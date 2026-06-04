@@ -1,0 +1,45 @@
+gene_name,uniprot_id,category,description
+# Pro-longevity / nutrient-sensing
+SIRT1,Q96EB6,pro-longevity,"NAD-dependent deacetylase, caloric restriction mediator"
+SIRT3,Q9NTG7,pro-longevity,"Mitochondrial sirtuin, oxidative stress defence"
+SIRT6,Q8N6T7,pro-longevity,"DNA repair sirtuin, telomere maintenance, overexpression extends lifespan"
+FOXO3,O43524,pro-longevity,"Forkhead TF, most replicated human longevity GWAS gene"
+KL,Q9UEF7,pro-longevity,"Klotho, aging suppressor, FGF23 co-receptor"
+TERT,O14746,pro-longevity,"Telomerase catalytic subunit, NMR has unique telomere biology"
+MTOR,P42345,pro-longevity,"mTOR kinase, nutrient sensing hub, rapamycin target"
+PRKAA1,Q13131,pro-longevity,"AMPK alpha-1, energy sensor, activates FOXO/SIRT pathways"
+IGF1R,P08069,pro-longevity,"IGF-1 receptor, reduced signaling extends lifespan across species"
+APOE,P02649,pro-longevity,"Apolipoprotein E, centenarian-associated variant (e2)"
+GDF15,Q99988,pro-longevity,"Growth differentiation factor 15, mitokine aging biomarker"
+# DNA repair
+TP53,P04637,dna-repair,"Tumor suppressor, genome guardian, unique adaptations in NMR"
+PARP1,P09874,dna-repair,"Poly-ADP-ribose polymerase, activity correlates with species max lifespan"
+BRCA1,P38398,dna-repair,"Homologous recombination repair, E3 ubiquitin ligase"
+ATM,Q13315,dna-repair,"DNA damage checkpoint kinase"
+ERCC1,P07992,dna-repair,"NER endonuclease subunit, enhanced in bowhead whale"
+# Proteostasis
+HSPA1A,P0DMV8,proteostasis,"HSP70 chaperone, heat-shock response enhanced in long-lived species"
+HSP90AA1,P07900,proteostasis,"HSP90-alpha, proteostasis hub chaperone"
+SQSTM1,Q13501,proteostasis,"p62, selective autophagy receptor"
+LAMP2,P13473,proteostasis,"Lysosomal membrane protein, chaperone-mediated autophagy"
+# Inflammation / cGAS-STING
+CGAS,Q8N884,inflammation/cGAS-STING,"Cyclic GMP-AMP synthase, cytosolic DNA sensor"
+STING1,Q86WV6,inflammation/cGAS-STING,"STING, innate immune signalling adaptor"
+NFKB1,P19838,inflammation/cGAS-STING,"NF-kB p105/p50, master inflammatory transcription factor"
+TNF,P01375,inflammation/cGAS-STING,"Tumor necrosis factor, pro-inflammatory cytokine"
+# Mitochondrial stress
+PINK1,Q9BXM7,mitochondrial-stress,"Mitophagy kinase, enhanced mitophagy in long-lived species"
+PRKN,O60260,mitochondrial-stress,"Parkin E3 ubiquitin ligase, mitophagy"
+SOD2,P04179,mitochondrial-stress,"Mitochondrial superoxide dismutase, higher activity in long-lived species"
+# Senescence regulators
+CDKN2A,P42771,senescence,"p16-INK4a, CDK inhibitor, senescence trigger"
+CDKN1A,P38936,senescence,"p21, CDK inhibitor downstream of p53"
+RB1,P06400,senescence,"Retinoblastoma protein, cell cycle / senescence gate"
+# ECM / hyaluronan
+HAS2,Q92819,ecm/hyaluronan,"Hyaluronan synthase 2, NMR produces unique high-MW HA"
+ELN,P15502,ecm/hyaluronan,"Elastin, vascular/tissue elasticity"
+COL1A1,P02452,ecm/hyaluronan,"Collagen type I alpha-1, major structural ECM protein"
+# Stress response / cold-shock
+CIRBP,Q14011,stress-response/cold-shock,"Cold-inducible RNA-binding protein, bat hibernation longevity"
+RBM3,P98179,stress-response/cold-shock,"RNA-binding motif 3, neuroprotective cold-shock protein"
+NFE2L2,Q16236,stress-response/cold-shock,"NRF2, master antioxidant TF, constitutively active in NMR"

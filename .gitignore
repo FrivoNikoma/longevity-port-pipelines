@@ -1,3 +1,14 @@
+# User-curated input — committed to git
+# data/input/ is NOT gitignored
+
+# Cached downloads and API responses (large, regenerable)
+data/interim/*
+!data/interim/.gitkeep
+
+# Pipeline outputs (regenerable)
+data/output/*
+!data/output/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -216,3 +227,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#claude
+claude/*
+
+#cursor
+cursor/*

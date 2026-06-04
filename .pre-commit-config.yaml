@@ -1,0 +1,11 @@
+# Restores the CLAUDE.md -> AGENTS.md symlink if a checkout dropped it
+# (Windows / zip exports turn symlinks into plain files). Run: pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: sync-agent-docs
+        name: sync CLAUDE.md to AGENTS.md
+        entry: bash scripts/sync_agent_docs.sh
+        language: system
+        files: '^(AGENTS\.md|CLAUDE\.md)$'
+        pass_filenames: false

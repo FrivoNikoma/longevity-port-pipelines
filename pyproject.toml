@@ -1,0 +1,85 @@
+[project]
+name = "longevity-port-pipelines"
+version = "0.1.0"
+description = "Cross-species interface embedding signal check for longevity hypothesis"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.13",
+    "polars>=1.41",
+    "numpy>=2.4",
+    "scipy>=1.17",
+    "requests>=2.32",
+    "huggingface-hub>=1.17",
+    "tqdm>=4.67",
+    "plotly>=6.8",
+    "biotite>=1.0",
+    "omnipath>=1.0",
+    "typer>=0.25",
+    "prefect>=3.7",
+    "python-dotenv>=1.1",
+    "kaleido>=1.3.0",
+    "pyarrow>=24.0.0",
+]
+
+[project.scripts]
+select = "longevity_port_pipelines.cli:select_cmd"
+orthologs = "longevity_port_pipelines.cli:orthologs_cmd"
+embed = "longevity_port_pipelines.cli:embed_cmd"
+analyze = "longevity_port_pipelines.cli:analyze_cmd"
+plot = "longevity_port_pipelines.cli:plot_cmd"
+run-pipeline = "longevity_port_pipelines.cli:run_cmd"
+candidates = "longevity_port_pipelines.cli:candidates_cmd"
+interactome = "longevity_port_pipelines.cli:interactome_cmd"
+breakage-table = "longevity_port_pipelines.cli:breakage_table_cmd"
+validation-protocol = "longevity_port_pipelines.cli:validation_protocol_cmd"
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = [
+    "plotly.*",
+    "omnipath.*",
+    "biotite.*",
+    "scipy.*",
+]
+ignore_missing_imports = true
+
+# Prefect's @flow/@task decorators are typed in a way mypy reads as "untyped
+# decorator" / overload mismatch (esp. with **kwargs spread). Don't let that mask
+# real errors elsewhere; relax it for the flow module only.
+[[tool.mypy.overrides]]
+module = ["longevity_port_pipelines.flow"]
+disable_error_code = ["untyped-decorator", "misc", "call-overload"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15",
+    "mypy>=2.1",
+    "pytest>=9.0",
+    "pre-commit>=4.6",
+    "types-requests>=2.33",
+    "types-tqdm>=4.67",
+]
