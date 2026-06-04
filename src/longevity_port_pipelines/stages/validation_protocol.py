@@ -94,23 +94,24 @@ def score_candidates(
         if has_breakage_table:
             bt = pl.read_csv(breakage_path)
             filled = bt.filter(
-                (pl.col("protein") == gene)
-                & (pl.col("desired_interaction_state") != "")
+                (pl.col("protein") == gene) & (pl.col("desired_interaction_state") != "")
             )
             has_breakage_pattern = filled.height > 0
 
-        score = sum([
-            has_structure,
-            True,
-            has_interactors,
-            not is_hub,
-            under_80kda and not is_membrane,
-            has_breakage_pattern,
-            can_express_cellfree,
-            under_80kda,
-            not is_membrane,
-            not has_glycosylation,
-        ])
+        score = sum(
+            [
+                has_structure,
+                True,
+                has_interactors,
+                not is_hub,
+                under_80kda and not is_membrane,
+                has_breakage_pattern,
+                can_express_cellfree,
+                under_80kda,
+                not is_membrane,
+                not has_glycosylation,
+            ]
+        )
 
         if score >= 8:
             tier = "high"
@@ -119,24 +120,26 @@ def score_candidates(
         else:
             tier = "low"
 
-        rows.append({
-            "gene_name": gene,
-            "uniprot_id": uniprot_id,
-            "category": category,
-            "has_structure": has_structure,
-            "has_human_ortholog": True,
-            "has_interactors": has_interactors,
-            "n_partners": n_partners,
-            "is_hub": is_hub,
-            "has_breakage_pattern": has_breakage_pattern,
-            "can_express_cellfree": can_express_cellfree,
-            "size_kda": size_kda,
-            "under_80kda": under_80kda,
-            "is_membrane": is_membrane,
-            "has_glycosylation": has_glycosylation,
-            "priority_score": score,
-            "priority_tier": tier,
-        })
+        rows.append(
+            {
+                "gene_name": gene,
+                "uniprot_id": uniprot_id,
+                "category": category,
+                "has_structure": has_structure,
+                "has_human_ortholog": True,
+                "has_interactors": has_interactors,
+                "n_partners": n_partners,
+                "is_hub": is_hub,
+                "has_breakage_pattern": has_breakage_pattern,
+                "can_express_cellfree": can_express_cellfree,
+                "size_kda": size_kda,
+                "under_80kda": under_80kda,
+                "is_membrane": is_membrane,
+                "has_glycosylation": has_glycosylation,
+                "priority_score": score,
+                "priority_tier": tier,
+            }
+        )
 
     return pl.DataFrame(rows) if rows else pl.DataFrame()
 
@@ -144,6 +147,7 @@ def score_candidates(
 # ---------------------------------------------------------------------------
 # SVG plots
 # ---------------------------------------------------------------------------
+
 
 def plot_priority_overview(scores_df: pl.DataFrame, plots_dir: Path) -> None:
     """Bar chart of candidates coloured by priority tier, sorted by score."""
@@ -203,18 +207,22 @@ def plot_category_breakdown(scores_df: pl.DataFrame, plots_dir: Path) -> None:
     )
 
     fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=cat_summary.get_column("category").to_list(),
-        y=cat_summary.get_column("mean_score").to_list(),
-        name="Mean Score",
-        marker_color="#3498db",
-        text=[f"{v:.1f}" for v in cat_summary.get_column("mean_score").to_list()],
-        textposition="outside",
-    ))
+    fig.add_trace(
+        go.Bar(
+            x=cat_summary.get_column("category").to_list(),
+            y=cat_summary.get_column("mean_score").to_list(),
+            name="Mean Score",
+            marker_color="#3498db",
+            text=[f"{v:.1f}" for v in cat_summary.get_column("mean_score").to_list()],
+            textposition="outside",
+        )
+    )
     fig.update_layout(
         title="Mean Priority Score by Category",
-        xaxis_title="Category", yaxis_title="Mean Score",
-        template="plotly_white", xaxis_tickangle=-30,
+        xaxis_title="Category",
+        yaxis_title="Mean Score",
+        template="plotly_white",
+        xaxis_tickangle=-30,
     )
     fig.write_image(str(plots_dir / "category_breakdown.svg"))
     logger.info("Wrote category_breakdown.svg")
@@ -223,6 +231,7 @@ def plot_category_breakdown(scores_df: pl.DataFrame, plots_dir: Path) -> None:
 # ---------------------------------------------------------------------------
 # Markdown protocol
 # ---------------------------------------------------------------------------
+
 
 def write_protocol_markdown(scores_df: pl.DataFrame, output_dir: Path) -> Path:
     """Write the computational validation protocol as markdown."""
@@ -275,9 +284,7 @@ def write_protocol_markdown(scores_df: pl.DataFrame, output_dir: Path) -> Path:
             lines.append("(none)")
             lines.append("")
             continue
-        lines.append(
-            "| Gene | UniProt | Category | Score | Size (kDa) | Hub | Membrane | Glyco |"
-        )
+        lines.append("| Gene | UniProt | Category | Score | Size (kDa) | Hub | Membrane | Glyco |")
         lines.append("|------|---------|----------|-------|------------|-----|----------|-------|")
         for r in df.sort("priority_score", descending=True).iter_rows(named=True):
             lines.append(
@@ -289,24 +296,26 @@ def write_protocol_markdown(scores_df: pl.DataFrame, output_dir: Path) -> Path:
             )
         lines.append("")
 
-    lines.extend([
-        "## 5. Recommended workflow",
-        "",
-        "1. **Review this ranking** — adjust scores for domain knowledge.",
-        "2. **Fill breakage_taxonomy.csv** — mark desired interaction states "
-        "(maintained / broken / rewired).",
-        "3. **Fetch orthologs** — `uv run orthologs` for cross-species coverage.",
-        "4. **Submit to AF3/Boltz/Chai** — high-priority, non-hub candidates.",
-        "5. **Adaptyv validation** — prioritise cell-free expressible candidates.",
-        "",
-        "## 6. Plots",
-        "",
-        "See `data/output/plots/` for:",
-        "- `priority_scores.svg` — bar chart of all candidates by score",
-        "- `hub_vs_score.svg` — partner count vs priority (hub filter rationale)",
-        "- `category_breakdown.svg` — mean score per functional category",
-        "",
-    ])
+    lines.extend(
+        [
+            "## 5. Recommended workflow",
+            "",
+            "1. **Review this ranking** — adjust scores for domain knowledge.",
+            "2. **Fill breakage_taxonomy.csv** — mark desired interaction states "
+            "(maintained / broken / rewired).",
+            "3. **Fetch orthologs** — `uv run orthologs` for cross-species coverage.",
+            "4. **Submit to AF3/Boltz/Chai** — high-priority, non-hub candidates.",
+            "5. **Adaptyv validation** — prioritise cell-free expressible candidates.",
+            "",
+            "## 6. Plots",
+            "",
+            "See `data/output/plots/` for:",
+            "- `priority_scores.svg` — bar chart of all candidates by score",
+            "- `hub_vs_score.svg` — partner count vs priority (hub filter rationale)",
+            "- `category_breakdown.svg` — mean score per functional category",
+            "",
+        ]
+    )
 
     with open(out_path, "w") as f:
         f.write("\n".join(lines))
@@ -318,6 +327,7 @@ def write_protocol_markdown(scores_df: pl.DataFrame, output_dir: Path) -> Path:
 # ---------------------------------------------------------------------------
 # Stage runner
 # ---------------------------------------------------------------------------
+
 
 def run_stage(cfg: PipelineConfig, candidates_df: pl.DataFrame) -> pl.DataFrame:
     """Run validation scoring. Writes scores CSV, protocol MD, and SVG plots."""

@@ -14,23 +14,29 @@ def _write_csv(tmp_path: Path, content: str) -> None:
 
 
 def test_loads_valid_csv(tmp_path: Path) -> None:
-    _write_csv(tmp_path, (
-        "gene_name,uniprot_id,category,description\n"
-        "GDF15,Q99988,pro-longevity,\"Growth differentiation factor 15\"\n"
-        "FOXO3,O43524,pro-longevity,\"Forkhead TF\"\n"
-    ))
+    _write_csv(
+        tmp_path,
+        (
+            "gene_name,uniprot_id,category,description\n"
+            'GDF15,Q99988,pro-longevity,"Growth differentiation factor 15"\n'
+            'FOXO3,O43524,pro-longevity,"Forkhead TF"\n'
+        ),
+    )
     df = candidates_dataframe(tmp_path)
     assert df.height == 2
     assert set(df.get_column("gene_name").to_list()) == {"GDF15", "FOXO3"}
 
 
 def test_skips_comment_lines(tmp_path: Path) -> None:
-    _write_csv(tmp_path, (
-        "gene_name,uniprot_id,category,description\n"
-        "# this is a comment\n"
-        "GDF15,Q99988,pro-longevity,\"Growth differentiation factor 15\"\n"
-        "# another comment\n"
-    ))
+    _write_csv(
+        tmp_path,
+        (
+            "gene_name,uniprot_id,category,description\n"
+            "# this is a comment\n"
+            'GDF15,Q99988,pro-longevity,"Growth differentiation factor 15"\n'
+            "# another comment\n"
+        ),
+    )
     df = candidates_dataframe(tmp_path)
     assert df.height == 1
 
@@ -53,11 +59,14 @@ def test_raises_on_missing_column(tmp_path: Path) -> None:
 
 
 def test_deduplicates_by_gene_name(tmp_path: Path) -> None:
-    _write_csv(tmp_path, (
-        "gene_name,uniprot_id,category,description\n"
-        "SIRT1,Q96EB6,pro-longevity,\"first\"\n"
-        "SIRT1,Q99999,pro-longevity,\"duplicate\"\n"
-    ))
+    _write_csv(
+        tmp_path,
+        (
+            "gene_name,uniprot_id,category,description\n"
+            'SIRT1,Q96EB6,pro-longevity,"first"\n'
+            'SIRT1,Q99999,pro-longevity,"duplicate"\n'
+        ),
+    )
     df = candidates_dataframe(tmp_path)
     assert df.height == 1
     assert df.row(0, named=True)["uniprot_id"] == "Q96EB6"

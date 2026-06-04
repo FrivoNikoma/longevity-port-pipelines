@@ -38,15 +38,17 @@ def query_oma_orthologs(uniprot_id: str, target_taxid: int) -> list[OrthologMapp
         if not target_id or not sequence:
             continue
 
-        results.append(OrthologMapping(
-            source_uniprot=uniprot_id,
-            source_species_taxid=REFERENCE_SPECIES.taxid,
-            target_uniprot=target_id,
-            target_species_taxid=target_taxid,
-            target_sequence=sequence,
-            is_reviewed=True,
-            source_db="OMA",
-        ))
+        results.append(
+            OrthologMapping(
+                source_uniprot=uniprot_id,
+                source_species_taxid=REFERENCE_SPECIES.taxid,
+                target_uniprot=target_id,
+                target_species_taxid=target_taxid,
+                target_sequence=sequence,
+                is_reviewed=True,
+                source_db="OMA",
+            )
+        )
 
     return results
 
@@ -94,15 +96,17 @@ def query_uniprot_orthologs(uniprot_id: str, target_taxid: int) -> list[Ortholog
         if not acc or not seq:
             continue
 
-        results.append(OrthologMapping(
-            source_uniprot=uniprot_id,
-            source_species_taxid=REFERENCE_SPECIES.taxid,
-            target_uniprot=acc,
-            target_species_taxid=target_taxid,
-            target_sequence=seq,
-            is_reviewed=reviewed,
-            source_db="UniProt",
-        ))
+        results.append(
+            OrthologMapping(
+                source_uniprot=uniprot_id,
+                source_species_taxid=REFERENCE_SPECIES.taxid,
+                target_uniprot=acc,
+                target_species_taxid=target_taxid,
+                target_sequence=seq,
+                is_reviewed=reviewed,
+                source_db="UniProt",
+            )
+        )
 
     return results
 
@@ -152,13 +156,18 @@ def fetch_orthologs_for_complexes(
                     all_mappings.append(mapping)
                     logger.info(
                         "%s/%s -> %s (%s, %s)",
-                        complex_id, chain_label, target.name,
-                        mapping.target_uniprot, mapping.source_db,
+                        complex_id,
+                        chain_label,
+                        target.name,
+                        mapping.target_uniprot,
+                        mapping.source_db,
                     )
                 else:
                     logger.warning(
                         "%s/%s -> %s: no ortholog found",
-                        complex_id, chain_label, target.name,
+                        complex_id,
+                        chain_label,
+                        target.name,
                     )
 
     return candidates_lf, all_mappings

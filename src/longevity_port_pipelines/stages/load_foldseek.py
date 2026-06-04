@@ -12,9 +12,7 @@ from longevity_port_pipelines.config import PipelineConfig
 
 logger = logging.getLogger(__name__)
 
-AFDB_CLUSTER_URL = (
-    "https://afdb-cluster.steineggerlab.workers.dev/cluster_data.tsv"
-)
+AFDB_CLUSTER_URL = "https://afdb-cluster.steineggerlab.workers.dev/cluster_data.tsv"
 
 
 def _download_if_missing(url: str, dest: Path, timeout: int = 300) -> Path:
@@ -73,11 +71,7 @@ def count_species_per_cluster(clusters_lf: pl.LazyFrame) -> pl.LazyFrame:
         )
         return pl.LazyFrame()
 
-    return (
-        clusters_lf
-        .group_by(cluster_col)
-        .agg(pl.col(taxid_col).n_unique().alias("n_species"))
-    )
+    return clusters_lf.group_by(cluster_col).agg(pl.col(taxid_col).n_unique().alias("n_species"))
 
 
 def filter_by_conservation(

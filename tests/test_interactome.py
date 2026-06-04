@@ -9,14 +9,16 @@ from longevity_port_pipelines.stages.interactome import (
 
 
 def test_summarise_interactome_partner_count() -> None:
-    interactions = pl.DataFrame({
-        "source_genesymbol": ["SIRT1", "SIRT1", "FOXO3"],
-        "target_genesymbol": ["FOXO3", "PPARG", "SIRT1"],
-        "sources": ["STRING;BioGRID", "STRING", "STRING;BioGRID"],
-        "is_directed": [1, 0, 1],
-        "is_stimulation": [1, 0, 0],
-        "is_inhibition": [0, 0, 0],
-    })
+    interactions = pl.DataFrame(
+        {
+            "source_genesymbol": ["SIRT1", "SIRT1", "FOXO3"],
+            "target_genesymbol": ["FOXO3", "PPARG", "SIRT1"],
+            "sources": ["STRING;BioGRID", "STRING", "STRING;BioGRID"],
+            "is_directed": [1, 0, 1],
+            "is_stimulation": [1, 0, 0],
+            "is_inhibition": [0, 0, 0],
+        }
+    )
 
     summary = summarise_interactome(
         interactions.lazy(),
@@ -33,14 +35,16 @@ def test_summarise_interactome_partner_count() -> None:
 
 
 def test_summarise_interactome_hub_detection() -> None:
-    interactions = pl.DataFrame({
-        "source_genesymbol": ["MTOR"] * 20,
-        "target_genesymbol": [f"PARTNER_{i}" for i in range(20)],
-        "sources": ["STRING"] * 20,
-        "is_directed": [0] * 20,
-        "is_stimulation": [0] * 20,
-        "is_inhibition": [0] * 20,
-    })
+    interactions = pl.DataFrame(
+        {
+            "source_genesymbol": ["MTOR"] * 20,
+            "target_genesymbol": [f"PARTNER_{i}" for i in range(20)],
+            "sources": ["STRING"] * 20,
+            "is_directed": [0] * 20,
+            "is_stimulation": [0] * 20,
+            "is_inhibition": [0] * 20,
+        }
+    )
 
     summary = summarise_interactome(
         interactions.lazy(),

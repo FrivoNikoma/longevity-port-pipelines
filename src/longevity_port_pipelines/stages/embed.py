@@ -70,9 +70,7 @@ def embed_sequence(
 
     embeddings = np.asarray(data["embeddings"], dtype=np.float32)
     if embeddings.ndim != 2:
-        raise ValueError(
-            f"Expected per-residue embeddings of shape (L, D), got {embeddings.shape}"
-        )
+        raise ValueError(f"Expected per-residue embeddings of shape (L, D), got {embeddings.shape}")
     return embeddings
 
 

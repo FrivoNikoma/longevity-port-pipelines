@@ -48,9 +48,7 @@ def load_string_task(candidates: pl.LazyFrame, cfg: PipelineConfig) -> pl.LazyFr
 
 
 @task(name="fetch_orthologs", **NETWORK_RETRIES)
-def fetch_orthologs_task(
-    candidates: pl.LazyFrame, cfg: PipelineConfig
-) -> list[OrthologMapping]:
+def fetch_orthologs_task(candidates: pl.LazyFrame, cfg: PipelineConfig) -> list[OrthologMapping]:
     """Stage 4: fetch orthologs for long-lived species."""
     _, mappings = fetch_orthologs.run_stage(candidates, cfg)
     return mappings

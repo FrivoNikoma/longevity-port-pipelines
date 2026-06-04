@@ -33,6 +33,7 @@ def _to_float(val: object, default: float = 0.0) -> float:
 # OmniPath: bulk PPI fetch
 # ---------------------------------------------------------------------------
 
+
 def fetch_all_interactions(gene_names: list[str]) -> pl.DataFrame:
     """Fetch interactions for all candidate genes in one OmniPath call.
 
@@ -65,13 +66,21 @@ def summarise_interactome(
     rows: list[dict[str, object]] = []
 
     for gene in candidate_genes:
-        partners_as_source = interactions.filter(
-            pl.col("source_genesymbol") == gene
-        ).get_column("target_genesymbol").to_list() if "source_genesymbol" in interactions.columns else []
+        partners_as_source = (
+            interactions.filter(pl.col("source_genesymbol") == gene)
+            .get_column("target_genesymbol")
+            .to_list()
+            if "source_genesymbol" in interactions.columns
+            else []
+        )
 
-        partners_as_target = interactions.filter(
-            pl.col("target_genesymbol") == gene
-        ).get_column("source_genesymbol").to_list() if "target_genesymbol" in interactions.columns else []
+        partners_as_target = (
+            interactions.filter(pl.col("target_genesymbol") == gene)
+            .get_column("source_genesymbol")
+            .to_list()
+            if "target_genesymbol" in interactions.columns
+            else []
+        )
 
         all_partners = sorted(set(partners_as_source + partners_as_target) - {gene})
         n_partners = len(all_partners)
@@ -99,17 +108,19 @@ def summarise_interactome(
 
         partner_in_candidates = [p for p in all_partners if p in gene_set]
 
-        rows.append({
-            "gene_name": gene,
-            "n_partners": n_partners,
-            "is_hub": n_partners > hub_threshold,
-            "n_directed": n_directed,
-            "n_stimulation": n_stimulation,
-            "n_inhibition": n_inhibition,
-            "top_partners": ", ".join(all_partners[:15]),
-            "databases": ", ".join(sorted(all_sources)),
-            "partners_in_candidates": ", ".join(partner_in_candidates),
-        })
+        rows.append(
+            {
+                "gene_name": gene,
+                "n_partners": n_partners,
+                "is_hub": n_partners > hub_threshold,
+                "n_directed": n_directed,
+                "n_stimulation": n_stimulation,
+                "n_inhibition": n_inhibition,
+                "top_partners": ", ".join(all_partners[:15]),
+                "databases": ", ".join(sorted(all_sources)),
+                "partners_in_candidates": ", ".join(partner_in_candidates),
+            }
+        )
 
     return pl.DataFrame(rows)
 
@@ -117,6 +128,7 @@ def summarise_interactome(
 # ---------------------------------------------------------------------------
 # UniProt: protein annotations (mass, membrane, glycosylation)
 # ---------------------------------------------------------------------------
+
 
 def _uniprot_cache_path(cache_dir: Path, uniprot_id: str) -> Path:
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -167,7 +179,10 @@ def parse_uniprot_annotations(data: dict[str, object]) -> dict[str, object]:
                     for loc in locs:
                         if isinstance(loc, dict):
                             loc_val = loc.get("location", {})
-                            if isinstance(loc_val, dict) and "membrane" in str(loc_val.get("value", "")).lower():
+                            if (
+                                isinstance(loc_val, dict)
+                                and "membrane" in str(loc_val.get("value", "")).lower()
+                            ):
                                 is_membrane = True
     result["is_membrane"] = is_membrane
 
@@ -197,6 +212,7 @@ def parse_uniprot_annotations(data: dict[str, object]) -> dict[str, object]:
 # Stage runner
 # ---------------------------------------------------------------------------
 
+
 def build_interactome(
     candidates_df: pl.DataFrame,
     cfg: PipelineConfig,
@@ -211,7 +227,9 @@ def build_interactome(
     interactions = fetch_all_interactions(gene_names)
 
     summary = summarise_interactome(
-        interactions.lazy(), gene_names, cfg.hub_partner_threshold,
+        interactions.lazy(),
+        gene_names,
+        cfg.hub_partner_threshold,
     )
 
     uniprot_cache = cfg.interim_dir / "uniprot"
@@ -228,7 +246,9 @@ def build_interactome(
     if annot_df.height > 0 and summary.height > 0:
         summary = summary.join(annot_df, on="gene_name", how="left")
 
-    category_map = dict(zip(gene_names, candidates_df.get_column("category").to_list(), strict=True))
+    category_map = dict(
+        zip(gene_names, candidates_df.get_column("category").to_list(), strict=True)
+    )
     summary = summary.with_columns(
         pl.col("gene_name").replace_strict(category_map, default="").alias("category")
     )
@@ -257,7 +277,9 @@ def run_stage(
     n_hubs = summary_df.filter(pl.col("is_hub")).height if "is_hub" in summary_df.columns else 0
     logger.info(
         "Hub proteins (>%d partners): %d / %d",
-        cfg.hub_partner_threshold, n_hubs, len(summary_df),
+        cfg.hub_partner_threshold,
+        n_hubs,
+        len(summary_df),
     )
 
     return summary_df, interactions_df

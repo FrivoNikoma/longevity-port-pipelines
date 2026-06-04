@@ -36,10 +36,12 @@ def test_shuffled_control_near_one() -> None:
 def test_mann_whitney_significant_difference() -> None:
     rng = np.random.default_rng(42)
     n = 50
-    deltas = np.concatenate([
-        rng.normal(1.0, 0.1, size=n),   # interface: high
-        rng.normal(0.3, 0.1, size=n),   # non-interface: low
-    ])
+    deltas = np.concatenate(
+        [
+            rng.normal(1.0, 0.1, size=n),  # interface: high
+            rng.normal(0.3, 0.1, size=n),  # non-interface: low
+        ]
+    )
     positions = np.arange(2 * n)
     interface = list(range(n))
 

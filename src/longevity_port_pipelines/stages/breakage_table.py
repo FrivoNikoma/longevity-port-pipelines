@@ -15,15 +15,31 @@ from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SHORT_LIVED_SPEC
 
 logger = logging.getLogger(__name__)
 
-DEGRADATION_KEYWORDS = frozenset({
-    "ubiquitin", "proteasome", "e3 ligase", "deubiquitin", "autophagy",
-    "lysosome", "caspase", "apoptosis", "degradation",
-})
+DEGRADATION_KEYWORDS = frozenset(
+    {
+        "ubiquitin",
+        "proteasome",
+        "e3 ligase",
+        "deubiquitin",
+        "autophagy",
+        "lysosome",
+        "caspase",
+        "apoptosis",
+        "degradation",
+    }
+)
 
-REGULATORY_KEYWORDS = frozenset({
-    "kinase", "phosphatase", "acetyltransferase", "deacetylase",
-    "methyltransferase", "sumo", "nedd",
-})
+REGULATORY_KEYWORDS = frozenset(
+    {
+        "kinase",
+        "phosphatase",
+        "acetyltransferase",
+        "deacetylase",
+        "methyltransferase",
+        "sumo",
+        "nedd",
+    }
+)
 
 
 def _classify_partner(partner_gene: str) -> str:
@@ -58,17 +74,19 @@ def build_breakage_table(
         regulatory = [p for p in partner_names if _classify_partner(p) == "regulatory"]
 
         for species in species_list:
-            rows.append({
-                "protein": gene,
-                "uniprot_id": uniprot_id,
-                "category": category,
-                "species": species,
-                "functional_partners": ", ".join(functional[:10]),
-                "n_functional": len(functional),
-                "regulatory_degradation_partners": ", ".join(regulatory[:10]),
-                "n_regulatory": len(regulatory),
-                "desired_interaction_state": "",
-            })
+            rows.append(
+                {
+                    "protein": gene,
+                    "uniprot_id": uniprot_id,
+                    "category": category,
+                    "species": species,
+                    "functional_partners": ", ".join(functional[:10]),
+                    "n_functional": len(functional),
+                    "regulatory_degradation_partners": ", ".join(regulatory[:10]),
+                    "n_regulatory": len(regulatory),
+                    "desired_interaction_state": "",
+                }
+            )
 
     return pl.DataFrame(rows) if rows else pl.DataFrame()
 

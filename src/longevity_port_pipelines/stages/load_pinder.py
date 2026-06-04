@@ -68,9 +68,7 @@ def select_candidates(lf: pl.LazyFrame, cfg: PipelineConfig) -> pl.LazyFrame:
     )
 
     # Enough interface contacts to have a meaningful interface.
-    filtered = filtered.filter(
-        pl.col("intermolecular_contacts") >= cfg.min_interface_contacts
-    )
+    filtered = filtered.filter(pl.col("intermolecular_contacts") >= cfg.min_interface_contacts)
 
     # Both chains must resolve to a UniProt accession (needed for orthologs).
     filtered = filtered.filter(
@@ -91,9 +89,11 @@ def select_candidates(lf: pl.LazyFrame, cfg: PipelineConfig) -> pl.LazyFrame:
             pl.max_horizontal("uniprot_R", "uniprot_L"),
         ).alias("_pair")
     )
-    filtered = filtered.sort("intermolecular_contacts", descending=True).unique(
-        subset="_pair", keep="first", maintain_order=True
-    ).drop("_pair")
+    filtered = (
+        filtered.sort("intermolecular_contacts", descending=True)
+        .unique(subset="_pair", keep="first", maintain_order=True)
+        .drop("_pair")
+    )
 
     return filtered.head(cfg.selection_count)
 

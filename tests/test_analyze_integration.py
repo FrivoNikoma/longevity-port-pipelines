@@ -74,7 +74,9 @@ def test_analyze_pair_detects_interface_signal() -> None:
     ref_emb = rng.normal(size=(100, dim)).astype(np.float32)
     orth_emb = ref_emb.copy()
     # large shift at interface positions
-    orth_emb[interface_residues] += rng.normal(loc=3.0, scale=0.2, size=(20, dim)).astype(np.float32)
+    orth_emb[interface_residues] += rng.normal(loc=3.0, scale=0.2, size=(20, dim)).astype(
+        np.float32
+    )
     # small shift everywhere else
     orth_emb[20:] += rng.normal(loc=0.1, scale=0.05, size=(80, dim)).astype(np.float32)
 
@@ -82,7 +84,9 @@ def test_analyze_pair_detects_interface_signal() -> None:
     orth = _make_embedding(seq, orth_emb, taxid=10181)
 
     result = analyze_pair(
-        ref, orth, interface_residues,
+        ref,
+        orth,
+        interface_residues,
         source_species_name="human",
         target_species_name="naked_mole_rat",
         n_permutations=500,
@@ -108,7 +112,9 @@ def test_analyze_pair_no_signal_when_uniform_shift() -> None:
     orth = _make_embedding(seq, orth_emb, taxid=10181)
 
     result = analyze_pair(
-        ref, orth, interface_residues,
+        ref,
+        orth,
+        interface_residues,
         source_species_name="human",
         target_species_name="naked_mole_rat",
         n_permutations=500,

@@ -131,10 +131,15 @@ def run_stage_5(
                 )
                 save_embeddings(ref_emb, cfg.output_dir)
                 save_embeddings(orth_emb, cfg.output_dir)
-                results.append((
-                    ref_emb, orth_emb, interface_res,
-                    REFERENCE_SPECIES.name, target_species,
-                ))
+                results.append(
+                    (
+                        ref_emb,
+                        orth_emb,
+                        interface_res,
+                        REFERENCE_SPECIES.name,
+                        target_species,
+                    )
+                )
 
     return results
 
@@ -151,7 +156,9 @@ def run_stage_6(
     results: list[EnrichmentResult] = []
     for ref_emb, orth_emb, interface_res, source_sp, target_sp in embedding_pairs:
         if not interface_res:
-            logger.warning("Skipping %s/%s — no interface residues", ref_emb.complex_id, ref_emb.chain)
+            logger.warning(
+                "Skipping %s/%s — no interface residues", ref_emb.complex_id, ref_emb.chain
+            )
             continue
 
         result = analyze_pair(

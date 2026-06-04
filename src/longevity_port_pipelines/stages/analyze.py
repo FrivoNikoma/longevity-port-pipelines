@@ -132,19 +132,22 @@ def mann_whitney_test(
     if len(interface_deltas) < 2 or len(noninterface_deltas) < 2:
         return 1.0, 0.0
 
-    stat_result = stats.mannwhitneyu(
-        interface_deltas, noninterface_deltas, alternative="greater"
-    )
+    stat_result = stats.mannwhitneyu(interface_deltas, noninterface_deltas, alternative="greater")
     p_value = float(stat_result.pvalue)
 
-    pooled_std = float(np.sqrt(
-        (np.var(interface_deltas) * (len(interface_deltas) - 1)
-         + np.var(noninterface_deltas) * (len(noninterface_deltas) - 1))
-        / (len(interface_deltas) + len(noninterface_deltas) - 2)
-    ))
+    pooled_std = float(
+        np.sqrt(
+            (
+                np.var(interface_deltas) * (len(interface_deltas) - 1)
+                + np.var(noninterface_deltas) * (len(noninterface_deltas) - 1)
+            )
+            / (len(interface_deltas) + len(noninterface_deltas) - 2)
+        )
+    )
     cohens_d = (
         (float(np.mean(interface_deltas)) - float(np.mean(noninterface_deltas))) / pooled_std
-        if pooled_std > 0 else 0.0
+        if pooled_std > 0
+        else 0.0
     )
 
     return p_value, cohens_d

@@ -27,7 +27,8 @@ def candidates_dataframe(input_dir: Path) -> pl.DataFrame:
         raise FileNotFoundError(msg)
 
     lines = [
-        line for line in csv_path.read_text().splitlines()
+        line
+        for line in csv_path.read_text().splitlines()
         if line.strip() and not line.strip().startswith("#")
     ]
     if len(lines) <= 1:
@@ -50,7 +51,8 @@ def candidates_dataframe(input_dir: Path) -> pl.DataFrame:
     if bad_cats:
         logger.warning(
             "Unknown categories in candidates CSV: %s (valid: %s)",
-            bad_cats, sorted(VALID_CATEGORIES),
+            bad_cats,
+            sorted(VALID_CATEGORIES),
         )
 
     df = df.unique(subset=["gene_name"], keep="first")

@@ -57,7 +57,9 @@ def extract_interface_residues(
     if chain_r.array_length() == 0 or chain_l.array_length() == 0:
         logger.warning(
             "Chain(s) %s/%s empty or absent in %s — available: %s",
-            chain_id_r, chain_id_l, pdb_path,
+            chain_id_r,
+            chain_id_l,
+            pdb_path,
             sorted(set(structure.chain_id.tolist())),
         )
         return [], []

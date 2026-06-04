@@ -35,7 +35,6 @@ class CandidateProtein(BaseModel):
     description: str = ""
 
 
-
 class Species(BaseModel):
     """A species with its NCBI taxonomy ID and lifespan category."""
 

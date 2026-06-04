@@ -89,7 +89,9 @@ def embed(
     selection_path = output_dir / "selection.csv"
     coverage_path = output_dir / "ortholog_coverage.csv"
     if not selection_path.exists() or not coverage_path.exists():
-        typer.echo("Missing selection.csv or ortholog_coverage.csv — run earlier stages first.", err=True)
+        typer.echo(
+            "Missing selection.csv or ortholog_coverage.csv — run earlier stages first.", err=True
+        )
         raise typer.Exit(1)
 
     candidates = pl.scan_csv(selection_path)
@@ -174,7 +176,9 @@ def interactome(
     n_hubs = summary_df.filter(pl.col("is_hub")).height if "is_hub" in summary_df.columns else 0
     typer.echo(f"Interactome: {len(summary_df)} proteins, {len(partners_df)} interactions")
     typer.echo(f"Hub proteins (>{cfg.hub_partner_threshold} partners): {n_hubs}")
-    typer.echo(f"Output: {output_dir / 'interactome.csv'}, {output_dir / 'interactome_partners.parquet'}")
+    typer.echo(
+        f"Output: {output_dir / 'interactome.csv'}, {output_dir / 'interactome_partners.parquet'}"
+    )
 
 
 def breakage_table(
@@ -231,7 +235,9 @@ def run(
     input_dir: InputDir = Path("data/input"),
     output_dir: OutputDir = Path("data/output"),
     count: Annotated[int, typer.Option(help="Number of complexes to select")] = 10,
-    pre_gpu_only: Annotated[bool, typer.Option(help="Stop after stage 4 (audit checkpoint)")] = False,
+    pre_gpu_only: Annotated[
+        bool, typer.Option(help="Stop after stage 4 (audit checkpoint)")
+    ] = False,
     verbose: Verbose = False,
 ) -> None:
     """Run the full Prefect flow (all 7 stages), or stop at the pre-GPU checkpoint."""
@@ -244,6 +250,7 @@ def run(
 
 
 # --- console-script entry points -------------------------------------------------
+
 
 def select_cmd() -> None:
     typer.run(select)
@@ -283,5 +290,3 @@ def breakage_table_cmd() -> None:
 
 def validation_protocol_cmd() -> None:
     typer.run(validation_protocol)
-
-

@@ -14,8 +14,7 @@ from longevity_port_pipelines.config import REFERENCE_SPECIES, PipelineConfig
 logger = logging.getLogger(__name__)
 
 STRING_LINKS_URL_TEMPLATE = (
-    "https://stringdb-downloads.org/download/"
-    "protein.links.v12.5/{taxid}.protein.links.v12.5.txt.gz"
+    "https://stringdb-downloads.org/download/protein.links.v12.5/{taxid}.protein.links.v12.5.txt.gz"
 )
 
 
@@ -51,21 +50,17 @@ def load_string_links(taxid: int, cfg: PipelineConfig) -> pl.LazyFrame:
 def count_partners(links_lf: pl.LazyFrame) -> pl.LazyFrame:
     """Count interaction partners per protein from STRING links."""
     left_counts = (
-        links_lf
-        .group_by("protein1")
+        links_lf.group_by("protein1")
         .agg(pl.col("protein2").n_unique().alias("n_partners"))
         .rename({"protein1": "string_id"})
     )
     right_counts = (
-        links_lf
-        .group_by("protein2")
+        links_lf.group_by("protein2")
         .agg(pl.col("protein1").n_unique().alias("n_partners"))
         .rename({"protein2": "string_id"})
     )
     return (
-        pl.concat([left_counts, right_counts])
-        .group_by("string_id")
-        .agg(pl.col("n_partners").sum())
+        pl.concat([left_counts, right_counts]).group_by("string_id").agg(pl.col("n_partners").sum())
     )
 
 
@@ -111,13 +106,9 @@ def annotate_hub_status(
 
     hub_expr_parts: list[pl.Expr] = []
     if uniprot_r:
-        hub_expr_parts.append(
-            pl.col("partners_R").fill_null(0) > cfg.hub_partner_threshold
-        )
+        hub_expr_parts.append(pl.col("partners_R").fill_null(0) > cfg.hub_partner_threshold)
     if uniprot_l:
-        hub_expr_parts.append(
-            pl.col("partners_L").fill_null(0) > cfg.hub_partner_threshold
-        )
+        hub_expr_parts.append(pl.col("partners_L").fill_null(0) > cfg.hub_partner_threshold)
 
     if hub_expr_parts:
         hub_expr = hub_expr_parts[0]

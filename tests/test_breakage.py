@@ -25,15 +25,19 @@ def test_classify_partner_degradation_keywords() -> None:
 
 
 def test_build_breakage_table_structure() -> None:
-    candidates = pl.DataFrame({
-        "gene_name": ["SIRT1", "TP53"],
-        "uniprot_id": ["Q96EB6", "P04637"],
-        "category": ["pro-longevity", "dna-repair"],
-    })
-    interactome = pl.DataFrame({
-        "gene_name": ["SIRT1", "TP53"],
-        "top_partners": ["FOXO3, PPARG, ubiquitin", "MDM2, BRCA1, caspase"],
-    })
+    candidates = pl.DataFrame(
+        {
+            "gene_name": ["SIRT1", "TP53"],
+            "uniprot_id": ["Q96EB6", "P04637"],
+            "category": ["pro-longevity", "dna-repair"],
+        }
+    )
+    interactome = pl.DataFrame(
+        {
+            "gene_name": ["SIRT1", "TP53"],
+            "top_partners": ["FOXO3, PPARG, ubiquitin", "MDM2, BRCA1, caspase"],
+        }
+    )
 
     table = build_breakage_table(candidates, interactome)
 
@@ -52,15 +56,19 @@ def test_build_breakage_table_structure() -> None:
 def test_build_breakage_table_covers_all_species() -> None:
     from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SHORT_LIVED_SPECIES
 
-    candidates = pl.DataFrame({
-        "gene_name": ["SIRT1"],
-        "uniprot_id": ["Q96EB6"],
-        "category": ["pro-longevity"],
-    })
-    interactome = pl.DataFrame({
-        "gene_name": ["SIRT1"],
-        "top_partners": ["FOXO3"],
-    })
+    candidates = pl.DataFrame(
+        {
+            "gene_name": ["SIRT1"],
+            "uniprot_id": ["Q96EB6"],
+            "category": ["pro-longevity"],
+        }
+    )
+    interactome = pl.DataFrame(
+        {
+            "gene_name": ["SIRT1"],
+            "top_partners": ["FOXO3"],
+        }
+    )
 
     table = build_breakage_table(candidates, interactome)
     expected_species = len(LONG_LIVED_SPECIES) + len(SHORT_LIVED_SPECIES)

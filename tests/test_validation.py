@@ -9,11 +9,13 @@ from longevity_port_pipelines.stages.validation_protocol import score_candidates
 
 
 def _make_candidates() -> pl.DataFrame:
-    return pl.DataFrame({
-        "gene_name": ["SIRT1", "MTOR", "ELN"],
-        "uniprot_id": ["Q96EB6", "P42345", "P15502"],
-        "category": ["pro-longevity", "pro-longevity", "ecm/hyaluronan"],
-    })
+    return pl.DataFrame(
+        {
+            "gene_name": ["SIRT1", "MTOR", "ELN"],
+            "uniprot_id": ["Q96EB6", "P42345", "P15502"],
+            "category": ["pro-longevity", "pro-longevity", "ecm/hyaluronan"],
+        }
+    )
 
 
 def _make_interactome(
@@ -23,15 +25,17 @@ def _make_interactome(
     is_membrane: list[bool],
     has_glycosylation: list[bool],
 ) -> pl.DataFrame:
-    return pl.DataFrame({
-        "gene_name": ["SIRT1", "MTOR", "ELN"],
-        "n_partners": n_partners,
-        "is_hub": is_hub,
-        "size_kda": size_kda,
-        "is_membrane": is_membrane,
-        "has_glycosylation": has_glycosylation,
-        "top_partners": ["FOXO3, PPARG", "RPTOR, RICTOR", "FBN1"],
-    })
+    return pl.DataFrame(
+        {
+            "gene_name": ["SIRT1", "MTOR", "ELN"],
+            "n_partners": n_partners,
+            "is_hub": is_hub,
+            "size_kda": size_kda,
+            "is_membrane": is_membrane,
+            "has_glycosylation": has_glycosylation,
+            "top_partners": ["FOXO3, PPARG", "RPTOR, RICTOR", "FBN1"],
+        }
+    )
 
 
 def test_score_candidates_tier_assignment(tmp_path: Path) -> None:
@@ -74,20 +78,24 @@ def test_score_candidates_empty_interactome(tmp_path: Path) -> None:
     )
     cfg.ensure_dirs()
 
-    candidates = pl.DataFrame({
-        "gene_name": ["UNKNOWN"],
-        "uniprot_id": ["X00000"],
-        "category": ["pro-longevity"],
-    })
-    interactome = pl.DataFrame({
-        "gene_name": ["OTHER"],
-        "n_partners": [0],
-        "is_hub": [False],
-        "size_kda": [0.0],
-        "is_membrane": [False],
-        "has_glycosylation": [False],
-        "top_partners": [""],
-    })
+    candidates = pl.DataFrame(
+        {
+            "gene_name": ["UNKNOWN"],
+            "uniprot_id": ["X00000"],
+            "category": ["pro-longevity"],
+        }
+    )
+    interactome = pl.DataFrame(
+        {
+            "gene_name": ["OTHER"],
+            "n_partners": [0],
+            "is_hub": [False],
+            "size_kda": [0.0],
+            "is_membrane": [False],
+            "has_glycosylation": [False],
+            "top_partners": [""],
+        }
+    )
 
     scores = score_candidates(candidates, interactome, cfg)
     assert scores.height == 0

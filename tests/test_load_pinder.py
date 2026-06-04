@@ -15,14 +15,16 @@ def _make_pinder_lf(
     seq_l: list[str] | None = None,
 ) -> pl.LazyFrame:
     n = len(ids)
-    return pl.DataFrame({
-        "id": ids,
-        "intermolecular_contacts": contacts or [20] * n,
-        "predicted_R": predicted_r or [False] * n,
-        "predicted_L": predicted_l or [False] * n,
-        "receptor_sequence": seq_r or ["MKTLVGAA"] * n,
-        "ligand_sequence": seq_l or ["AQVGLMKT"] * n,
-    }).lazy()
+    return pl.DataFrame(
+        {
+            "id": ids,
+            "intermolecular_contacts": contacts or [20] * n,
+            "predicted_R": predicted_r or [False] * n,
+            "predicted_L": predicted_l or [False] * n,
+            "receptor_sequence": seq_r or ["MKTLVGAA"] * n,
+            "ligand_sequence": seq_l or ["AQVGLMKT"] * n,
+        }
+    ).lazy()
 
 
 def test_parse_pinder_id_extracts_fields() -> None:
@@ -38,10 +40,12 @@ def test_parse_pinder_id_extracts_fields() -> None:
 
 
 def test_parse_pinder_id_multiple_entries() -> None:
-    lf = _make_pinder_lf([
-        "1abc__A1_P11111--1abc__B1_P22222",
-        "4xyz__X1_Q99999--4xyz__Y1_Q88888",
-    ])
+    lf = _make_pinder_lf(
+        [
+            "1abc__A1_P11111--1abc__B1_P22222",
+            "4xyz__X1_Q99999--4xyz__Y1_Q88888",
+        ]
+    )
     result = parse_pinder_id(lf).collect()
     assert result.height == 2
     assert result.row(1, named=True)["pdb_id"] == "4xyz"
