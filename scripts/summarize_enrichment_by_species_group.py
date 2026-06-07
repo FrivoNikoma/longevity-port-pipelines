@@ -14,8 +14,7 @@ def find_col(df: pd.DataFrame, candidates: list[str]) -> str:
             return col
 
     raise ValueError(
-        f"None of the expected columns found: {candidates}. "
-        f"Available columns: {list(df.columns)}"
+        f"None of the expected columns found: {candidates}. Available columns: {list(df.columns)}"
     )
 
 
@@ -62,8 +61,8 @@ def main() -> None:
     enrichment_col = find_col(df, ["enrichment", "interface_enrichment", "enrichment_ratio"])
 
     q_col = optional_col(
-    df,
-    ["mann_whitney_q_bh", "q_value", "fdr", "bh_fdr", "p_adj", "padj"],
+        df,
+        ["mann_whitney_q_bh", "q_value", "fdr", "bh_fdr", "p_adj", "padj"],
     )
     ratio_col = optional_col(
         df,
@@ -71,8 +70,8 @@ def main() -> None:
     )
 
     species_to_group = build_species_to_group_map(args.species_groups)
-    df["species_group"] = df[species_col].astype(str).map(
-        lambda x: infer_species_group(x, species_to_group)
+    df["species_group"] = (
+        df[species_col].astype(str).map(lambda x: infer_species_group(x, species_to_group))
     )
 
     df["is_long_lived_group"] = df["species_group"].isin(
@@ -97,11 +96,7 @@ def main() -> None:
     long_mean = df.loc[df["is_long_lived_group"], enrichment_col].mean()
     short_mean = df.loc[df["is_short_lived_control"], enrichment_col].mean()
 
-    delta = (
-        long_mean - short_mean
-        if pd.notna(long_mean) and pd.notna(short_mean)
-        else float("nan")
-    )
+    delta = long_mean - short_mean if pd.notna(long_mean) and pd.notna(short_mean) else float("nan")
 
     meta_row = pd.DataFrame(
         [
