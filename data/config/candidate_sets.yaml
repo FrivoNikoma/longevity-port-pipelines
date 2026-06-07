@@ -1,0 +1,114 @@
+sets:
+  ampk_pilot:
+    description: "AMPK signaling pilot used to validate interface-localized embedding-shift enrichment."
+    focus_genes:
+      - PRKAA1
+      - PRKAA2
+      - PRKAB1
+      - PRKAB2
+      - PRKAG1
+      - PRKAG2
+      - PRKAG3
+    partners:
+      - STK11
+      - CAB39
+      - CAB39L
+      - STRADA
+      - STRADB
+      - CAMKK2
+      - MTOR
+      - RPTOR
+      - TSC1
+      - TSC2
+      - ACACA
+      - ACACB
+      - ULK1
+    biological_mode: "signaling_rewiring"
+    interpretation_note: >
+      Exploratory pilot. Interface-localized evolutionary embedding shifts should not yet be
+      interpreted as longevity-specific without short-lived controls.
+
+  sirt6_dna_repair:
+    description: "SIRT6-centered DNA double-strand break repair module."
+    focus_genes:
+      - SIRT6
+    partners:
+      - PARP1
+      - XRCC5
+      - XRCC6
+      - PRKDC
+      - SMARCA5
+      - RELA
+      - HIF1A
+      - MYC
+    uniprot_ids:
+      - Q8N6T7   # SIRT6
+      - P09874   # PARP1
+      - P13010   # XRCC5 / Ku80
+      - P12956   # XRCC6 / Ku70
+      - P78527   # PRKDC / DNA-PKcs
+      - O60264   # SMARCA5 / SNF2H
+      - Q04206   # RELA
+      - Q16665   # HIF1A
+      - P01106   # MYC
+    biological_mode: "maintained_or_enhanced_repair"
+    interpretation_note: >
+      Known longevity-relevant module. Expected signal may involve enhanced DNA repair function
+      rather than simple interaction loss.
+
+  tp53_mdm2_elephant:
+    description: "TP53/MDM2 regulatory module, motivated by elephant TP53 copy expansion and MDM2 escape."
+    focus_genes:
+      - TP53
+    partners:
+      - MDM2
+      - MDM4
+      - EP300
+      - CREBBP
+      - TP53BP1
+    biological_mode: "beneficial_breakage"
+    interpretation_note: >
+      Useful interaction weakening or escape may be adaptive. Interface shifts should not be
+      automatically treated as incompatibility.
+
+  has2_cd44_nmr:
+    description: "Naked mole-rat HAS2/hyaluronan/CD44 module."
+    focus_genes:
+      - HAS2
+    partners:
+      - CD44
+      - HYAL1
+      - HYAL2
+      - CEMIP
+      - HMMR
+    biological_mode: "transferable_function"
+    interpretation_note: >
+      Known cross-species transfer case. The interface signal may be indirect because HAS2 biology
+      involves extracellular matrix and hyaluronan metabolism.
+
+  igf_rheb_mtor:
+    description: "IGF/RHEB/mTOR signaling module from comparative longevity and positive-selection evidence."
+    focus_genes:
+      - IGF1
+      - IGF1R
+      - RHEB
+      - RHEBL1
+      - MTOR
+      - TSC1
+      - TSC2
+      - AKT1
+      - FOXO3
+    partners:
+      - IRS1
+      - IRS2
+      - RPTOR
+      - RICTOR
+      - MLST8
+      - DEPTOR
+      - TSC1
+      - TSC2
+      - MTOR
+    biological_mode: "signaling_rewiring"
+    interpretation_note: >
+      Network-tuning module. Expected signal may involve altered regulatory sensitivity rather
+      than complete gain/loss of binding.

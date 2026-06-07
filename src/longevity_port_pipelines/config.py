@@ -41,10 +41,14 @@ class PipelineConfig(BaseModel):
     # Stage 1: PINDER selection
     pinder_dataset: str = "Synthyra/PINDER"
     negatome_dataset: str = "Synthyra/NEGATOME"
+    candidate_sets_path: Path = Path("data/config/candidate_sets.yaml")
+    candidate_set: str = "ampk_pilot"
+    allow_unfiltered_fallback: bool = True
     selection_count: int = 10
     min_interface_contacts: int = 5
     max_resolution: float = 3.0
     max_chain_length: int = 1000
+    allow_predicted_structures: bool = True
 
     # Stage 2: Foldseek conservation
     min_cluster_species: int = 3
@@ -54,8 +58,8 @@ class PipelineConfig(BaseModel):
     hub_partner_threshold: int = 15
 
     # Stage 5: embedding (Biohub Platform REST API; token via BIOHUB_API_TOKEN env)
-    biohub_api_url: str = "https://api.biohub.ai"
-    esmc_model: str = "esmc-600m"
+    biohub_api_url: str = "https://biohub.ai"
+    esmc_model: str = "esmc-300m-2024-12"
 
     # Stage 6: analysis
     n_permutations: int = 1000

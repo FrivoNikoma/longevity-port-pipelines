@@ -19,9 +19,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-import requests
+import torch
+from esm.sdk import ESMCForgeInferenceClient  # type: ignore[import-untyped]
+from esm.sdk.api import ESMProtein, ESMProteinError, LogitsConfig  # type: ignore[import-untyped]
 
 logger = logging.getLogger(__name__)
+_CLIENT_CACHE: dict[tuple[str, str, str], ESMCForgeInferenceClient] = {}
 
 
 @dataclass
@@ -48,6 +51,24 @@ def get_biohub_token() -> str:
     return token
 
 
+def get_esmc_client(
+    model: str,
+    api_url: str,
+    token: str,
+    timeout: int | None = 180,
+) -> ESMCForgeInferenceClient:
+    """Create or reuse a Biohub ESMC SDK client."""
+    key = (model, api_url, token)
+    if key not in _CLIENT_CACHE:
+        _CLIENT_CACHE[key] = ESMCForgeInferenceClient(
+            model=model,
+            url=api_url,
+            token=token,
+            request_timeout=timeout,
+        )
+    return _CLIENT_CACHE[key]
+
+
 def embed_sequence(
     sequence: str,
     model: str,
@@ -55,23 +76,51 @@ def embed_sequence(
     token: str,
     timeout: int = 180,
 ) -> np.ndarray:
-    """Request per-residue ESM C embeddings for one sequence from Biohub.
+    """Request per-residue ESMC embeddings for one sequence from Biohub SDK.
 
-    Returns an array of shape (L, D) where L == len(sequence).
+    Returns an array of shape (L, D), where L is expected to match len(sequence).
     """
-    resp = requests.post(
-        f"{api_url.rstrip('/')}/v1/embeddings",
-        headers={"Authorization": f"Bearer {token}"},
-        json={"model": model, "sequence": sequence},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
-    data = resp.json()
+    client = get_esmc_client(model=model, api_url=api_url, token=token, timeout=timeout)
 
-    embeddings = np.asarray(data["embeddings"], dtype=np.float32)
-    if embeddings.ndim != 2:
-        raise ValueError(f"Expected per-residue embeddings of shape (L, D), got {embeddings.shape}")
-    return embeddings
+    protein = ESMProtein(sequence=sequence)
+    protein_tensor = client.encode(protein)
+    if isinstance(protein_tensor, ESMProteinError):
+        raise RuntimeError(f"Biohub ESMC encode failed: {protein_tensor}")
+
+    output = client.logits(
+        protein_tensor,
+        LogitsConfig(sequence=True, return_embeddings=True),
+    )
+    if isinstance(output, ESMProteinError):
+        raise RuntimeError(f"Biohub ESMC logits failed: {output}")
+
+    embeddings = output.embeddings
+    if embeddings is None:
+        raise RuntimeError("Biohub ESMC response did not contain embeddings")
+
+    if isinstance(embeddings, torch.Tensor):
+        arr = embeddings.detach().cpu().to(torch.float32).numpy().astype(np.float32)
+    else:
+        arr = np.asarray(embeddings, dtype=np.float32)
+
+    # SDK responses may include a batch dimension.
+    if arr.ndim == 3 and arr.shape[0] == 1:
+        arr = arr[0]
+
+    # Some token-level models may include special tokens. Trim conservatively
+    # to the biological sequence length if needed.
+    if arr.ndim == 2 and arr.shape[0] != len(sequence):
+        if arr.shape[0] >= len(sequence):
+            arr = arr[: len(sequence)]
+        else:
+            raise ValueError(
+                f"Expected at least {len(sequence)} residue embeddings, got {arr.shape}"
+            )
+
+    if arr.ndim != 2:
+        raise ValueError(f"Expected per-residue embeddings of shape (L, D), got {arr.shape}")
+
+    return arr
 
 
 def embed_pair(

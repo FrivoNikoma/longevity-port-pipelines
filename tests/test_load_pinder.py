@@ -60,7 +60,7 @@ def test_select_candidates_filters_predicted_structures() -> None:
         predicted_r=[True, False],
         predicted_l=[False, False],
     )
-    cfg = PipelineConfig(selection_count=10)
+    cfg = PipelineConfig(selection_count=10, allow_predicted_structures=False)
     result = select_candidates(lf, cfg).collect()
     assert result.height == 1
     assert "P33333" in result.get_column("uniprot_R").to_list()

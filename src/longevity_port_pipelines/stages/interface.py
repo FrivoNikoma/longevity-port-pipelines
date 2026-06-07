@@ -36,6 +36,22 @@ def _per_atom_residue_index(chain: struc.AtomArray) -> np.ndarray:
     return np.searchsorted(starts, np.arange(chain.array_length()), side="right") - 1
 
 
+def _resolve_chain_id(requested_chain_id: str, available_chain_ids: set[str]) -> str:
+    """Resolve PINDER-style chain IDs like A1/B1 to PDB chain IDs like A/B.
+
+    PINDER system IDs may encode chain copies as A1, B1, C1, while the
+    downloaded RCSB PDB file often stores the corresponding chain as A, B, C.
+    """
+    if requested_chain_id in available_chain_ids:
+        return requested_chain_id
+
+    stripped = requested_chain_id.rstrip("0123456789")
+    if stripped in available_chain_ids:
+        return stripped
+
+    return requested_chain_id
+
+
 def extract_interface_residues(
     pdb_path: Path,
     chain_id_r: str,
@@ -51,14 +67,29 @@ def extract_interface_residues(
     structure = pdb.get_structure(pdb_file, model=1)
 
     amino = struc.filter_amino_acids(structure)
-    chain_r = structure[amino & (structure.chain_id == chain_id_r)]
-    chain_l = structure[amino & (structure.chain_id == chain_id_l)]
+
+    available_chain_ids = set(structure.chain_id.tolist())
+    resolved_chain_id_r = _resolve_chain_id(chain_id_r, available_chain_ids)
+    resolved_chain_id_l = _resolve_chain_id(chain_id_l, available_chain_ids)
+
+    if resolved_chain_id_r != chain_id_r or resolved_chain_id_l != chain_id_l:
+        logger.info(
+            "Resolved PINDER chain IDs %s/%s -> PDB chain IDs %s/%s for %s",
+            chain_id_r,
+            chain_id_l,
+            resolved_chain_id_r,
+            resolved_chain_id_l,
+            pdb_path,
+        )
+
+    chain_r = structure[amino & (structure.chain_id == resolved_chain_id_r)]
+    chain_l = structure[amino & (structure.chain_id == resolved_chain_id_l)]
 
     if chain_r.array_length() == 0 or chain_l.array_length() == 0:
         logger.warning(
             "Chain(s) %s/%s empty or absent in %s — available: %s",
-            chain_id_r,
-            chain_id_l,
+            resolved_chain_id_r,
+            resolved_chain_id_l,
             pdb_path,
             sorted(set(structure.chain_id.tolist())),
         )

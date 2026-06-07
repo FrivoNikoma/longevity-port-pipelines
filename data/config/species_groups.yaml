@@ -1,0 +1,67 @@
+reference:
+  human:
+    aliases:
+      - human
+      - Homo sapiens
+      - homo_sapiens
+    group: reference
+
+long_lived_small_body:
+  naked_mole_rat:
+    aliases:
+      - naked_mole_rat
+      - Heterocephalus glaber
+      - heterocephalus_glaber
+    group: long_lived_small_body
+
+  myotis_lucifugus:
+    aliases:
+      - Myotis lucifugus
+      - myotis_lucifugus
+      - little_brown_bat
+    group: long_lived_small_body
+
+  brandts_bat:
+    aliases:
+      - Brandts bat
+      - Myotis brandtii
+      - myotis_brandtii
+    group: long_lived_small_body
+
+long_lived_large_body:
+  elephant:
+    aliases:
+      - elephant
+      - Loxodonta africana
+      - loxodonta_africana
+      - African elephant
+    group: long_lived_large_body
+
+  bowhead_whale:
+    aliases:
+      - bowhead_whale
+      - Balaena mysticetus
+      - balaena_mysticetus
+    group: long_lived_large_body
+
+short_lived_controls:
+  mouse:
+    aliases:
+      - mouse
+      - Mus musculus
+      - mus_musculus
+    group: short_lived_control
+
+  rat:
+    aliases:
+      - rat
+      - Rattus norvegicus
+      - rattus_norvegicus
+    group: short_lived_control
+
+  hamster:
+    aliases:
+      - hamster
+      - Mesocricetus auratus
+      - mesocricetus_auratus
+    group: short_lived_control
