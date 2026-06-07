@@ -24,6 +24,12 @@ def parse_args() -> argparse.Namespace:
         help="Candidate set name from data/config/candidate_sets.yaml.",
     )
     parser.add_argument(
+        "--selection-mode",
+        default="partner_aware",
+        choices=["partner_aware", "explicit_only"],
+        help="Candidate UniProt selection mode.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Disable unfiltered fallback when no candidate-set complexes are found.",
@@ -47,6 +53,7 @@ def main() -> None:
 
     cfg = PipelineConfig(
         candidate_set=args.candidate_set,
+        candidate_selection_mode=args.selection_mode,
         allow_unfiltered_fallback=not args.strict,
         selection_count=args.selection_count,
     )
@@ -66,6 +73,7 @@ def main() -> None:
 
     if selected.is_empty():
         print(f"No complexes selected for candidate set: {args.candidate_set}")
+        print(f"selection mode: {args.selection_mode}")
         print(f"strict mode: {args.strict}")
         print(f"explicit UniProt IDs: {sorted(explicit_uniprots)}")
         print(f"expanded UniProt IDs: {sorted(expanded_uniprots)}")
@@ -113,6 +121,7 @@ def main() -> None:
     audit.write_csv(output_path)
 
     print(f"Candidate set: {args.candidate_set}")
+    print(f"selection mode: {args.selection_mode}")
     print(f"strict mode: {args.strict}")
     print(f"selected complexes: {audit.height}")
     print(f"explicit UniProt IDs: {sorted(explicit_uniprots)}")

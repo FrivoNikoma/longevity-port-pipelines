@@ -43,6 +43,7 @@ class PipelineConfig(BaseModel):
     negatome_dataset: str = "Synthyra/NEGATOME"
     candidate_sets_path: Path = Path("data/config/candidate_sets.yaml")
     candidate_set: str = "ampk_pilot"
+    candidate_selection_mode: str = "partner_aware"
     allow_unfiltered_fallback: bool = True
     selection_count: int = 10
     min_interface_contacts: int = 5

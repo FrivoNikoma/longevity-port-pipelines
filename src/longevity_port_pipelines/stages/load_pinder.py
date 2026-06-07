@@ -118,6 +118,20 @@ def load_partner_aware_uniprots(cfg: PipelineConfig) -> set[str]:
     if not focus_genes and not configured_uniprots:
         return load_candidate_uniprots(cfg)
 
+    if cfg.candidate_selection_mode == "explicit_only":
+        logger.info(
+            "Using explicit-only candidate selection for candidate set %s: %d UniProt IDs",
+            cfg.candidate_set,
+            len(configured_uniprots),
+        )
+        return configured_uniprots
+
+    if cfg.candidate_selection_mode != "partner_aware":
+        raise ValueError(
+            f"Unknown candidate_selection_mode: {cfg.candidate_selection_mode!r}. "
+            "Expected 'partner_aware' or 'explicit_only'."
+        )
+
     candidates_path = cfg.output_dir / "candidates.csv"
     partners_path = cfg.output_dir / "interactome_partners.parquet"
 
