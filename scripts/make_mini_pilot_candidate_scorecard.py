@@ -21,6 +21,11 @@ def parse_args() -> argparse.Namespace:
         help="Recurrent residue candidates CSV.",
     )
     parser.add_argument(
+        "--negative-control-audit",
+        default="data/output/sirt6_mini_pilot_negative_control_audit.csv",
+        help="Negative-control audit CSV.",
+    )
+    parser.add_argument(
         "--output",
         default="data/output/sirt6_mini_pilot_candidate_scorecard.csv",
         help="Output candidate scorecard CSV.",
@@ -62,40 +67,92 @@ def protein_label(complex_id: str, chain: str) -> str:
     return chain
 
 
+def control_interpretation(control_status: str) -> str:
+    if control_status == "has_shuffled_and_negatome":
+        return "shuffled_and_negatome_controls"
+
+    if control_status == "missing_negatome":
+        return "shuffled_only_missing_negatome"
+
+    if control_status == "missing_shuffled":
+        return "negatome_only_missing_shuffled"
+
+    if control_status == "missing_all_controls":
+        return "missing_all_controls"
+
+    return "control_status_unknown"
+
+
+def append_control_warning(recommendation: str, control_status: str) -> str:
+    if control_status == "has_shuffled_and_negatome":
+        return recommendation
+
+    if control_status == "missing_negatome":
+        return (
+            f"{recommendation} Control note: NEGATOME-style control is currently missing; "
+            "treat as shuffled-control-only evidence."
+        )
+
+    if control_status == "missing_shuffled":
+        return (
+            f"{recommendation} Control note: shuffled-mask control is missing; inspect before "
+            "using this candidate for prioritization."
+        )
+
+    return (
+        f"{recommendation} Control note: negative-control coverage is incomplete; do not treat "
+        "this as fully controlled enrichment evidence."
+    )
+
+
 def action_recommendation(
     outcome_class: str,
     confidence: str,
     engineering_priority: str,
     assay_priority: str,
+    control_status: str,
 ) -> str:
     if outcome_class == "maintained_candidate" and confidence == "high":
-        return (
+        recommendation = (
             "Treat as a likely maintained-interface candidate. Prioritize as a portability "
             "control or low-engineering transfer candidate; validate binding if selected for wet-lab follow-up."
         )
+        return append_control_warning(recommendation, control_status)
 
     if outcome_class == "maintained_candidate":
-        return (
+        recommendation = (
             "Keep as a possible maintained-interface candidate. Re-evaluate after expanding "
             "species and complexes before committing to assays."
         )
+        return append_control_warning(recommendation, control_status)
 
     if outcome_class == "possible_interface_remodeling_or_incompatibility":
-        return (
+        recommendation = (
             "Prioritize structural inspection and multi-partner validation. This may represent "
             "species-specific remodeling, functional breakage, or incompatibility requiring engineering."
         )
+        return append_control_warning(recommendation, control_status)
 
     if outcome_class == "possible_interface_remodeling_low_confidence":
-        return "Do not prioritize yet. Revisit after adding more species, more partners, or structural visualization."
+        recommendation = "Do not prioritize yet. Revisit after adding more species, more partners, or structural visualization."
+        return append_control_warning(recommendation, control_status)
 
     if outcome_class == "possible_maintained_low_confidence":
-        return "Track as a weak maintained-interface signal. Useful mainly as background evidence."
+        recommendation = (
+            "Track as a weak maintained-interface signal. Useful mainly as background evidence."
+        )
+        return append_control_warning(recommendation, control_status)
 
     if "high" in engineering_priority or "high" in assay_priority:
-        return "Review manually because priority flags are high despite unresolved classification."
+        recommendation = (
+            "Review manually because priority flags are high despite unresolved classification."
+        )
+        return append_control_warning(recommendation, control_status)
 
-    return "Do not prioritize in the current mini-pilot; keep for future larger-scale reruns."
+    recommendation = (
+        "Do not prioritize in the current mini-pilot; keep for future larger-scale reruns."
+    )
+    return append_control_warning(recommendation, control_status)
 
 
 def numeric_score(
@@ -188,11 +245,67 @@ def load_recurrent_counts(path: Path) -> pl.DataFrame:
     )
 
 
+def load_negative_control_audit(path: Path) -> pl.DataFrame:
+    empty = pl.DataFrame(
+        {
+            "complex_id": [],
+            "chain": [],
+            "target_species": [],
+            "control_status": [],
+            "control_interpretation": [],
+            "shuffled_control_ratio": [],
+            "negatome_control_ratio": [],
+            "ratio_vs_shuffled_control": [],
+            "ratio_vs_negatome_control": [],
+            "control_note": [],
+        }
+    )
+
+    if not path.exists():
+        return empty
+
+    audit = pl.read_csv(path)
+
+    required = {
+        "complex_id",
+        "chain",
+        "target_species",
+        "control_status",
+        "shuffled_control_ratio",
+        "negatome_control_ratio",
+        "ratio_vs_shuffled_control",
+        "ratio_vs_negatome_control",
+        "control_note",
+    }
+
+    if audit.is_empty() or not required.issubset(set(audit.columns)):
+        return empty
+
+    return audit.select(
+        [
+            "complex_id",
+            "chain",
+            "target_species",
+            "control_status",
+            "shuffled_control_ratio",
+            "negatome_control_ratio",
+            "ratio_vs_shuffled_control",
+            "ratio_vs_negatome_control",
+            "control_note",
+        ]
+    ).with_columns(
+        pl.col("control_status")
+        .map_elements(control_interpretation, return_dtype=pl.Utf8)
+        .alias("control_interpretation")
+    )
+
+
 def main() -> None:
     args = parse_args()
 
     outcome_path = Path(args.outcomes)
     recurrent_path = Path(args.recurrent_residues)
+    negative_control_path = Path(args.negative_control_audit)
     output_path = Path(args.output)
 
     if not outcome_path.exists():
@@ -200,6 +313,7 @@ def main() -> None:
 
     outcomes = pl.read_csv(outcome_path)
     recurrent_counts = load_recurrent_counts(recurrent_path)
+    negative_control_audit = load_negative_control_audit(negative_control_path)
 
     divergent_recurrent = recurrent_counts.filter(pl.col("candidate_type") == "divergent").rename(
         {
@@ -241,12 +355,21 @@ def main() -> None:
         how="left",
     )
 
+    scorecard = scorecard.join(
+        negative_control_audit,
+        on=["complex_id", "chain", "target_species"],
+        how="left",
+    )
+
     scorecard = scorecard.with_columns(
         [
             pl.col("n_recurrent_divergent_residues").fill_null(0),
             pl.col("n_recurrent_constrained_residues").fill_null(0),
             pl.col("recurrent_divergent_residues").fill_null(""),
             pl.col("recurrent_constrained_residues").fill_null(""),
+            pl.col("control_status").fill_null("not_audited"),
+            pl.col("control_interpretation").fill_null("not_audited"),
+            pl.col("control_note").fill_null("Negative-control audit was not available."),
         ]
     )
 
@@ -258,6 +381,7 @@ def main() -> None:
         confidence = str(row["confidence"])
         effect_size = float(row["effect_size_cohens_d"])
         p_directional = float(row["p_directional"])
+        control_status = str(row["control_status"])
 
         n_recurrent_divergent = int(row["n_recurrent_divergent_residues"])
         n_recurrent_constrained = int(row["n_recurrent_constrained_residues"])
@@ -289,6 +413,13 @@ def main() -> None:
                 "effect_size_cohens_d": effect_size,
                 "p_directional": p_directional,
                 "signal_class": row["signal_class"],
+                "control_status": control_status,
+                "control_interpretation": row["control_interpretation"],
+                "shuffled_control_ratio": row.get("shuffled_control_ratio"),
+                "negatome_control_ratio": row.get("negatome_control_ratio"),
+                "ratio_vs_shuffled_control": row.get("ratio_vs_shuffled_control"),
+                "ratio_vs_negatome_control": row.get("ratio_vs_negatome_control"),
+                "control_note": row["control_note"],
                 "assay_priority": row["assay_priority"],
                 "engineering_priority": row["engineering_priority"],
                 "top_divergent_interface_residues": row["top_divergent_interface_residues"],
@@ -303,6 +434,7 @@ def main() -> None:
                     confidence=confidence,
                     engineering_priority=str(row["engineering_priority"]),
                     assay_priority=str(row["assay_priority"]),
+                    control_status=control_status,
                 ),
                 "rationale": row["rationale"],
             }
@@ -319,6 +451,14 @@ def main() -> None:
     print(out_df.shape)
 
     print()
+    print("Control status counts:")
+    print(
+        out_df.group_by(["control_status", "control_interpretation"])
+        .len()
+        .sort("len", descending=True)
+    )
+
+    print()
     print("Top scorecard candidates:")
     print(
         out_df.select(
@@ -331,6 +471,7 @@ def main() -> None:
                 "score",
                 "effect_size_cohens_d",
                 "p_directional",
+                "control_status",
                 "n_recurrent_divergent_residues",
                 "n_recurrent_constrained_residues",
                 "recommended_next_action",
