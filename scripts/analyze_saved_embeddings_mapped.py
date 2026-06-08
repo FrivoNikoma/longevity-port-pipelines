@@ -167,6 +167,142 @@ def best_chain_match(query_sequence: str, chains: dict[str, str]) -> tuple[str |
     return best_chain, best_score
 
 
+def chain_match_candidates(
+    query_sequence: str,
+    chains: dict[str, str],
+    min_score: float = 0.8,
+) -> list[tuple[str, float]]:
+    candidates = []
+    for chain_id, sequence in chains.items():
+        score = score_chain(query_sequence, sequence)
+        if score >= min_score:
+            candidates.append((chain_id, score))
+
+    return sorted(candidates, key=lambda item: (-item[1], item[0]))
+
+
+def count_interface_atom_contacts(
+    structure_path: Path,
+    fmt: StructureFormat,
+    chain_id_r: str,
+    chain_id_l: str,
+    distance_cutoff: float,
+) -> tuple[int, int, int]:
+    structure = load_structure(structure_path, fmt)
+    model = next(iter(structure))
+
+    chain_r = model[chain_id_r]
+    chain_l = model[chain_id_l]
+
+    residue_map_r = residue_index_map(chain_r)
+    residue_map_l = residue_index_map(chain_l)
+
+    atoms_r = [
+        atom
+        for residue in chain_r
+        if residue.id in residue_map_r
+        for atom in residue
+        if atom.element != "H"
+    ]
+    atoms_l = [
+        atom
+        for residue in chain_l
+        if residue.id in residue_map_l
+        for atom in residue
+        if atom.element != "H"
+    ]
+
+    if not atoms_r or not atoms_l:
+        return 0, 0, 0
+
+    neighbor_search = NeighborSearch(atoms_l)
+    interface_r: set[int] = set()
+    interface_l: set[int] = set()
+    atom_contacts = 0
+    atom_to_ligand_residue_index = {atom: residue_map_l[atom.get_parent().id] for atom in atoms_l}
+
+    for atom_r in atoms_r:
+        nearby_atoms = neighbor_search.search(atom_r.coord, distance_cutoff, level="A")
+        if not nearby_atoms:
+            continue
+
+        residue_r = atom_r.get_parent()
+        interface_r.add(residue_map_r[residue_r.id])
+
+        for atom_l in nearby_atoms:
+            interface_l.add(atom_to_ligand_residue_index[atom_l])
+            atom_contacts += 1
+
+    return len(interface_r), len(interface_l), atom_contacts
+
+
+def best_spatial_chain_pair(
+    structure_path: Path,
+    fmt: StructureFormat,
+    chains: dict[str, str],
+    receptor_sequence: str,
+    ligand_sequence: str,
+    distance_cutoff: float,
+    min_score: float = 0.8,
+) -> tuple[str, str, float, float, int, int, int]:
+    receptor_candidates = chain_match_candidates(receptor_sequence, chains, min_score=min_score)
+    ligand_candidates = chain_match_candidates(ligand_sequence, chains, min_score=min_score)
+
+    if not receptor_candidates or not ligand_candidates:
+        raise ValueError(
+            "Could not find sequence-compatible chains: "
+            f"receptor_candidates={receptor_candidates}, ligand_candidates={ligand_candidates}"
+        )
+
+    pair_rows = []
+    for receptor_chain, receptor_score in receptor_candidates:
+        for ligand_chain, ligand_score in ligand_candidates:
+            if receptor_chain == ligand_chain:
+                continue
+
+            interface_r_count, interface_l_count, atom_contacts = count_interface_atom_contacts(
+                structure_path=structure_path,
+                fmt=fmt,
+                chain_id_r=receptor_chain,
+                chain_id_l=ligand_chain,
+                distance_cutoff=distance_cutoff,
+            )
+
+            pair_rows.append(
+                {
+                    "receptor_chain": receptor_chain,
+                    "ligand_chain": ligand_chain,
+                    "receptor_score": receptor_score,
+                    "ligand_score": ligand_score,
+                    "interface_r_count": interface_r_count,
+                    "interface_l_count": interface_l_count,
+                    "atom_contacts": atom_contacts,
+                }
+            )
+
+    if not pair_rows:
+        raise ValueError("No valid receptor/ligand chain pairs after excluding identical chains")
+
+    best = max(
+        pair_rows,
+        key=lambda row: (
+            row["atom_contacts"],
+            row["interface_r_count"] + row["interface_l_count"],
+            row["receptor_score"] + row["ligand_score"],
+        ),
+    )
+
+    return (
+        str(best["receptor_chain"]),
+        str(best["ligand_chain"]),
+        float(best["receptor_score"]),
+        float(best["ligand_score"]),
+        int(best["interface_r_count"]),
+        int(best["interface_l_count"]),
+        int(best["atom_contacts"]),
+    )
+
+
 def residue_index_map(chain) -> dict[object, int]:
     mapping: dict[object, int] = {}
     index = 0
@@ -241,16 +377,20 @@ def resolve_interfaces_for_row(
     structure_path, fmt = download_structure(pdb_id, cfg.interim_dir / "pdb")
     chains = chain_sequences(structure_path, fmt)
 
-    best_r, score_r = best_chain_match(str(row["receptor_sequence"]), chains)
-    best_l, score_l = best_chain_match(str(row["ligand_sequence"]), chains)
+    best_r, best_l, score_r, score_l, interface_r_count, interface_l_count, atom_contacts = (
+        best_spatial_chain_pair(
+            structure_path=structure_path,
+            fmt=fmt,
+            chains=chains,
+            receptor_sequence=str(row["receptor_sequence"]),
+            ligand_sequence=str(row["ligand_sequence"]),
+            distance_cutoff=distance_cutoff,
+        )
+    )
 
-    if best_r is None or best_l is None:
-        raise ValueError(f"Could not resolve chains for {row['id']}")
-
-    if score_r < 0.8 or score_l < 0.8:
+    if atom_contacts == 0:
         raise ValueError(
-            f"Low chain match score for {row['id']}: "
-            f"receptor={best_r}/{score_r:.3f}, ligand={best_l}/{score_l:.3f}"
+            f"No spatial contacts found for sequence-compatible chain pairs in {row['id']}"
         )
 
     interface_r, interface_l = extract_interface_residues_mapped(
@@ -259,6 +399,12 @@ def resolve_interfaces_for_row(
         best_r,
         best_l,
         distance_cutoff,
+    )
+
+    print(
+        f"[CHAIN_PAIR] {row['id']}: selected {best_r}/{best_l}; "
+        f"seq_scores={score_r:.3f}/{score_l:.3f}; "
+        f"contact_counts=R{interface_r_count}/L{interface_l_count}/atoms{atom_contacts}"
     )
 
     return interface_r, interface_l, best_r, best_l, fmt
