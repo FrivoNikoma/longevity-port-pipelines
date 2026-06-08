@@ -23,6 +23,8 @@ def test_compute_enrichment_no_interface() -> None:
     deltas = np.array([0.5, 0.5, 0.5])
     positions = np.arange(3)
     iface_mean, noniface_mean, ratio = compute_enrichment(deltas, positions, [])
+    assert iface_mean == 0.0
+    assert noniface_mean == 0.0
     assert ratio == 1.0
 
 
@@ -45,8 +47,15 @@ def test_mann_whitney_significant_difference() -> None:
     positions = np.arange(2 * n)
     interface = list(range(n))
 
-    p_value, cohens_d = mann_whitney_test(deltas, positions, interface)
-    assert p_value < 0.01
+    p_interface_greater, p_interface_less, p_two_sided, cohens_d = mann_whitney_test(
+        deltas,
+        positions,
+        interface,
+    )
+
+    assert p_interface_greater < 0.01
+    assert p_interface_less > 0.99
+    assert p_two_sided < 0.01
     assert cohens_d > 1.0
 
 
@@ -56,5 +65,13 @@ def test_mann_whitney_no_difference() -> None:
     positions = np.arange(200)
     interface = list(range(100))
 
-    p_value, cohens_d = mann_whitney_test(deltas, positions, interface)
+    p_interface_greater, p_interface_less, p_two_sided, cohens_d = mann_whitney_test(
+        deltas,
+        positions,
+        interface,
+    )
+
+    assert p_interface_greater > 0.05
+    assert p_interface_less > 0.05
+    assert p_two_sided > 0.05
     assert abs(cohens_d) < 0.5

@@ -40,7 +40,11 @@ def align_and_compute_deltas(
 
     matrix = align.SubstitutionMatrix.std_protein_matrix()
     alignments = align.align_optimal(
-        s_ref, s_orth, matrix, gap_penalty=(-10, -1), terminal_penalty=False
+        s_ref,
+        s_orth,
+        matrix,
+        gap_penalty=(-10, -1),
+        terminal_penalty=False,
     )
     trace = alignments[0].trace  # shape (aln_len, 2); -1 marks gaps
 
@@ -118,10 +122,14 @@ def mann_whitney_test(
     deltas: np.ndarray,
     aligned_positions: np.ndarray,
     interface_residues: list[int],
-) -> tuple[float, float]:
-    """Mann-Whitney U test + Cohen's d for interface vs non-interface deltas.
+) -> tuple[float, float, float, float]:
+    """Mann-Whitney U tests + Cohen's d for interface vs non-interface deltas.
 
-    Returns (p_value, cohens_d).
+    Returns:
+        (p_interface_greater, p_interface_less, p_two_sided, cohens_d)
+
+    p_interface_greater tests whether interface deltas are larger than background.
+    p_interface_less tests whether interface deltas are smaller than background.
     """
     interface_set = set(interface_residues)
     is_interface = np.array([pos in interface_set for pos in aligned_positions])
@@ -130,10 +138,29 @@ def mann_whitney_test(
     noninterface_deltas = deltas[~is_interface]
 
     if len(interface_deltas) < 2 or len(noninterface_deltas) < 2:
-        return 1.0, 0.0
+        return 1.0, 1.0, 1.0, 0.0
 
-    stat_result = stats.mannwhitneyu(interface_deltas, noninterface_deltas, alternative="greater")
-    p_value = float(stat_result.pvalue)
+    p_interface_greater = float(
+        stats.mannwhitneyu(
+            interface_deltas,
+            noninterface_deltas,
+            alternative="greater",
+        ).pvalue
+    )
+    p_interface_less = float(
+        stats.mannwhitneyu(
+            interface_deltas,
+            noninterface_deltas,
+            alternative="less",
+        ).pvalue
+    )
+    p_two_sided = float(
+        stats.mannwhitneyu(
+            interface_deltas,
+            noninterface_deltas,
+            alternative="two-sided",
+        ).pvalue
+    )
 
     pooled_std = float(
         np.sqrt(
@@ -150,7 +177,7 @@ def mann_whitney_test(
         else 0.0
     )
 
-    return p_value, cohens_d
+    return p_interface_greater, p_interface_less, p_two_sided, cohens_d
 
 
 def analyze_pair(
@@ -165,10 +192,16 @@ def analyze_pair(
     """Full analysis for one reference-ortholog pair."""
     deltas, aligned_positions = align_and_compute_deltas(ref, orth)
     interface_mean, noninterface_mean, enrichment = compute_enrichment(
-        deltas, aligned_positions, interface_residues
+        deltas,
+        aligned_positions,
+        interface_residues,
     )
     shuffled = shuffled_control(deltas, len(interface_residues), n_permutations)
-    p_value, cohens_d = mann_whitney_test(deltas, aligned_positions, interface_residues)
+    p_interface_greater, p_interface_less, p_two_sided, cohens_d = mann_whitney_test(
+        deltas=deltas,
+        aligned_positions=aligned_positions,
+        interface_residues=interface_residues,
+    )
 
     return EnrichmentResult(
         complex_id=ref.complex_id,
@@ -181,7 +214,10 @@ def analyze_pair(
         enrichment_ratio=enrichment,
         shuffled_control_ratio=shuffled,
         negatome_control_ratio=negatome_enrichment,
-        mann_whitney_p=p_value,
+        mann_whitney_p=p_interface_greater,
+        p_interface_greater=p_interface_greater,
+        p_interface_less=p_interface_less,
+        p_two_sided=p_two_sided,
         effect_size_cohens_d=cohens_d,
         is_predicted_structure=orth.is_predicted_structure,
     )

@@ -123,5 +123,8 @@ class EnrichmentResult(BaseModel):
     shuffled_control_ratio: float
     negatome_control_ratio: float | None = None
     mann_whitney_p: float
+    p_interface_greater: float = 1.0
+    p_interface_less: float = 1.0
+    p_two_sided: float = 1.0
     effect_size_cohens_d: float
     is_predicted_structure: bool = False
