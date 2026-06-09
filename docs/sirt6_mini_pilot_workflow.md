@@ -12,7 +12,8 @@ The mini-pilot starts from a small curated set of longevity-relevant protein com
 - residue-level delta export;
 - residue-level candidate summaries;
 - interaction outcome classification;
-- final candidate scorecard.
+- final candidate scorecard;
+- PyMOL and ChimeraX structure-selection exports.
 
 ## Prerequisites
 
@@ -284,24 +285,54 @@ It combines:
 - assay priority;
 - engineering priority;
 - recurrent residue summaries;
+- current negative-control status;
 - recommended next action.
 
-## 13. Current control status
+## 13. Export structure candidate selections
+
+```powershell
+uv run python -m scripts.export_structure_candidate_selections
+
+```
+
+Expected outputs:
+
+```text
+data/output/structure_selections/sirt6_mini_pilot_candidate_selection_summary.csv
+data/output/structure_selections/sirt6_mini_pilot_candidate_selections.pml
+data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
+
+```
+
+This step exports residue selections for downstream structural visualization in PyMOL and ChimeraX.
+
+The exported selections distinguish:
+
+- divergent candidate interface residues;
+- constrained candidate interface residues.
+
+Important note: the current selections use reference-sequence 1-based residue numbers. If structure residue numbering differs from reference sequence numbering, inspect and adjust the selections manually.
+
+## 14. Current control status
 
 Current implemented controls:
 
 - shuffled mask control: implemented in enrichment analysis;
 - directional Mann-Whitney tests: implemented;
-- NEGATOME-style negative control: field exists in the result model, but the current mini-pilot does not yet populate a full NEGATOME control.
+- NEGATOME-style negative control: field exists in the result model, but the current mini-pilot does not yet populate a full NEGATOME control;
+- NEGATOME input contract: documented in `docs/negatome_control_inputs.md`;
+- NEGATOME input validator: available as `scripts.validate_negatome_control_inputs`.
 
-A future audit step should explicitly report whether each result has:
+The current workflow can explicitly report whether each result has:
 
 - shuffled control only;
 - missing NEGATOME control;
 - populated negative control;
 - passed all required controls.
 
-## 14. Optional biological report
+Until a valid `data/interim/negatome_control_pairs.csv` file exists and control ratios are computed, mini-pilot scorecards should continue to show `missing_negatome`.
+
+## 15. Optional biological report
 
 The current biology-facing report is stored at:
 
@@ -312,7 +343,7 @@ docs/sirt6_mini_pilot_biology_report.md
 
 It summarizes the current biological interpretation of the mini-pilot.
 
-## 15. Recommended full command sequence
+## 16. Recommended full command sequence
 
 For a full mini-pilot rerun after embeddings are available:
 
@@ -323,7 +354,10 @@ uv run python -m scripts.summarize_embedding_signals
 uv run python -m scripts.export_mapped_residue_deltas
 uv run python -m scripts.summarize_residue_level_candidates
 uv run python -m scripts.classify_interaction_outcomes
+uv run python -m scripts.audit_negative_controls
 uv run python -m scripts.make_mini_pilot_candidate_scorecard
+uv run python -m scripts.validate_negatome_control_inputs
+uv run python -m scripts.export_structure_candidate_selections
 
 ```
 
@@ -334,7 +368,7 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 16. Quality checks before committing code changes
+## 17. Quality checks before committing code changes
 
 Run:
 
@@ -353,7 +387,7 @@ All checks passed
 
 ```
 
-## 17. Main output files
+## 18. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -366,15 +400,20 @@ data/output/sirt6_mini_pilot_top_divergent_interface_residues.csv
 data/output/sirt6_mini_pilot_top_constrained_interface_residues.csv
 data/output/sirt6_mini_pilot_recurrent_interface_residues.csv
 data/output/sirt6_mini_pilot_interaction_outcome_summary.csv
+data/output/sirt6_mini_pilot_negative_control_audit.csv
+data/output/sirt6_mini_pilot_negatome_control_input_validation.csv
 data/output/sirt6_mini_pilot_candidate_scorecard.csv
+data/output/structure_selections/sirt6_mini_pilot_candidate_selection_summary.csv
+data/output/structure_selections/sirt6_mini_pilot_candidate_selections.pml
+data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 ```
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 18. Workflow interpretation
+## 19. Workflow interpretation
 
-The workflow supports a progression from raw structural complexes to candidate prioritization:
+The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
 ```text
 structure selection
@@ -383,7 +422,9 @@ structure selection
 → signal classification
 → residue-level candidates
 → interaction outcome classes
+→ negative-control audit
 → candidate scorecard
+→ structure selection export
 
 ```
 
