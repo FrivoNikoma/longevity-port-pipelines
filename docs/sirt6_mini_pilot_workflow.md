@@ -14,6 +14,7 @@ The mini-pilot starts from a small curated set of longevity-relevant protein com
 - interaction outcome classification;
 - final candidate scorecard;
 - preliminary validation plan;
+- NEGATOME-style control pair candidate scaffold;
 - PyMOL and ChimeraX structure-selection exports.
 
 ## Prerequisites
@@ -208,7 +209,43 @@ is_predicted_structure
 
 ```
 
-## 10. Summarize residue-level candidates
+## 10. Generate NEGATOME-style control pair candidates
+
+```powershell
+uv run python -m scripts.generate_negatome_control_pair_candidates
+
+```
+
+Expected output:
+
+```text
+data/output/sirt6_mini_pilot_negatome_control_pair_candidates.csv
+
+```
+
+This step generates a curation scaffold for future NEGATOME-style negative-control pairs from the mini-pilot residue-delta outputs.
+
+The generated table is not a populated NEGATOME input. Candidate rows are marked as:
+
+```text
+ready_for_input_contract = false
+negative_partner_source = curation_required
+
+```
+
+until the following fields are filled:
+
+```text
+negative_partner_uniprot
+negative_partner_sequence
+
+```
+
+This output should be treated as a curation aid, not as evidence that NEGATOME-style controls are populated.
+
+The generated candidate scaffold should not change the current negative-control interpretation. Until a valid `data/interim/negatome_control_pairs.csv` file exists and control ratios are computed, enrichment results should continue to be reported as `missing_negatome`.
+
+## 11. Summarize residue-level candidates
 
 ```powershell
 uv run python -m scripts.summarize_residue_level_candidates
@@ -230,7 +267,7 @@ This step produces:
 - top constrained interface residues;
 - recurrent interface residues across target species.
 
-## 11. Classify interaction outcomes
+## 12. Classify interaction outcomes
 
 ```powershell
 uv run python -m scripts.classify_interaction_outcomes
@@ -259,7 +296,7 @@ It also assigns:
 - rationale;
 - top divergent and constrained residue summaries when available.
 
-## 12. Build candidate scorecard
+## 13. Build candidate scorecard
 
 ```powershell
 uv run python -m scripts.make_mini_pilot_candidate_scorecard
@@ -289,7 +326,7 @@ It combines:
 - current negative-control status;
 - recommended next action.
 
-## 13. Export structure candidate selections
+## 14. Export structure candidate selections
 
 ```powershell
 uv run python -m scripts.export_structure_candidate_selections
@@ -314,7 +351,7 @@ The exported selections distinguish:
 
 Important note: the current selections use reference-sequence 1-based residue numbers. If structure residue numbering differs from reference sequence numbering, inspect and adjust the selections manually.
 
-## 14. Generate mini-pilot validation plan
+## 15. Generate mini-pilot validation plan
 
 ```powershell
 uv run python -m scripts.generate_mini_pilot_validation_plan
@@ -343,7 +380,7 @@ The validation plan includes:
 
 Candidates with `missing_negatome` are labeled as preliminary shuffled-control-only evidence rather than fully controlled hits.
 
-## 15. Current control status
+## 16. Current control status
 
 Current implemented controls:
 
@@ -351,7 +388,8 @@ Current implemented controls:
 - directional Mann-Whitney tests: implemented;
 - NEGATOME-style negative control: field exists in the result model, but the current mini-pilot does not yet populate a full NEGATOME control;
 - NEGATOME input contract: documented in `docs/negatome_control_inputs.md`;
-- NEGATOME input validator: available as `scripts.validate_negatome_control_inputs`.
+- NEGATOME input validator: available as `scripts.validate_negatome_control_inputs`;
+- NEGATOME-style control pair candidate scaffold: available as `scripts.generate_negatome_control_pair_candidates`.
 
 The current workflow can explicitly report whether each result has:
 
@@ -362,7 +400,16 @@ The current workflow can explicitly report whether each result has:
 
 Until a valid `data/interim/negatome_control_pairs.csv` file exists and control ratios are computed, mini-pilot scorecards should continue to show `missing_negatome`.
 
-## 16. Optional biological report
+The candidate scaffold generated at:
+
+```text
+data/output/sirt6_mini_pilot_negatome_control_pair_candidates.csv
+
+```
+
+is not itself a valid NEGATOME input. It is a curation aid for preparing future negative-control partner rows.
+
+## 17. Optional biological report
 
 The current biology-facing report is stored at:
 
@@ -373,7 +420,7 @@ docs/sirt6_mini_pilot_biology_report.md
 
 It summarizes the current biological interpretation of the mini-pilot.
 
-## 17. Recommended full command sequence
+## 18. Recommended full command sequence
 
 For a full mini-pilot rerun after embeddings are available:
 
@@ -382,6 +429,7 @@ uv run python -m scripts.audit_mapped_interface_selection
 uv run python -m scripts.analyze_saved_embeddings_mapped
 uv run python -m scripts.summarize_embedding_signals
 uv run python -m scripts.export_mapped_residue_deltas
+uv run python -m scripts.generate_negatome_control_pair_candidates
 uv run python -m scripts.summarize_residue_level_candidates
 uv run python -m scripts.classify_interaction_outcomes
 uv run python -m scripts.audit_negative_controls
@@ -399,13 +447,14 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 18. Quality checks before committing code changes
+## 19. Quality checks before committing code changes
 
 Run:
 
 ```powershell
 uv run ruff format src scripts tests
 uv run ruff check src scripts tests
+uv run mypy src/
 uv run pytest
 
 ```
@@ -414,11 +463,12 @@ Expected result:
 
 ```text
 All checks passed
-44 passed
+Success: no issues found
+pytest passes
 
 ```
 
-## 19. Main output files
+## 20. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -427,6 +477,7 @@ data/output/sirt6_mini_pilot_chain_pair_qc.csv
 data/output/sirt6_mini_pilot_enrichment_mapped.parquet
 data/output/sirt6_mini_pilot_embedding_signal_summary.csv
 data/output/sirt6_mini_pilot_residue_deltas_mapped.parquet
+data/output/sirt6_mini_pilot_negatome_control_pair_candidates.csv
 data/output/sirt6_mini_pilot_top_divergent_interface_residues.csv
 data/output/sirt6_mini_pilot_top_constrained_interface_residues.csv
 data/output/sirt6_mini_pilot_recurrent_interface_residues.csv
@@ -444,7 +495,7 @@ data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 20. Workflow interpretation
+## 21. Workflow interpretation
 
 The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
@@ -453,6 +504,8 @@ structure selection
 → mapped interface extraction
 → embedding delta analysis
 → signal classification
+→ residue-level deltas
+→ NEGATOME-style control pair candidate scaffold
 → residue-level candidates
 → interaction outcome classes
 → negative-control audit
@@ -462,4 +515,4 @@ structure selection
 
 ```
 
-This makes the mini-pilot reproducible and provides a compact basis for downstream structural inspection, assay planning, and engineering decisions.
+This makes the mini-pilot reproducible and provides a compact basis for downstream structural inspection, assay planning, curation of negative controls, and engineering decisions.
