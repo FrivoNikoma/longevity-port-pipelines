@@ -13,6 +13,7 @@ The mini-pilot starts from a small curated set of longevity-relevant protein com
 - residue-level candidate summaries;
 - interaction outcome classification;
 - final candidate scorecard;
+- preliminary validation plan;
 - PyMOL and ChimeraX structure-selection exports.
 
 ## Prerequisites
@@ -313,7 +314,36 @@ The exported selections distinguish:
 
 Important note: the current selections use reference-sequence 1-based residue numbers. If structure residue numbering differs from reference sequence numbering, inspect and adjust the selections manually.
 
-## 14. Current control status
+## 14. Generate mini-pilot validation plan
+
+```powershell
+uv run python -m scripts.generate_mini_pilot_validation_plan
+
+```
+
+Expected outputs:
+
+```text
+data/output/sirt6_mini_pilot_validation_plan.csv
+data/output/sirt6_mini_pilot_validation_plan.md
+
+```
+
+This step generates a preliminary validation plan from the candidate scorecard.
+
+The validation plan includes:
+
+- evidence level;
+- validation priority;
+- primary validation assay;
+- secondary validation assay;
+- structural follow-up;
+- control requirements;
+- interpretation warnings.
+
+Candidates with `missing_negatome` are labeled as preliminary shuffled-control-only evidence rather than fully controlled hits.
+
+## 15. Current control status
 
 Current implemented controls:
 
@@ -332,7 +362,7 @@ The current workflow can explicitly report whether each result has:
 
 Until a valid `data/interim/negatome_control_pairs.csv` file exists and control ratios are computed, mini-pilot scorecards should continue to show `missing_negatome`.
 
-## 15. Optional biological report
+## 16. Optional biological report
 
 The current biology-facing report is stored at:
 
@@ -343,7 +373,7 @@ docs/sirt6_mini_pilot_biology_report.md
 
 It summarizes the current biological interpretation of the mini-pilot.
 
-## 16. Recommended full command sequence
+## 17. Recommended full command sequence
 
 For a full mini-pilot rerun after embeddings are available:
 
@@ -356,6 +386,7 @@ uv run python -m scripts.summarize_residue_level_candidates
 uv run python -m scripts.classify_interaction_outcomes
 uv run python -m scripts.audit_negative_controls
 uv run python -m scripts.make_mini_pilot_candidate_scorecard
+uv run python -m scripts.generate_mini_pilot_validation_plan
 uv run python -m scripts.validate_negatome_control_inputs
 uv run python -m scripts.export_structure_candidate_selections
 
@@ -368,7 +399,7 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 17. Quality checks before committing code changes
+## 18. Quality checks before committing code changes
 
 Run:
 
@@ -387,7 +418,7 @@ All checks passed
 
 ```
 
-## 18. Main output files
+## 19. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -403,6 +434,8 @@ data/output/sirt6_mini_pilot_interaction_outcome_summary.csv
 data/output/sirt6_mini_pilot_negative_control_audit.csv
 data/output/sirt6_mini_pilot_negatome_control_input_validation.csv
 data/output/sirt6_mini_pilot_candidate_scorecard.csv
+data/output/sirt6_mini_pilot_validation_plan.csv
+data/output/sirt6_mini_pilot_validation_plan.md
 data/output/structure_selections/sirt6_mini_pilot_candidate_selection_summary.csv
 data/output/structure_selections/sirt6_mini_pilot_candidate_selections.pml
 data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
@@ -411,7 +444,7 @@ data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 19. Workflow interpretation
+## 20. Workflow interpretation
 
 The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
@@ -424,6 +457,7 @@ structure selection
 → interaction outcome classes
 → negative-control audit
 → candidate scorecard
+→ preliminary validation plan
 → structure selection export
 
 ```
