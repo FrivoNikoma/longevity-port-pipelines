@@ -122,15 +122,59 @@ This exclusion list is not complete. It is a starting point for avoiding obvious
 ## 6. First-pass evidence table
 
 
-| complex_id                       | chain    | target_species | source_uniprot | true_partner_uniprot | candidate_negative_partner_uniprot | candidate_negative_partner_name               | candidate_negative_partner_species | candidate_negative_partner_sequence_status | evidence_source         | evidence_source_record                                                                | evidence_type                     | interaction_database_screen | known_interaction_exclusion_status | homology_exclusion_status         | same_complex_exclusion_status | curation_status        | curation_note                                                                                                                           |
-| -------------------------------- | -------- | -------------- | -------------- | -------------------- | ---------------------------------- | --------------------------------------------- | ---------------------------------- | ------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------- | --------------------------------- | --------------------------- | ---------------------------------- | --------------------------------- | ----------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | TBD                                | TBD                                           | mouse                              | sequence_not_checked                       | Negatome_check_required | TBD                                                                                   | TBD                               | not_checked                 | not_checked                        | not_checked                       | not_checked                   | candidate_unreviewed   | First-pass PARP1 mouse receptor row. Search Negatome for P09874-supported non-interactor candidates before promoting anything to input. |
-| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | P07437                             | Tubulin beta chain / TUBB                     | human                              | sequence_not_checked                       | negatome_database       | Negatome manual table row 1577; PMID 15607978; MI:0007 anti tag coimmunoprecipitation | database_supported_non_interactor | Negatome_checked            | not_checked                        | not_close_homolog_of_true_partner | not_checked                   | candidate_under_review | Manual Negatome hit for PARP1/P09874. Needs interaction-database and same-complex exclusion screening before promotion.                 |
-| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | O60907                             | F-box-like/WD repeat-containing protein TBL1X | human                              | sequence_not_checked                       | negatome_database       | Negatome manual table row 1671; PMID 15607978; MI:0007 anti tag coimmunoprecipitation | database_supported_non_interactor | Negatome_checked            | not_checked                        | not_close_homolog_of_true_partner | not_checked                   | candidate_under_review | Manual Negatome hit for PARP1/P09874. Needs interaction-database and same-complex exclusion screening before promotion.                 |
-| 7s68__D1_P09874--7s68__C1_P09874 | ligand   | mouse          | P09874         | P11103               | TBD                                | TBD                                           | mouse                              | sequence_not_checked                       | Negatome_check_required | TBD                                                                                   | TBD                               | not_checked                 | not_checked                        | not_checked                       | not_checked                   | candidate_unreviewed   | Optional second PARP1 mouse row. Do not curate until receptor row procedure is validated.                                               |
+| complex_id                       | chain    | target_species | source_uniprot | true_partner_uniprot | candidate_negative_partner_uniprot | candidate_negative_partner_name               | candidate_negative_partner_species | candidate_negative_partner_sequence_status | evidence_source         | evidence_source_record                                                                | evidence_type                     | interaction_database_screen                                       | known_interaction_exclusion_status | homology_exclusion_status         | same_complex_exclusion_status  | curation_status           | curation_note                                                                                                                                                                                                                                                        |
+| -------------------------------- | -------- | -------------- | -------------- | -------------------- | ---------------------------------- | --------------------------------------------- | ---------------------------------- | ------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------- | ---------------------------------- | --------------------------------- | ------------------------------ | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | TBD                                | TBD                                           | mouse                              | sequence_not_checked                       | Negatome_check_required | TBD                                                                                   | TBD                               | not_checked                                                       | not_checked                        | not_checked                       | not_checked                    | candidate_unreviewed      | First-pass PARP1 mouse receptor row. Search Negatome for P09874-supported non-interactor candidates before promoting anything to input.                                                                                                                              |
+| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | P07437                             | Tubulin beta chain / TUBB                     | human                              | sequence_not_checked                       | negatome_database       | Negatome manual table row 1577; PMID 15607978; MI:0007 anti tag coimmunoprecipitation | database_supported_non_interactor | Negatome_checked; IntAct_quick_screen_has_PARP1_TUBB_result       | ambiguous_manual_review_needed     | not_close_homolog_of_true_partner | ambiguous_manual_review_needed | candidate_background_only | Manual Negatome hit for PARP1/P09874, but quick IntAct search surfaces a PARP1/P09874 and P07437/TUBB result. Treat as lower-priority/background-only until the interaction context is manually resolved.                                                            |
+| 7s68__D1_P09874--7s68__C1_P09874 | receptor | mouse          | P09874         | P11103               | O60907                             | F-box-like/WD repeat-containing protein TBL1X | human                              | sequence_not_checked                       | negatome_database       | Negatome manual table row 1671; PMID 15607978; MI:0007 anti tag coimmunoprecipitation | database_supported_non_interactor | Negatome_checked; BioGRID_IntAct_quick_screen_no_direct_hit_found | not_checked                        | not_close_homolog_of_true_partner | ambiguous_manual_review_needed | candidate_under_review    | Manual Negatome hit for PARP1/P09874. Higher-priority review candidate than TUBB because TBL1X is nuclear/transcriptional and not an obvious PARP-family homolog, but it still needs explicit interaction-database and same-complex/pathway review before promotion. |
+| 7s68__D1_P09874--7s68__C1_P09874 | ligand   | mouse          | P09874         | P11103               | TBD                                | TBD                                           | mouse                              | sequence_not_checked                       | Negatome_check_required | TBD                                                                                   | TBD                               | not_checked                                                       | not_checked                        | not_checked                       | not_checked                    | candidate_unreviewed      | Optional second PARP1 mouse row. Do not curate until receptor row procedure is validated.                                                                                                                                                                            |
 
 
-## 7. Candidate screening checklist
+## 7. Current screening interpretation
+
+Current interpretation of the two PARP1/P09874 Negatome manual candidates:
+
+### P07437 / TUBB
+
+`P07437` is a reviewed UniProt entry for human tubulin beta chain / TUBB.
+
+It is not a PARP-family homolog, but it is a broad cytoskeletal/background protein and is therefore a weak biological match for a nuclear DNA-repair/chromatin PARP1 control.
+
+A quick IntAct screen surfaced a PARP1/P09874 and P07437/TUBB result. Because of this, TUBB should not be promoted to `candidate_ready_for_input` without manual resolution of the interaction context.
+
+Current status:
+
+```text
+curation_status = candidate_background_only
+known_interaction_exclusion_status = ambiguous_manual_review_needed
+same_complex_exclusion_status = ambiguous_manual_review_needed
+
+```
+
+### O60907 / TBL1X
+
+`O60907` is a reviewed UniProt entry for human TBL1X.
+
+TBL1X is not a PARP-family homolog and has a nuclear/transcriptional functional context, making it a better review candidate than TUBB for a PARP1 negative-control row.
+
+However, BioGRID contains a TBL1X interaction page with many interaction records, so the next step must be targeted pair-level screening rather than assuming that no direct PARP1 interaction exists.
+
+Current status:
+
+```text
+curation_status = candidate_under_review
+known_interaction_exclusion_status = not_checked
+same_complex_exclusion_status = ambiguous_manual_review_needed
+
+```
+
+TBL1X should remain under review until:
+
+- a targeted PARP1/TBL1X interaction-database screen is documented;
+- sequence availability is confirmed;
+- same-complex and chromatin-remodeling/pathway confounders are reviewed.
+
+## 8. Candidate screening checklist
 
 Before marking a candidate as `candidate_ready_for_input`, check:
 
@@ -149,7 +193,7 @@ curation_status = candidate_ready_for_input
 
 ```
 
-## 8. Promotion mapping
+## 9. Promotion mapping
 
 If a PARP1 candidate passes curation, map fields into the strict input contract as follows:
 
@@ -174,7 +218,7 @@ data/interim/negatome_control_pairs.csv
 
 only after review.
 
-## 9. Important caution
+## 10. Important caution
 
 This document does not populate NEGATOME controls.
 
@@ -190,24 +234,20 @@ scorecard status: missing_negatome
 
 A candidate row in this document is only a curation candidate. It should not be interpreted as evidence that PARP1 has a populated negative-control ratio.
 
-## 10. Next action
+## 11. Next action
 
 Next research step:
 
 ```text
-Screen P07437/TUBB and O60907/TBL1X against interaction databases and same-complex/pathway confounders before deciding whether either can be promoted to candidate_ready_for_input.
+Run a targeted pair-level screen for PARP1/P09874 against O60907/TBL1X, then confirm O60907 sequence availability and same-complex/pathway status. Keep P07437/TUBB as background-only or ambiguous unless the IntAct PARP1/TUBB quick-screen signal is manually resolved.
 
 ```
 
-For each candidate found:
+For the prioritized O60907/TBL1X candidate:
 
-1. record candidate UniProt;
-2. record candidate protein name;
-3. record candidate species;
-4. check whether sequence is available;
-5. screen against known direct PARP1 interactions;
-6. screen for homology to PARP1/P11103;
-7. screen for same-complex/pathway confounding;
-8. update the evidence table;
-9. only then consider promotion into `data/interim/negatome_control_pairs.csv`.
+1. confirm canonical sequence availability;
+2. run targeted PARP1/TBL1X screen in interaction databases;
+3. check whether TBL1X appears in the same protein complex or pathway context as PARP1;
+4. decide whether `known_interaction_exclusion_status` can move to `no_known_direct_interaction_found`;
+5. only then consider whether `curation_status` can move from `candidate_under_review` to `candidate_ready_for_input`.
 
