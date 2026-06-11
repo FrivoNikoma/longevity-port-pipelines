@@ -481,7 +481,72 @@ Option C: implement the computation step for NEGATOME-style ratios only after at
 
 ```
 
-## 18. Optional biological report
+## 18. v2 conservative preflight workflow
+
+The v2 conservative preflight is a local, non-committed workflow for testing the first controlled expansion before changing default mini-pilot behavior.
+
+It uses the conservative v2 PDB set described in `docs/sirt6_mini_pilot_v2_candidate_selection.md`:
+
+```text
+8f86
+8bot
+7s68
+4xhu
+1h2k
+1nfi
+8bhy
+8bhv
+
+```
+
+Generate the v2 selection and ortholog coverage files with explicit output paths:
+
+```powershell
+uv run python -m scripts.make_sirt6_mini_pilot `
+  --pdb-ids 8f86 8bot 7s68 4xhu 1h2k 1nfi 8bhy 8bhv `
+  --output-selection data/output/sirt6_mini_pilot_v2_selection.csv `
+  --output-coverage data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv
+
+```
+
+Expected local outputs:
+
+```text
+data/output/sirt6_mini_pilot_v2_selection.csv
+data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv
+
+```
+
+Run mapped interface chain-pair QC against the v2 selection:
+
+```powershell
+uv run python -m scripts.audit_mapped_interface_selection `
+  --selection data/output/sirt6_mini_pilot_v2_selection.csv `
+  --output data/output/sirt6_mini_pilot_v2_chain_pair_qc.csv
+
+```
+
+Expected local output:
+
+```text
+data/output/sirt6_mini_pilot_v2_chain_pair_qc.csv
+
+```
+
+Current local preflight result:
+
+```text
+selected v2 contexts: 8
+ortholog coverage rows: 31
+mapped interface QC: 8/8 rows status = ok
+
+```
+
+The v2 preflight outputs are generated artifacts under `data/output/` and should not be committed by default.
+
+This preflight does not populate NEGATOME-style controls and does not compute v2 enrichment results. It only verifies that the conservative v2 selection can be generated and that the selected chain pairs pass mapped interface QC.
+
+## 19. Optional biological report
 
 The current biology-facing report is stored at:
 
@@ -492,7 +557,7 @@ docs/sirt6_mini_pilot_biology_report.md
 
 It summarizes the current biological interpretation of the mini-pilot.
 
-## 19. Recommended full command sequence
+## 20. Recommended full command sequence
 
 For a full mini-pilot rerun after embeddings are available:
 
@@ -519,7 +584,7 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 20. Quality checks before committing code changes
+## 21. Quality checks before committing code changes
 
 Run:
 
@@ -540,7 +605,7 @@ pytest passes
 
 ```
 
-## 21. Main output files
+## 22. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -567,7 +632,7 @@ data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 22. Workflow interpretation
+## 23. Workflow interpretation
 
 The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
