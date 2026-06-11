@@ -542,9 +542,11 @@ mapped interface QC: 8/8 rows status = ok
 
 ```
 
-### v2 embedding dry-run
+### v2 embedding preflight
 
-Before running Biohub embedding generation for v2, estimate the required calls:
+Before running Biohub embedding generation for v2, run two separate preflight checks.
+
+First, estimate the total Biohub API call budget with a dry run:
 
 ```powershell
 uv run python -m scripts.embed_saved_selection `
@@ -552,6 +554,8 @@ uv run python -m scripts.embed_saved_selection `
   --coverage data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv
 
 ```
+
+This dry run does not call Biohub and does not write embeddings. It estimates the number of expected embedding pairs and the corresponding Biohub API calls.
 
 Current local dry-run result:
 
@@ -564,7 +568,26 @@ missing coverage row: 8f86 ligand P84233
 
 ```
 
-A local embedding file check found:
+Second, audit which expected saved embedding files are already present locally:
+
+```powershell
+uv run python -m scripts.audit_missing_saved_embeddings `
+  --selection data/output/sirt6_mini_pilot_v2_selection.csv `
+  --coverage data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv `
+  --output data/output/sirt6_mini_pilot_v2_missing_embeddings.csv
+
+```
+
+Expected local audit output:
+
+```text
+data/output/sirt6_mini_pilot_v2_missing_embeddings.csv
+
+```
+
+The audit checks expected `.npy` files under the model-specific saved-embedding directory and reports whether each expected embedding is already present.
+
+Current local audit result:
 
 ```text
 expected embeddings: 43
@@ -582,7 +605,7 @@ uv run python -m scripts.embed_saved_selection `
 
 ```
 
-Generated embedding files under `data/output/embeddings/` should not be committed by default.
+Generated embedding files under `data/output/embeddings/` and the generated missing-embedding audit CSV should not be committed by default.
 
 The v2 preflight outputs are generated artifacts under `data/output/` and should not be committed by default.
 
