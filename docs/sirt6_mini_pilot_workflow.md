@@ -542,9 +542,51 @@ mapped interface QC: 8/8 rows status = ok
 
 ```
 
+### v2 embedding dry-run
+
+Before running Biohub embedding generation for v2, estimate the required calls:
+
+```powershell
+uv run python -m scripts.embed_saved_selection `
+  --selection data/output/sirt6_mini_pilot_v2_selection.csv `
+  --coverage data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv
+
+```
+
+Current local dry-run result:
+
+```text
+complexes: 8
+embedding pairs: 43
+estimated Biohub API calls: 86
+missing ortholog coverage rows: 1
+missing coverage row: 8f86 ligand P84233
+
+```
+
+A local embedding file check found:
+
+```text
+expected embeddings: 43
+missing embeddings locally: 28
+
+```
+
+This means the conservative v2 selection is ready for a controlled Biohub embedding run, but the run should be explicit:
+
+```powershell
+uv run python -m scripts.embed_saved_selection `
+  --selection data/output/sirt6_mini_pilot_v2_selection.csv `
+  --coverage data/output/sirt6_mini_pilot_v2_ortholog_coverage.csv `
+  --run
+
+```
+
+Generated embedding files under `data/output/embeddings/` should not be committed by default.
+
 The v2 preflight outputs are generated artifacts under `data/output/` and should not be committed by default.
 
-This preflight does not populate NEGATOME-style controls and does not compute v2 enrichment results. It only verifies that the conservative v2 selection can be generated and that the selected chain pairs pass mapped interface QC.
+This preflight does not populate NEGATOME-style controls and does not compute v2 enrichment results. It verifies that the conservative v2 selection can be generated, that the selected chain pairs pass mapped interface QC, and that v2 embedding generation is ready for an explicit controlled run.
 
 ## 19. Optional biological report
 
