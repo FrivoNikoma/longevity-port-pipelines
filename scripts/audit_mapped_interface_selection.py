@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import polars as pl
@@ -11,6 +12,35 @@ from scripts.analyze_saved_embeddings_mapped import (
 )
 
 from longevity_port_pipelines.config import PipelineConfig
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Audit mapped interface chain-pair selection for a mini-pilot selection CSV."
+    )
+    parser.add_argument(
+        "--selection",
+        default="data/output/sirt6_mini_pilot_selection.csv",
+        help="Input mini-pilot selection CSV.",
+    )
+    parser.add_argument(
+        "--output",
+        default="data/output/sirt6_mini_pilot_chain_pair_qc.csv",
+        help="Output chain-pair QC CSV.",
+    )
+    parser.add_argument(
+        "--distance-cutoff",
+        type=float,
+        default=8.0,
+        help="Atom distance cutoff in Angstrom for interface/contact detection.",
+    )
+    parser.add_argument(
+        "--min-score",
+        type=float,
+        default=0.8,
+        help="Minimum sequence-match score for candidate chain matching.",
+    )
+    return parser.parse_args()
 
 
 def audit_row(
@@ -115,21 +145,25 @@ def audit_row(
 
 
 def main() -> None:
+    args = parse_args()
+
     cfg = PipelineConfig()
     cfg.ensure_dirs()
 
-    distance_cutoff = 8.0
-    min_score = 0.8
+    selection_path = Path(args.selection)
+    out_path = Path(args.output)
 
-    selection_path = Path("data/output/sirt6_mini_pilot_selection.csv")
+    if not selection_path.exists():
+        raise FileNotFoundError(f"Missing selection CSV: {selection_path}")
+
     selection = pl.read_csv(selection_path)
 
     rows = [
         audit_row(
             row=row,
             cfg=cfg,
-            distance_cutoff=distance_cutoff,
-            min_score=min_score,
+            distance_cutoff=args.distance_cutoff,
+            min_score=args.min_score,
         )
         for row in selection.iter_rows(named=True)
     ]
@@ -139,7 +173,7 @@ def main() -> None:
         descending=[False, True],
     )
 
-    out_path = Path("data/output/sirt6_mini_pilot_chain_pair_qc.csv")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     df.write_csv(out_path)
 
     print(f"Wrote chain-pair QC -> {out_path}")
