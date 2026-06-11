@@ -21,7 +21,7 @@ The mini-pilot starts from a small curated set of longevity-relevant protein com
 
 Run commands from the repository root:
 
-```powershell
+```text
 D:\biohub_projects\longevity-port-pipelines
 
 ```
@@ -168,10 +168,10 @@ data/output/sirt6_mini_pilot_embedding_signal_summary.md
 
 This step classifies interface signals as:
 
-- `interface_constrained`;
-- `interface_divergent`;
+- interface_constrained;
+- interface_divergent;
 - low-confidence directional classes;
-- `weak_or_mixed`.
+- weak_or_mixed.
 
 ## 9. Export residue-level mapped deltas
 
@@ -283,10 +283,10 @@ data/output/sirt6_mini_pilot_interaction_outcome_summary.csv
 
 This step maps technical signal classes to interaction outcome categories:
 
-- `maintained_candidate`;
-- `possible_interface_remodeling_or_incompatibility`;
+- maintained_candidate;
+- possible_interface_remodeling_or_incompatibility;
 - low-confidence directional classes;
-- `unresolved`.
+- unresolved.
 
 It also assigns:
 
@@ -409,7 +409,79 @@ data/output/sirt6_mini_pilot_negatome_control_pair_candidates.csv
 
 is not itself a valid NEGATOME input. It is a curation aid for preparing future negative-control partner rows.
 
-## 17. Optional biological report
+## 17. Current mini-pilot status before expansion
+
+The current SIRT6 mini-pilot should be interpreted as a reproducible, control-aware pilot rather than a fully validated NEGATOME-controlled analysis.
+
+Implemented and reproducible layers:
+
+```text
+mini-pilot complex selection
+mapped interface extraction
+interface-vs-background embedding enrichment
+shuffled-mask controls
+negative-control audit fields
+validation plan generation
+interaction outcome classification
+candidate scorecard generation
+NEGATOME-style candidate scaffold generation
+NEGATOME input validation
+NEGATOME curation rules and evidence notes
+
+```
+
+Current control interpretation:
+
+```text
+shuffled mask controls: implemented
+NEGATOME-style candidate scaffold: implemented
+NEGATOME input validator: implemented
+curated NEGATOME input rows: not yet populated
+NEGATOME-style control ratios: not yet computed
+scorecard/control status: missing_negatome where no curated input exists
+
+```
+
+PARP1/P09874 curation status:
+
+```text
+PARP1 NEGATOME curation: attempted
+Negatome 2.0 candidates found: P07437/TUBB and O60907/TBL1X
+P07437/TUBB: background-only / ambiguous
+O60907/TBL1X: reviewed but pathway-adjacent / candidate_under_review
+ready PARP1 negative-control input row: not available
+
+```
+
+Therefore, the current correct interpretation remains:
+
+```text
+The mini-pilot can support hypothesis generation and prioritization.
+The mini-pilot should not be interpreted as fully NEGATOME-controlled.
+Candidates with shuffled support but missing NEGATOME controls remain preliminary.
+NEGATOME-style controls are now scaffolded and auditable, but not yet populated.
+
+```
+
+Before expanding the pilot, preserve this distinction:
+
+```text
+Expansion can proceed with explicit missing_negatome status.
+Expansion should not silently treat scaffold rows as curated controls.
+Future curated controls should be added row-by-row only after passing the input contract and curation rules.
+
+```
+
+Recommended next directions:
+
+```text
+Option A: continue curation on another first-pass target such as SIRT6 receptor / mouse or Ku70 receptor / mouse.
+Option B: expand to a v2 pilot while keeping NEGATOME-style controls as an explicit missing/curation layer.
+Option C: implement the computation step for NEGATOME-style ratios only after at least one curated input row is accepted.
+
+```
+
+## 18. Optional biological report
 
 The current biology-facing report is stored at:
 
@@ -420,7 +492,7 @@ docs/sirt6_mini_pilot_biology_report.md
 
 It summarizes the current biological interpretation of the mini-pilot.
 
-## 18. Recommended full command sequence
+## 19. Recommended full command sequence
 
 For a full mini-pilot rerun after embeddings are available:
 
@@ -447,7 +519,7 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 19. Quality checks before committing code changes
+## 20. Quality checks before committing code changes
 
 Run:
 
@@ -468,7 +540,7 @@ pytest passes
 
 ```
 
-## 20. Main output files
+## 21. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -495,7 +567,7 @@ data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 21. Workflow interpretation
+## 22. Workflow interpretation
 
 The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
