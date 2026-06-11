@@ -1,8 +1,29 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import polars as pl
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Summarize mapped embedding enrichment signals.")
+    parser.add_argument(
+        "--input",
+        default="data/output/sirt6_mini_pilot_enrichment_mapped.parquet",
+        help="Input mapped enrichment parquet path.",
+    )
+    parser.add_argument(
+        "--output-csv",
+        default="data/output/sirt6_mini_pilot_embedding_signal_summary.csv",
+        help="Output CSV summary path.",
+    )
+    parser.add_argument(
+        "--output-md",
+        default="data/output/sirt6_mini_pilot_embedding_signal_summary.md",
+        help="Output Markdown summary path.",
+    )
+    return parser.parse_args()
 
 
 def classify_signal(
@@ -77,21 +98,30 @@ def interpretation(signal_class: str) -> str:
 
 
 def main() -> None:
-    in_path = Path("data/output/sirt6_mini_pilot_enrichment_mapped.parquet")
-    out_csv = Path("data/output/sirt6_mini_pilot_embedding_signal_summary.csv")
-    out_md = Path("data/output/sirt6_mini_pilot_embedding_signal_summary.md")
+    args = parse_args()
+
+    in_path = Path(args.input)
+    out_csv = Path(args.output_csv)
+    out_md = Path(args.output_md)
+
+    if not in_path.exists():
+        raise FileNotFoundError(f"Missing mapped enrichment parquet: {in_path}")
+
+    out_csv.parent.mkdir(parents=True, exist_ok=True)
+    out_md.parent.mkdir(parents=True, exist_ok=True)
 
     df = pl.read_parquet(in_path)
 
-    # The current mann_whitney_p column is interpreted as the one-sided test
-    # for interface_delta > noninterface_delta. For the opposite direction,
-    # we use the complementary one-sided p-value as a pragmatic summary-level fix.
-    df = df.with_columns(
-        [
-            pl.col("mann_whitney_p").alias("p_interface_greater"),
-            (1.0 - pl.col("mann_whitney_p")).clip(0.0, 1.0).alias("p_interface_less"),
-        ]
-    )
+    # Older outputs may only contain mann_whitney_p. In that case, interpret it
+    # as the one-sided test for interface_delta > noninterface_delta and derive
+    # the opposite direction as the complementary one-sided p-value.
+    if "p_interface_greater" not in df.columns:
+        df = df.with_columns(pl.col("mann_whitney_p").alias("p_interface_greater"))
+
+    if "p_interface_less" not in df.columns:
+        df = df.with_columns(
+            (1.0 - pl.col("p_interface_greater")).clip(0.0, 1.0).alias("p_interface_less")
+        )
 
     summary = (
         df.with_columns(
