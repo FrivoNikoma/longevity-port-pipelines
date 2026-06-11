@@ -142,7 +142,7 @@ uv run python -m scripts.validate_negatome_control_inputs
 
 ```
 
-## 6. Suggested `control_type` values
+## 6. Suggested control_type values
 
 Use controlled vocabulary where possible.
 
@@ -168,7 +168,7 @@ negatome_style_curation_required
 
 in the final `data/interim/negatome_control_pairs.csv`. That value belongs to the candidate scaffold only.
 
-## 7. Suggested `negative_partner_source` values
+## 7. Suggested negative_partner_source values
 
 Recommended values:
 
@@ -205,7 +205,62 @@ Rationale:
 
 Do not curate all species until the first small subset passes validation and downstream interpretation remains stable.
 
-## 9. How to interpret partial curation
+## 9. Current PARP1 curation status
+
+A first-pass PARP1/P09874 NEGATOME-style curation pass has been completed for the SIRT6 mini-pilot.
+
+The search covered the available Negatome 2.0 text datasets:
+
+```text
+manual.txt
+manual_stringent.txt
+pdb.txt
+pdb_stringent.txt
+combined.txt
+combined_stringent.txt
+
+```
+
+Only two P09874-linked candidate partners were found:
+
+```text
+P07437 / TUBB
+O60907 / TBL1X
+
+```
+
+Current interpretation:
+
+```text
+P07437 / TUBB:
+  status = candidate_background_only
+  reason = broad cytoskeletal/background protein and ambiguous quick IntAct PARP1/TUBB signal
+
+O60907 / TBL1X:
+  status = candidate_under_review
+  reason = Negatome manual evidence and sequence availability are present, but DNA-damage-response/pathway adjacency prevents promotion without further manual review
+
+```
+
+No additional P09874 candidates were found in the PDB-derived or PDB-stringent Negatome datasets.
+
+Therefore, the current correct status remains:
+
+```text
+PARP1 NEGATOME curation: attempted
+ready PARP1 negative-control input row: not available
+data/interim/negatome_control_pairs.csv: do not populate from current PARP1 candidates
+negatome_control_ratio: not computed
+scorecard/control status: missing_negatome
+
+```
+
+This status should only change if a future review identifies either:
+
+1. a cleaner external curated negative-control partner for PARP1; or
+2. enough evidence to resolve one of the existing candidates as suitable for the strict NEGATOME-style input contract.
+
+## 10. How to interpret partial curation
 
 If only some rows have curated controls, the audit should distinguish:
 
@@ -221,7 +276,7 @@ Partially populated NEGATOME controls should not be interpreted as global valida
 
 The scorecard should remain control-aware at row level.
 
-## 10. Relationship to shuffled controls
+## 11. Relationship to shuffled controls
 
 Shuffled mask controls and NEGATOME-style controls answer different questions.
 
@@ -233,7 +288,7 @@ Both are useful, but neither replaces the other.
 
 A candidate with only shuffled support should remain preliminary.
 
-## 11. Do not commit generated outputs by default
+## 12. Do not commit generated outputs by default
 
 Files under:
 
@@ -269,7 +324,7 @@ Before committing any curated input, review whether it contains:
 - no unreviewed speculative labels;
 - no generated placeholder rows.
 
-## 12. Minimum acceptance criteria for a curated input row
+## 13. Minimum acceptance criteria for a curated input row
 
 A row can be considered ready for the input contract only if:
 
@@ -285,7 +340,7 @@ A row can be considered ready for the input contract only if:
 
 Rows that fail these criteria should stay in the scaffold or external notes, not in `data/interim/negatome_control_pairs.csv`.
 
-## 13. Recommended first-pass procedure
+## 14. Recommended first-pass procedure
 
 For the first curated mini-pilot test:
 
@@ -303,7 +358,7 @@ uv run python -m scripts.validate_negatome_control_inputs
 2. do not yet change enrichment ratios;
 3. only after validation, implement the step that embeds negative partners and computes `negatome_control_ratio`.
 
-## 14. Important interpretation note
+## 15. Important interpretation note
 
 A valid input table does not automatically mean that NEGATOME-style ratios are populated.
 
