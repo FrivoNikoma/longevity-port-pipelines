@@ -200,7 +200,41 @@ Next resolution path:
 - search for additional Negatome-supported PARP1 candidates;
 - only promote TBL1X if targeted interaction and pathway-context review can rule out direct interaction and problematic pathway coupling.
 
-## 8. Candidate screening checklist
+## 8. Additional Negatome table search
+
+A follow-up search was performed across the available Negatome 2.0 text datasets:
+
+```text
+manual.txt
+manual_stringent.txt
+pdb.txt
+pdb_stringent.txt
+combined.txt
+combined_stringent.txt
+
+```
+
+The search for `P09874` found only the two previously recorded candidate partners:
+
+```text
+P07437 / TUBB
+O60907 / TBL1X
+
+```
+
+The same two hits appear in the manual and manual-stringent datasets, and therefore also in the combined and combined-stringent datasets. No additional `P09874` hits were found in the PDB-derived or PDB-stringent datasets.
+
+Current interpretation:
+
+```text
+additional_negatome_candidates_found = false
+available_negatome_p09874_candidates = P07437/TUBB; O60907/TBL1X
+
+```
+
+This means that the current Negatome 2.0 search does not provide a cleaner third PARP1 candidate. Because `P07437/TUBB` is background-only/ambiguous and `O60907/TBL1X` remains pathway-adjacent, neither candidate should be promoted automatically. A future curated input row would require either manual resolution of one of these candidates or an external curated negative-control source beyond the current Negatome 2.0 tables.
+
+## 9. Candidate screening checklist
 
 Before marking a candidate as `candidate_ready_for_input`, check:
 
@@ -219,7 +253,7 @@ curation_status = candidate_ready_for_input
 
 ```
 
-## 9. Promotion mapping
+## 10. Promotion mapping
 
 If a PARP1 candidate passes curation, map fields into the strict input contract as follows:
 
@@ -244,7 +278,7 @@ data/interim/negatome_control_pairs.csv
 
 only after review.
 
-## 10. Important caution
+## 11. Important caution
 
 This document does not populate NEGATOME controls.
 
@@ -260,12 +294,12 @@ scorecard status: missing_negatome
 
 A candidate row in this document is only a curation candidate. It should not be interpreted as evidence that PARP1 has a populated negative-control ratio.
 
-## 11. Next action
+## 12. Next action
 
 Next research step:
 
 ```text
-Keep O60907/TBL1X as candidate_under_review and search for additional Negatome-supported PARP1 candidates with cleaner pathway separation. Revisit TBL1X only if targeted interaction and pathway-context review can justify it as a matched negative-control partner.
+The current Negatome 2.0 table search found no additional P09874 candidates beyond P07437/TUBB and O60907/TBL1X. Do not promote either automatically. Next, either manually resolve O60907/TBL1X pathway adjacency or search external curated negative-control sources beyond Negatome 2.0.
 
 ```
 
