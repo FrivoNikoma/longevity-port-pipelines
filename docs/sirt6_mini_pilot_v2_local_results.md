@@ -22,6 +22,7 @@ v2 missing embedding audit
 v2 mapped enrichment
 v2 embedding signal summary
 v2 longevity contrast
+v2 structure-inspection selections
 v2 residue-level deltas
 v2 residue-level candidate summaries
 v2 interaction outcome summary
@@ -42,6 +43,7 @@ data/output/sirt6_mini_pilot_v2_embedding_signal_summary.csv
 data/output/sirt6_mini_pilot_v2_embedding_signal_summary.md
 data/output/sirt6_mini_pilot_v2_longevity_contrast.csv
 data/output/sirt6_mini_pilot_v2_longevity_contrast.md
+data/output/sirt6_mini_pilot_v2_structure_selections/
 data/output/sirt6_mini_pilot_v2_residue_deltas_mapped.parquet
 data/output/sirt6_mini_pilot_v2_residue_candidates/
 data/output/sirt6_mini_pilot_v2_interaction_outcome_summary.csv
@@ -228,6 +230,60 @@ The strongest original 8bhv ligand signal is better described as shared non-huma
 The current long-lived-enhanced candidates shift attention toward 1nfi receptor and 8bhv receptor contrasts.
 ```
 
+## Structure inspection selections
+
+The v2 structure-inspection selection package was generated with the contrast-aware structure selection export:
+```text
+uv run python -m scripts.export_structure_candidate_selections `
+  --residue-deltas data/output/sirt6_mini_pilot_v2_residue_deltas_mapped.parquet `
+  --longevity-contrast data/output/sirt6_mini_pilot_v2_longevity_contrast.csv `
+  --output-dir data/output/sirt6_mini_pilot_v2_structure_selections
+```
+
+The generated local structure-selection artifacts are:
+```text
+data/output/sirt6_mini_pilot_v2_structure_selections/sirt6_mini_pilot_candidate_selection_summary.csv
+data/output/sirt6_mini_pilot_v2_structure_selections/sirt6_mini_pilot_candidate_selections.pml
+data/output/sirt6_mini_pilot_v2_structure_selections/sirt6_mini_pilot_candidate_selections.cxc
+```
+
+These files are generated outputs and should not be committed by default.
+
+Current structure-selection summary:
+```text
+rows: 47
+columns: 22
+```
+
+Exported contrast-informed groups:
+```text
+1nfi receptor / myotis_lucifugus: 10 residues
+1nfi receptor / naked_mole_rat: 10 residues
+8bhv receptor / myotis_lucifugus: 10 residues
+8bhv receptor / naked_mole_rat: 10 residues
+8bhv ligand / naked_mole_rat: 7 residues
+```
+
+Structure-chain mapping used in the generated selections:
+```text
+1nfi receptor -> structure chain C
+8bhv receptor -> structure chain j
+8bhv ligand -> structure chain R
+```
+
+Interpretation:
+```text
+The structure-selection package focuses structural inspection on long-lived-enhanced interface-divergence candidates: 1nfi receptor and 8bhv receptor.
+The 8bhv ligand selection is retained as a strong shared non-human interface-divergence benchmark, not as a clean longevity-specific hit.
+```
+
+Important caveat:
+```text
+The generated selections use reference-sequence 1-based residue numbers.
+They assume that reference sequence numbering matches structure residue numbering.
+Structures with missing residues, insertion codes, or renumbered chains require manual inspection and adjustment.
+```
+
 ## Residue-level outputs
 
 The v2 residue-level delta export wrote:
@@ -356,6 +412,8 @@ After longevity contrast, the most relevant biological-review targets become:
 8bhv ligand / naked_mole_rat vs mouse as shared non-human interface divergence
 ```
 
+After structure-selection export, these biological-review targets now have generated PyMOL/ChimeraX residue selections for structure-guided inspection.
+
 ## Validation plan
 
 The v2 validation plan was written to:
@@ -383,6 +441,7 @@ The current v2 run supports:
 ```text
 candidate prioritization
 long-lived-vs-short-lived contrast analysis
+contrast-informed structure-inspection selection export
 residue-level inspection
 structure-guided follow-up
 assay planning
@@ -401,9 +460,9 @@ removing missing_negatome warnings from scorecards or validation plans
 
 Recommended next technical steps:
 ```text
-1. Use longevity contrast outputs to prioritize structure inspection targets.
-2. Generate structure-selection exports for the top long-lived-enhanced candidates.
-3. Inspect 1nfi receptor and 8bhv receptor contrast candidates structurally.
+1. Inspect the generated PyMOL/ChimeraX selections for the top long-lived-enhanced candidates.
+2. Check whether the selected reference-sequence residue numbers match structure residue numbering.
+3. Generate screenshots or short structural notes for 1nfi receptor and 8bhv receptor contrast candidates.
 4. Keep 8bhv ligand as a strong shared non-human interface-divergence benchmark, not as a clean longevity-specific hit.
 5. Add or curate NEGATOME-style negative-control rows for selected high-priority contrast candidates.
 6. Re-run negative-control audit and scorecard generation after curated controls exist.
