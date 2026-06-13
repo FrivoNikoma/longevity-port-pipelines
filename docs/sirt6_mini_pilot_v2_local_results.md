@@ -23,6 +23,7 @@ v2 mapped enrichment
 v2 embedding signal summary
 v2 longevity contrast
 v2 structure-inspection selections
+v2 structure-selection QC
 v2 residue-level deltas
 v2 residue-level candidate summaries
 v2 interaction outcome summary
@@ -44,6 +45,8 @@ data/output/sirt6_mini_pilot_v2_embedding_signal_summary.md
 data/output/sirt6_mini_pilot_v2_longevity_contrast.csv
 data/output/sirt6_mini_pilot_v2_longevity_contrast.md
 data/output/sirt6_mini_pilot_v2_structure_selections/
+data/output/sirt6_mini_pilot_v2_structure_selection_qc.csv
+data/output/sirt6_mini_pilot_v2_structure_selection_qc.md
 data/output/sirt6_mini_pilot_v2_residue_deltas_mapped.parquet
 data/output/sirt6_mini_pilot_v2_residue_candidates/
 data/output/sirt6_mini_pilot_v2_interaction_outcome_summary.csv
@@ -284,6 +287,56 @@ They assume that reference sequence numbering matches structure residue numberin
 Structures with missing residues, insertion codes, or renumbered chains require manual inspection and adjustment.
 ```
 
+## Structure selection QC
+
+The v2 structure-selection QC audit was generated with:
+```text
+uv run python -m scripts.audit_structure_selection_qc `
+  --selection-summary data/output/sirt6_mini_pilot_v2_structure_selections/sirt6_mini_pilot_candidate_selection_summary.csv `
+  --residue-deltas data/output/sirt6_mini_pilot_v2_residue_deltas_mapped.parquet `
+  --pdb-dir data/interim/pdb `
+  --output-csv data/output/sirt6_mini_pilot_v2_structure_selection_qc.csv `
+  --output-md data/output/sirt6_mini_pilot_v2_structure_selection_qc.md
+```
+
+The generated local QC artifacts are:
+```text
+data/output/sirt6_mini_pilot_v2_structure_selection_qc.csv
+data/output/sirt6_mini_pilot_v2_structure_selection_qc.md
+```
+
+These files are generated outputs and should not be committed by default.
+
+Current QC summary:
+```text
+QC rows: 5
+remapped_interface_supported: 5
+```
+
+The QC audit reports both exact residue-number matching and sequence-alignment-remapped matching.
+
+Exact-number QC showed residue-numbering mismatches, especially for `8bhv`. After sequence/structure remapping, all five contrast-informed structure-selection groups were interface-proximal:
+```text
+1nfi receptor / myotis_lucifugus: remapped_interface_supported
+1nfi receptor / naked_mole_rat: remapped_interface_supported
+8bhv receptor / myotis_lucifugus: remapped_interface_supported
+8bhv receptor / naked_mole_rat: remapped_interface_supported
+8bhv ligand / naked_mole_rat: remapped_interface_supported
+```
+
+Interpretation:
+```text
+The selected contrast-informed residues require sequence/structure residue remapping before structural interpretation.
+After remapping, all inspected groups are interface-proximal under the current QC cutoff.
+This supports structure-level follow-up for 1nfi receptor and 8bhv receptor long-lived-enhanced candidates.
+The 8bhv ligand remains a shared non-human interface-divergence benchmark rather than a clean longevity-specific hit.
+```
+
+Important caveat:
+```text
+This is an automated structural QC screen, not a replacement for final manual structure review or publication-quality structural analysis.
+```
+
 ## Residue-level outputs
 
 The v2 residue-level delta export wrote:
@@ -414,6 +467,8 @@ After longevity contrast, the most relevant biological-review targets become:
 
 After structure-selection export, these biological-review targets now have generated PyMOL/ChimeraX residue selections for structure-guided inspection.
 
+After structure-selection QC, all five contrast-informed structure-selection groups are supported as interface-proximal after sequence/structure residue remapping.
+
 ## Validation plan
 
 The v2 validation plan was written to:
@@ -442,6 +497,7 @@ The current v2 run supports:
 candidate prioritization
 long-lived-vs-short-lived contrast analysis
 contrast-informed structure-inspection selection export
+automated structure-selection QC with sequence/structure residue remapping
 residue-level inspection
 structure-guided follow-up
 assay planning
@@ -460,9 +516,9 @@ removing missing_negatome warnings from scorecards or validation plans
 
 Recommended next technical steps:
 ```text
-1. Inspect the generated PyMOL/ChimeraX selections for the top long-lived-enhanced candidates.
-2. Check whether the selected reference-sequence residue numbers match structure residue numbering.
-3. Generate screenshots or short structural notes for 1nfi receptor and 8bhv receptor contrast candidates.
+1. Use the structure-selection QC report to prioritize remapped interface-proximal candidates.
+2. Inspect the generated PyMOL/ChimeraX selections for the top long-lived-enhanced candidates.
+3. Generate screenshots or short structural notes for 1nfi receptor and 8bhv receptor contrast candidates, using remapped QC as a guide.
 4. Keep 8bhv ligand as a strong shared non-human interface-divergence benchmark, not as a clean longevity-specific hit.
 5. Add or curate NEGATOME-style negative-control rows for selected high-priority contrast candidates.
 6. Re-run negative-control audit and scorecard generation after curated controls exist.
