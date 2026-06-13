@@ -223,7 +223,7 @@ def select_candidates(lf: pl.LazyFrame, cfg: PipelineConfig) -> pl.LazyFrame:
 
     Prefer complexes where at least one chain is a curated longevity candidate.
     If none survive the quality filters, fall back to the original unfiltered
-    PINDER selection so the stage still produces a useful demo selection.
+    PINDER selection only when unfiltered fallback is explicitly allowed.
     """
     filtered = parse_pinder_id(lf)
 
@@ -265,32 +265,47 @@ def select_candidates(lf: pl.LazyFrame, cfg: PipelineConfig) -> pl.LazyFrame:
     )
 
     candidate_uniprots = load_partner_aware_uniprots(cfg)
-    if candidate_uniprots:
-        candidate_selection = base_selection.filter(
-            pl.col("uniprot_R").is_in(sorted(candidate_uniprots))
-            | pl.col("uniprot_L").is_in(sorted(candidate_uniprots))
-        )
 
-        n_candidate_complexes = candidate_selection.select(pl.len()).collect().item()
-        if n_candidate_complexes > 0:
-            logger.info(
-                "Candidate UniProt filter kept %d PINDER complexes",
-                n_candidate_complexes,
-            )
-            return candidate_selection.head(cfg.selection_count)
-
+    if not candidate_uniprots:
         if not cfg.allow_unfiltered_fallback:
             logger.warning(
-                "Candidate UniProt filter matched 0 PINDER complexes after quality filters; "
-                "returning empty selection because allow_unfiltered_fallback=False"
+                "No candidate UniProt IDs loaded for candidate set %s; "
+                "returning empty selection because allow_unfiltered_fallback=False",
+                cfg.candidate_set,
             )
-            return candidate_selection
+            return base_selection.head(0)
 
         logger.warning(
-            "Candidate UniProt filter matched 0 PINDER complexes after quality filters; "
-            "falling back to unfiltered selection"
+            "No candidate UniProt IDs loaded for candidate set %s; "
+            "falling back to unfiltered selection because allow_unfiltered_fallback=True",
+            cfg.candidate_set,
         )
+        return base_selection.head(cfg.selection_count)
 
+    candidate_selection = base_selection.filter(
+        pl.col("uniprot_R").is_in(sorted(candidate_uniprots))
+        | pl.col("uniprot_L").is_in(sorted(candidate_uniprots))
+    )
+
+    n_candidate_complexes = candidate_selection.select(pl.len()).collect().item()
+    if n_candidate_complexes > 0:
+        logger.info(
+            "Candidate UniProt filter kept %d PINDER complexes",
+            n_candidate_complexes,
+        )
+        return candidate_selection.head(cfg.selection_count)
+
+    if not cfg.allow_unfiltered_fallback:
+        logger.warning(
+            "Candidate UniProt filter matched 0 PINDER complexes after quality filters; "
+            "returning empty selection because allow_unfiltered_fallback=False"
+        )
+        return candidate_selection
+
+    logger.warning(
+        "Candidate UniProt filter matched 0 PINDER complexes after quality filters; "
+        "falling back to unfiltered selection"
+    )
     return base_selection.head(cfg.selection_count)
 
 

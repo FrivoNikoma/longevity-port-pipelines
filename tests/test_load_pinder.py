@@ -99,3 +99,51 @@ def test_select_candidates_respects_selection_count() -> None:
     cfg = PipelineConfig(selection_count=5)
     result = select_candidates(lf, cfg).collect()
     assert result.height == 5
+
+
+def test_select_candidates_returns_empty_when_candidate_uniprots_empty_and_fallback_disabled(
+    monkeypatch,
+) -> None:
+    lf = _make_pinder_lf(
+        ids=[
+            "1abc__A_P11111--1abc__B_P22222",
+            "2def__A_P33333--2def__B_P44444",
+        ],
+        contacts=[30, 20],
+    )
+    monkeypatch.setattr(
+        "longevity_port_pipelines.stages.load_pinder.load_partner_aware_uniprots",
+        lambda cfg: set(),
+    )
+    cfg = PipelineConfig(
+        selection_count=10,
+        allow_unfiltered_fallback=False,
+    )
+
+    result = select_candidates(lf, cfg).collect()
+
+    assert result.height == 0
+
+
+def test_select_candidates_falls_back_when_candidate_uniprots_empty_and_fallback_enabled(
+    monkeypatch,
+) -> None:
+    lf = _make_pinder_lf(
+        ids=[
+            "1abc__A_P11111--1abc__B_P22222",
+            "2def__A_P33333--2def__B_P44444",
+        ],
+        contacts=[30, 20],
+    )
+    monkeypatch.setattr(
+        "longevity_port_pipelines.stages.load_pinder.load_partner_aware_uniprots",
+        lambda cfg: set(),
+    )
+    cfg = PipelineConfig(
+        selection_count=10,
+        allow_unfiltered_fallback=True,
+    )
+
+    result = select_candidates(lf, cfg).collect()
+
+    assert result.height == 2
