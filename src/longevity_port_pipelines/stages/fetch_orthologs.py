@@ -17,25 +17,56 @@ OMA_API = "https://omabrowser.org/api"
 UNIPROT_API = "https://rest.uniprot.org"
 
 
+def query_oma_protein_sequence(entry_url: str) -> str:
+    """Fetch a protein sequence from an OMA protein detail endpoint.
+
+    The OMA ortholog list endpoint may provide only sequence metadata plus
+    an entry_url. In that case, fetch the protein detail endpoint and read
+    the full sequence field there.
+    """
+    if not entry_url:
+        return ""
+
+    try:
+        resp = requests.get(entry_url, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+    except (requests.RequestException, ValueError):
+        logger.warning("OMA protein detail query failed for %s", entry_url)
+        return ""
+
+    sequence = data.get("sequence", "")
+    return str(sequence).strip() if sequence else ""
+
+
 def query_oma_orthologs(uniprot_id: str, target_taxid: int) -> list[OrthologMapping]:
     """Query OMA API for orthologs of a given protein in a target species."""
     url = f"{OMA_API}/protein/{uniprot_id}/orthologs/"
     try:
         resp = requests.get(url, params={"format": "json"}, timeout=30)
         resp.raise_for_status()
-    except requests.RequestException:
-        logger.debug("OMA query failed for %s", uniprot_id)
+        entries = resp.json()
+    except (requests.RequestException, ValueError):
+        logger.warning("OMA query failed for %s", uniprot_id)
         return []
 
     results: list[OrthologMapping] = []
-    for entry in resp.json():
+    for entry in entries:
         species = entry.get("species", {})
         if species.get("taxon_id") != target_taxid:
             continue
 
-        target_id = entry.get("canonicalid", "")
-        sequence = entry.get("sequence", "")
+        target_id = str(entry.get("canonicalid", "")).strip()
+        sequence = str(entry.get("sequence", "") or "").strip()
+        if not sequence:
+            sequence = query_oma_protein_sequence(str(entry.get("entry_url", "")))
+
         if not target_id or not sequence:
+            logger.debug(
+                "Skipping OMA ortholog hit for %s taxid=%d because target_id or sequence is missing",
+                uniprot_id,
+                target_taxid,
+            )
             continue
 
         results.append(
