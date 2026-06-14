@@ -355,6 +355,7 @@ def group_selection_summary(selection_summary: pl.DataFrame) -> pl.DataFrame:
     ]
 
     for optional in [
+        "partner_structure_chain",
         "short_lived_species",
         "contrast_class",
         "contrast_priority",
@@ -400,7 +401,11 @@ def audit_group(
     pdb_id = str(row["pdb_id"])
     chain_role = str(row["chain"])
     structure_chain = str(row["structure_chain"])
-    partner_chain = partner_structure_chain(pdb_id, chain_role)
+    partner_chain = (
+        str(row["partner_structure_chain"])
+        if "partner_structure_chain" in row and row["partner_structure_chain"] is not None
+        else partner_structure_chain(pdb_id, chain_role)
+    )
     selected_reference_residues = [int(value) for value in row["selected_reference_residues"]]
 
     structure_path = find_structure_file(pdb_dir, pdb_id)
