@@ -741,6 +741,9 @@ def main() -> None:
     print("Contrast class counts:")
     print(value_counts_table(features, "contrast_class"))
     print()
+    if "qc_status" not in features.columns:
+        features = features.with_columns(pl.lit(None).alias("qc_status"))
+
     print("Top feature preview:")
     print(
         features.select(
