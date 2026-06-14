@@ -37,6 +37,14 @@ def parse_args() -> argparse.Namespace:
         help="Output residue-level parquet path.",
     )
     parser.add_argument(
+        "--embedding-dir",
+        default="data/output/embeddings",
+        help=(
+            "Directory containing saved embedding model subdirectories. "
+            "Defaults to data/output/embeddings for backwards compatibility."
+        ),
+    )
+    parser.add_argument(
         "--distance-cutoff",
         type=float,
         default=8.0,
@@ -103,6 +111,7 @@ def main() -> None:
     selection_path = Path(args.selection)
     coverage_path = Path(args.coverage)
     output_path = Path(args.output)
+    embedding_dir = Path(args.embedding_dir)
 
     if not selection_path.exists():
         raise FileNotFoundError(f"Missing selection CSV: {selection_path}")
@@ -173,7 +182,7 @@ def main() -> None:
                 continue
 
             ref_path = embedding_path(
-                cfg.output_dir,
+                embedding_dir,
                 cfg.esmc_model,
                 complex_id,
                 chain_role,
@@ -199,7 +208,7 @@ def main() -> None:
 
             for mapping in chain_mappings:
                 orth_path = embedding_path(
-                    cfg.output_dir,
+                    embedding_dir,
                     cfg.esmc_model,
                     complex_id,
                     chain_role,
