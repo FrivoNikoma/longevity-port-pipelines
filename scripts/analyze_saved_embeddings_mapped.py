@@ -39,6 +39,14 @@ def parse_args() -> argparse.Namespace:
         help="Output enrichment parquet path.",
     )
     parser.add_argument(
+        "--embedding-dir",
+        default="data/output/embeddings",
+        help=(
+            "Directory containing saved embedding model subdirectories. "
+            "Defaults to data/output/embeddings for backwards compatibility."
+        ),
+    )
+    parser.add_argument(
         "--distance-cutoff",
         type=float,
         default=8.0,
@@ -59,13 +67,13 @@ def species_name(taxid: int) -> str:
 
 
 def embedding_path(
-    output_dir: Path,
+    embedding_dir: Path,
     model_name: str,
     complex_id: str,
     chain: str,
     taxid: int,
 ) -> Path:
-    return output_dir / "embeddings" / model_name / f"{complex_id}_{chain}_{taxid}.npy"
+    return embedding_dir / model_name / f"{complex_id}_{chain}_{taxid}.npy"
 
 
 def download_structure(pdb_id: str, output_dir: Path) -> tuple[Path, StructureFormat]:
@@ -418,6 +426,7 @@ def main() -> None:
     selection_path = Path(args.selection)
     coverage_path = Path(args.coverage)
     output_path = Path(args.output)
+    embedding_dir = Path(args.embedding_dir)
 
     if not selection_path.exists():
         raise FileNotFoundError(f"Missing selection CSV: {selection_path}")
@@ -478,7 +487,7 @@ def main() -> None:
                 continue
 
             ref_path = embedding_path(
-                cfg.output_dir,
+                embedding_dir,
                 cfg.esmc_model,
                 complex_id,
                 chain_label,
@@ -506,7 +515,7 @@ def main() -> None:
 
             for mapping in chain_mappings:
                 orth_path = embedding_path(
-                    cfg.output_dir,
+                    embedding_dir,
                     cfg.esmc_model,
                     complex_id,
                     chain_label,
