@@ -1,0 +1,62 @@
+complex_id,pdb_id,chain,target_species,source_uniprot,target_uniprot,signal_class,contrast_class,kmeans_cluster,agglomerative_cluster,pca1,pca2,manual_review_case,manual_review_label
+1h2k__A2_Q9NWT6--1h2k__B2_Q16665,1h2k,receptor,mouse,Q9NWT6,HIF1N_MOUSE,interface_constrained,,0,0,-0.3461289953346714,0.4875141244861021,False,
+1h2k__A2_Q9NWT6--1h2k__B2_Q16665,1h2k,receptor,myotis_lucifugus,Q9NWT6,G1PRI7,weak_or_mixed,weak_or_unresolved_contrast,0,0,-0.4493193363785891,0.3678628122221772,False,
+1h2k__A2_Q9NWT6--1h2k__B2_Q16665,1h2k,receptor,naked_mole_rat,Q9NWT6,ENSHGLP00100020947.1,weak_or_mixed,weak_or_unresolved_contrast,0,0,-0.0430678113362209,0.4265912663506196,False,
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,ligand,mouse,P25963,IKBA_MOUSE,interface_divergent,,1,1,2.290238119326065,2.492214637307606,False,
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,ligand,myotis_lucifugus,P25963,G1P2L6,interface_divergent,weak_or_unresolved_contrast,1,1,2.0060565637101617,2.469890194790481,False,
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,ligand,naked_mole_rat,P25963,G5B118,interface_divergent,weak_or_unresolved_contrast,1,1,2.1043102431806653,1.487475490922009,False,
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,receptor,mouse,Q04206,TF65_MOUSE,interface_divergent,,1,1,1.7243049537450157,0.3925616173151816,False,
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,receptor,myotis_lucifugus,Q04206,G1PC32,interface_divergent,long_lived_enhanced_interface_divergence,1,1,2.549084367858439,0.674492560872706,True,1nfi receptor Myotis
+1nfi__A1_Q04206--1nfi__F1_P25963,1nfi,receptor,naked_mole_rat,Q04206,ENSHGLP00100021729.1,interface_divergent,long_lived_enhanced_interface_divergence,1,1,2.73087960939731,0.8024925746354721,True,1nfi receptor NMR
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,ligand,mouse,Q9UNS1,TIM_MOUSE,weak_or_mixed,,0,0,0.2096996743078411,0.577231739074149,False,
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,ligand,myotis_lucifugus,Q9UNS1,G1P7X4,interface_constrained_not_significant,weak_or_unresolved_contrast,1,0,0.4740664400419465,1.4047394001199158,False,
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,ligand,naked_mole_rat,Q9UNS1,ENSHGLP00100026068.1,weak_or_mixed,weak_or_unresolved_contrast,1,1,1.014008178218743,1.226798531405287,False,
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,receptor,mouse,P09874,Q921K2,interface_constrained,,2,2,-6.496320308288745,1.1341823387462036,True,4xhu receptor mouse
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,receptor,myotis_lucifugus,P09874,G1PK82,interface_constrained,shared_interface_constraint,2,2,-6.481314934258776,1.419669978664646,True,4xhu receptor Myotis
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,4xhu,receptor,naked_mole_rat,P09874,ENSHGLP00100023082.1,interface_constrained,shared_interface_constraint,2,2,-6.605739877690185,1.1717271158431524,True,4xhu receptor NMR
+7s68__D1_P09874--7s68__C1_P09874,7s68,ligand,mouse,P09874,Q921K2,interface_constrained,,0,0,-1.763922206658414,-0.0742486315672983,False,
+7s68__D1_P09874--7s68__C1_P09874,7s68,ligand,myotis_lucifugus,P09874,G1PK82,interface_constrained,shared_interface_constraint,0,0,-2.8175499742707983,-0.2267414657267587,False,
+7s68__D1_P09874--7s68__C1_P09874,7s68,ligand,naked_mole_rat,P09874,ENSHGLP00100023082.1,interface_constrained,shared_interface_constraint,0,0,-1.8106778044501315,0.0125539211415257,False,
+7s68__D1_P09874--7s68__C1_P09874,7s68,receptor,mouse,P09874,Q921K2,weak_or_mixed,,0,0,0.1640196912165608,-0.1485661473302539,False,
+7s68__D1_P09874--7s68__C1_P09874,7s68,receptor,myotis_lucifugus,P09874,G1PK82,interface_divergent_not_significant,weak_or_unresolved_contrast,1,1,2.016480404045214,-0.295070759592511,False,
+7s68__D1_P09874--7s68__C1_P09874,7s68,receptor,naked_mole_rat,P09874,ENSHGLP00100023082.1,interface_divergent_not_significant,long_lived_specific_interface_divergence,0,0,1.520359502259639,-1.735077873651243,True,7s68 receptor NMR
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,ligand,mouse,Q9H9Q4,NHEJ1_MOUSE,interface_divergent,,0,0,0.5235953010290747,-1.7795090650132188,True,8bhv ligand Q/h mouse
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,ligand,myotis_lucifugus,Q9H9Q4,G1Q785,interface_divergent,long_lived_enhanced_interface_divergence,0,0,1.022626244330904,-1.3564473372151835,False,
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,ligand,naked_mole_rat,Q9H9Q4,ENSHGLP00100023625.1,interface_divergent,long_lived_enhanced_interface_divergence,0,0,0.3232929571689564,-1.788670348130992,False,
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,receptor,mouse,P12956,A0A0R4J187,weak_or_mixed,,0,0,-0.2944747903844714,-1.0789135669877674,False,
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,receptor,myotis_lucifugus,P12956,G1NY13,interface_constrained,weak_or_unresolved_contrast,0,0,-1.3463964748167907,-0.8888978447798487,False,
+8bhv__N1_P12956--8bhv__I1_Q9H9Q4,8bhv,receptor,naked_mole_rat,P12956,G5BPQ1,weak_or_mixed,weak_or_unresolved_contrast,0,0,-0.1005254394294007,-1.1338896604838251,False,
+8bhv__P1_P13010--8bhv__J1_Q9H9Q4,8bhv,ligand,mouse,Q9H9Q4,NHEJ1_MOUSE,interface_divergent,,3,3,9.323859464112775,-2.997291659609552,True,8bhv ligand R/j mouse
+8bhv__P1_P13010--8bhv__J1_Q9H9Q4,8bhv,receptor,mouse,P13010,XRCC5_MOUSE,interface_divergent,,1,0,1.353232369703811,-0.6000693902621242,False,
+8bhv__P1_P13010--8bhv__J1_Q9H9Q4,8bhv,receptor,myotis_lucifugus,P13010,G1PNC7,interface_divergent,long_lived_enhanced_interface_divergence,1,0,1.644019683754756,-0.6667539433130821,False,
+8bhv__P1_P13010--8bhv__J1_Q9H9Q4,8bhv,receptor,naked_mole_rat,P13010,A0A0P6JG21,interface_divergent,long_lived_enhanced_interface_divergence,1,0,1.9536398797757792,-0.4126958701528812,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,ligand,mouse,P49917,DNLI4_MOUSE,interface_constrained,,0,0,-2.567910827697541,-1.168114012034248,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,ligand,myotis_lucifugus,P49917,G1Q2N1,interface_constrained,shared_interface_constraint,0,0,-2.18037592695746,-1.4126051674805205,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,ligand,naked_mole_rat,P49917,G5B8M6,interface_constrained,shared_interface_constraint,0,0,-2.4661246399603245,-1.1644237464127367,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,receptor,mouse,P12956,A0A0R4J187,weak_or_mixed,,0,0,-0.0383515005047114,-1.2576861136561155,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,receptor,myotis_lucifugus,P12956,G1NY13,interface_constrained_not_significant,weak_or_unresolved_contrast,0,0,-0.8894161763240588,-1.0184813372130848,False,
+8bhy__B1_P12956--8bhy__G1_P49917,8bhy,receptor,naked_mole_rat,P12956,G5BPQ1,interface_constrained,long_lived_specific_interface_constraint,0,0,-1.9513316046466624,-0.9022692853711008,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,ligand,mouse,P49917,DNLI4_MOUSE,interface_divergent_not_significant,,0,0,0.5517344295309698,-1.0029965009282515,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,ligand,myotis_lucifugus,P49917,G1Q2N1,weak_or_mixed,weak_or_unresolved_contrast,0,0,0.1466361279578644,-1.0170479524413236,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,ligand,naked_mole_rat,P49917,G5B8M6,weak_or_mixed,weak_or_unresolved_contrast,0,0,0.749904282662485,-0.8489730377885912,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,receptor,mouse,P13010,XRCC5_MOUSE,interface_constrained,,0,0,-3.126972277743141,-0.9569732199052298,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,receptor,myotis_lucifugus,P13010,G1PNC7,interface_constrained,shared_interface_constraint,0,0,-2.838751437345499,-1.1483563839398572,False,
+8bot__P1_P13010--8bot__C1_P49917,8bot,receptor,naked_mole_rat,P13010,A0A0P6JG21,interface_constrained,shared_interface_constraint,0,0,-3.02724100000063,-1.064839152357743,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,ligand,mouse,P12956,A0A0R4J187,interface_divergent,,1,1,1.7630431963934887,2.6849901840480848,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,ligand,myotis_lucifugus,P12956,G1NY13,weak_or_mixed,weak_or_unresolved_contrast,1,1,1.1776581641719663,2.5082521458207734,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,ligand,naked_mole_rat,P12956,G5BPQ1,weak_or_mixed,weak_or_unresolved_contrast,1,1,0.7736854525733645,2.724141067436566,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,receptor,mouse,P13010,XRCC5_MOUSE,interface_constrained,,1,1,-0.5793048708681272,3.0923757774830354,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,receptor,myotis_lucifugus,P13010,G1PNC7,interface_constrained,shared_interface_constraint,1,1,-0.1411164176199743,3.021394498996809,False,
+8bot__U1_P13010--8bot__T1_P12956,8bot,receptor,naked_mole_rat,P13010,A0A0P6JG21,interface_constrained,shared_interface_constraint,1,1,-0.2420815227649981,3.093997866353244,False,
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,ligand,mouse,P02281,H2B1M_MOUSE,interface_constrained,,0,0,-1.8025248124048765,-0.6975488126655688,False,
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,ligand,myotis_lucifugus,P02281,G1Q2G9,interface_constrained,long_lived_enhanced_interface_constraint,0,0,-1.8132040856907607,-0.7132653303960972,False,
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,ligand,naked_mole_rat,P02281,G5BSE7,interface_constrained,long_lived_enhanced_interface_constraint,0,0,-1.81379207290568,-0.7245314332883609,False,
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,receptor,mouse,Q8N6T7,SIR6_MOUSE,interface_divergent,,0,0,1.3736836709429925,-2.002270862845729,False,
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,receptor,myotis_lucifugus,Q8N6T7,G1PC24,interface_constrained_not_significant,long_lived_specific_interface_constraint,0,0,-2.0370713707160104,-1.7894664987926483,True,8f86 receptor Myotis
+8f86__K1_Q8N6T7--8f86__D1_P02281,8f86,receptor,naked_mole_rat,Q8N6T7,ENSHGLP00100014497.1,interface_constrained_not_significant,short_lived_baseline_stronger_signal,0,0,-1.3662660322622957,-1.6091131919106023,False,
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,ligand,mouse,P04908,H2A3_MOUSE,interface_constrained_not_significant,,0,0,-0.6934579884085217,-0.0528271788255405,False,
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,ligand,myotis_lucifugus,P04908,G1P399,interface_divergent_not_significant,long_lived_specific_interface_divergence,1,1,2.637925444777573,1.776659845963318,True,8g57 ligand Myotis
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,ligand,naked_mole_rat,P04908,G5BV53,interface_divergent_not_significant,long_lived_specific_interface_divergence,1,1,3.275276595509492,1.5807753904034123,True,8g57 ligand NMR
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,receptor,mouse,Q8N6T7,SIR6_MOUSE,interface_divergent,,1,1,4.218552709659773,-0.6009408967034687,False,
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,receptor,myotis_lucifugus,Q8N6T7,G1PC24,interface_divergent_not_significant,shared_nonhuman_interface_divergence,1,1,3.2667186424971386,-0.3859925539407236,False,
+8g57__A1_Q8N6T7--8g57__H1_P04908,8g57,receptor,naked_mole_rat,Q8N6T7,ENSHGLP00100014497.1,interface_divergent_not_significant,shared_nonhuman_interface_divergence,1,1,3.2481401542576958,-0.3090188476883962,False,
