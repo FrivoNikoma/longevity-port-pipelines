@@ -17,17 +17,19 @@
   --gold: #f1c40f;
   --lgray: #ecf0f4;
   --txt: #111;
+  --teal: #0e8a7e;
+  --purple: #6c3483;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--txt);
-  background: #555;
+  background: var(--navy);
 }
 
 .poster {
   width: 1680px;
-  margin: 10px auto;
+  margin: 0 auto;
   background: var(--navy);
   display: flex;
   flex-direction: column;
@@ -38,14 +40,24 @@ body {
 .row { display: flex; gap: 4px; }
 .row > * { flex: 1; min-width: 0; }
 
+/* ── Header: white bg, bold title, teal accent ── */
 .header {
-  background: var(--navy);
-  color: white;
+  background: white;
   text-align: center;
   padding: 18px 30px 14px;
+  border-bottom: 5px solid var(--teal);
+  position: relative;
 }
-.header h1 { font-size: 42px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
-.header .sub { font-size: 18px; margin-top: 6px; color: #c0d0e8; }
+.header h1 {
+  font-size: 44px; font-weight: 900; letter-spacing: 1px;
+  color: var(--navy);
+  text-transform: uppercase;
+}
+.header h1 .accent { color: var(--teal); }
+.header .sub {
+  font-size: 17px; margin-top: 6px; color: #555;
+  font-weight: 400;
+}
 
 .panel {
   background: white;
@@ -128,26 +140,45 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
 .iface-zone .dots { font-size: 20px; letter-spacing: 2px; }
 .iface-zone .lbl { font-size: 11px; font-weight: 800; margin-top: 2px; }
 
-/* Banner */
-.ban {
-  background: var(--dk);
+/* ── Take-home messages: icon cards ── */
+.thm {
+  background: #f5f7fa;
   border-radius: 6px;
-  color: white;
-  padding: 16px 24px;
-  font-size: 14px;
-  line-height: 1.6;
+  padding: 14px 16px;
+  display: flex;
+  gap: 10px;
 }
-.ban h3 {
-  font-size: 18px;
+.thm-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--gold);
-  margin-bottom: 8px;
+  letter-spacing: 2px;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  min-width: 24px;
 }
-.ban ul { padding-left: 20px; margin: 0; }
-.ban li { margin-bottom: 4px; }
-.ban strong { color: var(--gold); }
+.thm-cards { display: flex; gap: 8px; flex: 1; }
+.thm-card {
+  flex: 1;
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.thm-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.thm-card h4 { font-size: 15px; font-weight: 800; line-height: 1.2; }
+.thm-card p { font-size: 12px; line-height: 1.5; margin: 0; }
 </style>
 </head>
 <body>
@@ -156,7 +187,7 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
 
 <!-- HEADER -->
 <div class="header">
-  <h1>Longevity Port Pipeline</h1>
+  <h1><span class="accent">Longevity</span> Port Pipeline</h1>
   <div class="sub">Protein–Protein Interface Divergence in Long-Lived Species: A Computational Signal Check Using PLM Embeddings</div>
 </div>
 
@@ -222,14 +253,13 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
   </div>
 </div>
 
-<!-- ═══ ROW 2: 1NFI | 4XHU | Divergence vs Constraint ═══ -->
+<!-- ═══ ROW 2: 1NFI | 4XHU — two species side-by-side ═══ -->
 <div class="row">
 
   <!-- Panel 4: 1NFI Divergence -->
   <div class="panel">
-    <div class="ph ph-r"><span class="n">4</span><h2>1NFI · Interface Divergence</h2></div>
+    <div class="ph ph-r"><span class="n">4</span><h2>1NFI · RelA/p65–IkBα · Interface Divergence</h2></div>
     <div class="pb">
-      <!-- Schematic -->
       <div class="prot-schema">
         <div class="prot-blob" style="background:#999;">
           <span class="pn">RelA/p65</span>
@@ -247,29 +277,27 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
 
       <div style="font-size:11px; color:#888; text-align:right; font-style:italic;">ChimeraX render · PDB 1nfi</div>
       <img class="struct-render"
-           src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/1nfi_receptor_c_e_naked_mole_rat_long_lived_enhanced_interface_divergence_closeup.png"
+           src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/poster_1nfi_nmr_enhanced.png"
            alt="1nfi interface divergence — ChimeraX render">
-      <div class="render-cap">Naked mole-rat · interface closeup · d = 0.66</div>
 
       <div class="leg">
-        <span><span class="sw" style="background:#999;"></span>RelA/p65</span>
-        <span><span class="sw" style="background:#6495ed;"></span>IkBα</span>
-        <span><span class="sw" style="background:#e67e22;"></span>Divergent</span>
+        <span><span class="sw" style="background:#708090;"></span>RelA/p65 (gray)</span>
+        <span><span class="sw" style="background:#6495ed;"></span>IkBα (blue)</span>
+        <span><span class="sw" style="background:#ff0000;"></span>Divergent interface residues</span>
       </div>
 
       <div class="interp id">
         <b>Interface residues shift ~30% more than non-interface.</b>
-        Cohen's d = 0.66–0.70, significant in both long-lived species.
-        NF-kB binding surface remodeled.
+        Red spheres mark divergent positions at the binding surface.
+        d = 0.66 (NMR), 0.70 (bat). NF-kB regulatory interface remodeled in long-lived species.
       </div>
     </div>
   </div>
 
   <!-- Panel 5: 4XHU Constraint -->
   <div class="panel">
-    <div class="ph ph-g"><span class="n">5</span><h2>4XHU · Interface Constraint</h2></div>
+    <div class="ph ph-g"><span class="n">5</span><h2>4XHU · PARP1–Timeless · Interface Constraint</h2></div>
     <div class="pb">
-      <!-- Schematic -->
       <div class="prot-schema">
         <div class="prot-blob" style="background:#999;">
           <span class="pn">PARP1</span>
@@ -287,86 +315,19 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
 
       <div style="font-size:11px; color:#888; text-align:right; font-style:italic;">ChimeraX render · PDB 4xhu</div>
       <img class="struct-render"
-           src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/4xhu_receptor_c_d_naked_mole_rat_shared_interface_constraint_closeup.png"
+           src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/poster_4xhu_nmr_enhanced.png"
            alt="4xhu interface constraint — ChimeraX render">
-      <div class="render-cap">Naked mole-rat · interface closeup · d = −0.93</div>
 
       <div class="leg">
-        <span><span class="sw" style="background:#999;"></span>PARP1</span>
-        <span><span class="sw" style="background:#6495ed;"></span>Timeless</span>
-        <span><span class="sw" style="background:#e67e22;"></span>Constrained</span>
+        <span><span class="sw" style="background:#708090;"></span>PARP1 (gray)</span>
+        <span><span class="sw" style="background:#6495ed;"></span>Timeless (blue)</span>
+        <span><span class="sw" style="background:#00aa40;"></span>Conserved interface residues</span>
       </div>
 
       <div class="interp ic">
         <b>Interface shifts ~60% less than non-interface.</b>
-        Cohen's d = −0.91 to −1.01, significant across all species.
-        DNA repair surface preserved.
-      </div>
-    </div>
-  </div>
-
-  <!-- Panel 6: Divergence vs Constraint -->
-  <div class="panel">
-    <div class="ph ph-b"><span class="n">6</span><h2>Divergence vs Constraint</h2></div>
-    <div class="pb">
-      <div style="display:flex; gap:8px; flex:1;">
-        <!-- Divergence column -->
-        <div style="flex:1; background:#fdecea; border-radius:8px; padding:14px; display:flex; flex-direction:column;">
-          <div style="font-size:18px; font-weight:800; color:#c0392b; text-align:center;">DIVERGENCE</div>
-          <div style="font-size:12px; color:#922b21; text-align:center; margin-bottom:10px;">Rewiring / Incompatibility Risk</div>
-          <div style="display:flex; justify-content:center; align-items:center; gap:0; margin:10px 0;">
-            <div style="width:60px; height:60px; border-radius:50%; background:#bbb; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-              <span style="font-size:10px; color:white; font-weight:700;">Prot A</span>
-            </div>
-            <div style="width:40px; text-align:center;">
-              <div style="font-size:22px; color:#e67e22;">●●</div>
-              <div style="font-size:9px; color:#c0392b; font-weight:700;">⚡</div>
-            </div>
-            <div style="width:60px; height:60px; border-radius:50%; background:#6495ed; opacity:0.7; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-              <span style="font-size:10px; color:white; font-weight:700;">Prot B</span>
-            </div>
-          </div>
-          <div style="font-size:13px; color:#5a1a1a; line-height:1.6;">
-            • Residue changes at interface<br>
-            • Altered binding / regulation<br>
-            • Species-specific rewiring
-          </div>
-          <img style="width:100%; border-radius:6px; border:2px solid #e8c0c0; margin-top:8px;"
-               src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/1nfi_receptor_c_e_naked_mole_rat_long_lived_enhanced_interface_divergence_closeup.png"
-               alt="1nfi divergence example">
-          <div style="font-size:10px; text-align:center; color:#922b21; font-weight:600; padding:2px;">1nfi · RelA–IkBα · d = 0.66</div>
-        </div>
-        <!-- Constraint column -->
-        <div style="flex:1; background:#eaf7ef; border-radius:8px; padding:14px; display:flex; flex-direction:column;">
-          <div style="font-size:18px; font-weight:800; color:#1e8449; text-align:center;">CONSTRAINT</div>
-          <div style="font-size:12px; color:#145a32; text-align:center; margin-bottom:10px;">Preserved Compatibility</div>
-          <div style="display:flex; justify-content:center; align-items:center; gap:0; margin:10px 0;">
-            <div style="width:60px; height:60px; border-radius:50%; background:#bbb; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-              <span style="font-size:10px; color:white; font-weight:700;">Prot A</span>
-            </div>
-            <div style="width:40px; text-align:center;">
-              <div style="font-size:22px; color:#27ae60;">●●</div>
-              <div style="font-size:9px; color:#1e8449; font-weight:700;">═══</div>
-            </div>
-            <div style="width:60px; height:60px; border-radius:50%; background:#6495ed; opacity:0.7; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-              <span style="font-size:10px; color:white; font-weight:700;">Prot B</span>
-            </div>
-          </div>
-          <div style="font-size:13px; color:#0f4422; line-height:1.6;">
-            • Interface residues conserved<br>
-            • Preserves critical interactions<br>
-            • Compatible with portability
-          </div>
-          <img style="width:100%; border-radius:6px; border:2px solid #a0d0b0; margin-top:8px;"
-               src="../../data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/4xhu_receptor_c_d_naked_mole_rat_shared_interface_constraint_closeup.png"
-               alt="4xhu constraint example">
-          <div style="font-size:10px; text-align:center; color:#145a32; font-weight:600; padding:2px;">4xhu · PARP1–Timeless · d = −0.93</div>
-        </div>
-      </div>
-
-      <div style="background:#d6e4f8; border-radius:8px; padding:10px; margin-top:10px; font-size:14px; text-align:center; font-weight:600; color:#1a3060;">
-        Longevity Port seeks both: where interfaces <span style="color:#c0392b;">changed</span>
-        and where they <span style="color:#1e8449;">stayed the same</span>.
+        Green spheres mark conserved positions at the binding surface.
+        d = −0.93 (NMR), −1.01 (bat). DNA repair interface preserved across species.
       </div>
     </div>
   </div>
@@ -374,14 +335,30 @@ table.t tr.hi td { background: #fffde0; font-weight: 600; }
 </div>
 
 <!-- KEY TAKE-HOME MESSAGES -->
-<div class="ban">
-  <h3>Key Take-Home Messages</h3>
-  <ul>
-    <li><strong>1nfi</strong> (RelA/p65 — IkBα) is the strongest candidate: statistically significant interface divergence in both long-lived species (d = 0.66–0.70). NF-kB regulatory interface remodeled.</li>
-    <li><strong>4xhu</strong> (PARP1 — Timeless) demonstrates strong interface constraint (d = −0.91 to −1.01) — the DNA repair binding surface is preserved across all species, compatible with portability.</li>
-    <li>PLM embeddings detect both <strong>divergent</strong> (rewiring) and <strong>constrained</strong> (preserved) protein–protein interfaces — complementary evidence for cross-species portability assessment.</li>
-    <li>All <strong>11/11</strong> structure–species groups pass alignment-based residue remapping QC. 6 complexes screened, 2 statistically significant.</li>
-  </ul>
+<div class="thm">
+  <div class="thm-title">Key Take-Homes</div>
+  <div class="thm-cards">
+    <div class="thm-card" style="background:#fdecea; color:#5a1a1a;">
+      <div class="thm-icon" style="background:#c0392b; color:white;">&#x26A1;</div>
+      <h4 style="color:#922b21;">Interface Divergence Detected</h4>
+      <p><b>1nfi</b> RelA/p65–IkBα: significant interface divergence in both long-lived species (d&nbsp;=&nbsp;0.66–0.70). NF-kB regulatory surface remodeled.</p>
+    </div>
+    <div class="thm-card" style="background:#eaf7ef; color:#0f4422;">
+      <div class="thm-icon" style="background:#1e8449; color:white;">&#x1F6E1;</div>
+      <h4 style="color:#145a32;">Interface Constraint Confirmed</h4>
+      <p><b>4xhu</b> PARP1–Timeless: strong constraint (d&nbsp;=&nbsp;−0.91 to −1.01). DNA repair binding surface preserved across species — compatible with portability.</p>
+    </div>
+    <div class="thm-card" style="background:#eee8f5; color:#3b1d5e;">
+      <div class="thm-icon" style="background:#6c3483; color:white;">&#x1F52C;</div>
+      <h4 style="color:#6c3483;">PLM Embeddings Work Both Ways</h4>
+      <p>ESM&nbsp;C embeddings detect both <b>divergent</b> (rewiring risk) and <b>constrained</b> (preserved) interfaces — complementary evidence for portability.</p>
+    </div>
+    <div class="thm-card" style="background:#e0f0f8; color:#0c4a5e;">
+      <div class="thm-icon" style="background:#0e8a7e; color:white;">&#x2705;</div>
+      <h4 style="color:#0e8a7e;">11/11 QC Pass</h4>
+      <p>All structure–species groups pass alignment-based residue remapping QC. 6 complexes screened, 2 statistically significant hits.</p>
+    </div>
+  </div>
 </div>
 
 </div>

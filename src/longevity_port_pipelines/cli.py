@@ -303,7 +303,7 @@ def render_poster(
         Path, typer.Option("-o", "--output", help="Output PNG path")
     ] = Path("docs/poster/poster.png"),
     width: Annotated[int, typer.Option(help="Viewport width (px)")] = 1680,
-    height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1800,
+    height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1680,
     verbose: Verbose = False,
 ) -> None:
     """Render the poster HTML to a PNG image using Chrome headless."""

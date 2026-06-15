@@ -34,7 +34,7 @@ def render_poster(
     html: Annotated[Path, typer.Option(help="Input HTML file")] = POSTER_HTML,
     output: Annotated[Path, typer.Option("-o", "--output", help="Output PNG path")] = DEFAULT_OUTPUT,
     width: Annotated[int, typer.Option(help="Viewport width (px)")] = 1680,
-    height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1800,
+    height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1680,
 ) -> None:
     """Render the poster HTML to a PNG image using Chrome headless."""
     chrome = _find_chrome()
