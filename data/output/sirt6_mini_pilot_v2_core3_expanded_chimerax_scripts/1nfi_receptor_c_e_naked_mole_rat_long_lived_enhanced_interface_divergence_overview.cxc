@@ -1,0 +1,21 @@
+# 1nfi | receptor | naked_mole_rat | long_lived_enhanced_interface_divergence | remapped_interface_supported | Overview
+open "data/interim/pdb/1nfi.pdb"
+set bgColor white
+hide atoms
+hide cartoons
+hide surfaces
+cartoon /C
+color /C gray
+surface /E
+color /E blue surfaces
+transparency /E 75 surfaces
+show /C:22,181,302,304,306,307,308,309,310,311,313,314 atoms
+style /C:22,181,302,304,306,307,308,309,310,311,313,314 ball
+color /C:22,181,302,304,306,307,308,309,310,311,313,314 orange
+size /C:22,181,302,304,306,307,308,309,310,311,313,314 atomRadius 1.55
+lighting soft
+graphics silhouettes true
+view /C
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/1nfi_receptor_c_e_naked_mole_rat_long_lived_enhanced_interface_divergence_overview.png" width 2400 height 1800 supersample 3
+exit

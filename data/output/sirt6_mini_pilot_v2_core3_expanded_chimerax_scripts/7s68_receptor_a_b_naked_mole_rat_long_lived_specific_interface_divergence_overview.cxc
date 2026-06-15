@@ -1,0 +1,21 @@
+# 7s68 | receptor | naked_mole_rat | long_lived_specific_interface_divergence | remapped_interface_supported | Overview
+open "data/interim/pdb/7s68.pdb"
+set bgColor white
+hide atoms
+hide cartoons
+hide surfaces
+cartoon /A
+color /A gray
+surface /B
+color /B blue surfaces
+transparency /B 75 surfaces
+show /A:5,6,40,41,42,43,44,45,46,47,311,313 atoms
+style /A:5,6,40,41,42,43,44,45,46,47,311,313 ball
+color /A:5,6,40,41,42,43,44,45,46,47,311,313 orange
+size /A:5,6,40,41,42,43,44,45,46,47,311,313 atomRadius 1.55
+lighting soft
+graphics silhouettes true
+view /A
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/7s68_receptor_a_b_naked_mole_rat_long_lived_specific_interface_divergence_overview.png" width 2400 height 1800 supersample 3
+exit

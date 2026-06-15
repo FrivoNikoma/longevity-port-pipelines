@@ -14,8 +14,8 @@ DEFAULT_OUTPUT_MD = "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_fig
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Export ChimeraX figure scripts from the core3-expanded "
-            "viewer-ready structure selections."
+            "Export ChimeraX overview and closeup figure scripts from the "
+            "core3-expanded viewer-ready structure selections."
         )
     )
     parser.add_argument(
@@ -66,8 +66,7 @@ def parse_pymol_patch_selection(selection: str) -> list[int]:
     if not match:
         raise ValueError(f"Could not parse residue list from: {selection}")
 
-    residue_block = match.group(1)
-    residues = [int(token) for token in residue_block.split("+") if token.strip()]
+    residues = [int(token) for token in match.group(1).split("+") if token.strip()]
     if not residues:
         raise ValueError(f"Parsed empty residue list from: {selection}")
     return residues
@@ -94,29 +93,47 @@ def build_script_text(
     contrast_class: str,
     qc_status: str,
     residues: list[int],
+    view_mode: str,
 ) -> str:
     residue_spec = chimerax_residue_spec(residues)
+    patch_spec = f"/{structure_chain}:{residue_spec}"
 
-    title = f"{pdb_id} | {chain_role} | {target_species} | {contrast_class} | {qc_status}"
+    if view_mode == "overview":
+        title_suffix = "Overview"
+        view_commands = [f"view /{structure_chain}"]
+    elif view_mode == "closeup":
+        title_suffix = "Closeup"
+        view_commands = [f"view {patch_spec}", "zoom 1.6"]
+    else:
+        raise ValueError(f"Unexpected view mode: {view_mode}")
+
+    title = (
+        f"{pdb_id} | {chain_role} | {target_species} | "
+        f"{contrast_class} | {qc_status} | {title_suffix}"
+    )
 
     lines = [
         f"# {title}",
         f'open "{structure_path.as_posix()}"',
+        "set bgColor white",
         "hide atoms",
-        "cartoon",
-        f"color /{structure_chain} light gray",
-        f"color /{partner_chain} cornflower blue",
+        "hide cartoons",
+        "hide surfaces",
+        f"cartoon /{structure_chain}",
+        f"color /{structure_chain} gray",
         f"surface /{partner_chain}",
-        f"transparency 65 /{partner_chain}",
-        f"show /{structure_chain}:{residue_spec} atoms",
-        f"style /{structure_chain}:{residue_spec} ball",
-        f"color /{structure_chain}:{residue_spec} orange red",
-        f"size /{structure_chain}:{residue_spec} atomRadius 1.0",
+        f"color /{partner_chain} blue surfaces",
+        f"transparency /{partner_chain} 75 surfaces",
+        f"show {patch_spec} atoms",
+        f"style {patch_spec} ball",
+        f"color {patch_spec} orange",
+        f"size {patch_spec} atomRadius 1.55",
         "lighting soft",
         "graphics silhouettes true",
-        f"view /{structure_chain}:{residue_spec}",
+        *view_commands,
         "windowsize 1600 1200",
-        f'save "{png_path.as_posix()}" width 2000 height 1600 supersample 3',
+        f'save "{png_path.as_posix()}" width 2400 height 1800 supersample 3',
+        "exit",
     ]
     return "\n".join(lines) + "\n"
 
@@ -132,18 +149,17 @@ def write_markdown_summary(
     lines.append("## Purpose")
     lines.append("")
     lines.append(
-        "This file indexes the ChimeraX figure scripts exported from the "
-        "viewer-ready structure selections."
+        "This file indexes the ChimeraX overview and closeup figure scripts "
+        "exported from the viewer-ready structure selections."
     )
     lines.append("")
-    lines.append(
-        "These scripts are intended to generate biologically interpretable 3D "
-        "structure views in which:"
-    )
+    lines.append("The generated scripts use a robust ChimeraX command subset:")
     lines.append("")
-    lines.append("- the target chain is shown as a light-gray cartoon;")
-    lines.append("- the partner chain is shown as a blue semi-transparent surface;")
-    lines.append("- the candidate residue patch is highlighted as orange-red spheres.")
+    lines.append("- target chain: gray cartoon;")
+    lines.append("- partner chain: blue semi-transparent surface;")
+    lines.append("- candidate residue patch: orange spheres;")
+    lines.append("- overview view: target-chain framing;")
+    lines.append("- closeup view: patch-residue framing.")
     lines.append("")
     lines.append("## How to use")
     lines.append("")
@@ -159,20 +175,19 @@ def write_markdown_summary(
     lines.append("")
 
     for row in script_rows:
-        heading = (
+        lines.append(
             f"### {row['pdb_id']} / {row['chain']} / {row['target_species']} / "
             f"{row['structure_chain']}/{row['partner_structure_chain']}"
         )
-        lines.append(heading)
         lines.append("")
-        lines.append(f"- Structure chain: `{row['structure_chain']}`")
-        lines.append(f"- Partner chain: `{row['partner_structure_chain']}`")
         lines.append(f"- Contrast class: `{row['contrast_class']}`")
         lines.append(f"- QC status: `{row['qc_status']}`")
         lines.append(f"- Residue count: `{row['n_residues']}`")
-        lines.append(f"- Script: `{row['script_path']}`")
-        lines.append(f"- PNG target: `{row['png_path']}`")
         lines.append(f"- Residues: `{row['residue_numbers_for_display']}`")
+        lines.append(f"- Overview script: `{row['overview_script_path']}`")
+        lines.append(f"- Overview PNG target: `{row['overview_png_path']}`")
+        lines.append(f"- Closeup script: `{row['closeup_script_path']}`")
+        lines.append(f"- Closeup PNG target: `{row['closeup_png_path']}`")
         lines.append("")
 
     output_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
@@ -187,6 +202,7 @@ def main() -> None:
     output_md = Path(args.output_md)
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    output_md.parent.mkdir(parents=True, exist_ok=True)
 
     rows = read_rows(input_csv)
     script_rows: list[dict[str, str]] = []
@@ -204,26 +220,35 @@ def main() -> None:
         residues = parse_pymol_patch_selection(pymol_patch_selection)
         structure_path = find_structure_file(pdb_dir, pdb_id)
 
-        script_stem = safe_name(
+        case_stem = safe_name(
             f"{pdb_id}_{chain_role}_{structure_chain}_{partner_chain}_"
             f"{target_species}_{contrast_class}"
         )
-        script_path = output_dir / f"{script_stem}.cxc"
-        png_path = output_dir / f"{script_stem}.png"
 
-        script_text = build_script_text(
-            structure_path=structure_path,
-            png_path=png_path,
-            pdb_id=pdb_id,
-            chain_role=chain_role,
-            target_species=target_species,
-            structure_chain=structure_chain,
-            partner_chain=partner_chain,
-            contrast_class=contrast_class,
-            qc_status=qc_status,
-            residues=residues,
-        )
-        script_path.write_text(script_text, encoding="utf-8")
+        script_paths: dict[str, Path] = {}
+        png_paths: dict[str, Path] = {}
+
+        for view_mode in ["overview", "closeup"]:
+            script_path = output_dir / f"{case_stem}_{view_mode}.cxc"
+            png_path = output_dir / f"{case_stem}_{view_mode}.png"
+
+            script_text = build_script_text(
+                structure_path=structure_path,
+                png_path=png_path,
+                pdb_id=pdb_id,
+                chain_role=chain_role,
+                target_species=target_species,
+                structure_chain=structure_chain,
+                partner_chain=partner_chain,
+                contrast_class=contrast_class,
+                qc_status=qc_status,
+                residues=residues,
+                view_mode=view_mode,
+            )
+            script_path.write_text(script_text, encoding="utf-8")
+
+            script_paths[view_mode] = script_path
+            png_paths[view_mode] = png_path
 
         script_rows.append(
             {
@@ -236,14 +261,18 @@ def main() -> None:
                 "qc_status": qc_status,
                 "n_residues": str(len(residues)),
                 "residue_numbers_for_display": ",".join(str(value) for value in residues),
-                "script_path": str(script_path).replace("\\", "/"),
-                "png_path": str(png_path).replace("\\", "/"),
+                "overview_script_path": str(script_paths["overview"]).replace("\\", "/"),
+                "overview_png_path": str(png_paths["overview"]).replace("\\", "/"),
+                "closeup_script_path": str(script_paths["closeup"]).replace("\\", "/"),
+                "closeup_png_path": str(png_paths["closeup"]).replace("\\", "/"),
             }
         )
 
     write_markdown_summary(output_path=output_md, script_rows=script_rows)
 
-    print(f"Wrote {len(script_rows)} ChimeraX scripts to {output_dir}")
+    print(
+        f"Wrote {len(script_rows) * 2} ChimeraX scripts ({len(script_rows)} cases) to {output_dir}"
+    )
     print(f"Wrote {output_md}")
 
     for row in script_rows:
@@ -252,7 +281,8 @@ def main() -> None:
             f"{row['chain']:<8}  "
             f"{row['target_species']:<18}  "
             f"{row['structure_chain']}/{row['partner_structure_chain']}  "
-            f"n_residues={row['n_residues']}"
+            f"n_residues={row['n_residues']}  "
+            "overview+closeup"
         )
 
 

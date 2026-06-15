@@ -1,0 +1,21 @@
+# 8g57 | ligand | myotis_lucifugus | long_lived_specific_interface_divergence | remapped_interface_supported | Overview
+open "data/interim/pdb/8g57.pdb"
+set bgColor white
+hide atoms
+hide cartoons
+hide surfaces
+cartoon /G
+color /G gray
+surface /K
+color /K blue surfaces
+transparency /K 75 surfaces
+show /G:22,56,63,71,120,121,122,123,124,125,126,127 atoms
+style /G:22,56,63,71,120,121,122,123,124,125,126,127 ball
+color /G:22,56,63,71,120,121,122,123,124,125,126,127 orange
+size /G:22,56,63,71,120,121,122,123,124,125,126,127 atomRadius 1.55
+lighting soft
+graphics silhouettes true
+view /G
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/8g57_ligand_g_k_myotis_lucifugus_long_lived_specific_interface_divergence_overview.png" width 2400 height 1800 supersample 3
+exit
