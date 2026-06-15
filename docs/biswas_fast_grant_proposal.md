@@ -56,7 +56,7 @@ Open-source code, cross-species interface divergence dataset, ranked candidate s
 
 ## Brief Bio (<=400 chars, 3-4 bullets, ~80 words) — 288 chars
 
-Team: Anton Kulaga (PI), bioinformatician, Inst. of Biochemistry of the Romanian Academy / Rostock Univ. Medical Center. Key papers: ML of mammalian longevity (IJMS 2021), gray-whale DNA repair (Aging Cell 2020). Robi Tacutu (advisor, h-index 24), head of Romanian Bioinformatics Cluster, creator of HAGR aging database.
+Team: Anton Kulaga (PI), bioinformatician at IBIMA, Rostock Univ. Medical Center; Systems Biology of Aging, Inst. of Biochemistry, Romanian Academy. Key papers: ML of mammalian longevity (IJMS 2021), gray-whale DNA repair (Aging Cell 2020). Alexander Nikiforov (contributor, Healthy Life Extension Society). Robi Tacutu (advisor, 3700+ citations), head of Romanian Bioinformatics Cluster. 
 
 ---
 
