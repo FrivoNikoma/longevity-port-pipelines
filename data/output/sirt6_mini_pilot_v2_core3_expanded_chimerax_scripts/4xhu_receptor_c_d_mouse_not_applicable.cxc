@@ -1,0 +1,17 @@
+# 4xhu | receptor | mouse | not_applicable | remapped_interface_supported
+open "data/interim/pdb/4xhu.pdb"
+hide atoms
+cartoon
+color /C light gray
+color /D cornflower blue
+surface /D
+transparency 65 /D
+show /C:876,877,878,879,882,883,893,894,895,927,991,993 atoms
+style /C:876,877,878,879,882,883,893,894,895,927,991,993 ball
+color /C:876,877,878,879,882,883,893,894,895,927,991,993 orange red
+size /C:876,877,878,879,882,883,893,894,895,927,991,993 atomRadius 1.0
+lighting soft
+graphics silhouettes true
+view /C:876,877,878,879,882,883,893,894,895,927,991,993
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/4xhu_receptor_c_d_mouse_not_applicable.png" width 2000 height 1600 supersample 3

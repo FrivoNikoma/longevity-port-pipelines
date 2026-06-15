@@ -1,0 +1,17 @@
+# 8g57 | ligand | naked_mole_rat | long_lived_specific_interface_divergence | remapped_interface_supported
+open "data/interim/pdb/8g57.pdb"
+hide atoms
+cartoon
+color /G light gray
+color /K cornflower blue
+surface /K
+transparency 65 /K
+show /G:24,52,55,56,57,58,59,60,61,62,64,127 atoms
+style /G:24,52,55,56,57,58,59,60,61,62,64,127 ball
+color /G:24,52,55,56,57,58,59,60,61,62,64,127 orange red
+size /G:24,52,55,56,57,58,59,60,61,62,64,127 atomRadius 1.0
+lighting soft
+graphics silhouettes true
+view /G:24,52,55,56,57,58,59,60,61,62,64,127
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/8g57_ligand_g_k_naked_mole_rat_long_lived_specific_interface_divergence.png" width 2000 height 1600 supersample 3

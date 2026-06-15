@@ -1,0 +1,17 @@
+# 8bhv | ligand | mouse | not_applicable | remapped_interface_supported
+open "data/interim/pdb/8bhv.cif"
+hide atoms
+cartoon
+color /Q light gray
+color /h cornflower blue
+surface /h
+transparency 65 /h
+show /Q:173,174,175,176,177,178,179 atoms
+style /Q:173,174,175,176,177,178,179 ball
+color /Q:173,174,175,176,177,178,179 orange red
+size /Q:173,174,175,176,177,178,179 atomRadius 1.0
+lighting soft
+graphics silhouettes true
+view /Q:173,174,175,176,177,178,179
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/8bhv_ligand_q_h_mouse_not_applicable.png" width 2000 height 1600 supersample 3

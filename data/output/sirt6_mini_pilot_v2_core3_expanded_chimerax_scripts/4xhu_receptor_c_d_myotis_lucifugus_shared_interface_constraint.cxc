@@ -1,0 +1,17 @@
+# 4xhu | receptor | myotis_lucifugus | shared_interface_constraint | remapped_interface_supported
+open "data/interim/pdb/4xhu.pdb"
+hide atoms
+cartoon
+color /C light gray
+color /D cornflower blue
+surface /D
+transparency 65 /D
+show /C:875,876,877,878,881,882,883,893,894,895,926,927 atoms
+style /C:875,876,877,878,881,882,883,893,894,895,926,927 ball
+color /C:875,876,877,878,881,882,883,893,894,895,926,927 orange red
+size /C:875,876,877,878,881,882,883,893,894,895,926,927 atomRadius 1.0
+lighting soft
+graphics silhouettes true
+view /C:875,876,877,878,881,882,883,893,894,895,926,927
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/4xhu_receptor_c_d_myotis_lucifugus_shared_interface_constraint.png" width 2000 height 1600 supersample 3

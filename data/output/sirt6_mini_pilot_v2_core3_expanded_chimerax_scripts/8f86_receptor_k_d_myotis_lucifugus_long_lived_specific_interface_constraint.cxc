@@ -1,0 +1,17 @@
+# 8f86 | receptor | myotis_lucifugus | long_lived_specific_interface_constraint | remapped_interface_supported
+open "data/interim/pdb/8f86.pdb"
+hide atoms
+cartoon
+color /K light gray
+color /D cornflower blue
+surface /D
+transparency 65 /D
+show /K:170,171,172,173,174,175,176,178 atoms
+style /K:170,171,172,173,174,175,176,178 ball
+color /K:170,171,172,173,174,175,176,178 orange red
+size /K:170,171,172,173,174,175,176,178 atomRadius 1.0
+lighting soft
+graphics silhouettes true
+view /K:170,171,172,173,174,175,176,178
+windowsize 1600 1200
+save "data/output/sirt6_mini_pilot_v2_core3_expanded_chimerax_scripts/8f86_receptor_k_d_myotis_lucifugus_long_lived_specific_interface_constraint.png" width 2000 height 1600 supersample 3
