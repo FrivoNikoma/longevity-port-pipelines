@@ -65,6 +65,7 @@ class PipelineConfig(BaseModel):
     # Stage 6: analysis
     n_permutations: int = 1000
     interface_distance_cutoff: float = 8.0
+    negatome_control_pairs_path: Path = Path("data/interim/negatome_control_pairs.csv")
 
     def ensure_dirs(self) -> None:
         self.input_dir.mkdir(parents=True, exist_ok=True)

@@ -9,7 +9,9 @@ The current mini-pilot already reports:
 - negative-control audit status;
 - control status in the candidate scorecard.
 
-However, the current mini-pilot does not yet populate `negatome_control_ratio`. Until a valid negative-control input table is provided, enrichment results should remain marked as `missing_negatome`.
+However, the current mini-pilot does not yet populate `negatome_control_ratio` until curated
+negative-control inputs are provided **and** partner embeddings are computed. Until then,
+enrichment results should remain marked as `missing_negatome`.
 
 ## Input file
 
@@ -116,19 +118,41 @@ decoy
 
 Run:
 
-```
+```powershell
 uv run python -m scripts.validate_negatome_control_inputs
-
 ```
 
 Expected output:
 
 ```
 data/output/sirt6_mini_pilot_negatome_control_input_validation.csv
-
 ```
 
 The validation output reports whether each mini-pilot complex/chain/species row has at least one negative-control input candidate.
+
+## Compute NEGATOME control ratios
+
+After curating `data/interim/negatome_control_pairs.csv` (see `data/input/negatome_control_pairs.example.csv`):
+
+```powershell
+uv run python -m scripts.embed_negatome_control_partners
+uv run python -m scripts.analyze_saved_embeddings_mapped --negatome-pairs data/interim/negatome_control_pairs.csv
+uv run python -m scripts.audit_negative_controls
+```
+
+The main 7-stage pipeline also embeds negative partners during stage 5 and writes
+`negatome_control_ratio` during stage 6 when the curated input file exists.
+
+### Metric
+
+`negatome_control_ratio` uses the same structural interface mask as the primary enrichment
+analysis, but measures cross-species change in embedding coupling to the curated
+non-interacting partner. A candidate should ideally satisfy:
+
+```text
+enrichment_ratio > shuffled_control_ratio
+enrichment_ratio > negatome_control_ratio
+```
 
 ## Current expected status
 
@@ -150,26 +174,32 @@ This is expected and should not be treated as a failed analysis. It means the mi
 
 ## Future use
 
-A later pipeline step should use this input contract to compute `negatome_control_ratio`.
+The pipeline step that computes `negatome_control_ratio` is implemented in:
 
-That future step should:
+- `src/longevity_port_pipelines/stages/negatome_analyze.py`
+- `src/longevity_port_pipelines/stages/negatome_controls.py`
+- `src/longevity_port_pipelines/pipeline.py` (stages 5–6)
+- `scripts/embed_negatome_control_partners.py`
+- `scripts/analyze_saved_embeddings_mapped.py`
 
-1. embed the negative-control partner sequence;
-2. compute a comparable interface/non-interface or partner-control statistic;
-3. write `negatome_control_ratio` into enrichment outputs;
-4. rerun the negative-control audit;
-5. propagate the updated control status into the candidate scorecard.
+That step:
+
+1. embeds the negative-control partner sequence;
+2. computes coupling-shift enrichment at the structural interface mask;
+3. writes `negatome_control_ratio` into enrichment outputs;
+4. reruns the negative-control audit;
+5. propagates the updated control status into the candidate scorecard.
 
 ## Important interpretation note
 
-This document defines the input contract only. It does not claim that NEGATOME-style controls are currently populated.
+This document defines the input contract only. It does not claim that NEGATOME-style controls
+are populated for every row until curated inputs and partner embeddings exist.
 
-The current correct interpretation is:
+The current interpretation is:
 
-```
+```text
 shuffled mask control: implemented
-NEGATOME-style control: input contract defined, ratios not yet populated
-candidate scorecard: should continue to show missing_negatome until a valid control table exists
-
+NEGATOME-style control: implemented when data/interim/negatome_control_pairs.csv is curated
+candidate scorecard: missing_negatome until negatome_control_ratio is populated per row
 ```
 

@@ -25,6 +25,13 @@ from longevity_port_pipelines.stages.embed import (
     save_embeddings,
 )
 from longevity_port_pipelines.stages.interface import download_pdb, extract_interface_residues
+from longevity_port_pipelines.stages.negatome_controls import (
+    NegatomePairLookup,
+    apply_negatome_control_to_result,
+    build_negatome_pair_lookup,
+    embed_negatome_control_partners,
+    load_negatome_control_pairs,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +60,15 @@ def run_stages_1_to_4(cfg: PipelineConfig) -> tuple[pl.LazyFrame, list[OrthologM
     return candidates, mappings
 
 
+def _load_negatome_pair_lookup(
+    cfg: PipelineConfig,
+) -> tuple[pl.DataFrame | None, NegatomePairLookup | None]:
+    pairs = load_negatome_control_pairs(cfg.negatome_control_pairs_path)
+    if pairs is None or pairs.is_empty():
+        return None, None
+    return pairs, build_negatome_pair_lookup(pairs)
+
+
 def run_stage_5(
     candidates: pl.LazyFrame,
     mappings: list[OrthologMapping],
@@ -66,6 +82,11 @@ def run_stage_5(
     logger.info("=== Stage 5: Embed sequences (Biohub API) ===")
 
     token = get_biohub_token()
+
+    negatome_pairs, _ = _load_negatome_pair_lookup(cfg)
+    if negatome_pairs is not None:
+        embedded_count = embed_negatome_control_partners(negatome_pairs, cfg, token)
+        logger.info("Embedded %d NEGATOME negative partner sequences", embedded_count)
 
     df = candidates.collect()
     cols = df.columns
@@ -153,6 +174,8 @@ def run_stage_6(
 
     logger.info("=== Stage 6: Analyze enrichment ===")
 
+    _, negatome_lookup = _load_negatome_pair_lookup(cfg)
+
     results: list[EnrichmentResult] = []
     for ref_emb, orth_emb, interface_res, source_sp, target_sp in embedding_pairs:
         if not interface_res:
@@ -169,6 +192,15 @@ def run_stage_6(
             target_species_name=target_sp,
             n_permutations=cfg.n_permutations,
         )
+        if negatome_lookup is not None:
+            result = apply_negatome_control_to_result(
+                result,
+                ref=ref_emb,
+                orth=orth_emb,
+                interface_residues=interface_res,
+                pair_lookup=negatome_lookup,
+                interim_dir=cfg.interim_dir,
+            )
         results.append(result)
 
     enrichment_df = pl.DataFrame([r.model_dump() for r in results]) if results else pl.DataFrame()

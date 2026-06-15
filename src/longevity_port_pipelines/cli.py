@@ -296,12 +296,10 @@ def validation_protocol_cmd() -> None:
 
 
 def render_poster(
-    html: Annotated[
-        Path, typer.Option(help="Input HTML file")
-    ] = Path("docs/poster/poster.html"),
-    output: Annotated[
-        Path, typer.Option("-o", "--output", help="Output PNG path")
-    ] = Path("docs/poster/poster.png"),
+    html: Annotated[Path, typer.Option(help="Input HTML file")] = Path("docs/poster/poster.html"),
+    output: Annotated[Path, typer.Option("-o", "--output", help="Output PNG path")] = Path(
+        "docs/poster/poster.png"
+    ),
     width: Annotated[int, typer.Option(help="Viewport width (px)")] = 1680,
     height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1850,
     verbose: Verbose = False,

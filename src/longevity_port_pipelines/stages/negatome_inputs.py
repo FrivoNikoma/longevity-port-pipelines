@@ -73,7 +73,8 @@ def validation_note_expr() -> pl.Expr:
         .then(
             pl.lit(
                 "Negative-control input exists for this complex/chain/species row. "
-                "This enables a future NEGATOME-style control-ratio calculation."
+                "Run embed_negatome_control_partners and re-analyze to populate "
+                "negatome_control_ratio."
             )
         )
         .otherwise(

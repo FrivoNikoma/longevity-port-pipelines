@@ -14,7 +14,13 @@ from Bio.SeqUtils import seq1
 from longevity_port_pipelines.config import REFERENCE_SPECIES, TARGET_SPECIES, PipelineConfig
 from longevity_port_pipelines.models import OrthologMapping
 from longevity_port_pipelines.stages.analyze import analyze_pair
-from longevity_port_pipelines.stages.embed import PerResidueEmbedding
+from longevity_port_pipelines.stages.embed import PerResidueEmbedding, get_biohub_token
+from longevity_port_pipelines.stages.negatome_controls import (
+    apply_negatome_control_to_result,
+    build_negatome_pair_lookup,
+    embed_negatome_control_partners,
+    load_negatome_control_pairs,
+)
 
 StructureFormat = Literal["pdb", "cif"]
 
@@ -51,6 +57,17 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=8.0,
         help="Heavy-atom distance cutoff for interface residues.",
+    )
+    parser.add_argument(
+        "--negatome-pairs",
+        default="data/interim/negatome_control_pairs.csv",
+        help="Curated NEGATOME-style negative-control partner CSV.",
+    )
+    parser.add_argument(
+        "--embed-negatome-partners",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Embed missing negative-partner sequences via Biohub before analysis.",
     )
     return parser.parse_args()
 
@@ -428,6 +445,15 @@ def main() -> None:
     output_path = Path(args.output)
     embedding_dir = Path(args.embedding_dir)
 
+    negatome_pairs = load_negatome_control_pairs(Path(args.negatome_pairs))
+    negatome_lookup = (
+        build_negatome_pair_lookup(negatome_pairs) if negatome_pairs is not None else None
+    )
+    if negatome_pairs is not None and args.embed_negatome_partners:
+        token = get_biohub_token()
+        embedded_count = embed_negatome_control_partners(negatome_pairs, cfg, token)
+        print(f"[NEGATOME] Embedded {embedded_count} negative partner sequences")
+
     if not selection_path.exists():
         raise FileNotFoundError(f"Missing selection CSV: {selection_path}")
     if not coverage_path.exists():
@@ -547,6 +573,16 @@ def main() -> None:
                     target_species_name=species_name(mapping.target_species_taxid),
                     n_permutations=cfg.n_permutations,
                 )
+                if negatome_lookup is not None:
+                    result = apply_negatome_control_to_result(
+                        result,
+                        ref=ref_embedding,
+                        orth=orth_embedding,
+                        interface_residues=interface_residues,
+                        pair_lookup=negatome_lookup,
+                        interim_dir=cfg.interim_dir,
+                        source_uniprot=str(source_uniprot),
+                    )
                 results.append(result)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

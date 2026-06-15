@@ -10,8 +10,14 @@ from longevity_port_pipelines.config import (
 )
 from longevity_port_pipelines.models import OrthologMapping
 from longevity_port_pipelines.stages.analyze import analyze_pair
-from longevity_port_pipelines.stages.embed import PerResidueEmbedding
+from longevity_port_pipelines.stages.embed import PerResidueEmbedding, get_biohub_token
 from longevity_port_pipelines.stages.interface import download_pdb, extract_interface_residues
+from longevity_port_pipelines.stages.negatome_controls import (
+    apply_negatome_control_to_result,
+    build_negatome_pair_lookup,
+    embed_negatome_control_partners,
+    load_negatome_control_pairs,
+)
 
 
 def species_name(taxid: int) -> str:
@@ -47,6 +53,15 @@ def main() -> None:
 
     if not coverage_path.exists():
         raise FileNotFoundError(f"Missing {coverage_path}")
+
+    negatome_pairs = load_negatome_control_pairs(cfg.negatome_control_pairs_path)
+    negatome_lookup = (
+        build_negatome_pair_lookup(negatome_pairs) if negatome_pairs is not None else None
+    )
+    if negatome_pairs is not None:
+        token = get_biohub_token()
+        embedded_count = embed_negatome_control_partners(negatome_pairs, cfg, token)
+        print(f"[NEGATOME] Embedded {embedded_count} negative partner sequences")
 
     selection = pl.read_csv(selection_path)
     coverage_df = pl.read_csv(coverage_path)
@@ -168,6 +183,16 @@ def main() -> None:
                     target_species_name=species_name(mapping.target_species_taxid),
                     n_permutations=cfg.n_permutations,
                 )
+                if negatome_lookup is not None:
+                    result = apply_negatome_control_to_result(
+                        result,
+                        ref=ref_embedding,
+                        orth=orth_embedding,
+                        interface_residues=interface_residues,
+                        pair_lookup=negatome_lookup,
+                        interim_dir=cfg.interim_dir,
+                        source_uniprot=str(source_uniprot),
+                    )
                 results.append(result)
 
     out_path = cfg.output_dir / "enrichment.parquet"
