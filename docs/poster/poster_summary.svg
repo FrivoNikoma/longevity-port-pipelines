@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" font-family="Helvetica Neue,Helvetica,Arial,sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0L10 5 0 10z" fill="#2d4a8c"/>
+    </marker>
+    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#162040"/>
+      <stop offset="100%" stop-color="#2d4a8c"/>
+    </linearGradient>
+    <linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#a02020"/>
+      <stop offset="100%" stop-color="#c04040"/>
+    </linearGradient>
+    <linearGradient id="gg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1a6838"/>
+      <stop offset="100%" stop-color="#27ae60"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1100" height="680" rx="6" fill="white" stroke="#162040" stroke-width="2.5"/>
+
+  <!-- ════ HEADER ════ -->
+  <rect width="1100" height="52" rx="6" fill="url(#hg)"/>
+  <rect y="46" width="1100" height="6" fill="url(#hg)"/>
+  <text x="550" y="24" text-anchor="middle" fill="white" font-size="19" font-weight="700" letter-spacing="0.8">LONGEVITY PORT PIPELINE</text>
+  <text x="550" y="42" text-anchor="middle" fill="#a0b8e0" font-size="10.5">Protein–Protein Interface Divergence in Long-Lived Species — A Computational Signal Check Using PLM Embeddings</text>
+
+  <!-- ════ ROW 1: three panels ════ -->
+
+  <!-- ── Panel 1: Pipeline ── -->
+  <rect x="10" y="60" width="320" height="250" rx="4" fill="#f7f8fb" stroke="#c0c8d8"/>
+  <rect x="10" y="60" width="320" height="22" rx="4" fill="#1e3060"/>
+  <rect x="10" y="78" width="320" height="4" fill="#1e3060"/>
+  <circle cx="24" cy="71" r="7" fill="#d68519"/><text x="24" y="74" text-anchor="middle" fill="white" font-size="8" font-weight="700">1</text>
+  <text x="36" y="75" fill="white" font-size="10" font-weight="600">PIPELINE</text>
+
+  <!-- compact flow -->
+  <g font-size="9" fill="#162040">
+    <rect x="30" y="90" width="140" height="20" rx="3" fill="#e4eaf5" stroke="#2d4a8c" stroke-width="0.7"/>
+    <text x="100" y="104" text-anchor="middle">Select complexes</text>
+    <line x1="100" y1="110" x2="100" y2="118" stroke="#2d4a8c" stroke-width="1" marker-end="url(#a)"/>
+
+    <rect x="30" y="118" width="140" height="20" rx="3" fill="#e4eaf5" stroke="#2d4a8c" stroke-width="0.7"/>
+    <text x="100" y="132" text-anchor="middle">Fetch orthologs</text>
+    <line x1="100" y1="138" x2="100" y2="146" stroke="#2d4a8c" stroke-width="1" marker-end="url(#a)"/>
+
+    <rect x="30" y="146" width="140" height="20" rx="3" fill="#e4eaf5" stroke="#2d4a8c" stroke-width="0.7"/>
+    <text x="100" y="160" text-anchor="middle">ESM C embeddings</text>
+    <line x1="100" y1="166" x2="100" y2="174" stroke="#2d4a8c" stroke-width="1" marker-end="url(#a)"/>
+
+    <rect x="30" y="174" width="140" height="20" rx="3" fill="#fff3e0" stroke="#d68519" stroke-width="0.7"/>
+    <text x="100" y="188" text-anchor="middle" fill="#6b4400" font-weight="600">Enrichment analysis</text>
+    <line x1="100" y1="194" x2="100" y2="202" stroke="#2d4a8c" stroke-width="1" marker-end="url(#a)"/>
+
+    <rect x="30" y="202" width="140" height="20" rx="3" fill="#e4eaf5" stroke="#2d4a8c" stroke-width="0.7"/>
+    <text x="100" y="216" text-anchor="middle">Structure QC</text>
+    <line x1="100" y1="222" x2="100" y2="230" stroke="#2d4a8c" stroke-width="1" marker-end="url(#a)"/>
+
+    <rect x="30" y="230" width="140" height="20" rx="3" fill="#e8f5ee" stroke="#1d7a42" stroke-width="0.7"/>
+    <text x="100" y="244" text-anchor="middle" fill="#0f4422" font-weight="600">Manual 3D review</text>
+  </g>
+
+  <!-- species & data sidebar -->
+  <rect x="185" y="90" width="132" height="58" rx="3" fill="white" stroke="#c0c8d8" stroke-width="0.5"/>
+  <text x="251" y="103" text-anchor="middle" font-size="8.5" font-weight="700" fill="#162040">Species</text>
+  <text x="251" y="115" text-anchor="middle" font-size="8" fill="#333">Naked mole-rat</text>
+  <text x="251" y="127" text-anchor="middle" font-size="8" fill="#333">Little brown bat</text>
+  <text x="251" y="139" text-anchor="middle" font-size="8" fill="#888">Mouse (reference)</text>
+
+  <rect x="185" y="154" width="132" height="72" rx="3" fill="white" stroke="#c0c8d8" stroke-width="0.5"/>
+  <text x="251" y="167" text-anchor="middle" font-size="8.5" font-weight="700" fill="#162040">Data sources</text>
+  <text x="193" y="180" font-size="7.5" fill="#444">PINDER — PPI structures</text>
+  <text x="193" y="191" font-size="7.5" fill="#444">STRING v12.5 — hub scores</text>
+  <text x="193" y="202" font-size="7.5" fill="#444">OMA / UniProt — orthologs</text>
+  <text x="193" y="213" font-size="7.5" fill="#444">Biohub ESM C 600M — embeddings</text>
+
+  <!-- goal -->
+  <rect x="185" y="232" width="132" height="18" rx="3" fill="#dce6f7"/>
+  <text x="251" y="244" text-anchor="middle" font-size="7.5" font-weight="600" fill="#162040">Interface portability signal</text>
+
+  <!-- question -->
+  <rect x="20" y="260" width="300" height="28" rx="4" fill="#fdf2f2" stroke="#b03030" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <text x="170" y="278" text-anchor="middle" font-size="9" font-weight="600" fill="#5a1a1a">Do interfaces diverge more at contact sites in long-lived species?</text>
+
+  <!-- ── Panel 2: Evidence Ladder ── -->
+  <rect x="340" y="60" width="380" height="250" rx="4" fill="#f7f8fb" stroke="#c0c8d8"/>
+  <rect x="340" y="60" width="380" height="22" rx="4" fill="#1e3060"/>
+  <rect x="340" y="78" width="380" height="4" fill="#1e3060"/>
+  <circle cx="354" cy="71" r="7" fill="#d68519"/><text x="354" y="74" text-anchor="middle" fill="white" font-size="8" font-weight="700">2</text>
+  <text x="366" y="75" fill="white" font-size="10" font-weight="600">EVIDENCE LADDER: FROM SIGNAL TO STRUCTURE</text>
+
+  <!-- Ladder: left rail, right rail, rungs -->
+  <!-- Left rail -->
+  <line x1="370" y1="95" x2="370" y2="278" stroke="#2d4a8c" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Right rail -->
+  <line x1="690" y1="95" x2="690" y2="278" stroke="#2d4a8c" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Rung 1 -->
+  <line x1="370" y1="100" x2="690" y2="100" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="90" width="130" height="20" rx="10" fill="#5b7fbf" stroke="none"/>
+  <text x="445" y="104" text-anchor="middle" fill="white" font-size="8" font-weight="600">Complex-level signal</text>
+  <text x="560" y="104" text-anchor="middle" fill="#333" font-size="8">Interface enrichment ratio</text>
+
+  <!-- Rung 2 -->
+  <line x1="370" y1="128" x2="690" y2="128" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="118" width="130" height="20" rx="10" fill="#5b7fbf" stroke="none"/>
+  <text x="445" y="132" text-anchor="middle" fill="white" font-size="8" font-weight="600">Residue-level signal</text>
+  <text x="570" y="132" text-anchor="middle" fill="#333" font-size="8">Per-residue embedding delta</text>
+
+  <!-- Rung 3 -->
+  <line x1="370" y1="156" x2="690" y2="156" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="146" width="130" height="20" rx="10" fill="#d68519" stroke="none"/>
+  <text x="445" y="160" text-anchor="middle" fill="white" font-size="8" font-weight="600">Profile clustering</text>
+  <text x="570" y="160" text-anchor="middle" fill="#333" font-size="8">PCA + k-means regimes</text>
+
+  <!-- Rung 4 -->
+  <line x1="370" y1="184" x2="690" y2="184" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="174" width="130" height="20" rx="10" fill="#d68519" stroke="none"/>
+  <text x="445" y="188" text-anchor="middle" fill="white" font-size="8" font-weight="600">Review shortlist</text>
+  <text x="570" y="188" text-anchor="middle" fill="#333" font-size="8">Top residues per complex</text>
+
+  <!-- Rung 5 -->
+  <line x1="370" y1="212" x2="690" y2="212" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="202" width="130" height="20" rx="10" fill="#7b5fbf" stroke="none"/>
+  <text x="445" y="216" text-anchor="middle" fill="white" font-size="8" font-weight="600">Structure QC</text>
+  <text x="575" y="216" text-anchor="middle" fill="#333" font-size="8">Alignment-remapped to PDB</text>
+
+  <!-- Rung 6 -->
+  <line x1="370" y1="240" x2="690" y2="240" stroke="#6c8cc8" stroke-width="1.2"/>
+  <rect x="380" y="230" width="130" height="20" rx="10" fill="#2a9d5c" stroke="none"/>
+  <text x="445" y="244" text-anchor="middle" fill="white" font-size="8" font-weight="600">3D review</text>
+  <text x="575" y="244" text-anchor="middle" fill="#333" font-size="8">ChimeraX structural review</text>
+
+  <!-- Ladder direction arrow -->
+  <text x="530" y="275" text-anchor="middle" font-size="8" fill="#888" font-style="italic">computational signal → structurally grounded hypothesis</text>
+
+  <!-- ── Panel 3: Significant Results ── -->
+  <rect x="730" y="60" width="360" height="250" rx="4" fill="#f7f8fb" stroke="#c0c8d8"/>
+  <rect x="730" y="60" width="360" height="22" rx="4" fill="#1e3060"/>
+  <rect x="730" y="78" width="360" height="4" fill="#1e3060"/>
+  <circle cx="744" cy="71" r="7" fill="#d68519"/><text x="744" y="74" text-anchor="middle" fill="white" font-size="8" font-weight="700">3</text>
+  <text x="756" y="75" fill="white" font-size="10" font-weight="600">SIGNIFICANT RESULTS (6 COMPLEXES SCREENED)</text>
+
+  <!-- 1nfi card: divergence -->
+  <rect x="742" y="90" width="168" height="108" rx="5" fill="white" stroke="#b03030" stroke-width="1.5"/>
+  <rect x="742" y="90" width="168" height="20" rx="5" fill="url(#rg)"/>
+  <rect x="742" y="106" width="168" height="4" fill="url(#rg)"/>
+  <text x="826" y="104" text-anchor="middle" fill="white" font-size="9" font-weight="700">1nfi — DIVERGENCE</text>
+  <text x="752" y="124" font-size="8.5" fill="#162040" font-weight="600">RelA/p65 (C) — IkappaBAlpha (E)</text>
+  <text x="752" y="138" font-size="8" fill="#333">NF-kB / inflammation pathway</text>
+  <rect x="752" y="146" width="148" height="20" rx="3" fill="#fdf2f2"/>
+  <text x="826" y="160" text-anchor="middle" font-size="9" font-weight="700" fill="#b03030">Cohen's d = 0.66–0.70</text>
+  <text x="752" y="178" font-size="8" fill="#1d7a42" font-weight="700">✓ Statistically significant</text>
+  <text x="752" y="190" font-size="7.5" fill="#555">Bat + naked mole-rat vs mouse</text>
+
+  <!-- 4xhu card: constraint -->
+  <rect x="920" y="90" width="160" height="108" rx="5" fill="white" stroke="#1d7a42" stroke-width="1.5"/>
+  <rect x="920" y="90" width="160" height="20" rx="5" fill="url(#gg)"/>
+  <rect x="920" y="106" width="160" height="4" fill="url(#gg)"/>
+  <text x="1000" y="104" text-anchor="middle" fill="white" font-size="9" font-weight="700">4xhu — CONSTRAINT</text>
+  <text x="930" y="124" font-size="8.5" fill="#162040" font-weight="600">PARP1 (C) — Timeless (D)</text>
+  <text x="930" y="138" font-size="8" fill="#333">DNA repair / replication fork</text>
+  <rect x="930" y="146" width="140" height="20" rx="3" fill="#f0faf4"/>
+  <text x="1000" y="160" text-anchor="middle" font-size="9" font-weight="700" fill="#1d7a42">Cohen's d = −0.91 to −1.01</text>
+  <text x="930" y="178" font-size="8" fill="#1d7a42" font-weight="700">✓ Statistically significant</text>
+  <text x="930" y="190" font-size="7.5" fill="#555">Conserved across all 3 species</text>
+
+  <!-- Other complexes (not significant) -->
+  <rect x="742" y="206" width="338" height="48" rx="4" fill="white" stroke="#c0c8d8" stroke-dasharray="3,2"/>
+  <text x="752" y="220" font-size="8.5" font-weight="600" fill="#888">Other complexes (not significant)</text>
+  <text x="752" y="234" font-size="8" fill="#999">8g57 H2A–SIRT6 (d=0.35–0.50) · 7s68 PARP1 homodimer (d=0.38)</text>
+  <text x="752" y="246" font-size="8" fill="#999">8f86 SIRT6–H2B (d=−0.34) · 8bhv XLF–Ku70/80 (control)</text>
+
+  <!-- QC bar -->
+  <rect x="742" y="260" width="338" height="18" rx="3" fill="#dce6f7"/>
+  <text x="911" y="273" text-anchor="middle" font-size="8" font-weight="600" fill="#162040">11/11 structure–species groups pass remapped-residue QC</text>
+
+  <!-- ════ ROW 2: Structure comparison panels ════ -->
+
+  <!-- ── Panel 4: 1nfi structures ── -->
+  <rect x="10" y="320" width="540" height="300" rx="4" fill="#fdf8f8" stroke="#b03030" stroke-width="1.2"/>
+  <rect x="10" y="320" width="540" height="24" rx="4" fill="url(#rg)"/>
+  <rect x="10" y="340" width="540" height="4" fill="url(#rg)"/>
+  <circle cx="24" cy="332" r="7" fill="white"/><text x="24" y="335" text-anchor="middle" fill="#a02020" font-size="8" font-weight="700">4</text>
+  <text x="36" y="336" fill="white" font-size="10.5" font-weight="600">1NFI: RelA/p65 — IkappaBAlpha · INTERFACE DIVERGENCE</text>
+
+  <!-- Two side-by-side image slots -->
+  <rect x="24" y="352" width="250" height="188" rx="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="149" y="440" text-anchor="middle" font-size="20" fill="#ccc" font-weight="300">ChimeraX render</text>
+  <text x="149" y="460" text-anchor="middle" font-size="9" fill="#999">poster_1nfi_naked_mole_rat.png</text>
+  <rect x="24" y="540" width="250" height="16" rx="2" fill="#fdf2f2"/>
+  <text x="149" y="552" text-anchor="middle" font-size="8.5" font-weight="600" fill="#5a1a1a">Naked mole-rat</text>
+
+  <rect x="286" y="352" width="250" height="188" rx="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="411" y="440" text-anchor="middle" font-size="20" fill="#ccc" font-weight="300">ChimeraX render</text>
+  <text x="411" y="460" text-anchor="middle" font-size="9" fill="#999">poster_1nfi_myotis_lucifugus.png</text>
+  <rect x="286" y="540" width="250" height="16" rx="2" fill="#fdf2f2"/>
+  <text x="411" y="552" text-anchor="middle" font-size="8.5" font-weight="600" fill="#5a1a1a">Myotis lucifugus (bat)</text>
+
+  <!-- legend + interpretation -->
+  <rect x="24" y="564" width="516" height="46" rx="3" fill="white" stroke="#e0d0d0"/>
+  <rect x="34" y="572" width="10" height="10" rx="2" fill="#999"/>
+  <text x="48" y="581" font-size="8" fill="#444">Gray — RelA/p65 (chain C, target)</text>
+  <rect x="190" y="572" width="10" height="10" rx="2" fill="#6495ed" opacity="0.8"/>
+  <text x="204" y="581" font-size="8" fill="#444">Blue — IkappaBAlpha (chain E)</text>
+  <rect x="340" y="572" width="10" height="10" rx="2" fill="#d68519"/>
+  <text x="354" y="581" font-size="8" fill="#444">Orange — top-12 divergent residues</text>
+  <text x="34" y="600" font-size="8.5" fill="#5a1a1a" font-weight="600">Divergence concentrated at the regulatory interface — enrichment = 1.30–1.32, significant in both long-lived species.</text>
+
+  <!-- ── Panel 5: 4xhu structures ── -->
+  <rect x="560" y="320" width="530" height="300" rx="4" fill="#f6fcf8" stroke="#1d7a42" stroke-width="1.2"/>
+  <rect x="560" y="320" width="530" height="24" rx="4" fill="url(#gg)"/>
+  <rect x="560" y="340" width="530" height="4" fill="url(#gg)"/>
+  <circle cx="574" cy="332" r="7" fill="white"/><text x="574" y="335" text-anchor="middle" fill="#1a6838" font-size="8" font-weight="700">5</text>
+  <text x="586" y="336" fill="white" font-size="10.5" font-weight="600">4XHU: PARP1 — Timeless · INTERFACE CONSTRAINT</text>
+
+  <!-- Two side-by-side image slots -->
+  <rect x="574" y="352" width="244" height="188" rx="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="696" y="440" text-anchor="middle" font-size="20" fill="#ccc" font-weight="300">ChimeraX render</text>
+  <text x="696" y="460" text-anchor="middle" font-size="9" fill="#999">poster_4xhu_naked_mole_rat.png</text>
+  <rect x="574" y="540" width="244" height="16" rx="2" fill="#f0faf4"/>
+  <text x="696" y="552" text-anchor="middle" font-size="8.5" font-weight="600" fill="#0f4422">Naked mole-rat</text>
+
+  <rect x="830" y="352" width="244" height="188" rx="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="952" y="440" text-anchor="middle" font-size="20" fill="#ccc" font-weight="300">ChimeraX render</text>
+  <text x="952" y="460" text-anchor="middle" font-size="9" fill="#999">poster_4xhu_myotis_lucifugus.png</text>
+  <rect x="830" y="540" width="244" height="16" rx="2" fill="#f0faf4"/>
+  <text x="952" y="552" text-anchor="middle" font-size="8.5" font-weight="600" fill="#0f4422">Myotis lucifugus (bat)</text>
+
+  <!-- legend + interpretation -->
+  <rect x="574" y="564" width="506" height="46" rx="3" fill="white" stroke="#d0e0d0"/>
+  <rect x="584" y="572" width="10" height="10" rx="2" fill="#999"/>
+  <text x="598" y="581" font-size="8" fill="#444">Gray — PARP1 (chain C, target)</text>
+  <rect x="734" y="572" width="10" height="10" rx="2" fill="#6495ed" opacity="0.8"/>
+  <text x="748" y="581" font-size="8" fill="#444">Blue — Timeless (chain D)</text>
+  <rect x="876" y="572" width="10" height="10" rx="2" fill="#d68519"/>
+  <text x="890" y="581" font-size="8" fill="#444">Orange — top-12 constrained residues</text>
+  <text x="584" y="600" font-size="8.5" fill="#0f4422" font-weight="600">Interface strongly preserved across all species — enrichment = 0.39–0.43, consistent in NMR, bat, and mouse.</text>
+
+  <!-- ════ BOTTOM BANNER ════ -->
+  <rect y="628" width="1100" height="52" rx="0" fill="#162040"/>
+  <rect y="628" width="1100" height="3" fill="#d68519"/>
+  <g font-size="9.5" fill="white">
+    <text x="30" y="650">Interaction <tspan fill="#ffd700" font-weight="600">surfaces</tspan> diverge (1nfi) or are preserved (4xhu) in long-lived species.</text>
+    <text x="30" y="666">PLM embeddings detect both <tspan fill="#ffd700" font-weight="600">rewiring</tspan> and <tspan fill="#ffd700" font-weight="600">constraint</tspan> at protein–protein interfaces.</text>
+    <text x="620" y="650">Top candidate: <tspan fill="#ffd700" font-weight="700">1nfi</tspan> RelA–IkBα (d = 0.66–0.70) · Constraint anchor: <tspan fill="#ffd700" font-weight="700">4xhu</tspan> PARP1–Timeless (d = −0.93)</text>
+    <text x="620" y="666" font-size="8.5" fill="#8090b0">Full poster with 3D renders: docs/poster/poster.html · Corrections: docs/images/POSTER_CORRECTIONS.md</text>
+  </g>
+
+</svg>

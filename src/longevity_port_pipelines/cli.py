@@ -290,3 +290,63 @@ def breakage_table_cmd() -> None:
 
 def validation_protocol_cmd() -> None:
     typer.run(validation_protocol)
+
+
+# ── Poster rendering ──
+
+
+def render_poster(
+    html: Annotated[
+        Path, typer.Option(help="Input HTML file")
+    ] = Path("docs/poster/poster.html"),
+    output: Annotated[
+        Path, typer.Option("-o", "--output", help="Output PNG path")
+    ] = Path("docs/poster/poster.png"),
+    width: Annotated[int, typer.Option(help="Viewport width (px)")] = 1680,
+    height: Annotated[int, typer.Option(help="Viewport height (px)")] = 1800,
+    verbose: Verbose = False,
+) -> None:
+    """Render the poster HTML to a PNG image using Chrome headless."""
+    import shutil
+    import subprocess
+
+    _setup_logging(verbose)
+
+    chrome = None
+    for name in ("google-chrome", "chromium-browser", "chromium", "google-chrome-stable"):
+        chrome = shutil.which(name)
+        if chrome:
+            break
+    if not chrome:
+        raise typer.BadParameter(
+            "No Chrome/Chromium found. Install google-chrome or chromium-browser."
+        )
+
+    html_uri = html.resolve().as_uri()
+    out = output.resolve()
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    cmd = [
+        chrome,
+        "--headless",
+        f"--screenshot={out}",
+        f"--window-size={width},{height}",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--hide-scrollbars",
+        html_uri,
+    ]
+
+    logging.info("Rendering %s → %s (%dx%d)", html.name, out.name, width, height)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
+    if not out.exists():
+        logging.error("Chrome stderr: %s", result.stderr)
+        raise typer.Exit(code=1)
+
+    size_kb = out.stat().st_size / 1024
+    logging.info("Done: %s (%.0f KB)", out, size_kb)
+
+
+def render_poster_cmd() -> None:
+    typer.run(render_poster)

@@ -1,37 +1,57 @@
-# Longevity PPI — cross-species protein interaction analysis
+# LongevityPort — cross-species protein interaction analysis
+
+![Poster overview](docs/poster/poster.png)
+
+> **Prototype status.** This is a preliminary computational signal check — built in ~1 week
+> to see whether protein interface divergence in long-lived species is detectable before
+> committing to a full proposal (Biswas Family Foundation Fast Grants, $50K AI + health).
+> The code produces results, but the analysis has known limitations (see
+> [Pilot results & roadmap](docs/PILOT_RESULTS.md)). Treat the outputs as promising
+> preliminary data, not validated biological claims.
 
 ## The big picture
 
-Some species live extraordinarily long: naked mole-rats (~30 yr), bowhead whales (~200 yr),
-and certain bats (~40 yr). One hypothesis is that their **protein-protein interactions**
+Some species live extraordinarily long: naked mole-rats (~31 yr), bowhead whales (~211 yr),
+and certain bats (~41 yr). One hypothesis is that their **protein-protein interactions**
 have diverged — key interactions are maintained, broken, or rewired compared to short-lived
 species (mouse ~3 yr, human ~80 yr).
 
+The central question is fine-grained: not just *"is the long-lived-species protein different
+from the human one?"* but *does the ortholog differ especially strongly at the amino acids
+that participate in interaction with its partner?* If the changes concentrate at the
+interface, this may indicate altered binding specificity, remodeling of the complex, or
+preservation of a critical surface — exactly what we need to judge whether a variant is
+portable.
+
 This repo tackles two complementary questions:
+1. **Which proteins should we investigate?** — candidate & interactome analysis (Tasks A-D, no GPU)
+2. **Do protein interfaces actually diverge?** — embedding signal check (Stages 1-7, Biohub API)
 
-### 1. Which proteins should we investigate? (Candidate & interactome analysis)
+```mermaid
+flowchart LR
+    subgraph "Candidate preparation (Tasks A-D)"
+        A[Seed candidates\n~30 proteins] --> B[Interactome\nOmniPath]
+        B --> C[Breakage\ntaxonomy]
+        C --> D[Score &\nprotocol]
+    end
+    subgraph "Interface embedding pipeline (Stages 1-7)"
+        S1[Select PPI\ncomplexes] --> S4[Fetch\northologs]
+        S4 --> S5[ESM C\nembeddings]
+        S5 --> S6[Enrichment\nanalysis]
+        S6 --> S7[Plots]
+    end
+    D -.-> S1
+```
 
-Before any structural modelling, we need a defensible candidate list. Tasks A-D build this:
-- Curate ~30 longevity-relevant proteins across 8 functional categories
-- Map their **full interactome** from OmniPath (STRING + BioGRID + IntAct + 100 more databases)
-- Flag **hub proteins** (>15 partners) that risk network-wide incompatibility if ported
-- Score candidates on 10 wet-lab feasibility criteria (size, membrane, glycosylation, etc.)
-- Generate a **breakage taxonomy** — which interactions should be maintained, broken, or
-  rewired in long-lived species — for human curation
+**Tasks A-D** run on a laptop (no GPU, no API keys): curate longevity proteins, map their
+interactome from OmniPath, flag hub proteins, score on 10 wet-lab feasibility criteria, and
+generate a breakage taxonomy for human curation.
 
-This is pure data science. Runs on a laptop, no GPU, no API keys.
-
-### 2. Do protein interfaces actually diverge? (Embedding signal check)
-
-For the top candidates, we test the interface divergence hypothesis computationally:
-- Take a known protein complex with a solved 3D structure (known interface residues)
-- Embed each chain with ESM C (protein language model, via Biohub REST API)
-- Swap one chain for the ortholog from a long-lived species, re-embed
-- Check whether the embedding **shift concentrates at interface residues** — more than at
-  non-interface residues, and more than for known non-interacting pairs
-
-If yes, that's a signal that the interface is under cross-species divergence pressure.
-The deliverable is an enrichment table + plots with two negative controls.
+**Stages 1-7** test the interface divergence hypothesis: take a known complex with a solved
+3D structure, embed each chain with ESM C (via Biohub REST API), swap one chain for the
+ortholog from a long-lived species, re-embed, and check whether the embedding shift
+concentrates at interface residues. The deliverable is an enrichment table + plots with
+two negative controls (shuffled mask + NEGATOME).
 
 ## Prerequisites
 
@@ -208,72 +228,31 @@ uv run run-pipeline                  # everything
 uv run run-pipeline --pre-gpu-only   # stop after stage 4 (audit checkpoint)
 ```
 
-## Data layout
+## Pilot results
 
-The project uses three data directories with different git policies:
+The v2 pilot (43 complexes, 13,415 residue-level deltas) produced a preliminary signal.
+The strongest hit: **8bhv XLF/NHEJ1** (NHEJ DNA repair) shows enrichment ~2.59 in
+naked mole-rat and ~2.34 in mouse — embedding divergence concentrated at the binding
+surface. The method also distinguishes **interface-constrained** candidates (preserved
+surface, safer to port) from **interface-divergent** ones (remodeled, higher risk).
+
+Main limitations: missing NEGATOME negative controls, no long-lived vs short-lived
+contrast yet. See [docs/PILOT_RESULTS.md](docs/PILOT_RESULTS.md) for the full table,
+statistics, limitations, and roadmap.
+
+---
+
+## Data layout
 
 ```
 data/
-├── input/          IN GIT — user-curated configuration files
-│   └── custom_candidates.csv     Your custom proteins (edit this!)
-│
-├── interim/        GITIGNORED — cached downloads & API responses (regenerable)
-│   ├── uniprot/                  Cached UniProt JSON entries (~6 MB)
-│   ├── alphafold/                Cached AlphaFold DB structure checks (~300 KB)
-│   ├── pinder/                   HuggingFace PINDER dataset cache (~120 MB)
-│   ├── string/                   STRING interaction files
-│   └── foldseek/                 Foldseek cluster data
-│
-└── output/         GITIGNORED — all pipeline outputs (regenerable)
-    ├── candidates.csv              Task A: seed protein list (32+ proteins)
-    ├── interactome.csv             Task B: interaction summary per protein
-    ├── interactome_partners.parquet  Task B: all interaction pairs (~12k rows)
-    ├── breakage_taxonomy.csv       Task C: protein x species table (fill in!)
-    ├── validation_scores.csv       Task D: scored candidates
-    ├── validation_protocol.md      Task D: protocol document
-    ├── plots/
-    │   ├── priority_scores.svg     Candidate priority bar chart
-    │   ├── hub_vs_score.svg        Hub status vs priority scatter
-    │   └── category_breakdown.svg  Score by functional category
-    ├── selection.csv               Embedding pipeline: selected PPI complexes
-    ├── ortholog_coverage.csv       Embedding pipeline: ortholog lookup results
-    └── enrichment.parquet          Embedding pipeline: enrichment statistics
+├── input/     IN GIT      — user-curated files (custom_candidates.csv)
+├── interim/   GITIGNORED  — cached API responses (UniProt, PINDER, STRING, Foldseek)
+└── output/    GITIGNORED  — pipeline outputs (CSVs, embeddings, enrichment, plots)
 ```
 
-**What's committed vs generated:**
-
-| File | In git? | How to regenerate |
-|------|---------|-------------------|
-| `data/input/custom_candidates.csv` | **YES** | Edit manually to add proteins |
-| `data/interim/*` | no | Rebuilt automatically on first run (API caches) |
-| `data/output/*` | no | `uv run candidates` then `uv run interactome` etc. |
-
-## Key libraries
-
-| Library | What it does | Why we use it |
-|---------|-------------|--------------|
-| [omnipath](https://omnipathdb.org/) | Aggregated PPI data | One API call covers STRING + BioGRID + IntAct + 100 more |
-| [biotite](https://www.biotite-python.org/) | Structure parsing | Modern replacement for BioPython, numpy-backed |
-| [polars](https://pola.rs/) | DataFrames | Faster than pandas, lazy evaluation, native parquet |
-| [plotly](https://plotly.com/) + kaleido | Plots | Interactive HTML + static SVG export |
-| [pydantic v2](https://docs.pydantic.dev/) | Data models | Type-safe protein/interaction records |
-| [typer](https://typer.tiangolo.com/) | CLI | Each command = one function, auto-generated `--help` |
-| [prefect 3](https://www.prefect.io/) | Orchestration | Optional — retry/cache for the embedding pipeline |
-
-## Glossary (for data scientists new to bioinformatics)
-
-| Term | Meaning |
-|------|---------|
-| **UniProt ID** | Unique identifier for a protein (e.g., Q96EB6 = human SIRT1). Look up at [uniprot.org](https://www.uniprot.org/) |
-| **Gene symbol** | Short name for a gene (e.g., SIRT1, TP53). One gene = one protein (mostly) |
-| **PPI** | Protein-protein interaction — two proteins that physically bind or functionally interact |
-| **Hub protein** | A protein with many interaction partners (>15 here). Modifying it has wide network effects |
-| **Ortholog** | The "same" protein in a different species (e.g., human SIRT1 vs naked mole-rat SIRT1) |
-| **Interface residues** | The amino acids at the contact surface where two proteins bind |
-| **OmniPath** | A meta-database that combines 100+ interaction databases into one query |
-| **kDa** | Kilodaltons — unit of protein mass. 80 kDa is roughly a "large" single-chain protein |
-| **Glycosylation** | Sugar molecules attached to a protein. Cell-free expression systems can't add these |
-| **Parquet** | A compressed columnar file format. Like CSV but typed and much smaller. Open with polars/pandas |
+All `interim/` and `output/` files are regenerable by running the pipeline commands above.
+Only `data/input/` is committed to git.
 
 ## Development
 
@@ -286,6 +265,7 @@ uv run pytest               # tests
 
 ## Further reading
 
+- [docs/PILOT_RESULTS.md](docs/PILOT_RESULTS.md) — pilot results, limitations, and roadmap
 - [BUILD_BRIEF.md](BUILD_BRIEF.md) — the original design brief
-- [RESOURCES.md](RESOURCES.md) — data source inventory with freshness checks
+- [docs/RESOURCES.md](docs/RESOURCES.md) — data source inventory with freshness checks
 - [AGENTS.md](AGENTS.md) — conventions for AI-assisted development
