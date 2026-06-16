@@ -65,27 +65,17 @@ def main() -> None:
     print(f"Wrote interaction outcome summary -> {output_path}")
     print()
     print("Outcome class counts:")
-    print(
-        out_df.group_by(["proposal_outcome_class", "confidence"]).len().sort("len", descending=True)
-    )
-
+    for row in (
+        out_df.group_by(["proposal_outcome_class", "confidence"])
+        .len()
+        .sort("len", descending=True)
+        .iter_rows(named=True)
+    ):
+        print(f"  {row['proposal_outcome_class']} / {row['confidence']}: {row['len']}")
     print()
-    print("High/medium priority candidates:")
     print(
-        out_df.filter(pl.col("confidence").is_in(["high", "medium"])).select(
-            [
-                "complex_id",
-                "chain",
-                "target_species",
-                "signal_class",
-                "proposal_outcome_class",
-                "confidence",
-                "effect_size_cohens_d",
-                "p_directional",
-                "top_divergent_interface_residues",
-                "top_constrained_interface_residues",
-            ]
-        )
+        f"High/medium priority candidates: "
+        f"{out_df.filter(pl.col('confidence').is_in(['high', 'medium'])).height}"
     )
 
 

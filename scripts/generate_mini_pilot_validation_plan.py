@@ -98,27 +98,13 @@ def main() -> None:
     print(f"Wrote validation plan Markdown -> {output_md_path}")
     print()
     print("Validation priority counts:")
-    print(
-        plan.group_by(["validation_priority", "evidence_level"]).len().sort("len", descending=True)
-    )
-
-    print()
-    print("Validation plan preview:")
-    print(
-        plan.select(
-            [
-                "candidate_id",
-                "protein",
-                "target_species",
-                "proposal_outcome_class",
-                "confidence",
-                "control_status",
-                "evidence_level",
-                "validation_priority",
-                "primary_validation_assay",
-            ]
-        ).head(15)
-    )
+    for row in (
+        plan.group_by(["validation_priority", "evidence_level"])
+        .len()
+        .sort("len", descending=True)
+        .iter_rows(named=True)
+    ):
+        print(f"  {row['validation_priority']} / {row['evidence_level']}: {row['len']}")
 
 
 if __name__ == "__main__":

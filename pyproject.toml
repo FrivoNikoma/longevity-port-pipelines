@@ -73,6 +73,10 @@ ignore_missing_imports = true
 module = ["longevity_port_pipelines.flow"]
 disable_error_code = ["untyped-decorator", "misc", "call-overload"]
 
+[[tool.mypy.overrides]]
+module = ["longevity_port_pipelines.stages.mapped_interface"]
+disable_error_code = ["no-untyped-call"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

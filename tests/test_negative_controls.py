@@ -3,7 +3,10 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from longevity_port_pipelines.stages.negative_controls import build_negative_control_audit
+from longevity_port_pipelines.stages.negative_controls import (
+    build_negative_control_audit,
+    passes_controls,
+)
 
 
 def base_rows() -> dict[str, list[object]]:
@@ -47,6 +50,14 @@ def test_build_negative_control_audit_computes_ratio_columns() -> None:
     assert row["ratio_vs_negatome_control"] == pytest.approx(4.0)
 
 
+def test_build_negative_control_audit_marks_controlled_pass_for_divergence() -> None:
+    audit = build_negative_control_audit(pl.DataFrame(base_rows()))
+    row = audit.filter(pl.col("complex_id") == "c1").row(0, named=True)
+
+    assert row["passes_controls"] is True
+    assert row["control_evidence_tier"] == "controlled_pass"
+
+
 def test_build_negative_control_audit_missing_negatome_ratio_is_null() -> None:
     audit = build_negative_control_audit(pl.DataFrame(base_rows()))
 
@@ -54,6 +65,7 @@ def test_build_negative_control_audit_missing_negatome_ratio_is_null() -> None:
 
     assert row["control_status"] == "missing_negatome"
     assert row["ratio_vs_negatome_control"] is None
+    assert row["control_evidence_tier"] == "preliminary_shuffled_only"
 
 
 def test_build_negative_control_audit_rejects_missing_required_columns() -> None:
@@ -84,3 +96,25 @@ def test_build_negative_control_audit_treats_zero_controls_as_missing() -> None:
         "c3": "missing_all_controls",
         "c4": "missing_all_controls",
     }
+
+
+def test_passes_controls_constraint_direction() -> None:
+    assert passes_controls(
+        enrichment_ratio=0.7,
+        shuffled_control_ratio=1.0,
+        negatome_control_ratio=1.0,
+        p_interface_greater=0.9,
+        p_interface_less=0.01,
+        control_status="has_shuffled_and_negatome",
+    )
+
+
+def test_passes_controls_rejects_incomplete_controls() -> None:
+    assert not passes_controls(
+        enrichment_ratio=2.0,
+        shuffled_control_ratio=1.0,
+        negatome_control_ratio=0.5,
+        p_interface_greater=0.01,
+        p_interface_less=0.99,
+        control_status="missing_negatome",
+    )

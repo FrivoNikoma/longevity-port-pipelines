@@ -61,11 +61,14 @@ def main() -> None:
     print(f"Wrote NEGATOME-control input validation -> {output_path}")
     print()
     print("Input status counts:")
-    print(validation.group_by("input_status").len().sort("len", descending=True))
-
+    for row in (
+        validation.group_by("input_status").len().sort("len", descending=True).iter_rows(named=True)
+    ):
+        print(f"  {row['input_status']}: {row['len']}")
     print()
-    print("Validation preview:")
-    print(validation)
+    print(
+        f"Rows with negative-control input: {validation.filter(pl.col('has_negative_control_input')).height}"
+    )
 
 
 if __name__ == "__main__":

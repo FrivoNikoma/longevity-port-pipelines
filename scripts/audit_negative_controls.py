@@ -42,23 +42,21 @@ def main() -> None:
     print(f"Wrote negative-control audit -> {output_path}")
     print()
     print("Control status counts:")
-    print(audit.group_by("control_status").len().sort("len", descending=True))
-
+    for row in (
+        audit.group_by("control_status").len().sort("len", descending=True).iter_rows(named=True)
+    ):
+        print(f"  {row['control_status']}: {row['len']}")
     print()
-    print("Audit preview:")
-    print(
-        audit.select(
-            [
-                "complex_id",
-                "chain",
-                "target_species",
-                "enrichment_ratio",
-                "shuffled_control_ratio",
-                "negatome_control_ratio",
-                "control_status",
-            ]
-        )
-    )
+    print("Control evidence tier counts:")
+    for row in (
+        audit.group_by("control_evidence_tier")
+        .len()
+        .sort("len", descending=True)
+        .iter_rows(named=True)
+    ):
+        print(f"  {row['control_evidence_tier']}: {row['len']}")
+    print()
+    print(f"Controlled pass count: {audit.filter(pl.col('passes_controls')).height}")
 
 
 if __name__ == "__main__":

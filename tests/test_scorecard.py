@@ -66,6 +66,9 @@ def negative_control_rows() -> pl.DataFrame:
             "negatome_control_ratio": [None],
             "ratio_vs_shuffled_control": [0.75],
             "ratio_vs_negatome_control": [None],
+            "passes_controls": [False],
+            "control_evidence_tier": ["preliminary_shuffled_only"],
+            "passes_controls_note": ["Controls incomplete; strict pass/fail gate not applicable."],
             "control_note": ["Shuffled-only evidence."],
         }
     )
@@ -152,6 +155,8 @@ def test_build_candidate_scorecard() -> None:
     assert row["protein"] == "Ku70 / XRCC6"
     assert row["control_status"] == "missing_negatome"
     assert row["control_interpretation"] == "shuffled_only_missing_negatome"
+    assert row["passes_controls"] is False
+    assert row["control_evidence_tier"] == "preliminary_shuffled_only"
     assert row["n_recurrent_constrained_residues"] == 2
     assert "NEGATOME-style control is currently missing" in row["recommended_next_action"]
 

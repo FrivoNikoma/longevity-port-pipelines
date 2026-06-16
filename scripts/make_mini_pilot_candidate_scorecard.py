@@ -65,43 +65,30 @@ def main() -> None:
 
     print(f"Wrote candidate scorecard -> {output_path}")
     print()
-    print("Scorecard shape:")
-    print(out_df.shape)
+    print(f"Scorecard shape: {out_df.shape}")
 
     print()
     print("Control status counts:")
-    print(
+    for row in (
         out_df.group_by(["control_status", "control_interpretation"])
         .len()
         .sort("len", descending=True)
-    )
-
+        .iter_rows(named=True)
+    ):
+        print(f"  {row['control_status']} / {row['control_interpretation']}: {row['len']}")
     print()
-    print("Top scorecard candidates:")
-    print(
-        out_df.select(
-            [
-                "candidate_id",
-                "protein",
-                "target_species",
-                "proposal_outcome_class",
-                "confidence",
-                "score",
-                "effect_size_cohens_d",
-                "p_directional",
-                "control_status",
-                "n_recurrent_divergent_residues",
-                "n_recurrent_constrained_residues",
-                "recommended_next_action",
-            ]
-        ).head(15)
-    )
+    print(f"Controlled pass count: {out_df.filter(pl.col('passes_controls')).height}")
+    print(f"Top scorecard row count shown: {min(out_df.height, 15)}")
 
     print()
     print("Outcome counts:")
-    print(
-        out_df.group_by(["proposal_outcome_class", "confidence"]).len().sort("len", descending=True)
-    )
+    for row in (
+        out_df.group_by(["proposal_outcome_class", "confidence"])
+        .len()
+        .sort("len", descending=True)
+        .iter_rows(named=True)
+    ):
+        print(f"  {row['proposal_outcome_class']} / {row['confidence']}: {row['len']}")
 
 
 if __name__ == "__main__":

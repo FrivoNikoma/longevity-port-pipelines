@@ -230,6 +230,9 @@ def empty_negative_control_audit() -> pl.DataFrame:
             "negatome_control_ratio": [],
             "ratio_vs_shuffled_control": [],
             "ratio_vs_negatome_control": [],
+            "passes_controls": [],
+            "control_evidence_tier": [],
+            "passes_controls_note": [],
             "control_note": [],
         }
     )
@@ -245,6 +248,9 @@ def prepare_negative_control_audit(audit: pl.DataFrame) -> pl.DataFrame:
         "negatome_control_ratio",
         "ratio_vs_shuffled_control",
         "ratio_vs_negatome_control",
+        "passes_controls",
+        "control_evidence_tier",
+        "passes_controls_note",
         "control_note",
     }
 
@@ -261,6 +267,9 @@ def prepare_negative_control_audit(audit: pl.DataFrame) -> pl.DataFrame:
             "negatome_control_ratio",
             "ratio_vs_shuffled_control",
             "ratio_vs_negatome_control",
+            "passes_controls",
+            "control_evidence_tier",
+            "passes_controls_note",
             "control_note",
         ]
     ).with_columns(
@@ -364,6 +373,9 @@ def build_candidate_scorecard(
             pl.col("recurrent_constrained_residues").fill_null(""),
             pl.col("control_status").fill_null("not_audited"),
             pl.col("control_interpretation").fill_null("not_audited"),
+            pl.col("passes_controls").fill_null(False),
+            pl.col("control_evidence_tier").fill_null("not_audited"),
+            pl.col("passes_controls_note").fill_null(""),
             pl.col("control_note").fill_null("Negative-control audit was not available."),
         ]
     )
@@ -414,6 +426,9 @@ def build_candidate_scorecard(
                 "negatome_control_ratio": row.get("negatome_control_ratio"),
                 "ratio_vs_shuffled_control": row.get("ratio_vs_shuffled_control"),
                 "ratio_vs_negatome_control": row.get("ratio_vs_negatome_control"),
+                "passes_controls": bool(row.get("passes_controls", False)),
+                "control_evidence_tier": row.get("control_evidence_tier", "not_audited"),
+                "passes_controls_note": row.get("passes_controls_note", ""),
                 "control_note": row["control_note"],
                 "assay_priority": row["assay_priority"],
                 "engineering_priority": row["engineering_priority"],
