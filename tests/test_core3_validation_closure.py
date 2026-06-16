@@ -6,6 +6,8 @@ import polars as pl
 import pytest
 from scripts import run_core3_validation_closure as closure
 
+from longevity_port_pipelines.stages.validation_closure import write_closure_summary
+
 
 def test_parse_args_accepts_safe_local_mode_flags(
     monkeypatch: pytest.MonkeyPatch,
@@ -61,7 +63,7 @@ def test_write_closure_summary_smoke(tmp_path: Path) -> None:
 
     output_path = tmp_path / "validation_closure_summary.md"
 
-    closure.write_closure_summary(
+    write_closure_summary(
         enrichment=enrichment,
         audit=audit,
         scorecard=scorecard,
