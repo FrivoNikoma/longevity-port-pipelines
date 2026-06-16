@@ -242,6 +242,16 @@ statistics, limitations, and roadmap.
 
 ---
 
+## Validation closure
+
+For the SIRT6 v2 core3-expanded controlled-evidence workflow, see:
+
+```text
+docs/core3_validation_closure.md
+```
+
+This document explains how curated NEGATOME-style controls feed the negative-control audit, candidate scorecard, validation plan, and final validation-closure summary.
+
 ## Data layout
 
 ```
