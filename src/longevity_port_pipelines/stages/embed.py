@@ -1,14 +1,15 @@
-"""Stage 5: Embed protein sequences via the Biohub Platform REST API.
+"""Stage 5: Embed protein sequences via the remote Biohub ESMC SDK.
 
-This is a remote compute stage — the Prefect `embed` task is a thin wrapper that
-calls these functions. We hit the Biohub ESM C endpoint rather than running the
-model locally (no torch/GPU dependency in this repo).
+This is a remote-compute stage: the Prefect `embed` task is a thin wrapper
+around these functions, and the model is not run locally. The implementation
+uses Biohub's ESM SDK client to call the remote ESMC service.
 
-The auth token is read from the BIOHUB_API_TOKEN environment variable (see
-.env.template). ESM-2 is outdated — do NOT use it; we use ESM C.
+The SDK may return torch tensors, so this module imports torch to convert
+returned embeddings to NumPy arrays. This does not mean the pipeline requires
+a local GPU or local model weights.
 
-NOTE: the exact endpoint path and response schema below follow the documented
-Biohub embeddings contract — if the API shape changes, adjust `embed_sequence`.
+The auth token is read from the BIOHUB_API_TOKEN environment variable
+(see .env.template). ESM-2 is outdated — do NOT use it; we use ESM C.
 """
 
 from __future__ import annotations

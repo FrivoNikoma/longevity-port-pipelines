@@ -23,8 +23,7 @@ assets over building pipelines. We assemble; we don't curate databases from scra
 Prefect 3 flow, one task per stage: load_pinder → load_foldseek_clusters →
 load_string_hubs → fetch_orthologs → embed → analyze → plot. Tasks orchestrate; the real
 logic lives in plain typed modules under src/longevity_port_pipelines/stages/. The flow
-lives in flow.py; tasks are thin wrappers. The embed stage calls the Biohub REST API
-(ESM C 600M/6B) — keep its task thin.
+lives in flow.py; tasks are thin wrappers. The embed stage calls the remote Biohub ESMC service through the Biohub ESM SDK — keep its task thin. The model is not run locally; torch may be imported only because the SDK can return torch tensors that we convert to NumPy arrays.
 
 We chose Prefect over MageAI: the latest mage-ai (0.9.79) force-pins legacy deps
 (numpy 1.x, pydantic 2.9, typer 0.9) that conflict with our modern stack. Prefect 3
@@ -40,7 +39,7 @@ Key data sources (details + freshness in docs/RESOURCES.md):
 - AFDB Foldseek clusters — structural conservation filter.
 - STRING v12.5 — hub/partner counts.
 - OMA / UniProt — orthologs for long-lived species (PINDER has none).
-- Biohub ESM C (600M/6B via REST API) — the embedding model. NOT ESM-2 (outdated).
+- Biohub ESM C (600M/6B via the remote Biohub ESM SDK service) — the embedding model. NOT ESM-2 (outdated).
 - ESMFold2 (via Biohub API) — structure prediction for ortholog chains.
 - Synthyra/NEGATOME — non-interacting pairs for the negative control.
 

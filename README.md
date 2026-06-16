@@ -48,7 +48,7 @@ interactome from OmniPath, flag hub proteins, score on 10 wet-lab feasibility cr
 generate a breakage taxonomy for human curation.
 
 **Stages 1-7** test the interface divergence hypothesis: take a known complex with a solved
-3D structure, embed each chain with ESM C (via Biohub REST API), swap one chain for the
+3D structure, embed each chain with ESM C (via the remote Biohub ESMC service), swap one chain for the
 ortholog from a long-lived species, re-embed, and check whether the embedding shift
 concentrates at interface residues. The deliverable is an enrichment table + plots with
 two negative controls (shuffled mask + NEGATOME).
@@ -209,7 +209,7 @@ ranking plus SVG plots.
 After you have your prioritised candidates, this pipeline tests whether cross-species
 sequence divergence concentrates at protein-protein interfaces.
 
-**Embeddings use the Biohub REST API** (ESM C 600M/6B) — no local GPU required.
+**Embeddings use the remote Biohub ESMC service through the Biohub ESM SDK** — no local GPU or local model weights required.
 Set your API token in `.env` (copy from `.env.template`).
 
 ```bash

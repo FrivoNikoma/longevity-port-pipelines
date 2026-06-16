@@ -76,15 +76,14 @@ Full collection: https://huggingface.co/collections/Synthyra/ppi-datasets-67b119
 - [CORRECTED: EvolutionaryScale rebranded to Biohub (Chan Zuckerberg). New repo + HF org.]
 - Open weights: ESMC-600M (fits 16GB VRAM), ESMC-6B (needs multi-GPU or API).
 - Install SDK: `pip install esm@git+https://github.com/Biohub/esm.git@main`
-  WARNING: SDK pins transformers fork requiring huggingface-hub<1.0 — conflicts with our
-  stack. Use the REST API directly instead (works, tested June 2026).
+  NOTE: the pipeline currently uses the Biohub ESM SDK client for remote ESMC calls. Keep dependency constraints aligned with `pyproject.toml` and `uv.lock`.
 - Local inference via HuggingFace AutoModel (if deps resolve):
   ```python
   from transformers import AutoModelForMaskedLM, AutoTokenizer
   model = AutoModelForMaskedLM.from_pretrained("biohub/ESMC-600M")
   ```
 
-**Biohub Platform REST API** — https://biohub.ai/api-reference/encode
+**Biohub Platform / ESM SDK remote service** — see Biohub API and SDK documentation
 - API key: get one at https://biohub.ai/developer-console/api-keys, store in `.env`
   as `BIOHUB_API_TOKEN` (see `.env.template`).
 - Auth: `Authorization: Bearer <token>` header on all requests.
@@ -148,7 +147,7 @@ Full collection: https://huggingface.co/collections/Synthyra/ppi-datasets-67b119
 - 6.8B protein sequences + 1.1B predicted structures + SAE interpretability features.
 - Browsable per-protein at biohub.ai; bulk download via AWS S3 (~377 TB total, no auth).
 - Indexed by sequence, NOT by PDB/UniProt accession — search by sequence, not ID.
-- For our pipeline: use the REST API above for per-protein embeddings/folds rather than
+- For our pipeline: use the remote Biohub ESMC service for per-protein embeddings/folds rather than
   downloading Atlas bulk data.
 
 ## 5. Candidate annotation (Task A, optional) — GenAge/HAGR, OpenGenes, Open Targets
