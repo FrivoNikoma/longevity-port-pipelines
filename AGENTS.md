@@ -25,6 +25,15 @@ load_string_hubs → fetch_orthologs → embed → analyze → plot. Tasks orche
 logic lives in plain typed modules under src/longevity_port_pipelines/stages/. The flow
 lives in flow.py; tasks are thin wrappers. The embed stage calls the remote Biohub ESMC service through the Biohub ESM SDK — keep its task thin. The model is not run locally; torch may be imported only because the SDK can return torch tensors that we convert to NumPy arrays.
 
+Beyond the seven core-flow stages, src/longevity_port_pipelines/stages/ also holds
+supporting modules that are invoked by the candidate-prep CLI commands and pipeline.py
+rather than the Prefect flow:
+- candidates / interactome / breakage_table / validation_protocol — Tasks A–D (CLI commands below).
+- interface / mapped_interface / interaction_outcomes — interface residue mapping and maintained/broken/rewired calls.
+- negative_controls + the NEGATOME suite (negatome_seed / negatome_inputs / negatome_curation / negatome_controls / negatome_analyze) — the two negative controls.
+- scorecard / validation_plan / validation_closure — candidate scoring and validation-closure reporting.
+These are plain typed modules, not separate entry points; the registered CLI is the list below.
+
 We chose Prefect over MageAI: the latest mage-ai (0.9.79) force-pins legacy deps
 (numpy 1.x, pydantic 2.9, typer 0.9) that conflict with our modern stack. Prefect 3
 co-resolves cleanly with numpy 2.x / polars / pydantic 2.13.
@@ -61,6 +70,9 @@ uv run embed               # Stage 5: ESM C embeddings (Biohub API)
 uv run analyze             # Stage 6: enrichment analysis
 uv run plot                # Stage 7: generate Plotly figures
 uv run run-pipeline        # All stages (or --pre-gpu-only for stages 1-4)
+
+# --- Reporting ---
+uv run render-poster       # Render docs/poster/poster.html to PNG via headless Chrome
 ```
 
 Every new pipeline step gets its own direct entry point — no umbrella CLI.
