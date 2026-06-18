@@ -85,7 +85,9 @@ Every new pipeline step gets its own direct entry point — no umbrella CLI.
   `python-dotenv` (`load_dotenv()`) at CLI entry points. Never hard-code tokens.
 - CLI: typer. Each meaningful operation is a separate command, not a flag.
 - Full type hints. pydantic v2 for data records.
-- Lint/type: ruff + mypy clean before any commit.
+- Pre-push checks: run ALL of `ruff format`, `ruff check`, `mypy`, and `pytest` clean
+  before pushing — not just `ruff check`. `ruff check` and `ruff format` are separate;
+  CI runs both, so a `ruff check`-only pass can still fail CI on formatting.
 - Logging: structured `logging`, not print.
 - Polars LazyFrame is the default dataframe type. Never call `.collect()` unless you
   genuinely need eager evaluation (row-by-row iteration, final output write). Pass
