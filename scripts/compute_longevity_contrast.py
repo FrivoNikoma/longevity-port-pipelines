@@ -172,6 +172,11 @@ def classify_contrast(
     min_enrichment_delta: float,
     min_abs_effect: float,
 ) -> tuple[str, str]:
+    # NOTE: the enrichment_delta vs min_enrichment_delta comparison below is exact
+    # (>=). Under IEEE-754, nominal-boundary subtractions evaluate just under the
+    # threshold (e.g. 1.3 - 1.1 == 0.19999999999999996 < 0.2), so such pairs fall
+    # through from "specific" to "enhanced" rather than classifying as "specific".
+    # This boundary behavior is locked in by tests/test_compute_longevity_contrast.py.
     enrichment_delta = long_ratio - short_ratio
 
     long_divergent = is_divergent(
