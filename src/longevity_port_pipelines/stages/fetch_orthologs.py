@@ -214,8 +214,22 @@ def write_ortholog_coverage(
 
     rows = [m.model_dump() for m in mappings]
     df = pl.DataFrame(rows) if rows else pl.DataFrame()
+
+    # Deduplicate: a single protein can participate in multiple complexes,
+    # so its orthologs get fetched repeatedly. Drop repeats keyed on
+    # (source protein, target species, target protein).
+    if not df.is_empty():
+        before = len(df)
+        df = df.unique(
+            subset=["source_uniprot", "target_species_taxid", "target_uniprot"],
+            keep="first",
+        )
+        after = len(df)
+        if before != after:
+            logger.info("Deduplicated ortholog coverage: %d -> %d rows", before, after)
+
     df.write_csv(output_path)
-    logger.info("Wrote ortholog coverage: %d mappings -> %s", len(rows), output_path)
+    logger.info("Wrote ortholog coverage: %d mappings -> %s", len(df), output_path)
     return output_path
 
 

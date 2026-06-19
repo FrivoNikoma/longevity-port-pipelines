@@ -103,13 +103,40 @@ def embed(
 
 
 def analyze(
+    input_dir: InputDir = Path("data/input"),
     output_dir: OutputDir = Path("data/output"),
     verbose: Verbose = False,
 ) -> None:
     """Stage 6: Compute enrichment at interface vs non-interface residues."""
     _setup_logging(verbose)
-    typer.echo(f"Results will be written to {output_dir / 'enrichment.parquet'}")
-    typer.echo("(This stage runs as part of `run-pipeline` — standalone mode not yet wired)")
+    import polars as pl
+
+    from longevity_port_pipelines.models import OrthologMapping
+    from longevity_port_pipelines.pipeline import run_stage_5, run_stage_6
+
+    cfg = _cfg(input_dir, output_dir)
+
+    selection_path = output_dir / "selection.csv"
+    coverage_path = output_dir / "ortholog_coverage.csv"
+    embeddings_path = output_dir / "embeddings"
+
+    if not selection_path.exists() or not coverage_path.exists():
+        typer.echo(
+            "Missing selection.csv or ortholog_coverage.csv — run earlier stages first.", err=True
+        )
+        raise typer.Exit(1)
+
+    if not embeddings_path.exists():
+        typer.echo("No embeddings found — run `uv run embed` first.", err=True)
+        raise typer.Exit(1)
+
+    candidates = pl.scan_csv(selection_path)
+    coverage_df = pl.read_csv(coverage_path)
+    mappings = [OrthologMapping(**row) for row in coverage_df.to_dicts()]
+
+    embedding_pairs = run_stage_5(candidates, mappings, cfg)
+    results = run_stage_6(embedding_pairs, cfg)
+    typer.echo(f"Enrichment written to {output_dir / 'enrichment.parquet'} ({len(results)} rows)")
 
 
 def plot(

@@ -36,6 +36,7 @@ interactome = "longevity_port_pipelines.cli:interactome_cmd"
 breakage-table = "longevity_port_pipelines.cli:breakage_table_cmd"
 validation-protocol = "longevity_port_pipelines.cli:validation_protocol_cmd"
 render-poster = "longevity_port_pipelines.cli:render_poster_cmd"
+cofolding = "longevity_port_pipelines.stages.cofolding:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
