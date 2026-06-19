@@ -6,18 +6,31 @@ protein-protein complex predictions to the Boltz API and store the
 structural confidence metrics (iptm, complex_iplddt, binding_confidence, etc.).
 
 This is Stage 3 "Compatibility classification" from the LongevityPort plan:
-    predict the cross-species complex (human chain A + ortholog chain B)
-    and classify the interaction as maintained / functionally_broken / incompatible.
+    predict the cross-species complex (human partner chain + ortholog of the
+    analyzed chain) and classify the interaction as maintained /
+    functionally_broken / incompatible.
 
-Columns in enrichment.parquet:
-    complex_id, model_name, source_species, target_species, chain,
-    interface_mean_delta, noninterface_mean_delta, enrichment_ratio, ...
+Cross-species logic
+-------------------
+A complex like "6b2e__A1_P54646--6b2e__B1_O43741" has two human chains:
+    receptor = P54646  (first half, "A1_P54646")
+    ligand   = O43741  (second half, "B1_O43741")
+
+For each enrichment row we know which chain was analyzed (`chain`) and which
+species we compare against (`target_species`). We co-fold:
+    - the analyzed chain, replaced by its ortholog from target_species
+    - the partner chain, kept as the human sequence
+This asks Boltz whether the ortholog still docks against the human partner.
+
+Ortholog sequences come from ortholog_coverage.csv (column target_sequence),
+keyed on (source_uniprot, target_species_taxid). The human partner sequence is
+fetched from UniProt.
 
 Usage:
     uv run cofolding                          # top 10 by enrichment_ratio
     uv run cofolding --top-n 20               # top 20
-    uv run cofolding --test                   # test mode (no real API calls, no credits)
-    uv run cofolding --complex 8bhv --species naked_mole_rat  # single row
+    uv run cofolding --test                   # internal synthetic results, no API
+    uv run cofolding --complex 6b2e__A1_P54646--6b2e__B1_O43741 --top-n 1
 
 Output:
     data/output/cofolding_results.parquet     — one row per (complex, chain, species)
@@ -27,12 +40,17 @@ Output:
 from __future__ import annotations
 
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any
 
 import polars as pl
 import typer
+from dotenv import load_dotenv
+
+# Load .env so BOLTZ_API_KEY is available when this module runs standalone.
+load_dotenv()
 
 app = typer.Typer(help="Boltz API co-folding stage for cross-species PPI compatibility.")
 
@@ -41,7 +59,19 @@ app = typer.Typer(help="Boltz API co-folding stage for cross-species PPI compati
 # ---------------------------------------------------------------------------
 DATA_OUTPUT = Path("data/output")
 ENRICHMENT_PATH = DATA_OUTPUT / "enrichment.parquet"
+ORTHOLOG_COVERAGE_PATH = DATA_OUTPUT / "ortholog_coverage.csv"
 COFOLDING_RESULTS = DATA_OUTPUT / "cofolding_results.parquet"
+
+# ---------------------------------------------------------------------------
+# Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
+# ---------------------------------------------------------------------------
+SPECIES_TAXID = {
+    "human": 9606,
+    "naked_mole_rat": 10181,
+    "bowhead_whale": 27622,
+    "myotis_lucifugus": 59463,
+    "mouse": 10090,
+}
 
 # ---------------------------------------------------------------------------
 # Compatibility classification thresholds
@@ -69,6 +99,63 @@ def classify_interaction(iptm: float, binding_confidence: float | None) -> str:
 
 
 # ---------------------------------------------------------------------------
+# complex_id parsing
+# ---------------------------------------------------------------------------
+
+
+def parse_complex_id(complex_id: str) -> tuple[str | None, str | None]:
+    """
+    Parse a complex_id into (receptor_uniprot, ligand_uniprot).
+
+    Format: "6b2e__A1_P54646--6b2e__B1_O43741"
+            receptor side  ^^^^^^         ligand side ^^^^^^
+    Returns (None, None) if it cannot be parsed.
+    """
+    halves = complex_id.split("--")
+    if len(halves) != 2:
+        return None, None
+
+    def last_token(half: str) -> str | None:
+        # half looks like "6b2e__A1_P54646"; the UniProt ID is the final _token.
+        m = re.search(r"_([A-Z0-9]{6,10})$", half)
+        return m.group(1) if m else None
+
+    return last_token(halves[0]), last_token(halves[1])
+
+
+# ---------------------------------------------------------------------------
+# Ortholog lookup
+# ---------------------------------------------------------------------------
+
+
+def load_ortholog_table() -> pl.DataFrame | None:
+    """Load ortholog_coverage.csv, or return None if it does not exist."""
+    if not ORTHOLOG_COVERAGE_PATH.exists():
+        return None
+    return pl.read_csv(ORTHOLOG_COVERAGE_PATH)
+
+
+def lookup_ortholog_sequence(
+    ortholog_df: pl.DataFrame,
+    source_uniprot: str,
+    target_taxid: int,
+) -> str | None:
+    """
+    Find the ortholog sequence for a human protein in a target species.
+
+    Returns the target_sequence string, or None if no ortholog is on file.
+    """
+    hits = ortholog_df.filter(
+        (pl.col("source_uniprot") == source_uniprot)
+        & (pl.col("target_species_taxid") == target_taxid)
+    )
+    if hits.is_empty():
+        return None
+    seq = hits.row(0, named=True).get("target_sequence")
+    return str(seq) if seq else None
+
+
+# ---------------------------------------------------------------------------
 # Boltz API helpers
 # ---------------------------------------------------------------------------
 
@@ -76,7 +163,7 @@ def classify_interaction(iptm: float, binding_confidence: float | None) -> str:
 def get_boltz_client() -> Any:
     """Return an authenticated Boltz client. Requires BOLTZ_API_KEY in env."""
     try:
-        from boltz_api import Boltz  # type: ignore[import-not-found]
+        from boltz_api import Boltz
     except ImportError as err:
         typer.echo(
             "boltz_api not installed. Run:\n  uv add boltz-api\nor:\n  pip install boltz-api",
@@ -97,23 +184,22 @@ def get_boltz_client() -> Any:
 
 def submit_ppi_prediction(
     client: Any,
-    seq_human: str,
-    seq_ortholog: str,
-    name: str,
+    seq_a: str,
+    seq_b: str,
     num_samples: int = 1,
 ) -> dict[str, Any]:
     """
     Submit a protein-protein co-folding prediction to Boltz API.
 
-    Chain A = human protein
-    Chain B = ortholog from long-lived (or short-lived) species
+    Chain A and chain B are the two partners of the complex. Chain B is marked
+    as the binder for binding-metric purposes.
 
     Returns the prediction result dict with metrics.
     """
     prediction_input = {
         "entities": [
-            {"type": "protein", "value": seq_human, "chain_ids": ["A"]},
-            {"type": "protein", "value": seq_ortholog, "chain_ids": ["B"]},
+            {"type": "protein", "value": seq_a, "chain_ids": ["A"]},
+            {"type": "protein", "value": seq_b, "chain_ids": ["B"]},
         ],
         "binding": {
             "type": "protein_protein_binding",
@@ -125,16 +211,15 @@ def submit_ppi_prediction(
     prediction = client.predictions.structure_and_binding.start(
         model="boltz-2.1",
         input=prediction_input,
-        name=name,
     )
 
-    # Poll until done
+    # Poll until done.
     while prediction.status not in ("succeeded", "failed"):
-        time.sleep(10)
+        time.sleep(5)
         prediction = client.predictions.structure_and_binding.retrieve(prediction.id)
 
     if prediction.status == "failed":
-        raise RuntimeError(f"Boltz prediction failed for {name}: {prediction.error}")
+        raise RuntimeError(f"Boltz prediction failed: {prediction.error}")
 
     best = prediction.output.best_sample
     metrics = best.metrics
@@ -180,14 +265,13 @@ def make_test_result(name: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def fetch_sequence_uniprot(uniprot_id: str) -> str:
+def fetch_sequence_uniprot(uniprot_id: str) -> str | None:
     """
-    Fetch canonical FASTA sequence from UniProt REST API.
+    Fetch the canonical FASTA sequence for a UniProt ID.
 
     UniProt is a protein database; each protein has a unique ID
-    (e.g. P04637 = human p53). We download the amino-acid sequence
-    in FASTA format (one letter per residue).
-    Falls back to a short placeholder if the network is unavailable.
+    (e.g. P04637 = human p53). Returns the amino-acid sequence as a plain
+    string, or None on failure.
     """
     import urllib.request
 
@@ -196,13 +280,65 @@ def fetch_sequence_uniprot(uniprot_id: str) -> str:
         with urllib.request.urlopen(url, timeout=15) as resp:
             fasta = resp.read().decode()
         lines = [line for line in fasta.splitlines() if not line.startswith(">")]
-        return "".join(lines)
+        seq = "".join(lines)
+        return seq or None
     except Exception as exc:
+        typer.echo(f"    Warning: could not fetch {uniprot_id} from UniProt ({exc}).", err=True)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Build the cross-species pair for one enrichment row
+# ---------------------------------------------------------------------------
+
+
+def build_cross_species_pair(
+    complex_id: str,
+    chain: str,
+    target_species: str,
+    ortholog_df: pl.DataFrame,
+) -> tuple[str, str] | None:
+    """
+    Assemble the (chain A, chain B) sequences for a cross-species prediction.
+
+    The analyzed chain is replaced by its ortholog in target_species; the
+    partner chain stays human. Returns (seq_a, seq_b) or None if any piece is
+    missing.
+    """
+    receptor_up, ligand_up = parse_complex_id(complex_id)
+    if not receptor_up or not ligand_up:
+        typer.echo(f"    Could not parse UniProt IDs from {complex_id}.", err=True)
+        return None
+
+    target_taxid = SPECIES_TAXID.get(target_species)
+    if target_taxid is None:
+        typer.echo(f"    Unknown species '{target_species}'.", err=True)
+        return None
+
+    # Decide which chain is analyzed (gets the ortholog) and which is the
+    # human partner.
+    if chain == "receptor":
+        analyzed_up, partner_up = receptor_up, ligand_up
+    elif chain == "ligand":
+        analyzed_up, partner_up = ligand_up, receptor_up
+    else:
+        typer.echo(f"    Unknown chain '{chain}'.", err=True)
+        return None
+
+    ortholog_seq = lookup_ortholog_sequence(ortholog_df, analyzed_up, target_taxid)
+    if not ortholog_seq:
         typer.echo(
-            f"  Warning: could not fetch {uniprot_id} from UniProt ({exc}). Using placeholder.",
+            f"    No ortholog for {analyzed_up} in {target_species} (taxid {target_taxid}).",
             err=True,
         )
-        return "MKTIIALSYIFCLVFAQSIIGTEITMKFGKQYMYIAKRGEIPMDPNHHHHH"  # placeholder
+        return None
+
+    partner_seq = fetch_sequence_uniprot(partner_up)
+    if not partner_seq:
+        return None
+
+    # Chain A = human partner, Chain B = ortholog of analyzed chain (the binder).
+    return partner_seq, ortholog_seq
 
 
 # ---------------------------------------------------------------------------
@@ -220,7 +356,7 @@ def main(
     ),
     species: str | None = typer.Option(None, "--species", help="Run only this target species."),
     test: bool = typer.Option(
-        False, "--test", help="Test mode: fake predictions, no API calls, no credits spent."
+        False, "--test", help="Test mode: internal synthetic results, no API calls."
     ),
     num_samples: int = typer.Option(
         1,
@@ -232,12 +368,6 @@ def main(
     Co-fold cross-species protein complexes via Boltz API and classify
     interactions as maintained / functionally_broken / incompatible / uncertain.
     """
-    # -----------------------------------------------------------------------
-    # Load enrichment results.
-    # enrichment.parquet holds the embedding-divergence analysis: for each
-    # complex and each species, how strongly interface residues diverge
-    # relative to non-interface residues (enrichment_ratio).
-    # -----------------------------------------------------------------------
     if not ENRICHMENT_PATH.exists():
         typer.echo(
             f"Enrichment file not found at {ENRICHMENT_PATH}.\n"
@@ -264,14 +394,11 @@ def main(
     else:
         candidates = df
 
-    # Apply CLI filters if provided.
     if complex_id:
         candidates = candidates.filter(pl.col("complex_id") == complex_id)
     if species:
         candidates = candidates.filter(pl.col("target_species") == species)
 
-    # Sort by enrichment_ratio -- higher means divergence is more concentrated
-    # at the interface. Take the top N.
     if "enrichment_ratio" in candidates.columns:
         candidates = candidates.sort("enrichment_ratio", descending=True)
     candidates = candidates.head(top_n)
@@ -282,31 +409,27 @@ def main(
 
     typer.echo(f"\n{'[TEST MODE] ' if test else ''}Processing {len(candidates)} candidates...\n")
 
-    # -----------------------------------------------------------------------
-    # Set up Boltz client (skip in test mode).
-    # -----------------------------------------------------------------------
+    # Load ortholog table and Boltz client only when running for real.
+    ortholog_df = None if test else load_ortholog_table()
+    if not test and ortholog_df is None:
+        typer.echo(
+            f"Ortholog coverage not found at {ORTHOLOG_COVERAGE_PATH}. Run `uv run orthologs`.",
+            err=True,
+        )
+        raise typer.Exit(1)
+
     client = None if test else get_boltz_client()
 
-    # -----------------------------------------------------------------------
-    # Process each candidate.
-    # -----------------------------------------------------------------------
-    results: list[dict[str, Any]] = []
+    results = []
 
     for row in candidates.iter_rows(named=True):
-        # Column names in enrichment.parquet:
-        # complex_id  -- complex identifier, e.g. "7p6b__B1_P10636--7p6b__C1_P10636"
-        # chain       -- "receptor" or "ligand" (which chain was analyzed)
-        # source_species -- always "human" (the reference)
-        # target_species -- the species we compare against: "naked_mole_rat", "mouse", ...
         complex_id_val = row.get("complex_id", "unknown")
         chain_val = row.get("chain", "?")
         source_species = row.get("source_species", "human")
         target_species = row.get("target_species", "unknown")
         enrichment_ratio = row.get("enrichment_ratio", None)
 
-        name = f"{complex_id_val}_{chain_val}_{target_species}"
-        # Truncate to 60 chars so the job name is not too long for the API.
-        name = name[:60]
+        name = f"{complex_id_val}_{chain_val}_{target_species}"[:60]
 
         typer.echo(
             f"  -> {complex_id_val} / {chain_val} / {target_species}"
@@ -317,28 +440,18 @@ def main(
             if test:
                 api_result = make_test_result(name)
             else:
-                # In live mode we need protein sequences. enrichment.parquet
-                # embeds the UniProt IDs inside complex_id, so we parse them out
-                # and fetch sequences from UniProt.
-                # Format: "7p6b__B1_P10636--7p6b__C1_P10636".
-                import re
-
-                uniprot_ids = re.findall(r"_([A-Z0-9]{6,10})(?:--|$|_)", complex_id_val)
-                if len(uniprot_ids) < 2:
-                    typer.echo(f"    Skipping {name}: could not parse UniProt IDs.", err=True)
+                assert ortholog_df is not None  # for type-checkers; guarded above
+                pair = build_cross_species_pair(
+                    complex_id_val, chain_val, target_species, ortholog_df
+                )
+                if pair is None:
+                    typer.echo(f"    Skipping {name}: could not build cross-species pair.")
                     continue
-
-                seq_human = fetch_sequence_uniprot(uniprot_ids[0])
-                seq_ortholog = fetch_sequence_uniprot(uniprot_ids[1])
+                seq_a, seq_b = pair
 
                 typer.echo("    Submitting to Boltz API...")
-                api_result = submit_ppi_prediction(
-                    client, seq_human, seq_ortholog, name=name, num_samples=num_samples
-                )
+                api_result = submit_ppi_prediction(client, seq_a, seq_b, num_samples=num_samples)
 
-            # Classify the interaction from structural metrics.
-            # iptm (interface predicted TM-score) reflects how confident the
-            # model is in the predicted interface structure. 0-1, higher = better.
             iptm = api_result["iptm"]
             bc = api_result["binding_confidence"]
             classification = classify_interaction(iptm, bc)
@@ -374,9 +487,6 @@ def main(
                 }
             )
 
-    # -----------------------------------------------------------------------
-    # Save results.
-    # -----------------------------------------------------------------------
     if not results:
         typer.echo("No results to save.", err=True)
         raise typer.Exit(1)
@@ -388,9 +498,6 @@ def main(
 
     typer.echo(f"\nSaved {len(results)} rows to {COFOLDING_RESULTS}")
 
-    # -----------------------------------------------------------------------
-    # Summary.
-    # -----------------------------------------------------------------------
     if "boltz_classification" in out_df.columns:
         summary = (
             out_df.group_by("boltz_classification")

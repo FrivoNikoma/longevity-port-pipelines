@@ -288,6 +288,23 @@ wheels = [
 ]
 
 [[package]]
+name = "boltz-api"
+version = "0.36.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6f/29/d357bb0498d2ec55a49e774b50b54251a1a14a386b3cc7aca75a0d8c3657/boltz_api-0.36.2.tar.gz", hash = "sha256:ffe3f02ac7d37bd801513fa2476a3850b0a380e30ed8540d5da514d964f44145", size = 386068, upload-time = "2026-06-18T03:24:11.216Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4a/f7/9a141399ca92015f7f9c3d6fe49dc9021aa09473bc068a007275ed87deca/boltz_api-0.36.2-py3-none-any.whl", hash = "sha256:979e2133923eecce26b8eedf2ac065b0f2386e2ea658b28c8052bf5eb92e3114", size = 294348, upload-time = "2026-06-18T03:24:12.338Z" },
+]
+
+[[package]]
 name = "boto3"
 version = "1.43.23"
 source = { registry = "https://pypi.org/simple" }
@@ -794,6 +811,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/86/b2/d6fc3f2347f43dada79e5ff118493e8109c98400a0e29a1d5264a3aa479b/distlib-0.4.1.tar.gz", hash = "sha256:c3804d0d2d4b5fcd44036eb860cb6660485fcdf5c2aba53dc324d805837ea65b", size = 610526, upload-time = "2026-06-02T11:17:40.691Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/25/18/3497c4fa83a76dcb154923fd2075522e8dd6995ecee4093c00ae18160046/distlib-0.4.1-py2.py3-none-any.whl", hash = "sha256:9c2c552c68cbadc619f2d0ed3a69e27c351a3f4c9baa9ffb7df9e9cdc3d19a97", size = 469216, upload-time = "2026-06-02T11:17:38.779Z" },
+]
+
+[[package]]
+name = "distro"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527f8a2e8885fc8015d3e6f5775df186e443e0964a11c3/distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed", size = 60722, upload-time = "2023-12-24T09:54:32.31Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277, upload-time = "2023-12-24T09:54:30.421Z" },
 ]
 
 [[package]]
@@ -1526,6 +1552,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
+    { name = "boltz-api" },
     { name = "esm" },
     { name = "huggingface-hub" },
     { name = "kaleido" },
@@ -1556,6 +1583,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.0" },
+    { name = "boltz-api", specifier = ">=0.36.2" },
     { name = "esm", git = "https://github.com/Biohub/esm.git?rev=c94ed8d" },
     { name = "huggingface-hub", specifier = ">=0.34,<1.0" },
     { name = "kaleido", specifier = ">=1.3.0" },
@@ -2233,7 +2261,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
