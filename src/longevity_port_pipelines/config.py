@@ -11,6 +11,9 @@ from longevity_port_pipelines.models import LifespanCategory, Species
 SPECIES_REGISTRY: dict[str, Species] = {
     "human": Species(name="human", taxid=9606, category=LifespanCategory.REFERENCE),
     "mouse": Species(name="mouse", taxid=10090, category=LifespanCategory.SHORT_LIVED),
+    # Additional short-lived controls (taxids verified via UniProt taxonomy API).
+    "rat": Species(name="rat", taxid=10116, category=LifespanCategory.SHORT_LIVED),
+    "hamster": Species(name="hamster", taxid=10036, category=LifespanCategory.SHORT_LIVED),
     "naked_mole_rat": Species(
         name="naked_mole_rat", taxid=10181, category=LifespanCategory.LONG_LIVED
     ),
@@ -18,6 +21,9 @@ SPECIES_REGISTRY: dict[str, Species] = {
         name="bowhead_whale", taxid=27622, category=LifespanCategory.LONG_LIVED
     ),
     "bat": Species(name="myotis_lucifugus", taxid=59463, category=LifespanCategory.LONG_LIVED),
+    # Additional long-lived species (taxids verified via UniProt taxonomy API).
+    "elephant": Species(name="elephant", taxid=9785, category=LifespanCategory.LONG_LIVED),
+    "brandts_bat": Species(name="brandts_bat", taxid=109478, category=LifespanCategory.LONG_LIVED),
 }
 
 LONG_LIVED_SPECIES = [

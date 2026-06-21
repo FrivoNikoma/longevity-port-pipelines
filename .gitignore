@@ -233,3 +233,5 @@ claude/*
 
 #cursor
 cursor/*
+# Local working notes from AI agents (not committed)
+.notes/
