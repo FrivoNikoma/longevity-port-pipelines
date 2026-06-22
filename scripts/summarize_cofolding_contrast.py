@@ -9,8 +9,8 @@ For each (complex_id, chain) it shows, per target species:
     binding_confidence -- Boltz binding confidence
     boltz_classification
 
-It then computes a long-lived-vs-mouse contrast on both layers, so you can see
-whether the structural signal agrees with the embedding signal.
+It then computes a long-lived-vs-short-lived-control contrast on both layers,
+so you can see whether the structural signal agrees with the embedding signal.
 
 This is a reporting tool. Outputs go to gitignored data/output/ and are NOT
 committed — only this script is.
@@ -27,14 +27,16 @@ from pathlib import Path
 
 import polars as pl
 
+from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SHORT_LIVED_SPECIES
+
 DATA_OUTPUT = Path("data/output")
 ENRICHMENT_PATH = DATA_OUTPUT / "enrichment.parquet"
 COFOLDING_PATH = DATA_OUTPUT / "cofolding_results.parquet"
 SUMMARY_CSV = DATA_OUTPUT / "cofolding_contrast_summary.csv"
 SUMMARY_MD = DATA_OUTPUT / "cofolding_contrast_summary.md"
 
-LONG_LIVED = ["naked_mole_rat", "bowhead_whale", "myotis_lucifugus"]
-SHORT_LIVED = "mouse"
+LONG_LIVED = [species.name for species in LONG_LIVED_SPECIES]
+SHORT_LIVED_CONTROLS = [species.name for species in SHORT_LIVED_SPECIES]
 
 
 def parse_args() -> argparse.Namespace:
@@ -91,7 +93,7 @@ def main() -> None:
     DATA_OUTPUT.mkdir(parents=True, exist_ok=True)
     merged.write_csv(SUMMARY_CSV)
 
-    # Build a contrast view: long-lived vs mouse, per (complex_id, chain).
+    # Build a contrast view: long-lived vs short-lived controls, per (complex_id, chain).
     lines: list[str] = []
     lines.append("# Cofolding contrast summary")
     lines.append("")
@@ -118,37 +120,52 @@ def main() -> None:
             lines.append(f"| {r['target_species']} | {er_s} | {iptm_s} | {bc_s} | {cls} |")
         lines.append("")
 
-        # Contrast: best long-lived vs mouse, on both layers.
+        # Contrast: best long-lived vs short-lived controls, on both layers.
         rows = {r["target_species"]: r for r in group.iter_rows(named=True)}
-        mouse = rows.get(SHORT_LIVED)
+        short_present = [s for s in SHORT_LIVED_CONTROLS if s in rows]
         ll_present = [s for s in LONG_LIVED if s in rows]
 
-        if mouse and ll_present:
-            # ESM contrast
+        if short_present and ll_present:
             ll_esm = [
                 rows[s]["enrichment_ratio"]
                 for s in ll_present
                 if rows[s].get("enrichment_ratio") is not None
             ]
+            short_esm = [
+                rows[s]["enrichment_ratio"]
+                for s in short_present
+                if rows[s].get("enrichment_ratio") is not None
+            ]
             ll_iptm = [rows[s]["iptm"] for s in ll_present if rows[s].get("iptm") is not None]
+            short_iptm = [rows[s]["iptm"] for s in short_present if rows[s].get("iptm") is not None]
+
             note_parts = []
-            if ll_esm and mouse.get("enrichment_ratio") is not None:
-                d_esm = max(ll_esm) - mouse["enrichment_ratio"]
-                note_parts.append(f"ESM contrast (max long-lived - mouse): {d_esm:+.3f}")
-            if ll_iptm and mouse.get("iptm") is not None:
-                d_iptm = max(ll_iptm) - mouse["iptm"]
-                note_parts.append(f"Boltz iptm contrast (max long-lived - mouse): {d_iptm:+.3f}")
+            d_esm = None
+            d_iptm = None
+            if ll_esm and short_esm:
+                short_esm_mean = sum(short_esm) / len(short_esm)
+                d_esm = max(ll_esm) - short_esm_mean
+                note_parts.append(
+                    f"ESM contrast (max long-lived - mean short-lived controls): {d_esm:+.3f}"
+                )
+            if ll_iptm and short_iptm:
+                short_iptm_mean = sum(short_iptm) / len(short_iptm)
+                d_iptm = max(ll_iptm) - short_iptm_mean
+                note_parts.append(
+                    "Boltz iptm contrast "
+                    f"(max long-lived - mean short-lived controls): {d_iptm:+.3f}"
+                )
             if note_parts:
                 lines.append("**Contrast:** " + "; ".join(note_parts))
+                lines.append(
+                    "_Groups: long-lived = "
+                    + ", ".join(ll_present)
+                    + "; short-lived controls = "
+                    + ", ".join(short_present)
+                    + "_"
+                )
                 # Plain-language interpretation.
-                if (
-                    ll_esm
-                    and ll_iptm
-                    and mouse.get("enrichment_ratio") is not None
-                    and mouse.get("iptm") is not None
-                ):
-                    d_esm = max(ll_esm) - mouse["enrichment_ratio"]
-                    d_iptm = max(ll_iptm) - mouse["iptm"]
+                if d_esm is not None and d_iptm is not None:
                     if d_esm > 0.3 and d_iptm >= 0:
                         verdict = (
                             "Long-lived interface diverges more (ESM) but stays at least as "
