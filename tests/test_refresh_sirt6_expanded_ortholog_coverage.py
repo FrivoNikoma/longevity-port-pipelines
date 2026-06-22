@@ -24,6 +24,24 @@ def test_selected_uniprots_deduplicates_receptor_and_ligand_ids() -> None:
     assert refresh.selected_uniprots(selection) == ["P1", "P2", "P3", "P4"]
 
 
+def test_restrict_uniprots_supports_requested_ids_and_limits() -> None:
+    uniprots = ["P1", "P2", "P3", "P4"]
+
+    assert refresh.restrict_uniprots(uniprots, ["P3,P1"], None) == ["P1", "P3"]
+    assert refresh.restrict_uniprots(uniprots, None, 2) == ["P1", "P2"]
+    assert refresh.restrict_uniprots(uniprots, ["P4"], 1) == ["P4"]
+
+
+def test_restrict_uniprots_reports_missing_requested_ids() -> None:
+    with pytest.raises(ValueError, match="not present"):
+        refresh.restrict_uniprots(["P1"], ["P2"], None)
+
+
+def test_restrict_uniprots_rejects_nonpositive_limits() -> None:
+    with pytest.raises(ValueError, match="must be >= 1"):
+        refresh.restrict_uniprots(["P1"], None, 0)
+
+
 def test_fetch_ortholog_coverage_records_mappings_and_missing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -42,7 +60,11 @@ def test_fetch_ortholog_coverage_records_mappings_and_missing(
 
     monkeypatch.setattr(refresh, "fetch_ortholog", fake_fetch_ortholog)
 
-    mappings, missing = refresh.fetch_ortholog_coverage(["P1"], targets)
+    mappings, missing = refresh.fetch_ortholog_coverage(
+        ["P1"],
+        targets,
+        progress=False,
+    )
 
     assert calls == [("P1", 10090), ("P1", 10116)]
     assert len(mappings) == 1
