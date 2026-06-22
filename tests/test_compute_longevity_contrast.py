@@ -200,3 +200,32 @@ def test_build_longevity_contrast_sorted_by_priority() -> None:
         "long_lived_specific_interface_divergence"
     )
     assert contrast.row(1, named=True)["contrast_class"] == ("short_lived_baseline_stronger_signal")
+
+
+def test_build_longevity_contrast_aggregates_multiple_short_lived_controls() -> None:
+    df = enrichment_rows(
+        [
+            _row("multi__a", "receptor", "naked_mole_rat", 1.8, 0.9),
+            _row("multi__a", "receptor", "mouse", 1.0, 0.0),
+            _row("multi__a", "receptor", "rat", 1.2, 0.2),
+            _row("multi__a", "receptor", "hamster", 0.8, -0.2),
+        ]
+    )
+
+    contrast = build_longevity_contrast(
+        df,
+        short_lived_species=["mouse", "rat", "hamster"],
+        long_lived_species=["naked_mole_rat"],
+        **DEFAULTS,
+    )
+
+    assert contrast.height == 1
+    row = contrast.row(0, named=True)
+    assert row["complex_id"] == "multi__a"
+    assert row["chain"] == "receptor"
+    assert row["long_lived_species"] == "naked_mole_rat"
+    assert row["short_lived_species"] == "hamster,mouse,rat"
+    assert row["short_lived_control_count"] == 3
+    assert row["short_enrichment_ratio"] == pytest.approx(1.0)
+    assert row["short_effect_size"] == pytest.approx(0.0)
+    assert row["contrast_class"] == "long_lived_specific_interface_divergence"

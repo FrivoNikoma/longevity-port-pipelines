@@ -7,9 +7,9 @@ from typing import Any
 
 import polars as pl
 
-from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SPECIES_REGISTRY
+from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SHORT_LIVED_SPECIES
 
-DEFAULT_SHORT_LIVED_SPECIES = SPECIES_REGISTRY["mouse"].name
+DEFAULT_SHORT_LIVED_SPECIES = [species.name for species in SHORT_LIVED_SPECIES]
 DEFAULT_LONG_LIVED_SPECIES = [species.name for species in LONG_LIVED_SPECIES]
 
 
@@ -34,11 +34,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--short-lived-species",
+        nargs="+",
         default=DEFAULT_SHORT_LIVED_SPECIES,
         help=(
-            "Single short-lived baseline species used for contrast. "
-            "Defaults to mouse for backward compatibility; multi-control "
-            "short-lived aggregation is handled separately."
+            "Short-lived control species used to build an aggregated baseline. "
+            "Defaults to all short-lived species registered in config."
         ),
     )
     parser.add_argument(
@@ -278,10 +278,93 @@ def class_priority(contrast_class: str) -> int:
     return priorities.get(contrast_class, 99)
 
 
+def normalize_species_names(species: str | list[str]) -> list[str]:
+    """Normalize CLI/test species arguments to a list of species names."""
+    if isinstance(species, str):
+        return [species]
+    return list(species)
+
+
+def mean_numeric(rows: list[dict[str, Any]], column: str) -> float:
+    values = []
+    for row in rows:
+        value = safe_float(row.get(column))
+        if not math.isnan(value):
+            values.append(value)
+    if not values:
+        return math.nan
+    return sum(values) / len(values)
+
+
+def aggregate_short_lived_controls(short_df: pl.DataFrame) -> pl.DataFrame:
+    """Aggregate available short-lived controls per complex/chain baseline."""
+    records: list[dict[str, Any]] = []
+
+    for (complex_id, chain), group in short_df.group_by(
+        ["complex_id", "chain"], maintain_order=True
+    ):
+        rows = list(group.iter_rows(named=True))
+        species_present = sorted({str(row["target_species"]) for row in rows})
+
+        record: dict[str, Any] = {
+            "complex_id": complex_id,
+            "chain": chain,
+            "target_species": ",".join(species_present),
+            "short_lived_control_count": len(species_present),
+            "interface_mean_delta": mean_numeric(rows, "interface_mean_delta"),
+            "noninterface_mean_delta": mean_numeric(rows, "noninterface_mean_delta"),
+            "enrichment_ratio": mean_numeric(rows, "enrichment_ratio"),
+            "effect_size_cohens_d": mean_numeric(rows, "effect_size_cohens_d"),
+        }
+
+        if "p_two_sided" in short_df.columns:
+            record["p_two_sided"] = mean_numeric(rows, "p_two_sided")
+
+        if "is_predicted_structure" in short_df.columns:
+            record["is_predicted_structure"] = any(
+                bool(row.get("is_predicted_structure"))
+                for row in rows
+                if row.get("is_predicted_structure") is not None
+            )
+
+        records.append(record)
+
+    return pl.DataFrame(records)
+
+
+def prefixed_short_lived_baseline_frame(short_df: pl.DataFrame) -> pl.DataFrame:
+    """Rename aggregated short-lived baseline columns to the short_* namespace."""
+    rename_map = {
+        "target_species": "short_lived_species",
+        "interface_mean_delta": "short_interface_mean_delta",
+        "noninterface_mean_delta": "short_noninterface_mean_delta",
+        "enrichment_ratio": "short_enrichment_ratio",
+        "effect_size_cohens_d": "short_effect_size",
+        "p_two_sided": "short_p_two_sided",
+        "is_predicted_structure": "short_is_predicted_structure",
+    }
+    columns = [
+        "complex_id",
+        "chain",
+        "target_species",
+        "short_lived_control_count",
+        "interface_mean_delta",
+        "noninterface_mean_delta",
+        "enrichment_ratio",
+        "effect_size_cohens_d",
+        "p_two_sided",
+        "is_predicted_structure",
+    ]
+    selected = [column for column in columns if column in short_df.columns]
+    return short_df.select(selected).rename(
+        {old: new for old, new in rename_map.items() if old in selected}
+    )
+
+
 def build_longevity_contrast(
     df: pl.DataFrame,
     *,
-    short_lived_species: str,
+    short_lived_species: str | list[str],
     long_lived_species: list[str],
     divergent_threshold: float,
     constrained_threshold: float,
@@ -305,20 +388,20 @@ def build_longevity_contrast(
 
     df = add_p_two_sided_if_missing(df)
 
-    short_df = df.filter(pl.col("target_species") == short_lived_species)
-    long_df = df.filter(pl.col("target_species").is_in(long_lived_species))
+    short_lived_species_names = normalize_species_names(short_lived_species)
+    long_lived_species_names = normalize_species_names(long_lived_species)
+
+    short_df = df.filter(pl.col("target_species").is_in(short_lived_species_names))
+    long_df = df.filter(pl.col("target_species").is_in(long_lived_species_names))
 
     if short_df.is_empty():
-        raise ValueError(f"No rows found for short-lived baseline: {short_lived_species}")
+        raise ValueError(f"No rows found for short-lived controls: {short_lived_species_names}")
 
     if long_df.is_empty():
-        raise ValueError(f"No rows found for long-lived species: {long_lived_species}")
+        raise ValueError(f"No rows found for long-lived species: {long_lived_species_names}")
 
-    short_prefixed = prefixed_species_frame(
-        short_df,
-        prefix="short",
-        species_column="short_lived_species",
-    )
+    short_aggregated = aggregate_short_lived_controls(short_df)
+    short_prefixed = prefixed_short_lived_baseline_frame(short_aggregated)
     long_prefixed = prefixed_species_frame(
         long_df,
         prefix="long",
@@ -356,6 +439,7 @@ def build_longevity_contrast(
             "chain": row["chain"],
             "long_lived_species": row["long_lived_species"],
             "short_lived_species": row["short_lived_species"],
+            "short_lived_control_count": row["short_lived_control_count"],
             "long_enrichment_ratio": long_ratio,
             "short_enrichment_ratio": short_ratio,
             "enrichment_delta": enrichment_delta,
@@ -428,7 +512,7 @@ def write_markdown_report(
     *,
     output_path: Path,
     input_path: Path,
-    short_lived_species: str,
+    short_lived_species: str | list[str],
     long_lived_species: list[str],
 ) -> None:
     counts = (
@@ -444,6 +528,7 @@ def write_markdown_report(
             "chain",
             "long_lived_species",
             "short_lived_species",
+            "short_lived_control_count",
             "long_enrichment_ratio",
             "short_enrichment_ratio",
             "enrichment_delta",
@@ -455,14 +540,16 @@ def write_markdown_report(
         ]
     ).head(20)
 
+    short_lived_species_names = normalize_species_names(short_lived_species)
+
     lines = [
         "# SIRT6 mini-pilot v2 longevity contrast",
         "",
         f"Input: `{input_path}`",
-        f"Short-lived baseline: `{short_lived_species}`",
+        f"Short-lived controls: `{', '.join(short_lived_species_names)}`",
         f"Long-lived species: `{', '.join(long_lived_species)}`",
         "",
-        "This report compares long-lived species rows against a short-lived baseline within each `complex_id + chain` group.",
+        "This report compares long-lived species rows against an aggregated short-lived control baseline within each `complex_id + chain` group.",
         "",
         "The goal is to separate shared non-human interface divergence from candidate longevity-specific interface signals.",
         "",
@@ -481,7 +568,7 @@ def write_markdown_report(
         "- `shared_nonhuman_interface_divergence`: both long-lived and short-lived species show interface-enriched divergence relative to human.",
         "- `long_lived_specific_interface_constraint`: long-lived species shows interface constraint while the short-lived baseline is near neutral.",
         "- `shared_interface_constraint`: both long-lived and short-lived species show interface constraint.",
-        "- `short_lived_baseline_stronger_signal`: mouse/short-lived baseline has the stronger directional signal.",
+        "- `short_lived_baseline_stronger_signal`: the aggregated short-lived baseline has the stronger directional signal.",
         "- `weak_or_unresolved_contrast`: no clear contrast under current thresholds.",
         "",
         "These classes are preliminary prioritization labels. They do not replace NEGATOME-style controls.",
