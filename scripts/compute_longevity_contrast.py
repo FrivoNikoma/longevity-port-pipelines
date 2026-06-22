@@ -7,6 +7,11 @@ from typing import Any
 
 import polars as pl
 
+from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SPECIES_REGISTRY
+
+DEFAULT_SHORT_LIVED_SPECIES = SPECIES_REGISTRY["mouse"].name
+DEFAULT_LONG_LIVED_SPECIES = [species.name for species in LONG_LIVED_SPECIES]
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -29,14 +34,21 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--short-lived-species",
-        default="mouse",
-        help="Short-lived baseline species used for contrast.",
+        default=DEFAULT_SHORT_LIVED_SPECIES,
+        help=(
+            "Single short-lived baseline species used for contrast. "
+            "Defaults to mouse for backward compatibility; multi-control "
+            "short-lived aggregation is handled separately."
+        ),
     )
     parser.add_argument(
         "--long-lived-species",
         nargs="+",
-        default=["naked_mole_rat", "myotis_lucifugus"],
-        help="Long-lived species to compare against the short-lived baseline.",
+        default=DEFAULT_LONG_LIVED_SPECIES,
+        help=(
+            "Long-lived species to compare against the short-lived baseline. "
+            "Defaults to all long-lived species registered in config."
+        ),
     )
     parser.add_argument(
         "--divergent-threshold",
