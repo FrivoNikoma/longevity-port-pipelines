@@ -20,9 +20,8 @@ from longevity_port_pipelines.models import EnrichmentResult, OrthologMapping
 from longevity_port_pipelines.stages import fetch_orthologs, load_foldseek, load_pinder, load_string
 from longevity_port_pipelines.stages.embed import (
     PerResidueEmbedding,
-    embed_pair,
+    embed_pair_cached,
     get_biohub_token,
-    save_embeddings,
 )
 from longevity_port_pipelines.stages.interface import download_pdb, extract_interface_residues
 from longevity_port_pipelines.stages.negatome_controls import (
@@ -138,7 +137,7 @@ def run_stage_5(
                     (s.name for s in TARGET_SPECIES if s.taxid == m.target_species_taxid),
                     str(m.target_species_taxid),
                 )
-                ref_emb, orth_emb = embed_pair(
+                ref_emb, orth_emb = embed_pair_cached(
                     complex_id=complex_id,
                     chain=chain_label,
                     ref_sequence=str(ref_seq),
@@ -148,10 +147,9 @@ def run_stage_5(
                     model=cfg.esmc_model,
                     api_url=cfg.biohub_api_url,
                     token=token,
+                    output_dir=cfg.output_dir,
                     is_predicted=not m.is_reviewed,
                 )
-                save_embeddings(ref_emb, cfg.output_dir)
-                save_embeddings(orth_emb, cfg.output_dir)
                 results.append(
                     (
                         ref_emb,

@@ -70,6 +70,55 @@ def get_esmc_client(
     return _CLIENT_CACHE[key]
 
 
+def embedding_path(
+    output_dir: Path,
+    model_name: str,
+    complex_id: str,
+    chain: str,
+    species_taxid: int,
+) -> Path:
+    """Return the canonical saved embedding path for one complex/chain/species."""
+    return output_dir / "embeddings" / model_name / f"{complex_id}_{chain}_{species_taxid}.npy"
+
+
+def load_saved_embedding(
+    output_dir: Path,
+    model_name: str,
+    complex_id: str,
+    chain: str,
+    species_taxid: int,
+    sequence: str,
+    is_predicted_structure: bool = False,
+) -> PerResidueEmbedding:
+    """Load a saved per-residue embedding from disk."""
+    path = embedding_path(
+        output_dir=output_dir,
+        model_name=model_name,
+        complex_id=complex_id,
+        chain=chain,
+        species_taxid=species_taxid,
+    )
+    arr = np.load(path).astype(np.float32, copy=False)
+
+    if arr.ndim != 2:
+        raise ValueError(f"Expected saved embedding matrix with shape (L, D), got {arr.shape}")
+    if arr.shape[0] != len(sequence):
+        raise ValueError(
+            f"Saved embedding length mismatch for {path}: "
+            f"expected {len(sequence)}, got {arr.shape[0]}"
+        )
+
+    return PerResidueEmbedding(
+        complex_id=complex_id,
+        chain=chain,
+        species_taxid=species_taxid,
+        model_name=model_name,
+        sequence=sequence,
+        embeddings=arr,
+        is_predicted_structure=is_predicted_structure,
+    )
+
+
 def embed_sequence(
     sequence: str,
     model: str,
@@ -166,9 +215,98 @@ def embed_pair(
 
 def save_embeddings(emb: PerResidueEmbedding, output_dir: Path) -> Path:
     """Save embedding array to disk as a .npy file."""
-    subdir = output_dir / "embeddings" / emb.model_name
-    subdir.mkdir(parents=True, exist_ok=True)
-    fname = f"{emb.complex_id}_{emb.chain}_{emb.species_taxid}.npy"
-    path = subdir / fname
+    path = embedding_path(
+        output_dir=output_dir,
+        model_name=emb.model_name,
+        complex_id=emb.complex_id,
+        chain=emb.chain,
+        species_taxid=emb.species_taxid,
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
     np.save(path, emb.embeddings)
     return path
+
+
+def embed_or_load_sequence(
+    complex_id: str,
+    chain: str,
+    sequence: str,
+    species_taxid: int,
+    model: str,
+    api_url: str,
+    token: str,
+    output_dir: Path,
+    is_predicted_structure: bool = False,
+) -> PerResidueEmbedding:
+    """Reuse a saved embedding when present, otherwise request it from Biohub."""
+    path = embedding_path(
+        output_dir=output_dir,
+        model_name=model,
+        complex_id=complex_id,
+        chain=chain,
+        species_taxid=species_taxid,
+    )
+
+    if path.exists():
+        logger.info("Reusing saved embedding: %s", path)
+        return load_saved_embedding(
+            output_dir=output_dir,
+            model_name=model,
+            complex_id=complex_id,
+            chain=chain,
+            species_taxid=species_taxid,
+            sequence=sequence,
+            is_predicted_structure=is_predicted_structure,
+        )
+
+    logger.info("Embedding missing sequence via Biohub: %s", path)
+    emb = PerResidueEmbedding(
+        complex_id=complex_id,
+        chain=chain,
+        species_taxid=species_taxid,
+        model_name=model,
+        sequence=sequence,
+        embeddings=embed_sequence(sequence, model, api_url, token),
+        is_predicted_structure=is_predicted_structure,
+    )
+    save_embeddings(emb, output_dir)
+    return emb
+
+
+def embed_pair_cached(
+    complex_id: str,
+    chain: str,
+    ref_sequence: str,
+    orth_sequence: str,
+    ref_taxid: int,
+    orth_taxid: int,
+    model: str,
+    api_url: str,
+    token: str,
+    output_dir: Path,
+    is_predicted: bool = False,
+) -> tuple[PerResidueEmbedding, PerResidueEmbedding]:
+    """Embed a reference/ortholog pair, reusing saved files when available."""
+    return (
+        embed_or_load_sequence(
+            complex_id=complex_id,
+            chain=chain,
+            sequence=ref_sequence,
+            species_taxid=ref_taxid,
+            model=model,
+            api_url=api_url,
+            token=token,
+            output_dir=output_dir,
+        ),
+        embed_or_load_sequence(
+            complex_id=complex_id,
+            chain=chain,
+            sequence=orth_sequence,
+            species_taxid=orth_taxid,
+            model=model,
+            api_url=api_url,
+            token=token,
+            output_dir=output_dir,
+            is_predicted_structure=is_predicted,
+        ),
+    )
