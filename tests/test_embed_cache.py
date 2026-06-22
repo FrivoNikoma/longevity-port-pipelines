@@ -110,3 +110,51 @@ def test_embed_or_load_sequence_writes_missing_embedding(
     assert path.exists()
     np.testing.assert_array_equal(emb.embeddings, generated)
     np.testing.assert_array_equal(np.load(path), generated)
+
+
+def test_embed_or_load_sequence_regenerates_stale_embedding(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sequence = "ACDE"
+    stale = np.ones((len(sequence) + 1, 3), dtype=np.float32)
+    regenerated = np.arange(len(sequence) * 2, dtype=np.float32).reshape(len(sequence), 2)
+
+    path = embed.embedding_path(
+        output_dir=tmp_path,
+        model_name="model",
+        complex_id="complex",
+        chain="ligand",
+        species_taxid=10181,
+    )
+    path.parent.mkdir(parents=True)
+    np.save(path, stale)
+
+    calls: list[str] = []
+
+    def fake_embed_sequence(
+        sequence: str,
+        model: str,
+        api_url: str,
+        token: str,
+        timeout: int = 180,
+    ) -> np.ndarray:
+        calls.append(sequence)
+        return regenerated
+
+    monkeypatch.setattr(embed, "embed_sequence", fake_embed_sequence)
+
+    emb = embed.embed_or_load_sequence(
+        complex_id="complex",
+        chain="ligand",
+        sequence=sequence,
+        species_taxid=10181,
+        model="model",
+        api_url="https://example.invalid",
+        token="token",
+        output_dir=tmp_path,
+    )
+
+    assert calls == [sequence]
+    np.testing.assert_array_equal(emb.embeddings, regenerated)
+    np.testing.assert_array_equal(np.load(path), regenerated)

@@ -248,16 +248,23 @@ def embed_or_load_sequence(
     )
 
     if path.exists():
-        logger.info("Reusing saved embedding: %s", path)
-        return load_saved_embedding(
-            output_dir=output_dir,
-            model_name=model,
-            complex_id=complex_id,
-            chain=chain,
-            species_taxid=species_taxid,
-            sequence=sequence,
-            is_predicted_structure=is_predicted_structure,
-        )
+        try:
+            logger.info("Reusing saved embedding: %s", path)
+            return load_saved_embedding(
+                output_dir=output_dir,
+                model_name=model,
+                complex_id=complex_id,
+                chain=chain,
+                species_taxid=species_taxid,
+                sequence=sequence,
+                is_predicted_structure=is_predicted_structure,
+            )
+        except (OSError, ValueError) as exc:
+            logger.warning(
+                "Saved embedding is stale or invalid; regenerating via Biohub: %s (%s)",
+                path,
+                exc,
+            )
 
     logger.info("Embedding missing sequence via Biohub: %s", path)
     emb = PerResidueEmbedding(
