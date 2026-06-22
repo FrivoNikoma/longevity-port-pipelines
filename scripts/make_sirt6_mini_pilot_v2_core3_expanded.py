@@ -5,6 +5,8 @@ from pathlib import Path
 
 import polars as pl
 
+from longevity_port_pipelines.config import TARGET_SPECIES
+
 DEFAULT_SELECTION = "data/output/sirt6_mini_pilot_v2_expanded_selection.csv"
 DEFAULT_ORTHOLOG_COVERAGE = "data/output/sirt6_mini_pilot_v2_expanded_ortholog_coverage.csv"
 DEFAULT_OUTPUT_SELECTION = "data/output/sirt6_mini_pilot_v2_core3_expanded_selection.csv"
@@ -16,6 +18,7 @@ CORE_TARGET_SPECIES = {
     59463: "myotis_lucifugus",
     10090: "mouse",
 }
+EXPANDED_TARGET_SPECIES = {species.taxid: species.name for species in TARGET_SPECIES}
 
 
 def parse_args() -> argparse.Namespace:
@@ -23,7 +26,8 @@ def parse_args() -> argparse.Namespace:
         description=(
             "Build a conservative SIRT6 v2 core3 expanded selection. "
             "Core3 keeps only complex rows where receptor and ligand both have "
-            "ortholog mappings for mouse, naked mole rat, and Myotis lucifugus."
+            "ortholog mappings for mouse, naked mole rat, and Myotis lucifugus, "
+            "while auditing all registered target species."
         )
     )
     parser.add_argument(
@@ -75,7 +79,7 @@ def build_readiness_audit(selection: pl.DataFrame, coverage: pl.DataFrame) -> pl
             ("ligand", "uniprot_L"),
         ]:
             source_uniprot = row[uniprot_col]
-            for taxid, species_name in CORE_TARGET_SPECIES.items():
+            for taxid, species_name in EXPANDED_TARGET_SPECIES.items():
                 target_uniprot = covered.get((source_uniprot, taxid))
                 rows.append(
                     {
@@ -85,6 +89,7 @@ def build_readiness_audit(selection: pl.DataFrame, coverage: pl.DataFrame) -> pl
                         "source_uniprot": source_uniprot,
                         "target_species_taxid": taxid,
                         "target_species": species_name,
+                        "required_for_core3": taxid in CORE_TARGET_SPECIES,
                         "target_uniprot": target_uniprot,
                         "has_ortholog_mapping": target_uniprot is not None,
                         "intermolecular_contacts": row["intermolecular_contacts"],
@@ -97,16 +102,17 @@ def build_readiness_audit(selection: pl.DataFrame, coverage: pl.DataFrame) -> pl
 
 
 def core3_ready_ids(readiness_audit: pl.DataFrame) -> list[str]:
-    pair = readiness_audit.group_by(["id", "pdb_id", "target_species"]).agg(
+    required = readiness_audit.filter(pl.col("required_for_core3"))
+    pair = required.group_by(["id", "pdb_id", "target_species"]).agg(
         pl.col("has_ortholog_mapping").all().alias("both_chains_mapped")
     )
 
-    all3 = pair.group_by(["id", "pdb_id"]).agg(
-        pl.col("both_chains_mapped").all().alias("all_three_species_both_chains"),
-        pl.col("both_chains_mapped").sum().alias("n_species_both_chains"),
+    all_required = pair.group_by(["id", "pdb_id"]).agg(
+        pl.col("both_chains_mapped").all().alias("all_required_species_both_chains"),
+        pl.col("both_chains_mapped").sum().alias("n_required_species_both_chains"),
     )
 
-    return all3.filter(pl.col("all_three_species_both_chains"))["id"].to_list()
+    return all_required.filter(pl.col("all_required_species_both_chains"))["id"].to_list()
 
 
 def build_core3_outputs(
@@ -127,7 +133,7 @@ def build_core3_outputs(
 
     core_coverage = coverage.filter(
         pl.col("source_uniprot").is_in(sorted(source_uniprots))
-        & pl.col("target_species_taxid").is_in(sorted(CORE_TARGET_SPECIES))
+        & pl.col("target_species_taxid").is_in(sorted(EXPANDED_TARGET_SPECIES))
     ).sort(["source_uniprot", "target_species_taxid"])
 
     return core_selection, core_coverage
@@ -143,7 +149,7 @@ def estimate_embedding_pairs(selection: pl.DataFrame, coverage: pl.DataFrame) ->
     missing = 0
     for row in selection.iter_rows(named=True):
         for uniprot_col in ["uniprot_R", "uniprot_L"]:
-            for taxid in CORE_TARGET_SPECIES:
+            for taxid in EXPANDED_TARGET_SPECIES:
                 if (row[uniprot_col], taxid) in covered:
                     embedding_pairs += 1
                 else:
@@ -217,8 +223,12 @@ def main() -> None:
     print(f"Wrote core3 expanded selection -> {output_selection}")
     print(f"Wrote core3 expanded ortholog coverage -> {output_coverage}")
     print()
-    print("Core3 target species:")
+    print("Core3 required species:")
     for taxid, species_name in CORE_TARGET_SPECIES.items():
+        print(f"- {species_name}: {taxid}")
+    print()
+    print("Expanded target species audited/retained when available:")
+    for taxid, species_name in EXPANDED_TARGET_SPECIES.items():
         print(f"- {species_name}: {taxid}")
     print()
     print("Core3 summary:")
