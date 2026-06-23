@@ -80,6 +80,18 @@ DRY_RUN_INPUTS_OPTION = typer.Option(
     help="Build and print real Boltz inputs without calling the Boltz API.",
 )
 
+RETRIEVE_PREDICTION_OPTION = typer.Option(
+    None,
+    "--retrieve-prediction",
+    help="Retrieve an existing Boltz prediction ID without starting a new prediction.",
+)
+
+CIF_OUTPUT_OPTION = typer.Option(
+    None,
+    "--cif-output",
+    help="Optional CIF output path for --retrieve-prediction.",
+)
+
 # ---------------------------------------------------------------------------
 # Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
 # ---------------------------------------------------------------------------
@@ -257,6 +269,39 @@ def submit_ppi_prediction(
     }
 
 
+def retrieve_ppi_prediction(client: Any, prediction_id: str) -> dict[str, Any]:
+    """
+    Retrieve a completed Boltz protein-protein prediction by ID.
+
+    This does not start a new prediction or spend compute credits. It is useful
+    when a live run created a prediction successfully but local polling/retrieve
+    failed due to a connection error.
+    """
+    prediction = client.predictions.structure_and_binding.retrieve(prediction_id)
+
+    if prediction.status == "failed":
+        raise RuntimeError(f"Boltz prediction failed: {prediction.error}")
+    if prediction.status != "succeeded":
+        raise RuntimeError(f"Boltz prediction is not complete: status={prediction.status}")
+
+    best = prediction.output.best_sample
+    metrics = best.metrics
+    binding = prediction.output.binding_metrics
+
+    return {
+        "prediction_id": prediction.id,
+        "structure_confidence": metrics.structure_confidence,
+        "ptm": metrics.ptm,
+        "iptm": metrics.iptm,
+        "complex_plddt": metrics.complex_plddt,
+        "complex_iplddt": metrics.complex_iplddt,
+        "complex_pde": metrics.complex_pde,
+        "complex_ipde": metrics.complex_ipde,
+        "binding_confidence": binding.binding_confidence if binding else None,
+        "structure_url": best.structure.url if best.structure else None,
+    }
+
+
 def make_test_result(name: str) -> dict[str, Any]:
     """Return a fake result for --test mode (no API call, no credits used)."""
     import random
@@ -384,11 +429,58 @@ def main(
     output_path: Path = COFOLDING_OUTPUT_OPTION,
     yes_live: bool = YES_LIVE_OPTION,
     dry_run_inputs: bool = DRY_RUN_INPUTS_OPTION,
+    retrieve_prediction: str | None = RETRIEVE_PREDICTION_OPTION,
+    cif_output: Path | None = CIF_OUTPUT_OPTION,
 ) -> None:
     """
     Co-fold cross-species protein complexes via Boltz API and classify
     interactions as maintained / functionally_broken / incompatible / uncertain.
     """
+    if retrieve_prediction:
+        client = get_boltz_client()
+        api_result = retrieve_ppi_prediction(client, retrieve_prediction)
+
+        iptm = api_result["iptm"]
+        bc = api_result["binding_confidence"]
+        classification = classify_interaction(iptm, bc)
+
+        result_row = {
+            "complex_id": "recovered_prediction",
+            "chain": "unknown",
+            "source_species": "unknown",
+            "target_species": "unknown",
+            "enrichment_ratio": None,
+            "boltz_classification": classification,
+            **api_result,
+        }
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        out_df = pl.DataFrame([result_row])
+        out_df.write_parquet(output_path)
+        out_df.write_csv(output_path.with_suffix(".csv"))
+
+        typer.echo(f"Retrieved prediction {retrieve_prediction}")
+        typer.echo(f"Saved 1 row to {output_path}")
+
+        if cif_output:
+            structure_url = api_result.get("structure_url")
+            if not structure_url:
+                typer.echo("Prediction has no structure URL; CIF was not written.", err=True)
+                raise typer.Exit(1)
+
+            import urllib.request
+
+            cif_output.parent.mkdir(parents=True, exist_ok=True)
+            urllib.request.urlretrieve(str(structure_url), cif_output)
+            typer.echo(f"Saved CIF to {cif_output}")
+
+        typer.echo(
+            f"iptm={iptm:.3f}  "
+            + (f"binding_conf={bc:.3f}  " if bc is not None else "")
+            + f"-> {classification}"
+        )
+        raise typer.Exit(0)
+
     if not ENRICHMENT_PATH.exists():
         typer.echo(
             f"Enrichment file not found at {ENRICHMENT_PATH}.\n"
