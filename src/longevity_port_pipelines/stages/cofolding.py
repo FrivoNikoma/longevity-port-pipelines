@@ -62,6 +62,18 @@ ENRICHMENT_PATH = DATA_OUTPUT / "enrichment.parquet"
 ORTHOLOG_COVERAGE_PATH = DATA_OUTPUT / "ortholog_coverage.csv"
 COFOLDING_RESULTS = DATA_OUTPUT / "cofolding_results.parquet"
 
+COFOLDING_OUTPUT_OPTION = typer.Option(
+    "data/output/cofolding_results.parquet",
+    "--output",
+    help="Output parquet path. A CSV with the same stem is written next to it.",
+)
+
+YES_LIVE_OPTION = typer.Option(
+    False,
+    "--yes-live",
+    help="Required for real Boltz API prediction starts. Not needed for --test.",
+)
+
 # ---------------------------------------------------------------------------
 # Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
 # ---------------------------------------------------------------------------
@@ -363,6 +375,8 @@ def main(
         "--num-samples",
         help="Number of structure samples per prediction (more = more credits).",
     ),
+    output_path: Path = COFOLDING_OUTPUT_OPTION,
+    yes_live: bool = YES_LIVE_OPTION,
 ) -> None:
     """
     Co-fold cross-species protein complexes via Boltz API and classify
@@ -405,6 +419,14 @@ def main(
 
     if candidates.is_empty():
         typer.echo("No candidates found after filtering. Check your enrichment.parquet.", err=True)
+        raise typer.Exit(1)
+
+    if not test and not yes_live:
+        typer.echo(
+            "Refusing to start live Boltz predictions without --yes-live.\n"
+            "Use --test first, or pass --yes-live intentionally for real API calls.",
+            err=True,
+        )
         raise typer.Exit(1)
 
     typer.echo(f"\n{'[TEST MODE] ' if test else ''}Processing {len(candidates)} candidates...\n")
@@ -491,12 +513,12 @@ def main(
         typer.echo("No results to save.", err=True)
         raise typer.Exit(1)
 
-    DATA_OUTPUT.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     out_df = pl.DataFrame(results)
-    out_df.write_parquet(COFOLDING_RESULTS)
-    out_df.write_csv(COFOLDING_RESULTS.with_suffix(".csv"))
+    out_df.write_parquet(output_path)
+    out_df.write_csv(output_path.with_suffix(".csv"))
 
-    typer.echo(f"\nSaved {len(results)} rows to {COFOLDING_RESULTS}")
+    typer.echo(f"\nSaved {len(results)} rows to {output_path}")
 
     if "boltz_classification" in out_df.columns:
         summary = (
