@@ -92,6 +92,10 @@ CIF_OUTPUT_OPTION = typer.Option(
     help="Optional CIF output path for --retrieve-prediction.",
 )
 
+BOLTZ_RETRIEVE_ATTEMPTS = 3
+BOLTZ_RETRIEVE_RETRY_SECONDS = 5.0
+
+
 # ---------------------------------------------------------------------------
 # Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
 # ---------------------------------------------------------------------------
@@ -212,6 +216,43 @@ def get_boltz_client() -> Any:
     return Boltz(api_key=api_key)
 
 
+def retrieve_prediction_with_retry(
+    client: Any,
+    prediction_id: str,
+    *,
+    attempts: int = BOLTZ_RETRIEVE_ATTEMPTS,
+    sleep_seconds: float = BOLTZ_RETRIEVE_RETRY_SECONDS,
+) -> Any:
+    """
+    Retrieve a Boltz prediction with a short retry loop.
+
+    This only retries retrieval of an already-created prediction. It does not
+    start new Boltz predictions and therefore does not repeat compute work.
+    """
+    import time
+
+    last_error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            return client.predictions.structure_and_binding.retrieve(prediction_id)
+        except Exception as exc:
+            last_error = exc
+            if attempt == attempts:
+                break
+
+            typer.echo(
+                f"Boltz retrieve failed for {prediction_id} "
+                f"(attempt {attempt}/{attempts}): {exc}. "
+                f"Retrying in {sleep_seconds:g}s...",
+                err=True,
+            )
+            time.sleep(sleep_seconds)
+
+    raise RuntimeError(
+        f"Boltz retrieve failed after {attempts} attempts for {prediction_id}"
+    ) from last_error
+
+
 def submit_ppi_prediction(
     client: Any,
     seq_a: str,
@@ -246,7 +287,7 @@ def submit_ppi_prediction(
     # Poll until done.
     while prediction.status not in ("succeeded", "failed"):
         time.sleep(5)
-        prediction = client.predictions.structure_and_binding.retrieve(prediction.id)
+        prediction = retrieve_prediction_with_retry(client, prediction.id)
 
     if prediction.status == "failed":
         raise RuntimeError(f"Boltz prediction failed: {prediction.error}")
@@ -277,7 +318,7 @@ def retrieve_ppi_prediction(client: Any, prediction_id: str) -> dict[str, Any]:
     when a live run created a prediction successfully but local polling/retrieve
     failed due to a connection error.
     """
-    prediction = client.predictions.structure_and_binding.retrieve(prediction_id)
+    prediction = retrieve_prediction_with_retry(client, prediction_id)
 
     if prediction.status == "failed":
         raise RuntimeError(f"Boltz prediction failed: {prediction.error}")
