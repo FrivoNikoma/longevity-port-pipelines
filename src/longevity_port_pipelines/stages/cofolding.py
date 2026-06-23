@@ -74,6 +74,12 @@ YES_LIVE_OPTION = typer.Option(
     help="Required for real Boltz API prediction starts. Not needed for --test.",
 )
 
+DRY_RUN_INPUTS_OPTION = typer.Option(
+    False,
+    "--dry-run-inputs",
+    help="Build and print real Boltz inputs without calling the Boltz API.",
+)
+
 # ---------------------------------------------------------------------------
 # Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
 # ---------------------------------------------------------------------------
@@ -377,6 +383,7 @@ def main(
     ),
     output_path: Path = COFOLDING_OUTPUT_OPTION,
     yes_live: bool = YES_LIVE_OPTION,
+    dry_run_inputs: bool = DRY_RUN_INPUTS_OPTION,
 ) -> None:
     """
     Co-fold cross-species protein complexes via Boltz API and classify
@@ -421,17 +428,19 @@ def main(
         typer.echo("No candidates found after filtering. Check your enrichment.parquet.", err=True)
         raise typer.Exit(1)
 
-    if not test and not yes_live:
+    if not test and not dry_run_inputs and not yes_live:
         typer.echo(
             "Refusing to start live Boltz predictions without --yes-live.\n"
-            "Use --test first, or pass --yes-live intentionally for real API calls.",
+            "Use --test or --dry-run-inputs first, or pass --yes-live intentionally for real API calls.",
             err=True,
         )
         raise typer.Exit(1)
 
-    typer.echo(f"\n{'[TEST MODE] ' if test else ''}Processing {len(candidates)} candidates...\n")
+    mode_label = "[TEST MODE] " if test else "[DRY RUN INPUTS] " if dry_run_inputs else ""
+    typer.echo(f"\n{mode_label}Processing {len(candidates)} candidates...\n")
 
-    # Load ortholog table and Boltz client only when running for real.
+    # Load ortholog table when building real cross-species inputs.
+    # Create the Boltz client only for confirmed live runs.
     ortholog_df = None if test else load_ortholog_table()
     if not test and ortholog_df is None:
         typer.echo(
@@ -440,9 +449,11 @@ def main(
         )
         raise typer.Exit(1)
 
-    client = None if test else get_boltz_client()
+    client = None if test or dry_run_inputs else get_boltz_client()
 
     results = []
+    dry_run_ready = 0
+    dry_run_skipped = 0
 
     for row in candidates.iter_rows(named=True):
         complex_id_val = row.get("complex_id", "unknown")
@@ -468,8 +479,21 @@ def main(
                 )
                 if pair is None:
                     typer.echo(f"    Skipping {name}: could not build cross-species pair.")
+                    if dry_run_inputs:
+                        dry_run_skipped += 1
                     continue
                 seq_a, seq_b = pair
+
+                if dry_run_inputs:
+                    target_taxid = SPECIES_TAXID.get(str(target_species))
+                    typer.echo(
+                        "    Would submit to Boltz: "
+                        f"target_taxid={target_taxid}, "
+                        f"seq_a_len={len(seq_a)}, seq_b_len={len(seq_b)}, "
+                        f"num_samples={num_samples}"
+                    )
+                    dry_run_ready += 1
+                    continue
 
                 typer.echo("    Submitting to Boltz API...")
                 api_result = submit_ppi_prediction(client, seq_a, seq_b, num_samples=num_samples)
@@ -508,6 +532,13 @@ def main(
                     "error_message": str(exc),
                 }
             )
+
+    if dry_run_inputs:
+        typer.echo(
+            f"\nDry-run input summary: ready={dry_run_ready}, skipped={dry_run_skipped}. "
+            "No Boltz API calls were made and no results were written."
+        )
+        raise typer.Exit(0)
 
     if not results:
         typer.echo("No results to save.", err=True)
