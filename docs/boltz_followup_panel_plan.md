@@ -226,3 +226,8 @@ This keeps the Boltz workflow gated:
 The first live PINDER-fragment Boltz baseline calibration is recorded in docs/boltz_baseline_calibration_results.md.
 Both audited human-human MHC/HLA positive controls were recovered as maintained interactions.
 Use this as the calibration gate before interpreting future cross-species cofolding panels biologically.
+
+## SIRT6/core3-expanded human baseline shortlist
+
+The next human-baseline shortlist is recorded in docs/sirt6_human_cofolding_baseline_shortlist.md.
+Use it to audit candidate ids before spending live Boltz calls on species panels.
