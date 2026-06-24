@@ -199,3 +199,24 @@ Rationale:
 
 The audit stage is cheap: it fetches/caches UniProt metadata and writes a local
 CSV under `data/output/`, but it does not call Boltz or spend prediction credits.
+
+## Baseline-control runner
+
+After uv run cofolding-controls has produced a local audit CSV,
+prepare PINDER-fragment baseline controls with:
+
+```bash
+uv run cofolding-baseline-controls
+```
+
+The default mode is a dry run: it prints the selected audited controls
+and their PINDER fragment lengths but does not call Boltz.
+To spend prediction credits, pass --yes-live explicitly.
+
+This keeps the Boltz workflow gated:
+
+1. audit PINDER controls with UniProt metadata
+2. prepare/check PINDER-fragment baseline inputs
+3. run a small live positive-control baseline only when intentional
+4. interpret cross-species cofolding results only after baseline recovery
+   is demonstrated

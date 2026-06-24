@@ -150,3 +150,21 @@ UNDEFINED accessions, viral/capsid-like assemblies, and non-human pairs.
 
 Use this audit to select human-human or technical positive controls before
 interpreting cross-species cofolding incompatibility biologically.
+
+## Cofolding baseline controls
+
+After running the cofolding control audit, prepare baseline control inputs with:
+
+```bash
+uv run cofolding-baseline-controls
+```
+
+This command consumes the local cofolding-controls audit CSV and extracts
+PINDER receptor/ligand fragment sequences for selected controls.
+By default it is a dry run and does not call Boltz.
+Live submissions require --yes-live.
+
+Use this before interpreting cross-species cofolding results.
+A candidate class should have a recoverable human-human or technical
+positive-control baseline before cross-species incompatibility is treated
+as biological evidence.
