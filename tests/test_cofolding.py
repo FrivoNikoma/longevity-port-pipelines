@@ -193,8 +193,6 @@ def test_live_without_yes_live_does_not_create_boltz_client(
         ]
     ).write_parquet(enrichment_path)
 
-    monkeypatch.setattr(cofolding, "ENRICHMENT_PATH", enrichment_path)
-
     client_created = {"value": False}
 
     def fake_get_boltz_client() -> None:
@@ -211,6 +209,8 @@ def test_live_without_yes_live_does_not_create_boltz_client(
             test=False,
             num_samples=1,
             output_path=tmp_path / "cofolding_results.parquet",
+            enrichment_input=enrichment_path,
+            ortholog_input=tmp_path / "ortholog_coverage.csv",
             yes_live=False,
             dry_run_inputs=False,
             retrieve_prediction=None,
@@ -219,3 +219,34 @@ def test_live_without_yes_live_does_not_create_boltz_client(
 
     assert exc_info.value.exit_code == 1
     assert client_created["value"] is False
+
+
+def test_load_ortholog_table_uses_custom_path(tmp_path: Any) -> None:
+    custom_path = tmp_path / "custom_ortholog_coverage.csv"
+
+    pl.DataFrame(
+        [
+            {
+                "source_uniprot": "P54646",
+                "target_species_taxid": 10181,
+                "target_sequence": "ORTHOLOG_RECEPTOR",
+            }
+        ]
+    ).write_csv(custom_path)
+
+    loaded = cofolding.load_ortholog_table(custom_path)
+
+    assert loaded is not None
+    assert loaded.to_dicts() == [
+        {
+            "source_uniprot": "P54646",
+            "target_species_taxid": 10181,
+            "target_sequence": "ORTHOLOG_RECEPTOR",
+        }
+    ]
+
+
+def test_load_ortholog_table_returns_none_for_missing_custom_path(tmp_path: Any) -> None:
+    missing_path = tmp_path / "missing_ortholog_coverage.csv"
+
+    assert cofolding.load_ortholog_table(missing_path) is None

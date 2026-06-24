@@ -31,6 +31,7 @@ Usage:
     uv run cofolding --top-n 20               # top 20
     uv run cofolding --test                   # internal synthetic results, no API
     uv run cofolding --complex 6b2e__A1_P54646--6b2e__B1_O43741 --top-n 1
+    uv run cofolding --dry-run-inputs --enrichment-input path/to/enrichment.parquet
 
 Output:
     data/output/cofolding_results.parquet     — one row per (complex, chain, species)
@@ -63,6 +64,18 @@ DATA_OUTPUT = Path("data/output")
 ENRICHMENT_PATH = DATA_OUTPUT / "enrichment.parquet"
 ORTHOLOG_COVERAGE_PATH = DATA_OUTPUT / "ortholog_coverage.csv"
 COFOLDING_RESULTS = DATA_OUTPUT / "cofolding_results.parquet"
+
+ENRICHMENT_INPUT_OPTION = typer.Option(
+    ENRICHMENT_PATH,
+    "--enrichment-input",
+    help="Input enrichment parquet path.",
+)
+
+ORTHOLOG_INPUT_OPTION = typer.Option(
+    ORTHOLOG_COVERAGE_PATH,
+    "--ortholog-input",
+    help="Input ortholog coverage CSV path.",
+)
 
 COFOLDING_OUTPUT_OPTION = typer.Option(
     "data/output/cofolding_results.parquet",
@@ -163,11 +176,11 @@ def parse_complex_id(complex_id: str) -> tuple[str | None, str | None]:
 # ---------------------------------------------------------------------------
 
 
-def load_ortholog_table() -> pl.DataFrame | None:
-    """Load ortholog_coverage.csv, or return None if it does not exist."""
-    if not ORTHOLOG_COVERAGE_PATH.exists():
+def load_ortholog_table(path: Path = ORTHOLOG_COVERAGE_PATH) -> pl.DataFrame | None:
+    """Load an ortholog coverage CSV, or return None if it does not exist."""
+    if not path.exists():
         return None
-    return pl.read_csv(ORTHOLOG_COVERAGE_PATH)
+    return pl.read_csv(path)
 
 
 def lookup_ortholog_sequence(
@@ -469,6 +482,8 @@ def main(
         help="Number of structure samples per prediction (more = more credits).",
     ),
     output_path: Path = COFOLDING_OUTPUT_OPTION,
+    enrichment_input: Path = ENRICHMENT_INPUT_OPTION,
+    ortholog_input: Path = ORTHOLOG_INPUT_OPTION,
     yes_live: bool = YES_LIVE_OPTION,
     dry_run_inputs: bool = DRY_RUN_INPUTS_OPTION,
     retrieve_prediction: str | None = RETRIEVE_PREDICTION_OPTION,
@@ -523,16 +538,16 @@ def main(
         )
         raise typer.Exit(0)
 
-    if not ENRICHMENT_PATH.exists():
+    if not enrichment_input.exists():
         typer.echo(
-            f"Enrichment file not found at {ENRICHMENT_PATH}.\n"
+            f"Enrichment file not found at {enrichment_input}.\n"
             "Run the embedding pipeline first:\n"
             "  uv run embed\n  uv run analyze",
             err=True,
         )
         raise typer.Exit(1)
 
-    df = pl.read_parquet(ENRICHMENT_PATH)
+    df = pl.read_parquet(enrichment_input)
 
     # Keep only rows where the interface significantly diverges -- these are
     # the candidates for a "remodeled interaction". signal_class is a future
@@ -575,10 +590,10 @@ def main(
 
     # Load ortholog table when building real cross-species inputs.
     # Create the Boltz client only for confirmed live runs.
-    ortholog_df = None if test else load_ortholog_table()
+    ortholog_df = None if test else load_ortholog_table(ortholog_input)
     if not test and ortholog_df is None:
         typer.echo(
-            f"Ortholog coverage not found at {ORTHOLOG_COVERAGE_PATH}. Run `uv run orthologs`.",
+            f"Ortholog coverage not found at {ortholog_input}. Run `uv run orthologs`.",
             err=True,
         )
         raise typer.Exit(1)
