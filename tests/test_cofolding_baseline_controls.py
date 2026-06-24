@@ -246,3 +246,38 @@ def test_drop_existing_inputs() -> None:
     kept = runner.drop_existing_inputs(inputs, {"skip"})
 
     assert kept == [{"id": "keep"}]
+
+
+def test_load_existing_results_prefers_csv(tmp_path: Path) -> None:
+    output = tmp_path / "results.parquet"
+    pl.DataFrame([{"id": "from_parquet", "iptm": 0.1}]).write_parquet(output)
+    pl.DataFrame([{"id": "from_csv", "iptm": 0.2}]).write_csv(output.with_suffix(".csv"))
+
+    loaded = runner.load_existing_results(output)
+
+    assert loaded is not None
+    assert loaded["id"].to_list() == ["from_csv"]
+
+
+def test_merge_baseline_results_appends_and_keeps_latest(tmp_path: Path) -> None:
+    output = tmp_path / "results.parquet"
+    pl.DataFrame(
+        [
+            {"id": "old_only", "iptm": 0.1, "source": "old"},
+            {"id": "replace_me", "iptm": 0.2, "source": "old"},
+        ]
+    ).write_csv(output.with_suffix(".csv"))
+
+    new_results = pl.DataFrame(
+        [
+            {"id": "replace_me", "iptm": 0.9, "source": "new"},
+            {"id": "new_only", "iptm": 0.8, "source": "new"},
+        ]
+    )
+
+    merged = runner.merge_baseline_results(new_results, output)
+    rows = {row["id"]: row for row in merged.iter_rows(named=True)}
+
+    assert set(rows) == {"old_only", "replace_me", "new_only"}
+    assert rows["replace_me"]["iptm"] == 0.9
+    assert rows["replace_me"]["source"] == "new"

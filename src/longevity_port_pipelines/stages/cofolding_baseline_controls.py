@@ -259,6 +259,36 @@ def print_dry_run(inputs: list[dict[str, Any]], *, num_samples: int) -> None:
     typer.echo("No Boltz API calls were made.")
 
 
+def load_existing_results(output: Path) -> pl.DataFrame | None:
+    """Load existing baseline results from CSV or parquet output."""
+    csv_output = output.with_suffix(".csv")
+
+    if csv_output.exists():
+        df = pl.read_csv(csv_output)
+        source = csv_output
+    elif output.exists():
+        df = pl.read_parquet(output)
+        source = output
+    else:
+        return None
+
+    require_columns(df, {"id"}, source=str(source))
+    return df
+
+
+def merge_baseline_results(new_results: pl.DataFrame, output: Path) -> pl.DataFrame:
+    """Append new baseline results while keeping one latest row per id."""
+    existing_results = load_existing_results(output)
+
+    if existing_results is None or existing_results.is_empty():
+        return new_results
+
+    return pl.concat(
+        [existing_results, new_results],
+        how="diagonal_relaxed",
+    ).unique(subset=["id"], keep="last")
+
+
 def run_live_baselines(
     inputs: list[dict[str, Any]],
     *,
@@ -316,8 +346,9 @@ def run_live_baselines(
             + f"-> {classification}"
         )
 
-    out_df = pl.DataFrame(result_rows)
+    new_df = pl.DataFrame(result_rows)
     output.parent.mkdir(parents=True, exist_ok=True)
+    out_df = merge_baseline_results(new_df, output)
     out_df.write_parquet(output)
     out_df.write_csv(output.with_suffix(".csv"))
 
