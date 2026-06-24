@@ -220,3 +220,9 @@ This keeps the Boltz workflow gated:
 3. run a small live positive-control baseline only when intentional
 4. interpret cross-species cofolding results only after baseline recovery
    is demonstrated
+
+## Baseline calibration result
+
+The first live PINDER-fragment Boltz baseline calibration is recorded in docs/boltz_baseline_calibration_results.md.
+Both audited human-human MHC/HLA positive controls were recovered as maintained interactions.
+Use this as the calibration gate before interpreting future cross-species cofolding panels biologically.
