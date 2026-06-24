@@ -49,6 +49,8 @@ import polars as pl
 import typer
 from dotenv import load_dotenv
 
+from longevity_port_pipelines.config import SPECIES_REGISTRY
+
 # Load .env so BOLTZ_API_KEY is available when this module runs standalone.
 load_dotenv()
 
@@ -97,15 +99,14 @@ BOLTZ_RETRIEVE_RETRY_SECONDS = 5.0
 
 
 # ---------------------------------------------------------------------------
-# Species name -> NCBI taxid (must match config.TARGET_SPECIES / REFERENCE_SPECIES)
+# Species name -> NCBI taxid
 # ---------------------------------------------------------------------------
-SPECIES_TAXID = {
-    "human": 9606,
-    "naked_mole_rat": 10181,
-    "bowhead_whale": 27622,
-    "myotis_lucifugus": 59463,
-    "mouse": 10090,
-}
+
+
+def species_taxid_by_name() -> dict[str, int]:
+    """Return species name -> NCBI taxid mapping from the shared registry."""
+    return {species.name: species.taxid for species in SPECIES_REGISTRY.values()}
+
 
 # ---------------------------------------------------------------------------
 # Compatibility classification thresholds
@@ -414,7 +415,7 @@ def build_cross_species_pair(
         typer.echo(f"    Could not parse UniProt IDs from {complex_id}.", err=True)
         return None
 
-    target_taxid = SPECIES_TAXID.get(target_species)
+    target_taxid = species_taxid_by_name().get(target_species)
     if target_taxid is None:
         typer.echo(f"    Unknown species '{target_species}'.", err=True)
         return None
@@ -618,7 +619,7 @@ def main(
                 seq_a, seq_b = pair
 
                 if dry_run_inputs:
-                    target_taxid = SPECIES_TAXID.get(str(target_species))
+                    target_taxid = species_taxid_by_name().get(str(target_species))
                     typer.echo(
                         "    Would submit to Boltz: "
                         f"target_taxid={target_taxid}, "
