@@ -44,6 +44,11 @@ CONTROL_KIND_OPTION = typer.Option(
     "--control-kind",
     help="Control kind: human_heterodimer, technical_homomer, or all.",
 )
+CONTROL_ID_OPTION = typer.Option(
+    None,
+    "--control-id",
+    help="Exact PINDER control id to prepare/run.",
+)
 TOP_N_OPTION = typer.Option(
     2,
     "--top-n",
@@ -60,6 +65,11 @@ YES_LIVE_OPTION = typer.Option(
     help="Actually submit selected controls to Boltz. Omit for dry-run mode.",
 )
 
+SKIP_EXISTING_OPTION = typer.Option(
+    False,
+    "--skip-existing",
+    help="Skip ids already present in the output CSV or parquet.",
+)
 CONTROL_KIND_TO_FLAG: dict[str, str | None] = {
     "human_heterodimer": "human_heterodimer_control",
     "technical_homomer": "technical_homomer_control",
@@ -153,16 +163,52 @@ def load_pinder_fragment_sequences(
     return found
 
 
+def load_existing_ids(output: Path) -> set[str]:
+    """Load already-computed baseline ids from CSV or parquet output."""
+    csv_output = output.with_suffix(".csv")
+
+    if csv_output.exists():
+        df = pl.read_csv(csv_output)
+        source = csv_output
+    elif output.exists():
+        df = pl.read_parquet(output)
+        source = output
+    else:
+        return set()
+
+    require_columns(df, {"id"}, source=str(source))
+    return {str(value) for value in df["id"].drop_nulls().to_list()}
+
+
+def drop_existing_inputs(
+    inputs: list[dict[str, Any]],
+    existing_ids: set[str],
+) -> list[dict[str, Any]]:
+    """Drop prepared inputs whose ids are already present in prior outputs."""
+    if not existing_ids:
+        return inputs
+
+    return [row for row in inputs if str(row["id"]) not in existing_ids]
+
+
 def prepare_baseline_inputs(
     audit_input: Path,
     pinder_data_dir: Path,
     *,
     control_kind: str,
     top_n: int,
+    control_id: str | None = None,
 ) -> list[dict[str, Any]]:
     """Prepare PINDER-fragment baseline inputs from audited controls."""
     audit = load_audit(audit_input)
-    candidates = filter_control_candidates(audit, control_kind=control_kind).head(top_n)
+
+    if control_id is not None:
+        require_columns(audit, {"id"}, source=str(audit_input))
+        candidates = audit.filter(pl.col("id") == control_id)
+        if candidates.is_empty():
+            raise ValueError(f"Control id not found in audit: {control_id}")
+    else:
+        candidates = filter_control_candidates(audit, control_kind=control_kind).head(top_n)
 
     if candidates.is_empty():
         return []
@@ -289,8 +335,10 @@ def main(
     output: Path = OUTPUT_OPTION,
     control_kind: str = CONTROL_KIND_OPTION,
     top_n: int = TOP_N_OPTION,
+    control_id: str | None = CONTROL_ID_OPTION,
     num_samples: int = NUM_SAMPLES_OPTION,
     yes_live: bool = YES_LIVE_OPTION,
+    skip_existing: bool = SKIP_EXISTING_OPTION,
 ) -> None:
     """Prepare or run PINDER-fragment Boltz baselines for audited controls."""
     inputs = prepare_baseline_inputs(
@@ -298,7 +346,16 @@ def main(
         pinder_data_dir,
         control_kind=control_kind,
         top_n=top_n,
+        control_id=control_id,
     )
+
+    if skip_existing:
+        existing_ids = load_existing_ids(output)
+        before_count = len(inputs)
+        inputs = drop_existing_inputs(inputs, existing_ids)
+        skipped_count = before_count - len(inputs)
+        if skipped_count:
+            typer.echo(f"Skipped {skipped_count} existing baseline result(s).")
 
     if not inputs:
         typer.echo(f"No controls found for control_kind={control_kind!r}.")

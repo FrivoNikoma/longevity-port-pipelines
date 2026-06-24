@@ -192,3 +192,57 @@ def test_prepare_baseline_inputs_raises_for_missing_pinder_sequence(
             control_kind="human_heterodimer",
             top_n=1,
         )
+
+
+def test_prepare_baseline_inputs_can_select_control_id(tmp_path: Path) -> None:
+    audit_path = tmp_path / "audit.csv"
+    write_audit(audit_path)
+
+    pinder_dir = tmp_path / "pinder"
+    pinder_dir.mkdir()
+    write_pinder_data(pinder_dir / "part.parquet")
+
+    inputs = runner.prepare_baseline_inputs(
+        audit_path,
+        pinder_dir,
+        control_kind="human_heterodimer",
+        top_n=1,
+        control_id="1abc__A1_P12345--1abc__B1_P12345",
+    )
+
+    assert len(inputs) == 1
+    assert inputs[0]["id"] == "1abc__A1_P12345--1abc__B1_P12345"
+    assert inputs[0]["control_kind"] == "human_heterodimer"
+
+
+def test_prepare_baseline_inputs_rejects_missing_control_id(tmp_path: Path) -> None:
+    audit_path = tmp_path / "audit.csv"
+    write_audit(audit_path)
+
+    pinder_dir = tmp_path / "pinder"
+    pinder_dir.mkdir()
+    write_pinder_data(pinder_dir / "part.parquet")
+
+    with pytest.raises(ValueError, match="Control id not found"):
+        runner.prepare_baseline_inputs(
+            audit_path,
+            pinder_dir,
+            control_kind="human_heterodimer",
+            top_n=1,
+            control_id="missing_id",
+        )
+
+
+def test_load_existing_ids_reads_csv(tmp_path: Path) -> None:
+    output = tmp_path / "results.parquet"
+    pl.DataFrame([{"id": "already_done"}]).write_csv(output.with_suffix(".csv"))
+
+    assert runner.load_existing_ids(output) == {"already_done"}
+
+
+def test_drop_existing_inputs() -> None:
+    inputs = [{"id": "keep"}, {"id": "skip"}]
+
+    kept = runner.drop_existing_inputs(inputs, {"skip"})
+
+    assert kept == [{"id": "keep"}]
