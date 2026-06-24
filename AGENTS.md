@@ -134,3 +134,19 @@ Don't ask about routine plumbing — just build it.
 AGENTS.md is canonical. CLAUDE.md symlinks to it. A pre-commit hook re-creates the symlink
 if it's missing (e.g. after a Windows checkout). Change conventions HERE; never let the
 two files diverge.
+
+## Cofolding control audit
+
+Before spending Boltz prediction credits on new cofolding panels, run the
+control audit:
+
+```bash
+uv run cofolding-controls
+```
+
+This stage does not call Boltz. It annotates high-confidence PINDER rows with
+UniProt metadata and flags misleading controls such as same-UniProt pairs,
+UNDEFINED accessions, viral/capsid-like assemblies, and non-human pairs.
+
+Use this audit to select human-human or technical positive controls before
+interpreting cross-species cofolding incompatibility biologically.

@@ -178,3 +178,24 @@ Do not run:
 - biological claims from single uncertain predictions
 
 The next step should remain a small controlled structural follow-up panel.
+
+## Cofolding control-selection gate
+
+Before running additional live Boltz panels, run:
+
+```bash
+uv run cofolding-controls
+```
+
+Rationale:
+
+- PINDER rows are structural chain-pairs, not automatically biological
+  receptor/ligand pairs.
+- High-confidence PINDER rows can include homomers, capsids, viral assemblies,
+  repeated chains, or non-human proteins.
+- Cross-species incompatibility should not be interpreted biologically unless
+  the corresponding human-human or technical positive-control baseline is
+  recoverable.
+
+The audit stage is cheap: it fetches/caches UniProt metadata and writes a local
+CSV under `data/output/`, but it does not call Boltz or spend prediction credits.
