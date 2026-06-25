@@ -119,3 +119,124 @@ def test_print_dry_run_warns_for_short_fragments(
     out = capsys.readouterr().out
     assert "WARNING: receptor fragment is short" in out
     assert "No Boltz API calls were made." in out
+
+
+def test_load_existing_candidate_ids_reads_csv(tmp_path: Path) -> None:
+    output = tmp_path / "candidate_results.parquet"
+    output.with_suffix(".csv").write_text(
+        "id,boltz_classification\n1nfi__A1_Q04206--1nfi__F1_P25963,maintained\n",
+        encoding="utf-8",
+    )
+
+    assert runner.load_existing_candidate_ids(output) == {"1nfi__A1_Q04206--1nfi__F1_P25963"}
+
+
+def test_merge_candidate_baseline_results_keeps_latest_row(tmp_path: Path) -> None:
+    output = tmp_path / "candidate_results.parquet"
+    pl.DataFrame(
+        [
+            {
+                "id": "1nfi__A1_Q04206--1nfi__F1_P25963",
+                "boltz_classification": "uncertain",
+                "iptm": 0.50,
+            }
+        ]
+    ).write_parquet(output)
+
+    new_results = pl.DataFrame(
+        [
+            {
+                "id": "1nfi__A1_Q04206--1nfi__F1_P25963",
+                "boltz_classification": "maintained",
+                "iptm": 0.82,
+            }
+        ]
+    )
+
+    merged = runner.merge_candidate_baseline_results(new_results, output)
+
+    assert merged.height == 1
+    row = merged.row(0, named=True)
+    assert row["boltz_classification"] == "maintained"
+    assert row["iptm"] == 0.82
+
+
+def test_run_live_candidate_baseline_submits_and_saves_outputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: dict[str, object] = {}
+
+    class FakeClient:
+        pass
+
+    def fake_get_boltz_client() -> FakeClient:
+        calls["client_created"] = True
+        return FakeClient()
+
+    def fake_submit_ppi_prediction(
+        client: FakeClient,
+        seq_a: str,
+        seq_b: str,
+        num_samples: int,
+    ) -> dict[str, object]:
+        calls["client_type"] = type(client).__name__
+        calls["seq_a"] = seq_a
+        calls["seq_b"] = seq_b
+        calls["num_samples"] = num_samples
+        return {
+            "prediction_id": "pred_candidate_1nfi",
+            "structure_confidence": 0.91,
+            "ptm": 0.86,
+            "iptm": 0.82,
+            "complex_plddt": 0.88,
+            "complex_iplddt": 0.80,
+            "complex_pde": 1.20,
+            "complex_ipde": 1.60,
+            "binding_confidence": 0.74,
+            "structure_url": "https://example.test/structure.cif",
+        }
+
+    monkeypatch.setattr(runner.cofolding, "get_boltz_client", fake_get_boltz_client)
+    monkeypatch.setattr(
+        runner.cofolding,
+        "submit_ppi_prediction",
+        fake_submit_ppi_prediction,
+    )
+
+    output = tmp_path / "candidate_results.parquet"
+    row = {
+        "id": "1nfi__A1_Q04206--1nfi__F1_P25963",
+        "pdb_id": "1nfi",
+        "receptor_chain": "A1",
+        "receptor_uniprot": "Q04206",
+        "ligand_chain": "F1",
+        "ligand_uniprot": "P25963",
+        "receptor_sequence": "AAAA",
+        "ligand_sequence": "CCCC",
+        "pinder_receptor_len": 4,
+        "pinder_ligand_len": 4,
+    }
+
+    result = runner.run_live_candidate_baseline(row, output=output, num_samples=2)
+
+    assert calls == {
+        "client_created": True,
+        "client_type": "FakeClient",
+        "seq_a": "AAAA",
+        "seq_b": "CCCC",
+        "num_samples": 2,
+    }
+    assert output.exists()
+    assert output.with_suffix(".csv").exists()
+
+    saved = pl.read_parquet(output)
+    assert result.height == 1
+    assert saved.height == 1
+
+    saved_row = saved.row(0, named=True)
+    assert saved_row["id"] == "1nfi__A1_Q04206--1nfi__F1_P25963"
+    assert saved_row["baseline_type"] == "pinder_fragment_candidate_human_baseline"
+    assert saved_row["prediction_id"] == "pred_candidate_1nfi"
+    assert saved_row["boltz_classification"] == "maintained"
+    assert saved_row["num_samples"] == 2
