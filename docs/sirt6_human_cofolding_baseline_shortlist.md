@@ -154,6 +154,41 @@ Interpretation:
 - Full temporary structure URLs are intentionally not recorded in docs.
 
 
+## 4xhu P09874 species coverage gap
+
+The intended biological contrast is long-lived species versus short-lived controls, not old versus newly added species. However, the current local coverage for the `4xhu` receptor chain (`P09874`) is fragmented across historical ortholog coverage outputs.
+
+The expanded species registry contains five long-lived species and three short-lived controls:
+
+| Group | Species |
+|---|---|
+| long-lived | `naked_mole_rat`, `myotis_lucifugus`, `brandts_bat`, `elephant`, `bowhead_whale` |
+| short-lived controls | `mouse`, `rat`, `hamster` |
+
+Local audit of existing `*ortholog_coverage*.csv` files found partial `P09874` coverage:
+
+| Coverage source pattern | P09874 species present | Missing registry species |
+|---|---|---|
+| earlier mini-pilot / explicit-only files | `mouse`, `myotis_lucifugus`, `naked_mole_rat` | `brandts_bat`, `elephant`, `bowhead_whale`, `rat`, `hamster` |
+| refreshed / part2 files | `elephant`, `hamster`, `myotis_lucifugus`, `naked_mole_rat`, `rat` | `brandts_bat`, `bowhead_whale`, `mouse` |
+
+This means the current local outputs are not uniformly consolidated across the full intended 5-vs-3 long-lived/short-lived panel for `P09874`.
+
+Interpretation guard:
+
+- `4xhu` remains the first clean human-baseline candidate for follow-up because its live baseline was classified as `maintained`.
+- A full species-level interpretation should wait until `P09874` ortholog coverage is refreshed or explicitly consolidated across all intended target species.
+- Existing SIRT6/core3-expanded outputs should not be described as a complete expanded long-lived-vs-short-lived contrast for `4xhu`.
+- A smaller technical pilot may be possible, but it must be labeled as incomplete coverage rather than a full species panel.
+
+Next recommended step before live Boltz species-panel runs:
+
+1. consolidate or refresh `P09874` ortholog coverage for all intended target species;
+2. audit whether corresponding embeddings / mapped residue outputs exist;
+3. run `cofolding --dry-run-inputs` only after the input species panel is explicit and reproducible;
+4. start live Boltz calls only after the dry-run input audit is clean.
+
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu
