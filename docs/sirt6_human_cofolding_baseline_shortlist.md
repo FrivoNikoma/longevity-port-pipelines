@@ -189,6 +189,47 @@ Next recommended step before live Boltz species-panel runs:
 4. start live Boltz calls only after the dry-run input audit is clean.
 
 
+## 4xhu P09874 missing-ortholog probe
+
+After the local coverage audit, two long-lived species still lacked usable `P09874` ortholog coverage for the `4xhu` receptor chain:
+
+- `bowhead_whale` / taxid `27622`
+- `brandts_bat` / taxid `109478`
+
+A targeted local probe was run through the repository's standard `fetch_ortholog()` path, which tries OMA first and falls back to UniProt. Both species returned missing through that standard path.
+
+A broader local probe was then run across UniProt and NCBI Protein. This found strict `brandts_bat` candidates, but did not yield a safe `bowhead_whale` candidate.
+
+Summary:
+
+| Species | Standard OMA/UniProt path | Broad probe result | Current interpretation |
+|---|---|---|---|
+| `brandts_bat` | missing | strict PARP1 candidates found: `EPQ16369.1` / `S7NG06`, length 1024 | candidate mapping can be considered in a separate curated-input PR |
+| `bowhead_whale` | missing | PARP1-like hits found, but full headers identify `Molossus molossus`, not `Balaena mysticetus` | no safe curated mapping yet |
+
+The best current `brandts_bat` candidate is:
+
+| Species | Candidate | Source | Length | Header / description |
+|---|---|---|---:|---|
+| `brandts_bat` | `EPQ16369.1` | NCBI Protein | 1024 | `Poly [ADP-ribose] polymerase 1 [Myotis brandtii]` |
+| `brandts_bat` | `S7NG06` | UniProt | 1024 | `Poly [ADP-ribose] polymerase`, organism `Myotis brandtii` |
+
+The `bowhead_whale` PARP1-like hits were rejected for curated use at this stage:
+
+| Candidate | Length | Rejection reason |
+|---|---:|---|
+| `XP_036133328.1` | 1014 | FASTA header identifies `Molossus molossus`, not `Balaena mysticetus` |
+| `XP_036133329.1` | 975 | FASTA header identifies `Molossus molossus`, not `Balaena mysticetus` |
+
+Interpretation guard:
+
+- This does not prove that bowhead whale lacks PARP1 biologically.
+- It means the current standard and broad local probes did not produce a safe `bowhead_whale` `P09874` curated mapping.
+- The `4xhu` / `P09874` follow-up should still not be described as a complete 5-vs-3 long-lived/short-lived species panel.
+- A separate curated-input PR may add `brandts_bat`, but `bowhead_whale` needs a stronger source or manual sequence curation before inclusion.
+- No Boltz API calls were made during these probes.
+
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu
