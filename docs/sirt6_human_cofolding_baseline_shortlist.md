@@ -137,6 +137,23 @@ This does not yet imply that Boltz can recover the interaction as maintained;
 it only shows that the exact PINDER-fragment baseline inputs can be prepared
 and inspected safely before any live baseline run.
 
+## Local live candidate baseline results
+
+The first controlled live candidate baseline runs were executed with `--yes-live --num-samples 1` after dry-run preflight.
+
+| Candidate id | PDB | Receptor | Ligand | ipTM | Binding confidence | complex ipLDDT | Boltz classification | Prediction id |
+|---|---|---:|---:|---:|---:|---:|---|---|
+| `1nfi__A1_Q04206--1nfi__F1_P25963` | 1nfi | Q04206 / A1 | P25963 / F1 | 0.742 | 0.376 | 0.893 | uncertain | `sab_pred_apj3d6YLoGb4ErSaJUDH` |
+| `4xhu__A1_P09874--4xhu__B1_Q9UNS1` | 4xhu | P09874 / A1 | Q9UNS1 / B1 | 0.920 | 0.798 | 0.931 | maintained | `sab_pred_7cUCBAVPrtD5UzhkHa0P` |
+
+Interpretation:
+
+- `1nfi` is a borderline/uncertain human baseline: high structural confidence but low binding confidence.
+- `4xhu` is the first cleanly recovered SIRT6/core3-expanded human-baseline candidate in this workflow.
+- Species-panel interpretation should prioritize `4xhu` first, because its matching human/technical baseline is recoverable.
+- Full temporary structure URLs are intentionally not recorded in docs.
+
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu
