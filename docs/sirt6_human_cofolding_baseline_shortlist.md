@@ -115,6 +115,28 @@ PDB id, UniProt ids, chain ids, and fragment lengths. It does not create a
 Boltz client, does not submit predictions, and does not write runtime output
 files.
 
+## Local dry-run preflight results
+
+The first dry-run preflight checks for the Priority 1 candidates resolved
+successfully from local PINDER data:
+
+| Candidate id | PDB | Receptor | Ligand | Receptor length | Ligand length | Dry-run status |
+|---|---|---:|---:|---:|---:|---|
+| `1nfi__A1_Q04206--1nfi__F1_P25963` | 1nfi | Q04206 / A1 | P25963 / F1 | 295 | 213 | input prepared |
+| `4xhu__A1_P09874--4xhu__B1_Q9UNS1` | 4xhu | P09874 / A1 | Q9UNS1 / B1 | 333 | 83 | input prepared |
+
+Both dry-runs reported:
+
+```text
+No Boltz API calls were made.
+No runtime output files were written.
+```
+
+Interpretation: these Priority 1 candidates pass the input-preflight gate.
+This does not yet imply that Boltz can recover the interaction as maintained;
+it only shows that the exact PINDER-fragment baseline inputs can be prepared
+and inspected safely before any live baseline run.
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu
