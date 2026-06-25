@@ -100,6 +100,21 @@ Reason:
 - older 8f86 rows included ligand-mapping and partner-mismatch concerns
 - useful to track, but not a good first live baseline target
 
+## Candidate baseline preflight CLI
+
+Before any live Boltz call, inspect the exact PINDER-fragment baseline input
+with the dry-run-only candidate baseline CLI:
+
+```bash
+uv run cofolding-candidate-baseline --candidate-id "1nfi__A1_Q04206--1nfi__F1_P25963"
+uv run cofolding-candidate-baseline --candidate-id "4xhu__A1_P09874--4xhu__B1_Q9UNS1"
+```
+
+This command prepares receptor/ligand fragment sequences and prints their
+PDB id, UniProt ids, chain ids, and fragment lengths. It does not create a
+Boltz client, does not submit predictions, and does not write runtime output
+files.
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu
