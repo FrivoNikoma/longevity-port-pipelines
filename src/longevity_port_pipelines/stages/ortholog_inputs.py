@@ -112,15 +112,15 @@ def validation_note_expr() -> pl.Expr:
         .then(
             pl.lit(
                 "Curated ortholog candidate input exists for this complex/chain/species/source "
-                "row. This is candidate evidence only; a dedicated override step is still needed "
-                "before standard ortholog_coverage outputs are populated from curated inputs."
+                "row. Run the explicit curated-ortholog merge step before downstream "
+                "ortholog_coverage, embedding, or analysis outputs use curated inputs."
             )
         )
         .otherwise(
             pl.lit(
                 "No curated ortholog candidate input exists for this complex/chain/species/source "
-                "row. Use the standard OMA/UniProt ortholog lookup unless a future curated "
-                "override is added."
+                "row. Use the standard OMA/UniProt ortholog lookup unless a curated input row "
+                "is added and the explicit curated-ortholog merge step is run."
             )
         )
     )
