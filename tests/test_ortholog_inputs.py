@@ -3,12 +3,19 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
+from longevity_port_pipelines.models import OrthologMapping
 from longevity_port_pipelines.stages.ortholog_inputs import (
     build_curated_ortholog_candidate_coverage,
     build_curated_ortholog_input_validation,
+    curated_candidates_to_ortholog_mappings,
     empty_validation,
     filter_active_curated_ortholog_candidates,
     find_duplicate_curated_ortholog_rows,
+    find_duplicate_primary_candidate_rows,
+    merge_ortholog_mappings,
+    ortholog_mapping_key,
+    ortholog_mappings_from_frame,
+    ortholog_mappings_to_frame,
     validate_schema,
 )
 
@@ -61,6 +68,23 @@ def candidate_rows() -> pl.DataFrame:
                 "Rejected because sequence/header evidence is missing or unsafe.",
             ],
         }
+    )
+
+
+def standard_mapping(
+    *,
+    target_species_taxid: int = 10090,
+    target_uniprot: str = "Q921K2",
+    source_db: str = "UniProt",
+) -> OrthologMapping:
+    return OrthologMapping(
+        source_uniprot="P09874",
+        source_species_taxid=9606,
+        target_uniprot=target_uniprot,
+        target_species_taxid=target_species_taxid,
+        target_sequence="STANDARD",
+        is_reviewed=True,
+        source_db=source_db,
     )
 
 
@@ -131,3 +155,120 @@ def test_find_duplicate_curated_ortholog_rows() -> None:
     assert duplicates.height == 1
     assert duplicates.row(0, named=True)["target_accession"] == "EPQ16369.1"
     assert duplicates.row(0, named=True)["len"] == 2
+
+
+def test_curated_candidates_to_ortholog_mappings_uses_primary_candidates_only() -> None:
+    mappings = curated_candidates_to_ortholog_mappings(candidate_rows())
+
+    assert len(mappings) == 1
+    mapping = mappings[0]
+    assert mapping.source_uniprot == "P09874"
+    assert mapping.source_species_taxid == 9606
+    assert mapping.target_uniprot == "EPQ16369.1"
+    assert mapping.target_species_taxid == 109478
+    assert mapping.target_sequence == "AAAA"
+    assert mapping.is_reviewed is False
+    assert mapping.source_db == "curated:NCBI Protein"
+
+
+def test_find_duplicate_primary_candidate_rows_detects_ambiguous_primary_candidates() -> None:
+    candidates = candidate_rows().with_columns(
+        pl.when(pl.col("target_accession") == "S7NG06")
+        .then(pl.lit("primary_candidate"))
+        .otherwise(pl.col("curation_status"))
+        .alias("curation_status")
+    )
+
+    duplicates = find_duplicate_primary_candidate_rows(candidates)
+
+    assert duplicates.height == 1
+    assert duplicates.row(0, named=True)["source_uniprot"] == "P09874"
+    assert duplicates.row(0, named=True)["target_species_taxid"] == 109478
+
+
+def test_curated_candidates_to_ortholog_mappings_rejects_ambiguous_primary_candidates() -> None:
+    candidates = candidate_rows().with_columns(
+        pl.when(pl.col("target_accession") == "S7NG06")
+        .then(pl.lit("primary_candidate"))
+        .otherwise(pl.col("curation_status"))
+        .alias("curation_status")
+    )
+
+    with pytest.raises(ValueError, match="Multiple primary curated ortholog candidates"):
+        curated_candidates_to_ortholog_mappings(candidates)
+
+
+def test_ortholog_mapping_key_uses_source_and_target_species() -> None:
+    mapping = standard_mapping()
+
+    assert ortholog_mapping_key(mapping) == ("P09874", 9606, 10090)
+
+
+def test_ortholog_mapping_frame_roundtrip_handles_boolean_strings() -> None:
+    frame = pl.DataFrame(
+        {
+            "source_uniprot": ["P09874"],
+            "source_species_taxid": [9606],
+            "target_uniprot": ["Q921K2"],
+            "target_species_taxid": [10090],
+            "target_sequence": ["STANDARD"],
+            "is_reviewed": ["true"],
+            "source_db": ["UniProt"],
+        }
+    )
+
+    mappings = ortholog_mappings_from_frame(frame)
+    roundtrip = ortholog_mappings_to_frame(mappings)
+
+    assert mappings[0].is_reviewed is True
+    assert roundtrip.row(0, named=True)["target_uniprot"] == "Q921K2"
+
+
+def test_merge_ortholog_mappings_adds_missing_curated_mapping() -> None:
+    standard = [standard_mapping(target_species_taxid=10090)]
+    curated = curated_candidates_to_ortholog_mappings(candidate_rows())
+
+    merged = merge_ortholog_mappings(standard, curated)
+
+    assert len(merged) == 2
+    assert [mapping.target_species_taxid for mapping in merged] == [10090, 109478]
+
+
+def test_merge_ortholog_mappings_keeps_standard_by_default() -> None:
+    standard = [standard_mapping(target_species_taxid=109478, target_uniprot="STANDARD_BAT")]
+    curated = curated_candidates_to_ortholog_mappings(candidate_rows())
+
+    merged = merge_ortholog_mappings(standard, curated)
+
+    assert len(merged) == 1
+    assert merged[0].target_uniprot == "STANDARD_BAT"
+    assert merged[0].source_db == "UniProt"
+
+
+def test_merge_ortholog_mappings_can_prefer_curated() -> None:
+    standard = [standard_mapping(target_species_taxid=109478, target_uniprot="STANDARD_BAT")]
+    curated = curated_candidates_to_ortholog_mappings(candidate_rows())
+
+    merged = merge_ortholog_mappings(standard, curated, conflict_policy="prefer_curated")
+
+    assert len(merged) == 1
+    assert merged[0].target_uniprot == "EPQ16369.1"
+    assert merged[0].source_db == "curated:NCBI Protein"
+
+
+def test_merge_ortholog_mappings_can_error_on_conflict() -> None:
+    standard = [standard_mapping(target_species_taxid=109478, target_uniprot="STANDARD_BAT")]
+    curated = curated_candidates_to_ortholog_mappings(candidate_rows())
+
+    with pytest.raises(ValueError, match="conflicts with standard mapping"):
+        merge_ortholog_mappings(standard, curated, conflict_policy="error")
+
+
+def test_merge_ortholog_mappings_rejects_duplicate_standard_mapping_keys() -> None:
+    standard = [
+        standard_mapping(target_species_taxid=109478, target_uniprot="STANDARD_BAT_1"),
+        standard_mapping(target_species_taxid=109478, target_uniprot="STANDARD_BAT_2"),
+    ]
+
+    with pytest.raises(ValueError, match="Duplicate standard ortholog mapping key"):
+        merge_ortholog_mappings(standard, [])

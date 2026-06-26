@@ -177,3 +177,62 @@ live Boltz species-panel runs should start.
 
 A future PR may add a dedicated merge/override step that converts validated curated rows into
 standard ortholog coverage rows.
+
+## Merging curated candidates into ortholog coverage
+
+The contract also supports a conservative merge step:
+
+```text
+standard ortholog coverage
++ primary curated ortholog candidates
+-> merged ortholog coverage
+
+The merge step is implemented in:
+
+scripts/merge_curated_ortholog_coverage.py
+
+It converts only primary_candidate rows into OrthologMapping rows. supporting_candidate
+rows remain evidence/validation rows and are not promoted into standard coverage by default.
+
+The generated source_db value is prefixed with:
+
+curated:
+
+For example:
+
+curated:NCBI Protein
+Conflict policy
+
+A conflict means that standard coverage and curated coverage both contain a mapping for the same:
+
+source_uniprot
+source_species_taxid
+target_species_taxid
+
+The default policy is:
+
+keep_standard
+
+This means a standard OMA/UniProt mapping is not silently overwritten by a curated row.
+
+Supported policies:
+
+keep_standard
+prefer_curated
+error
+
+Recommended default for production-like runs:
+
+keep_standard
+
+Recommended debugging policy:
+
+error
+Example command
+uv run python -m scripts.merge_curated_ortholog_coverage \
+  --standard-coverage data/output/sirt6_mini_pilot_v2_core3_expanded_ortholog_coverage.csv \
+  --curated-orthologs data/input/curated_ortholog_candidates.csv \
+  --output data/output/sirt6_mini_pilot_v2_core3_expanded_ortholog_coverage_with_curated.csv \
+  --conflict-policy keep_standard
+
+This still does not run Boltz and does not change live species-panel behavior by itself.
