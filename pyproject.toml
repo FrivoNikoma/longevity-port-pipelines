@@ -42,6 +42,7 @@ cofolding-controls = "longevity_port_pipelines.stages.cofolding_controls:app"
 cofolding-baseline-controls = "longevity_port_pipelines.stages.cofolding_baseline_controls:app"
 cofolding-candidate-baseline = "longevity_port_pipelines.stages.cofolding_candidate_baseline:app"
 curated-embedding-preflight = "longevity_port_pipelines.stages.curated_embedding_preflight:app"
+curated-embedding-single = "longevity_port_pipelines.stages.curated_embedding_single:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
