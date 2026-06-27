@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import os
+
 import polars as pl
 import pytest
 
 from longevity_port_pipelines.stages.curated_embedding_single import (
     build_single_curated_embedding_plan,
+    load_runtime_env,
     run_single_curated_embedding,
     select_single_primary_curated_candidate,
 )
@@ -172,3 +175,15 @@ def test_run_single_curated_embedding_refuses_live_length_mismatch(tmp_path) -> 
             api_url="https://biohub.ai",
             yes_live=True,
         )
+
+
+def test_load_runtime_env_reads_local_dotenv(tmp_path, monkeypatch) -> None:
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("BIOHUB_API_TOKEN=from-dotenv-test\n", encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("BIOHUB_API_TOKEN", raising=False)
+
+    load_runtime_env()
+
+    assert os.environ["BIOHUB_API_TOKEN"] == "from-dotenv-test"

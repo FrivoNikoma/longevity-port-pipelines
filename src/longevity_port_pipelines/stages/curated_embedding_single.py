@@ -6,6 +6,7 @@ from typing import Annotated, Literal
 
 import polars as pl
 import typer
+from dotenv import load_dotenv
 
 from longevity_port_pipelines.config import PipelineConfig
 from longevity_port_pipelines.stages.embed import (
@@ -29,6 +30,11 @@ EmbeddingRunStatus = Literal[
 ]
 
 app = typer.Typer(add_completion=False)
+
+
+def load_runtime_env() -> None:
+    """Load local runtime secrets from .env before live Biohub calls."""
+    load_dotenv(dotenv_path=Path(".env"))
 
 
 @dataclass(frozen=True)
@@ -281,6 +287,8 @@ def main(
     ] = True,
 ) -> None:
     """Generate or dry-run exactly one primary curated ortholog embedding."""
+    load_runtime_env()
+
     if not curated_orthologs.exists():
         raise FileNotFoundError(f"Missing curated ortholog input: {curated_orthologs}")
 
