@@ -45,6 +45,7 @@ curated-embedding-preflight = "longevity_port_pipelines.stages.curated_embedding
 curated-embedding-single = "longevity_port_pipelines.stages.curated_embedding_single:app"
 curated-analysis-preflight = "longevity_port_pipelines.stages.curated_analysis_preflight:app"
 curated-analysis-plan = "longevity_port_pipelines.stages.curated_analysis_plan:app"
+curated-analysis-runner = "longevity_port_pipelines.stages.curated_analysis_runner:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
