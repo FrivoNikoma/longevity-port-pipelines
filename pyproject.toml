@@ -47,6 +47,7 @@ curated-analysis-preflight = "longevity_port_pipelines.stages.curated_analysis_p
 curated-analysis-plan = "longevity_port_pipelines.stages.curated_analysis_plan:app"
 curated-analysis-runner = "longevity_port_pipelines.stages.curated_analysis_runner:app"
 curated-analysis-enrichment = "longevity_port_pipelines.stages.curated_analysis_enrichment:app"
+curated-negatome-controls = "longevity_port_pipelines.stages.curated_negatome_controls:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
