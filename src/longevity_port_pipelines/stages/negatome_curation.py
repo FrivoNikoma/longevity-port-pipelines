@@ -9,6 +9,9 @@ import polars as pl
 import requests
 
 from longevity_port_pipelines.stages.negatome_inputs import validate_schema
+from longevity_port_pipelines.stages.ortholog_inputs import (
+    filter_primary_curated_ortholog_candidates,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +144,56 @@ def build_core3_negatome_control_pairs(
             raise ValueError(
                 f"No curated negative partner configured for source_uniprot={source_uniprot} "
                 f"({complex_id}/{chain})"
+            )
+
+        negative_uniprot = partner_spec["negative_partner_uniprot"]
+        negative_sequence = fetch_uniprot_sequence(negative_uniprot, cache_dir=cache_dir)
+
+        rows.append(
+            {
+                "complex_id": complex_id,
+                "chain": chain,
+                "target_species": target_species,
+                "source_uniprot": source_uniprot,
+                "negative_partner_uniprot": negative_uniprot,
+                "negative_partner_source": partner_spec["negative_partner_source"],
+                "negative_partner_sequence": negative_sequence,
+                "control_type": partner_spec["control_type"],
+            }
+        )
+
+    if not rows:
+        return pl.DataFrame({column: [] for column in NEGATOME_PAIR_COLUMNS})
+
+    return pl.DataFrame(rows).unique(
+        subset=["complex_id", "chain", "target_species", "negative_partner_uniprot"]
+    )
+
+
+def build_curated_ortholog_negatome_control_pairs(
+    curated_candidates: pl.DataFrame,
+    cache_dir: Path,
+) -> pl.DataFrame:
+    """Build NEGATOME-style rows for primary curated ortholog candidates.
+
+    This extends the same source-protein negative partner curation used by the
+    core3 mini-pilot to curated ortholog species that were added later, such as
+    Brandt's bat PARP1.
+    """
+    primary_candidates = filter_primary_curated_ortholog_candidates(curated_candidates)
+
+    rows: list[dict[str, str]] = []
+    for candidate_row in primary_candidates.to_dicts():
+        complex_id = str(candidate_row["complex_id"])
+        chain = str(candidate_row["chain"])
+        target_species = str(candidate_row["target_species"])
+        source_uniprot = str(candidate_row["source_uniprot"])
+
+        partner_spec = CURATED_NEGATIVE_PARTNERS.get(source_uniprot)
+        if partner_spec is None:
+            raise ValueError(
+                f"No curated negative partner configured for source_uniprot={source_uniprot} "
+                f"({complex_id}/{chain}/{target_species})"
             )
 
         negative_uniprot = partner_spec["negative_partner_uniprot"]
