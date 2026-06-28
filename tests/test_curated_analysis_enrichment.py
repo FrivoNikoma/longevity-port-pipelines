@@ -96,6 +96,23 @@ def patch_interface(monkeypatch, residues: list[int]) -> None:
     )
 
 
+def write_negatome_control_pairs(tmp_path: Path) -> Path:
+    path = tmp_path / "negatome_control_pairs.csv"
+    pl.DataFrame(
+        {
+            "complex_id": [COMPLEX_ID],
+            "chain": ["receptor"],
+            "target_species": ["brandts_bat"],
+            "source_uniprot": ["P09874"],
+            "negative_partner_uniprot": ["NEG1"],
+            "negative_partner_source": ["synthetic"],
+            "negative_partner_sequence": ["A" * 10],
+            "control_type": ["synthetic_negatome"],
+        }
+    ).write_csv(path)
+    return path
+
+
 def test_empty_curated_ortholog_enrichment_report_has_expected_columns() -> None:
     report = empty_curated_ortholog_enrichment_report()
 
@@ -166,8 +183,8 @@ def test_curated_ortholog_enrichment_yes_run_computes_technical_checkpoint(
     assert row["run_mode"] == "yes-run"
     assert row["status"] == "enrichment_completed"
     assert row["blocking_reason"] == "ready"
-    assert row["control_status"] == "shuffled_only_negatome_not_applied"
-    assert row["interpretation_status"] == "technical_checkpoint_not_validated_claim"
+    assert row["control_status"] == "missing_negatome"
+    assert row["interpretation_status"] == "preliminary_shuffled_only"
     assert row["interface_residue_count"] == 3
     assert row["reference_embedding_shape"] == "10x3"
     assert row["target_embedding_shape"] == "10x3"
@@ -202,3 +219,41 @@ def test_curated_ortholog_enrichment_yes_run_blocks_empty_interface(
     assert row["reference_embedding_shape"] == "10x3"
     assert row["target_embedding_shape"] == "10x3"
     assert row["enrichment_ratio"] is None
+
+
+def test_curated_ortholog_enrichment_yes_run_applies_negatome_control(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    write_enrichment_test_embeddings(tmp_path)
+    pairs_path = write_negatome_control_pairs(tmp_path)
+    patch_interface(monkeypatch, residues=[1, 2, 3])
+
+    def fake_resolve_negatome_control_ratio(**kwargs) -> float:
+        pair_rows = kwargs["pair_rows"]
+        assert pair_rows[0]["negative_partner_uniprot"] == "NEG1"
+        return 0.9
+
+    monkeypatch.setattr(
+        enrichment_mod,
+        "resolve_negatome_control_ratio",
+        fake_resolve_negatome_control_ratio,
+    )
+
+    report = run_curated_ortholog_enrichment(
+        candidate_rows(),
+        selection_rows(),
+        output_dir=tmp_path,
+        interim_dir=tmp_path,
+        negatome_control_pairs=pairs_path,
+        pdb_dir=tmp_path / "pdb",
+        model_name=DEFAULT_MODEL_NAME,
+        yes_run=True,
+        n_permutations=20,
+    )
+
+    row = report.row(0, named=True)
+    assert row["status"] == "enrichment_completed"
+    assert row["control_status"] == "has_shuffled_and_negatome"
+    assert row["interpretation_status"] == "controlled_pass"
+    assert row["negatome_control_ratio"] == 0.9

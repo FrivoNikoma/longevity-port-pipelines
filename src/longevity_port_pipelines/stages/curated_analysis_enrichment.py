@@ -6,6 +6,7 @@ import polars as pl
 import typer
 
 from longevity_port_pipelines.config import REFERENCE_SPECIES
+from longevity_port_pipelines.models import EnrichmentResult
 from longevity_port_pipelines.stages.analyze import analyze_pair
 from longevity_port_pipelines.stages.curated_analysis_plan import (
     DEFAULT_CURATED_ORTHOLOGS,
@@ -16,12 +17,24 @@ from longevity_port_pipelines.stages.curated_analysis_plan import (
 )
 from longevity_port_pipelines.stages.embed import load_saved_embedding
 from longevity_port_pipelines.stages.interface import download_pdb, extract_interface_residues
+from longevity_port_pipelines.stages.negative_controls import (
+    control_evidence_tier,
+    passes_controls,
+)
+from longevity_port_pipelines.stages.negatome_controls import (
+    build_negatome_pair_lookup,
+    load_negatome_control_pairs,
+    negatome_lookup_key,
+    resolve_negatome_control_ratio,
+)
 from longevity_port_pipelines.stages.ortholog_inputs import (
     filter_primary_curated_ortholog_candidates,
     validate_schema,
 )
 
-DEFAULT_PDB_DIR = Path("data/interim/pdb")
+DEFAULT_INTERIM_DIR = Path("data/interim")
+DEFAULT_PDB_DIR = DEFAULT_INTERIM_DIR / "pdb"
+DEFAULT_NEGATOME_CONTROL_PAIRS = DEFAULT_INTERIM_DIR / "negatome_control_pairs.csv"
 DEFAULT_ENRICHMENT_OUTPUT = Path("data/output/curated_ortholog_enrichment.csv")
 
 ENRICHMENT_SCHEMA = {
@@ -202,6 +215,24 @@ def _base_row(
     }
 
 
+def _control_status(negatome_control_ratio: float | None) -> str:
+    if negatome_control_ratio is not None and negatome_control_ratio > 0.0:
+        return "has_shuffled_and_negatome"
+    return "missing_negatome"
+
+
+def _interpretation_status(result: EnrichmentResult, control_status: str) -> str:
+    passes = passes_controls(
+        enrichment_ratio=result.enrichment_ratio,
+        shuffled_control_ratio=result.shuffled_control_ratio,
+        negatome_control_ratio=result.negatome_control_ratio,
+        p_interface_greater=result.p_interface_greater,
+        p_interface_less=result.p_interface_less,
+        control_status=control_status,
+    )
+    return control_evidence_tier(control_status=control_status, passes=passes)
+
+
 def _status_counts(report: pl.DataFrame) -> dict[str, int]:
     if report.is_empty():
         return {}
@@ -220,6 +251,8 @@ def run_curated_ortholog_enrichment(
     pdb_dir: Path,
     model_name: str,
     yes_run: bool,
+    interim_dir: Path = DEFAULT_INTERIM_DIR,
+    negatome_control_pairs: Path | None = DEFAULT_NEGATOME_CONTROL_PAIRS,
     interface_distance_cutoff: float = 8.0,
     n_permutations: int = 1000,
 ) -> pl.DataFrame:
@@ -229,8 +262,8 @@ def run_curated_ortholog_enrichment(
     embeddings. In yes-run mode it loads already-saved embeddings, extracts
     interface residues, and calls analyze_pair.
 
-    The resulting enrichment is a technical checkpoint. It is not a validated
-    biological claim because NEGATOME control is not applied here.
+    The resulting enrichment remains preliminary until NEGATOME control is
+    populated and the strict control gate is evaluated.
     """
     plan = build_curated_ortholog_analysis_plan(
         candidates,
@@ -241,6 +274,15 @@ def run_curated_ortholog_enrichment(
 
     if plan.is_empty():
         return empty_curated_ortholog_enrichment_report()
+
+    negatome_pairs = (
+        load_negatome_control_pairs(negatome_control_pairs)
+        if negatome_control_pairs is not None
+        else None
+    )
+    negatome_lookup = (
+        build_negatome_pair_lookup(negatome_pairs) if negatome_pairs is not None else {}
+    )
 
     rows: list[dict[str, object]] = []
     for plan_row in plan.iter_rows(named=True):
@@ -339,15 +381,32 @@ def run_curated_ortholog_enrichment(
             rows.append(blocked_row)
             continue
 
+        target_species = _as_str(plan_row, "target_species")
+        source_uniprot = _as_str(plan_row, "source_uniprot")
+        negatome_control_ratio = resolve_negatome_control_ratio(
+            ref=ref_embedding,
+            orth=target_embedding,
+            interface_residues=selected_interface,
+            pair_rows=negatome_lookup.get(
+                negatome_lookup_key(complex_id, chain, target_species),
+                [],
+            ),
+            interim_dir=interim_dir,
+            model_name=model_name,
+            source_uniprot=source_uniprot,
+        )
+
         result = analyze_pair(
             ref=ref_embedding,
             orth=target_embedding,
             interface_residues=selected_interface,
             source_species_name=REFERENCE_SPECIES.name,
-            target_species_name=_as_str(plan_row, "target_species"),
+            target_species_name=target_species,
             n_permutations=n_permutations,
-            negatome_enrichment=None,
+            negatome_enrichment=negatome_control_ratio,
         )
+        control_status = _control_status(result.negatome_control_ratio)
+        interpretation_status = _interpretation_status(result, control_status)
 
         result_row = _base_row(
             plan_row,
@@ -358,8 +417,8 @@ def run_curated_ortholog_enrichment(
         )
         result_row.update(
             {
-                "control_status": "shuffled_only_negatome_not_applied",
-                "interpretation_status": "technical_checkpoint_not_validated_claim",
+                "control_status": control_status,
+                "interpretation_status": interpretation_status,
                 "interface_residue_count": len(selected_interface),
                 "reference_embedding_shape": _shape_text(ref_embedding.embeddings.shape),
                 "target_embedding_shape": _shape_text(target_embedding.embeddings.shape),
@@ -387,7 +446,9 @@ def main(
     curated_orthologs: Path = DEFAULT_CURATED_ORTHOLOGS,
     selection: Path = DEFAULT_SELECTION,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
+    interim_dir: Path = DEFAULT_INTERIM_DIR,
     pdb_dir: Path = DEFAULT_PDB_DIR,
+    negatome_control_pairs: Path = DEFAULT_NEGATOME_CONTROL_PAIRS,
     model_name: str = DEFAULT_MODEL_NAME,
     output: Path = DEFAULT_ENRICHMENT_OUTPUT,
     yes_run: bool = typer.Option(
@@ -414,6 +475,8 @@ def main(
         pdb_dir=pdb_dir,
         model_name=model_name,
         yes_run=yes_run,
+        interim_dir=interim_dir,
+        negatome_control_pairs=negatome_control_pairs,
         interface_distance_cutoff=interface_distance_cutoff,
         n_permutations=n_permutations,
     )
