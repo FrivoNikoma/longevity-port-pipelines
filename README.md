@@ -221,6 +221,23 @@ uv run analyze             # Enrichment analysis (interface vs non-interface)
 uv run plot                # Summary plots
 ```
 
+### Curated ortholog analysis ladder
+
+For a manually curated candidate, use the smaller dry-run-first ladder instead of rerunning the full pipeline:
+
+```bash
+uv run curated-embedding-preflight
+uv run curated-embedding-single
+uv run curated-analysis-preflight
+uv run curated-analysis-plan
+uv run curated-analysis-runner
+uv run curated-analysis-enrichment
+```
+
+`curated-analysis-enrichment` loads already-saved embeddings, extracts interface residues, and computes a technical interface-vs-noninterface enrichment checkpoint only when explicitly run with `--yes-run`. It does not call Biohub, does not call Boltz, and does not generate new embeddings.
+
+Treat this output as a technical checkpoint, not validated biological evidence, until NEGATOME control is applied.
+
 Or run all stages at once:
 
 ```bash

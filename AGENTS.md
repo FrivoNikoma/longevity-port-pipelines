@@ -73,7 +73,23 @@ uv run run-pipeline        # All stages (or --pre-gpu-only for stages 1-4)
 
 # --- Reporting ---
 uv run render-poster       # Render docs/poster/poster.html to PNG via headless Chrome
+
+# --- Curated ortholog analysis ladder ---
+uv run curated-embedding-preflight
+uv run curated-embedding-single
+uv run curated-analysis-preflight
+uv run curated-analysis-plan
+uv run curated-analysis-runner
+uv run curated-analysis-enrichment
 ```
+
+The curated ortholog ladder is dry-run-first. Commands that can spend API
+credits or perform runtime analysis require explicit flags such as `--yes-run`.
+
+`curated-analysis-enrichment` is a technical checkpoint until both negative
+controls are satisfied. Without NEGATOME it must be marked as
+`shuffled_only_negatome_not_applied` and
+`technical_checkpoint_not_validated_claim`.
 
 Every new pipeline step gets its own direct entry point — no umbrella CLI.
 
