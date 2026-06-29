@@ -57,6 +57,21 @@ SCORECARD_SCHEMA = {
     "preflight_note": pl.Utf8,
 }
 
+NEGATOME_READINESS_SCHEMA = {
+    "candidate_id": pl.Utf8,
+    "pdb_id": pl.Utf8,
+    "chain": pl.Utf8,
+    "source_uniprot": pl.Utf8,
+    "priority": pl.Utf8,
+    "baseline_input_status": pl.Utf8,
+    "species_coverage_status": pl.Utf8,
+    "negatome_status": pl.Utf8,
+    "negative_partner_uniprot": pl.Utf8,
+    "missing_negatome_species": pl.Utf8,
+    "recommended_next_action": pl.Utf8,
+}
+
+
 app = typer.Typer(add_completion=False)
 
 
@@ -110,6 +125,22 @@ def _scorecard_from_rows(rows: list[dict[str, object]]) -> pl.DataFrame:
     return pl.DataFrame(rows).select(
         [pl.col(column).cast(dtype).alias(column) for column, dtype in SCORECARD_SCHEMA.items()]
     )
+
+
+def empty_negatome_readiness_matrix() -> pl.DataFrame:
+    return pl.DataFrame(schema=NEGATOME_READINESS_SCHEMA)
+
+
+def negatome_readiness_matrix(scorecard: pl.DataFrame) -> pl.DataFrame:
+    if scorecard.is_empty():
+        return empty_negatome_readiness_matrix()
+
+    return scorecard.select(
+        [
+            pl.col(column).cast(dtype).alias(column)
+            for column, dtype in NEGATOME_READINESS_SCHEMA.items()
+        ]
+    ).sort(["negatome_status", "priority", "candidate_id"])
 
 
 def read_table(path: Path) -> pl.DataFrame:
@@ -422,6 +453,10 @@ def main(
         Path,
         typer.Option(help="Output CSV path for the candidate preflight scorecard."),
     ] = DEFAULT_OUTPUT,
+    negatome_readiness_output: Annotated[
+        Path | None,
+        typer.Option(help="Optional output CSV path for candidate NEGATOME readiness rows."),
+    ] = None,
     short_fragment_threshold: Annotated[
         int,
         typer.Option(help="Warn when either PINDER fragment is shorter than this threshold."),
@@ -442,6 +477,10 @@ def main(
     output.parent.mkdir(parents=True, exist_ok=True)
     scorecard.write_csv(output)
 
+    if negatome_readiness_output is not None:
+        negatome_readiness_output.parent.mkdir(parents=True, exist_ok=True)
+        negatome_readiness_matrix(scorecard).write_csv(negatome_readiness_output)
+
     typer.echo(f"candidate rows audited: {scorecard.height}")
     for action, count in sorted(action_counts(scorecard).items()):
         typer.echo(f"{action}: {count}")
@@ -457,6 +496,8 @@ def main(
         )
 
     typer.echo(f"Wrote candidate preflight scorecard -> {output}")
+    if negatome_readiness_output is not None:
+        typer.echo(f"Wrote NEGATOME readiness matrix -> {negatome_readiness_output}")
     typer.echo("No Boltz API calls were made.")
 
 

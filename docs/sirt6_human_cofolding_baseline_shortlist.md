@@ -449,3 +449,46 @@ already have a validated longevity-specific signal.
 
 The remaining 11 non-ready matrix rows should remain provenance blockers until
 their source ortholog provenance is repaired or explicitly excluded.
+
+## Candidate NEGATOME readiness checkpoint
+
+The manifest-driven preflight batch can now emit an optional NEGATOME readiness
+matrix:
+
+```bash
+uv run cofolding-candidate-preflight-batch \
+  --manifest data/input/sirt6_cofolding_candidate_manifest.csv \
+  --output data/interim/sirt6_candidate_preflight_scorecard.csv \
+  --negatome-readiness-output data/interim/sirt6_candidate_negatome_readiness_matrix.csv
+```
+
+This checkpoint is a control-readiness diagnostic only. It does not compute
+embedding enrichment, does not compute NEGATOME control ratios, and does not
+make a biological claim.
+
+Local checkpoint result:
+
+```text
+candidate rows audited: 6
+fix_species_coverage: 6
+
+NEGATOME status counts:
+- partial_existing: 4
+- missing_export_ready: 2
+
+No Boltz API calls were made.
+```
+
+Interpretation:
+
+```text
+All six SIRT6 manifest candidates still remain blocked at the strict preflight
+level by incomplete species provenance coverage. Within that blocked set, four
+candidates already have partial existing NEGATOME-style control rows, while two
+still need export-ready NEGATOME rows before controlled enrichment can be claimed.
+```
+
+This remains separate from the coverage-only contrast-ready subset: a candidate
+can be eligible for a future contrast-layer dry-run while still blocked from
+strict controlled-evidence claims until species provenance and NEGATOME control
+readiness are resolved.

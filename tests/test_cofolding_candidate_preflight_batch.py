@@ -190,3 +190,55 @@ def test_build_scorecard_records_missing_baseline_input(monkeypatch: pytest.Monk
     assert row["baseline_input_status"] == "missing_baseline_input"
     assert row["recommended_next_action"] == "fix_baseline_input"
     assert "missing PINDER sequences" in row["preflight_note"]
+
+
+def test_negatome_readiness_matrix_selects_control_gate_columns() -> None:
+    scorecard = pl.DataFrame(
+        [
+            {
+                "candidate_id": "4xhu__A1_P09874--4xhu__B1_Q9UNS1",
+                "pdb_id": "4xhu",
+                "chain": "receptor",
+                "source_uniprot": "P09874",
+                "priority": "1",
+                "baseline_input_status": "input_prepared",
+                "receptor_uniprot": "P09874",
+                "ligand_uniprot": "Q9UNS1",
+                "receptor_length": 333,
+                "ligand_length": 83,
+                "short_fragment_warning": False,
+                "species_coverage_status": "complete_species_coverage",
+                "missing_source_ortholog_species": "",
+                "missing_local_candidate_row_species": "",
+                "negatome_status": "present_existing",
+                "negative_partner_uniprot": "O60907",
+                "missing_negatome_species": "",
+                "recommended_next_action": "ready_for_human_baseline",
+                "preflight_note": "synthetic scorecard row",
+            }
+        ]
+    ).select(
+        [
+            pl.col(column).cast(dtype).alias(column)
+            for column, dtype in batch.SCORECARD_SCHEMA.items()
+        ]
+    )
+
+    readiness = batch.negatome_readiness_matrix(scorecard)
+
+    assert readiness.columns == list(batch.NEGATOME_READINESS_SCHEMA)
+    row = readiness.row(0, named=True)
+    assert row["candidate_id"] == "4xhu__A1_P09874--4xhu__B1_Q9UNS1"
+    assert row["baseline_input_status"] == "input_prepared"
+    assert row["species_coverage_status"] == "complete_species_coverage"
+    assert row["negatome_status"] == "present_existing"
+    assert row["negative_partner_uniprot"] == "O60907"
+    assert row["missing_negatome_species"] == ""
+    assert row["recommended_next_action"] == "ready_for_human_baseline"
+
+
+def test_negatome_readiness_matrix_returns_empty_schema() -> None:
+    readiness = batch.negatome_readiness_matrix(pl.DataFrame(schema=batch.SCORECARD_SCHEMA))
+
+    assert readiness.is_empty()
+    assert readiness.columns == list(batch.NEGATOME_READINESS_SCHEMA)
