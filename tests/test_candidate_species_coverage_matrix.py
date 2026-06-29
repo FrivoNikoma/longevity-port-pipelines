@@ -80,6 +80,30 @@ def test_recommended_coverage_action(
     assert matrix.recommended_coverage_action(coverage_gap_status) == expected_action
 
 
+def test_recommended_coverage_action_for_row_marks_unresolved_downstream_provenance() -> None:
+    assert (
+        matrix.recommended_coverage_action_for_row(
+            coverage_gap_status="missing_ortholog_but_local_rows_present",
+            candidate_target_uniprots="",
+            ortholog_source_files="",
+            has_local_candidate_file_rows=True,
+        )
+        == "local_downstream_evidence_without_source_ortholog"
+    )
+
+
+def test_recommended_coverage_action_for_row_keeps_generic_review_when_source_id_exists() -> None:
+    assert (
+        matrix.recommended_coverage_action_for_row(
+            coverage_gap_status="missing_ortholog_but_local_rows_present",
+            candidate_target_uniprots="G3T000",
+            ortholog_source_files="",
+            has_local_candidate_file_rows=True,
+        )
+        == "review_local_rows_without_source_ortholog"
+    )
+
+
 def test_build_candidate_species_coverage_matrix_flattens_candidate_summary(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

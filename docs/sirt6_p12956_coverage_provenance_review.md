@@ -91,13 +91,13 @@ and/or elephant with documented provenance; or
 2. Improve the coverage matrix action labels so these rows are distinguished
 from cases where local evidence contains a usable target sequence identifier.
 
-A possible refined action label would be:
+The refined action label for this unresolved provenance case is:
 
 ```text
 local_downstream_evidence_without_source_ortholog
 ```
 
-This would make the blocker more precise than the current generic action:
+This makes the blocker more precise than the previous generic action:
 
 ```text
 review_local_rows_without_source_ortholog

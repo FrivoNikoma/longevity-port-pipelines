@@ -130,6 +130,28 @@ def recommended_coverage_action(coverage_gap_status: str) -> str:
     return "review_coverage_status"
 
 
+def _has_value(value: str) -> bool:
+    return bool(value.strip())
+
+
+def recommended_coverage_action_for_row(
+    *,
+    coverage_gap_status: str,
+    candidate_target_uniprots: str = "",
+    ortholog_source_files: str = "",
+    has_local_candidate_file_rows: bool = False,
+) -> str:
+    if (
+        coverage_gap_status == "missing_ortholog_but_local_rows_present"
+        and has_local_candidate_file_rows
+        and not _has_value(candidate_target_uniprots)
+        and not _has_value(ortholog_source_files)
+    ):
+        return "local_downstream_evidence_without_source_ortholog"
+
+    return recommended_coverage_action(coverage_gap_status)
+
+
 def _missing_baseline_row(
     *,
     candidate_id: str,
@@ -227,7 +249,14 @@ def build_candidate_species_coverage_matrix(
                     ),
                     "local_files": _as_str(summary_row, "local_files"),
                     "coverage_gap_status": status,
-                    "recommended_coverage_action": recommended_coverage_action(status),
+                    "recommended_coverage_action": recommended_coverage_action_for_row(
+                        coverage_gap_status=status,
+                        candidate_target_uniprots=_as_str(summary_row, "candidate_target_uniprots"),
+                        ortholog_source_files=_as_str(summary_row, "ortholog_source_files"),
+                        has_local_candidate_file_rows=_as_bool(
+                            summary_row, "has_local_candidate_file_rows"
+                        ),
+                    ),
                     "coverage_note": "Species coverage audited without Biohub or Boltz calls.",
                 }
             )
