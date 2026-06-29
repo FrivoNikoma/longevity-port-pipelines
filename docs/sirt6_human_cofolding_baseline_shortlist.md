@@ -230,6 +230,25 @@ Interpretation guard:
 - No Boltz API calls were made during these probes.
 
 
+## Reusable species coverage audit CLI
+
+The earlier `scripts/audit_4xhu_p09874_coverage.py` script captured the first hard-coded `4xhu` / `P09874` coverage audit. The reusable `species-coverage-audit` command generalizes the same safety check for explicit future candidates.
+
+Example:
+
+```bash
+uv run species-coverage-audit --complex-id "4xhu__A1_P09874--4xhu__B1_Q9UNS1" --pdb-id 4xhu --chain receptor --source-uniprot P09874 --output-prefix 4xhu_p09874_reusable
+```
+
+Local smoke-test result for the historical `4xhu` / `P09874` case:
+
+```text
+Missing source ortholog coverage: ['bowhead_whale']
+Missing local candidate file rows: []
+```
+
+Interpretation guard: this still should not be described as a complete expanded 5-vs-3 species panel while `bowhead_whale` source ortholog coverage is missing. No Boltz API calls are made by the audit command.
+
 ## Proposed live-run order
 
 1. audit generated ids for 1nfi and 4xhu

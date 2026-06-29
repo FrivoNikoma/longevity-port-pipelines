@@ -49,6 +49,7 @@ curated-analysis-runner = "longevity_port_pipelines.stages.curated_analysis_runn
 curated-analysis-enrichment = "longevity_port_pipelines.stages.curated_analysis_enrichment:app"
 curated-negatome-controls = "longevity_port_pipelines.stages.curated_negatome_controls:app"
 curated-control-closure = "longevity_port_pipelines.stages.curated_control_closure:app"
+species-coverage-audit = "longevity_port_pipelines.stages.species_coverage_audit:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
