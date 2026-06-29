@@ -361,3 +361,48 @@ Interpretation:
 
 This keeps the workflow moving toward automation without weakening the
 interpretation gate before live Boltz spending.
+
+Manifest-level species coverage matrix
+
+The committed SIRT6 candidate manifest can now be audited as a full
+candidate-by-species coverage matrix:
+
+uv run candidate-species-coverage-matrix \
+  --manifest data/input/sirt6_cofolding_candidate_manifest.csv \
+  --output data/interim/sirt6_candidate_species_coverage_matrix.csv
+
+Local smoke result:
+
+coverage matrix rows: 48
+coverage_ready: 37
+review_local_rows_without_source_ortholog: 11
+No Biohub API calls were made.
+No Boltz API calls were made.
+
+Interpretation:
+
+- the matrix expands six SIRT6/core3 candidate rows across the current
+  eight-species target panel;
+- 37/48 candidate-species cells are already coverage-ready;
+- 11/48 cells have local candidate rows but lack explicit source-ortholog
+  coverage in the available ortholog_coverage*.csv inputs;
+- all current coverage blockers are in long-lived species, with bowhead whale
+  contributing the largest number of review cells.
+
+Current blocker summary:
+
+blocked by target species:
+- bowhead_whale: 6
+- brandts_bat: 4
+- elephant: 1
+
+blocked by source UniProt:
+- P12956: 3
+- P09874: 2
+- P13010: 2
+- Q04206: 2
+- Q8N6T7: 2
+
+This does not create a new biological claim. It turns the broad
+fix_species_coverage preflight result into an explicit worklist for reviewing
+ortholog provenance before long-lived-vs-short-lived interpretation.
