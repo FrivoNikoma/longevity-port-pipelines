@@ -222,11 +222,53 @@ def action_counts(matrix: pl.DataFrame) -> dict[str, int]:
     return counts
 
 
+def coverage_gap_counts(matrix: pl.DataFrame, column: str) -> dict[str, int]:
+    if matrix.is_empty():
+        return {}
+
+    blocked = matrix.filter(pl.col("recommended_coverage_action") != "coverage_ready")
+    if blocked.is_empty():
+        return {}
+
+    blocked = blocked.filter(pl.col(column).cast(pl.Utf8).str.strip_chars() != "")
+    if blocked.is_empty():
+        return {}
+
+    counts: dict[str, int] = {}
+    grouped = blocked.group_by(column).len().sort(["len", column], descending=[True, False])
+    for row in grouped.iter_rows(named=True):
+        counts[str(row[column])] = int(row["len"])
+
+    return counts
+
+
+def print_prioritization_summary(matrix: pl.DataFrame) -> None:
+    blocked_by_species = coverage_gap_counts(matrix, "target_species")
+    blocked_by_source = coverage_gap_counts(matrix, "source_uniprot")
+
+    if not blocked_by_species and not blocked_by_source:
+        return
+
+    typer.echo("")
+    if blocked_by_species:
+        typer.echo("blocked by target species:")
+        for target_species, count in blocked_by_species.items():
+            typer.echo(f"- {target_species}: {count}")
+
+    if blocked_by_source:
+        typer.echo("")
+        typer.echo("blocked by source UniProt:")
+        for source_uniprot, count in blocked_by_source.items():
+            typer.echo(f"- {source_uniprot}: {count}")
+
+
 def print_matrix_summary(matrix: pl.DataFrame) -> None:
     typer.echo(f"coverage matrix rows: {matrix.height}")
 
     for action, count in sorted(action_counts(matrix).items()):
         typer.echo(f"{action}: {count}")
+
+    print_prioritization_summary(matrix)
 
 
 @app.command()

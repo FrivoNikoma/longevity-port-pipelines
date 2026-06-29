@@ -7,6 +7,10 @@ import polars as pl
 import pytest
 
 from longevity_port_pipelines.stages import candidate_species_coverage_matrix as matrix
+from longevity_port_pipelines.stages.candidate_species_coverage_matrix import (
+    coverage_gap_counts,
+    print_prioritization_summary,
+)
 
 
 def manifest_rows() -> pl.DataFrame:
@@ -154,3 +158,65 @@ def test_action_counts_counts_recommended_actions() -> None:
         "coverage_ready": 2,
         "fetch_or_curate_source_ortholog": 1,
     }
+
+
+def test_coverage_gap_counts_ignore_ready_rows() -> None:
+    matrix = pl.DataFrame(
+        [
+            {
+                "target_species": "mouse",
+                "source_uniprot": "P09874",
+                "recommended_coverage_action": "coverage_ready",
+            },
+            {
+                "target_species": "bowhead_whale",
+                "source_uniprot": "P09874",
+                "recommended_coverage_action": "review_local_rows_without_source_ortholog",
+            },
+            {
+                "target_species": "bowhead_whale",
+                "source_uniprot": "P12956",
+                "recommended_coverage_action": "review_local_rows_without_source_ortholog",
+            },
+            {
+                "target_species": "brandts_bat",
+                "source_uniprot": "P12956",
+                "recommended_coverage_action": "fetch_or_curate_source_ortholog",
+            },
+        ]
+    )
+
+    assert coverage_gap_counts(matrix, "target_species") == {
+        "bowhead_whale": 2,
+        "brandts_bat": 1,
+    }
+    assert coverage_gap_counts(matrix, "source_uniprot") == {
+        "P12956": 2,
+        "P09874": 1,
+    }
+
+
+def test_print_prioritization_summary_prints_blocker_worklist(capsys) -> None:
+    matrix = pl.DataFrame(
+        [
+            {
+                "target_species": "mouse",
+                "source_uniprot": "P09874",
+                "recommended_coverage_action": "coverage_ready",
+            },
+            {
+                "target_species": "bowhead_whale",
+                "source_uniprot": "P09874",
+                "recommended_coverage_action": "review_local_rows_without_source_ortholog",
+            },
+        ]
+    )
+
+    print_prioritization_summary(matrix)
+
+    captured = capsys.readouterr()
+    assert "blocked by target species:" in captured.out
+    assert "- bowhead_whale: 1" in captured.out
+    assert "blocked by source UniProt:" in captured.out
+    assert "- P09874: 1" in captured.out
+    assert "mouse" not in captured.out
