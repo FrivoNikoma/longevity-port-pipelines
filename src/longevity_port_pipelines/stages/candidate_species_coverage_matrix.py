@@ -47,6 +47,30 @@ MATRIX_SCHEMA = {
     "coverage_note": pl.Utf8,
 }
 
+BLOCKER_REVIEW_COLUMNS = [
+    "candidate_id",
+    "pdb_id",
+    "chain",
+    "source_uniprot",
+    "priority",
+    "target_species",
+    "target_species_taxid",
+    "group",
+    "has_source_ortholog",
+    "n_ortholog_candidate_rows",
+    "candidate_target_uniprots",
+    "candidate_sequence_lengths",
+    "ortholog_source_dbs",
+    "ortholog_source_files",
+    "has_local_candidate_file_rows",
+    "n_local_candidate_file_rows",
+    "local_files",
+    "coverage_gap_status",
+    "recommended_coverage_action",
+    "coverage_note",
+]
+
+
 app = typer.Typer(add_completion=False)
 
 
@@ -242,6 +266,23 @@ def coverage_gap_counts(matrix: pl.DataFrame, column: str) -> dict[str, int]:
     return counts
 
 
+def empty_blocker_review() -> pl.DataFrame:
+    return pl.DataFrame(schema={column: MATRIX_SCHEMA[column] for column in BLOCKER_REVIEW_COLUMNS})
+
+
+def coverage_blocker_review(matrix: pl.DataFrame) -> pl.DataFrame:
+    if matrix.is_empty():
+        return empty_blocker_review()
+
+    blockers = matrix.filter(pl.col("recommended_coverage_action") != "coverage_ready")
+    if blockers.is_empty():
+        return empty_blocker_review()
+
+    return blockers.select(BLOCKER_REVIEW_COLUMNS).sort(
+        ["target_species", "source_uniprot", "candidate_id"]
+    )
+
+
 def print_prioritization_summary(matrix: pl.DataFrame) -> None:
     blocked_by_species = coverage_gap_counts(matrix, "target_species")
     blocked_by_source = coverage_gap_counts(matrix, "source_uniprot")
@@ -289,6 +330,10 @@ def main(
         Path,
         typer.Option(help="Output CSV path for the candidate × species coverage matrix."),
     ] = DEFAULT_OUTPUT,
+    blockers_output: Annotated[
+        Path | None,
+        typer.Option(help="Optional output CSV path for non-ready coverage review rows."),
+    ] = None,
 ) -> None:
     """Build a manifest-level species coverage matrix without Biohub or Boltz calls."""
     manifest_df = read_table(manifest)
@@ -301,8 +346,14 @@ def main(
     output.parent.mkdir(parents=True, exist_ok=True)
     matrix.write_csv(output)
 
+    if blockers_output is not None:
+        blockers_output.parent.mkdir(parents=True, exist_ok=True)
+        coverage_blocker_review(matrix).write_csv(blockers_output)
+
     print_matrix_summary(matrix)
     typer.echo(f"Wrote candidate species coverage matrix -> {output}")
+    if blockers_output is not None:
+        typer.echo(f"Wrote coverage blocker review -> {blockers_output}")
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
 

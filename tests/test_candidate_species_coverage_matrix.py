@@ -220,3 +220,110 @@ def test_print_prioritization_summary_prints_blocker_worklist(capsys) -> None:
     assert "blocked by source UniProt:" in captured.out
     assert "- P09874: 1" in captured.out
     assert "mouse" not in captured.out
+
+
+def test_coverage_blocker_review_filters_ready_rows() -> None:
+    rows = [
+        {
+            "candidate_id": "ready_candidate",
+            "pdb_id": "4xhu",
+            "chain": "receptor",
+            "source_uniprot": "P09874",
+            "priority": "1",
+            "target_species": "mouse",
+            "target_species_taxid": 10090,
+            "group": "short_lived_control",
+            "has_source_ortholog": True,
+            "n_ortholog_candidate_rows": 1,
+            "candidate_target_uniprots": "P11111",
+            "candidate_sequence_lengths": "333",
+            "ortholog_source_dbs": "UniProt",
+            "ortholog_source_files": "ortholog_coverage.csv",
+            "has_local_candidate_file_rows": True,
+            "n_local_candidate_file_rows": 1,
+            "local_files": "local_rows.csv",
+            "coverage_gap_status": "ortholog_and_local_rows_present",
+            "recommended_coverage_action": "coverage_ready",
+            "coverage_note": "ready",
+        },
+        {
+            "candidate_id": "blocked_b",
+            "pdb_id": "4xhu",
+            "chain": "receptor",
+            "source_uniprot": "P09874",
+            "priority": "1",
+            "target_species": "bowhead_whale",
+            "target_species_taxid": 27622,
+            "group": "long_lived_large_body",
+            "has_source_ortholog": False,
+            "n_ortholog_candidate_rows": 0,
+            "candidate_target_uniprots": "",
+            "candidate_sequence_lengths": "",
+            "ortholog_source_dbs": "",
+            "ortholog_source_files": "",
+            "has_local_candidate_file_rows": True,
+            "n_local_candidate_file_rows": 1,
+            "local_files": "local_rows.csv",
+            "coverage_gap_status": "missing_ortholog_but_local_rows_present",
+            "recommended_coverage_action": "review_local_rows_without_source_ortholog",
+            "coverage_note": "review provenance",
+        },
+        {
+            "candidate_id": "blocked_a",
+            "pdb_id": "1nfi",
+            "chain": "receptor",
+            "source_uniprot": "Q04206",
+            "priority": "1",
+            "target_species": "brandts_bat",
+            "target_species_taxid": 109478,
+            "group": "long_lived_extended",
+            "has_source_ortholog": False,
+            "n_ortholog_candidate_rows": 0,
+            "candidate_target_uniprots": "",
+            "candidate_sequence_lengths": "",
+            "ortholog_source_dbs": "",
+            "ortholog_source_files": "",
+            "has_local_candidate_file_rows": True,
+            "n_local_candidate_file_rows": 1,
+            "local_files": "local_rows.csv",
+            "coverage_gap_status": "missing_ortholog_but_local_rows_present",
+            "recommended_coverage_action": "review_local_rows_without_source_ortholog",
+            "coverage_note": "review provenance",
+        },
+    ]
+
+    review = matrix.coverage_blocker_review(pl.DataFrame(rows))
+
+    assert review.columns == matrix.BLOCKER_REVIEW_COLUMNS
+    assert review["candidate_id"].to_list() == ["blocked_b", "blocked_a"]
+    assert "ready_candidate" not in review["candidate_id"].to_list()
+
+
+def test_coverage_blocker_review_returns_empty_schema_when_all_ready() -> None:
+    row = {
+        "candidate_id": "ready_candidate",
+        "pdb_id": "4xhu",
+        "chain": "receptor",
+        "source_uniprot": "P09874",
+        "priority": "1",
+        "target_species": "mouse",
+        "target_species_taxid": 10090,
+        "group": "short_lived_control",
+        "has_source_ortholog": True,
+        "n_ortholog_candidate_rows": 1,
+        "candidate_target_uniprots": "P11111",
+        "candidate_sequence_lengths": "333",
+        "ortholog_source_dbs": "UniProt",
+        "ortholog_source_files": "ortholog_coverage.csv",
+        "has_local_candidate_file_rows": True,
+        "n_local_candidate_file_rows": 1,
+        "local_files": "local_rows.csv",
+        "coverage_gap_status": "ortholog_and_local_rows_present",
+        "recommended_coverage_action": "coverage_ready",
+        "coverage_note": "ready",
+    }
+
+    review = matrix.coverage_blocker_review(pl.DataFrame([row]))
+
+    assert review.is_empty()
+    assert review.columns == matrix.BLOCKER_REVIEW_COLUMNS
