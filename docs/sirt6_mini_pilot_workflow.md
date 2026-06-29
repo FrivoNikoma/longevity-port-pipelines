@@ -649,7 +649,61 @@ uv run python -m scripts.embed_saved_selection
 
 ```
 
-## 21. Quality checks before committing code changes
+## 21. Curated ortholog NEGATOME control ladder
+
+For curated ortholog candidates, use `curated-negatome-controls` before rerunning curated enrichment with NEGATOME-style controls.
+
+Start with a dry-run audit:
+
+```powershell
+uv run curated-negatome-controls
+```
+
+This writes:
+
+```text
+data/output/curated_negatome_control_preflight.csv
+```
+
+The dry-run report distinguishes:
+
+- `missing_export_ready`: a curated negative partner exists, but the row is not yet present in the current NEGATOME input.
+- `present_existing`: the curated NEGATOME row is already present.
+- `missing_curated_negative_partner`: the source protein does not yet have an accepted curated negative partner.
+
+To write a merged local NEGATOME input file, run:
+
+```powershell
+uv run curated-negatome-controls --yes-write
+```
+
+This writes:
+
+```text
+data/interim/negatome_control_pairs_with_curated.csv
+```
+
+Then rerun curated enrichment with the merged control-pair file:
+
+```powershell
+uv run curated-analysis-enrichment `
+  --selection data/output/sirt6_dna_repair_explicit_only_selection.csv `
+  --negatome-control-pairs data/interim/negatome_control_pairs_with_curated.csv `
+  --output data/output/curated_ortholog_enrichment_brandts_bat_with_curated_negatome.csv `
+  --yes-run
+```
+
+For the Brandt's bat PARP1 receptor checkpoint, the expected control status is:
+
+```text
+control_status: has_shuffled_and_negatome
+```
+
+The strict interpretation can still be `controlled_fail` if the primary enrichment does not beat the NEGATOME control by the configured margin. That is a biological/control interpretation, not a failed run.
+
+The generated preflight, merged control-pair file, and curated enrichment output are local/generated artifacts and should not be committed by default.
+
+## 22. Quality checks before committing code changes
 
 Run:
 
@@ -670,7 +724,7 @@ pytest passes
 
 ```
 
-## 22. Main output files
+## 23. Main output files
 
 The most important mini-pilot outputs are:
 
@@ -697,7 +751,7 @@ data/output/structure_selections/sirt6_mini_pilot_candidate_selections.cxc
 
 Most `data/output` files are generated artifacts and should generally not be committed unless explicitly needed.
 
-## 23. Workflow interpretation
+## 24. Workflow interpretation
 
 The workflow supports a progression from raw structural complexes to candidate prioritization and structural inspection:
 
