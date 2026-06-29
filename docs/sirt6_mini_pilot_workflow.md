@@ -693,6 +693,22 @@ uv run curated-analysis-enrichment `
   --yes-run
 ```
 
+After curated enrichment, close the row-level controlled-evidence interpretation:
+
+```powershell
+uv run curated-control-closure `
+  --enrichment data/output/curated_ortholog_enrichment_brandts_bat_with_curated_negatome.csv `
+  --output-csv data/output/curated_ortholog_control_closure_brandts_bat.csv `
+  --output-md data/output/curated_ortholog_control_closure_brandts_bat.md
+```
+
+This writes:
+
+```text
+data/output/curated_ortholog_control_closure_brandts_bat.csv
+data/output/curated_ortholog_control_closure_brandts_bat.md
+```
+
 For the Brandt's bat PARP1 receptor checkpoint, the expected control status is:
 
 ```text
