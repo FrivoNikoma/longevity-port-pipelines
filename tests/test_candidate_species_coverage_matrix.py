@@ -351,3 +351,99 @@ def test_coverage_blocker_review_returns_empty_schema_when_all_ready() -> None:
 
     assert review.is_empty()
     assert review.columns == matrix.BLOCKER_REVIEW_COLUMNS
+
+
+def test_contrast_ready_subset_identifies_minimal_long_vs_short_ready_candidate() -> None:
+    rows = [
+        {
+            "candidate_id": "candidate_a",
+            "pdb_id": "4xhu",
+            "chain": "receptor",
+            "source_uniprot": "P09874",
+            "priority": "1",
+            "target_species": "mouse",
+            "group": "short_lived_control",
+            "recommended_coverage_action": "coverage_ready",
+        },
+        {
+            "candidate_id": "candidate_a",
+            "pdb_id": "4xhu",
+            "chain": "receptor",
+            "source_uniprot": "P09874",
+            "priority": "1",
+            "target_species": "naked_mole_rat",
+            "group": "long_lived_small_body",
+            "recommended_coverage_action": "coverage_ready",
+        },
+        {
+            "candidate_id": "candidate_a",
+            "pdb_id": "4xhu",
+            "chain": "receptor",
+            "source_uniprot": "P09874",
+            "priority": "1",
+            "target_species": "bowhead_whale",
+            "group": "long_lived_large_body",
+            "recommended_coverage_action": "local_downstream_evidence_without_source_ortholog",
+        },
+    ]
+
+    subset = matrix.contrast_ready_subset(pl.DataFrame(rows))
+
+    assert subset.height == 1
+    row = subset.row(0, named=True)
+    assert row["candidate_id"] == "candidate_a"
+    assert row["n_coverage_ready_species"] == 2
+    assert row["n_long_lived_ready"] == 1
+    assert row["n_short_lived_ready"] == 1
+    assert row["ready_long_lived_species"] == "naked_mole_rat"
+    assert row["ready_short_lived_species"] == "mouse"
+    assert row["contrast_readiness_status"] == "contrast_ready"
+    assert row["recommended_next_action"] == "prepare_long_lived_vs_short_lived_contrast"
+
+
+def test_contrast_ready_subset_marks_missing_short_lived_coverage() -> None:
+    rows = [
+        {
+            "candidate_id": "candidate_b",
+            "pdb_id": "1nfi",
+            "chain": "receptor",
+            "source_uniprot": "Q04206",
+            "priority": "1",
+            "target_species": "naked_mole_rat",
+            "group": "long_lived_small_body",
+            "recommended_coverage_action": "coverage_ready",
+        }
+    ]
+
+    subset = matrix.contrast_ready_subset(pl.DataFrame(rows))
+
+    assert subset.height == 1
+    row = subset.row(0, named=True)
+    assert row["n_long_lived_ready"] == 1
+    assert row["n_short_lived_ready"] == 0
+    assert row["contrast_readiness_status"] == "insufficient_short_lived_coverage"
+    assert row["recommended_next_action"] == "repair_species_coverage_before_contrast"
+
+
+def test_contrast_ready_subset_returns_empty_schema_without_ready_rows() -> None:
+    subset = matrix.contrast_ready_subset(
+        pl.DataFrame(
+            [
+                {
+                    "candidate_id": "candidate_c",
+                    "pdb_id": "8bhv",
+                    "chain": "ligand",
+                    "source_uniprot": "P12956",
+                    "priority": "1",
+                    "target_species": "elephant",
+                    "group": "long_lived_extended",
+                    "recommended_coverage_action": (
+                        "local_downstream_evidence_without_source_ortholog"
+                    ),
+                }
+            ]
+        )
+    )
+
+    assert subset.is_empty()
+    assert subset.columns == list(matrix.CONTRAST_READY_SUBSET_SCHEMA)

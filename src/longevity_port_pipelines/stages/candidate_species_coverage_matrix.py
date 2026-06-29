@@ -105,6 +105,33 @@ def _as_bool(row: dict[str, Any], column: str, default: bool = False) -> bool:
     return str(value).strip().lower() in {"true", "1", "yes"}
 
 
+CONTRAST_READY_SUBSET_SCHEMA = {
+    "candidate_id": pl.Utf8,
+    "pdb_id": pl.Utf8,
+    "chain": pl.Utf8,
+    "source_uniprot": pl.Utf8,
+    "priority": pl.Utf8,
+    "n_coverage_ready_species": pl.Int64,
+    "n_long_lived_ready": pl.Int64,
+    "n_short_lived_ready": pl.Int64,
+    "ready_long_lived_species": pl.Utf8,
+    "ready_short_lived_species": pl.Utf8,
+    "contrast_readiness_status": pl.Utf8,
+    "recommended_next_action": pl.Utf8,
+}
+
+LONG_LIVED_GROUPS = {
+    "long-lived",
+    "long_lived_small_body",
+    "long_lived_large_body",
+    "long_lived_extended",
+}
+SHORT_LIVED_GROUPS = {
+    "short-lived",
+    "short_lived_control",
+}
+
+
 def _empty_matrix() -> pl.DataFrame:
     return pl.DataFrame(schema=MATRIX_SCHEMA)
 
@@ -312,6 +339,103 @@ def coverage_blocker_review(matrix: pl.DataFrame) -> pl.DataFrame:
     )
 
 
+def empty_contrast_ready_subset() -> pl.DataFrame:
+    return pl.DataFrame(schema=CONTRAST_READY_SUBSET_SCHEMA)
+
+
+def _contrast_ready_subset_from_rows(rows: list[dict[str, Any]]) -> pl.DataFrame:
+    if not rows:
+        return empty_contrast_ready_subset()
+
+    return pl.DataFrame(rows).select(
+        [
+            pl.col(column).cast(dtype).alias(column)
+            for column, dtype in CONTRAST_READY_SUBSET_SCHEMA.items()
+        ]
+    )
+
+
+def _contrast_readiness_status(
+    *,
+    n_long_lived_ready: int,
+    n_short_lived_ready: int,
+) -> str:
+    if n_long_lived_ready > 0 and n_short_lived_ready > 0:
+        return "contrast_ready"
+    if n_long_lived_ready == 0 and n_short_lived_ready == 0:
+        return "insufficient_coverage"
+    if n_long_lived_ready == 0:
+        return "insufficient_long_lived_coverage"
+    return "insufficient_short_lived_coverage"
+
+
+def _contrast_recommended_next_action(contrast_readiness_status: str) -> str:
+    if contrast_readiness_status == "contrast_ready":
+        return "prepare_long_lived_vs_short_lived_contrast"
+    return "repair_species_coverage_before_contrast"
+
+
+def contrast_ready_subset(matrix: pl.DataFrame) -> pl.DataFrame:
+    if matrix.is_empty():
+        return empty_contrast_ready_subset()
+
+    ready = matrix.filter(pl.col("recommended_coverage_action") == "coverage_ready")
+    if ready.is_empty():
+        return empty_contrast_ready_subset()
+
+    key_columns = ["candidate_id", "pdb_id", "chain", "source_uniprot", "priority"]
+    rows: list[dict[str, Any]] = []
+
+    for key_row in ready.select(key_columns).unique().sort(key_columns).iter_rows(named=True):
+        group = ready
+        for column in key_columns:
+            group = group.filter(pl.col(column) == key_row[column])
+
+        ready_species = sorted(
+            {str(species) for species in group["target_species"].to_list() if str(species).strip()}
+        )
+        ready_long_lived_species = sorted(
+            {
+                str(row["target_species"])
+                for row in group.filter(pl.col("group").is_in(LONG_LIVED_GROUPS)).iter_rows(
+                    named=True
+                )
+                if str(row["target_species"]).strip()
+            }
+        )
+        ready_short_lived_species = sorted(
+            {
+                str(row["target_species"])
+                for row in group.filter(pl.col("group").is_in(SHORT_LIVED_GROUPS)).iter_rows(
+                    named=True
+                )
+                if str(row["target_species"]).strip()
+            }
+        )
+
+        status = _contrast_readiness_status(
+            n_long_lived_ready=len(ready_long_lived_species),
+            n_short_lived_ready=len(ready_short_lived_species),
+        )
+
+        rows.append(
+            {
+                **key_row,
+                "n_coverage_ready_species": len(ready_species),
+                "n_long_lived_ready": len(ready_long_lived_species),
+                "n_short_lived_ready": len(ready_short_lived_species),
+                "ready_long_lived_species": ",".join(ready_long_lived_species),
+                "ready_short_lived_species": ",".join(ready_short_lived_species),
+                "contrast_readiness_status": status,
+                "recommended_next_action": _contrast_recommended_next_action(status),
+            }
+        )
+
+    return _contrast_ready_subset_from_rows(rows).sort(
+        ["contrast_readiness_status", "candidate_id", "source_uniprot"]
+    )
+
+
 def print_prioritization_summary(matrix: pl.DataFrame) -> None:
     blocked_by_species = coverage_gap_counts(matrix, "target_species")
     blocked_by_source = coverage_gap_counts(matrix, "source_uniprot")
@@ -363,6 +487,10 @@ def main(
         Path | None,
         typer.Option(help="Optional output CSV path for non-ready coverage review rows."),
     ] = None,
+    contrast_ready_output: Annotated[
+        Path | None,
+        typer.Option(help="Optional output CSV path for coverage-ready contrast subset rows."),
+    ] = None,
 ) -> None:
     """Build a manifest-level species coverage matrix without Biohub or Boltz calls."""
     manifest_df = read_table(manifest)
@@ -379,10 +507,16 @@ def main(
         blockers_output.parent.mkdir(parents=True, exist_ok=True)
         coverage_blocker_review(matrix).write_csv(blockers_output)
 
+    if contrast_ready_output is not None:
+        contrast_ready_output.parent.mkdir(parents=True, exist_ok=True)
+        contrast_ready_subset(matrix).write_csv(contrast_ready_output)
+
     print_matrix_summary(matrix)
     typer.echo(f"Wrote candidate species coverage matrix -> {output}")
     if blockers_output is not None:
         typer.echo(f"Wrote coverage blocker review -> {blockers_output}")
+    if contrast_ready_output is not None:
+        typer.echo(f"Wrote contrast-ready subset -> {contrast_ready_output}")
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
 

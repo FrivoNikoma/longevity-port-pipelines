@@ -406,3 +406,46 @@ blocked by source UniProt:
 This does not create a new biological claim. It turns the broad
 fix_species_coverage preflight result into an explicit worklist for reviewing
 ortholog provenance before long-lived-vs-short-lived interpretation.
+
+## Coverage-only contrast-ready subset checkpoint
+
+The candidate species coverage matrix can now emit an optional coverage-only
+contrast-ready subset:
+
+```bash
+uv run candidate-species-coverage-matrix \
+  --manifest data/input/sirt6_cofolding_candidate_manifest.csv \
+  --output data/interim/sirt6_candidate_species_coverage_matrix.csv \
+  --blockers-output data/interim/sirt6_candidate_species_coverage_blockers.csv \
+  --contrast-ready-output data/interim/sirt6_contrast_ready_subset.csv
+```
+
+This checkpoint is a coverage/provenance diagnostic only. It does not compute
+embedding enrichment, does not compute a long-lived-vs-short-lived statistic,
+does not use NEGATOME controls, and does not make a biological claim.
+
+Local checkpoint result:
+
+```text
+coverage matrix rows: 48
+coverage_ready: 37
+local_downstream_evidence_without_source_ortholog: 11
+
+contrast-ready subset rows: 6
+contrast_ready: 6
+
+No Biohub API calls were made.
+No Boltz API calls were made.
+```
+
+Interpretation:
+
+```text
+All six SIRT6 manifest candidates currently have at least one coverage-ready
+long-lived species and at least one coverage-ready short-lived control species.
+This means they are eligible for a future contrast-layer dry-run, not that they
+already have a validated longevity-specific signal.
+```
+
+The remaining 11 non-ready matrix rows should remain provenance blockers until
+their source ortholog provenance is repaired or explicitly excluded.
