@@ -285,3 +285,38 @@ cofolding setup for that candidate.
 - 8f86__K1_Q8N6T7--8f86__D1_P02281
 - 8bhv__N1_P12956--8bhv__I1_Q9H9Q4
 - 8bhv__P1_P13010--8bhv__J1_Q9H9Q4
+
+## Manifest-driven candidate preflight
+
+The reusable species coverage audit can be composed with candidate baseline and
+NEGATOME-readiness checks through a manifest-driven dry-run CLI:
+
+```bash
+uv run cofolding-candidate-preflight-batch \
+  --manifest data/interim/cofolding_candidate_manifest_smoke.csv \
+  --output data/interim/cofolding_candidate_preflight_scorecard_smoke.csv
+```
+
+The manifest must include:
+
+```text
+candidate_id,chain,source_uniprot,priority
+4xhu__A1_P09874--4xhu__B1_Q9UNS1,receptor,P09874,1
+```
+
+The command does not make Boltz API calls. It prepares the PINDER baseline input,
+runs the species coverage audit, checks NEGATOME control readiness, and writes a
+candidate-level scorecard with a recommended next action.
+
+Current `4xhu` / `P09874` smoke result:
+
+```text
+baseline=input_prepared
+species=missing_source_ortholog
+negatome=partial_existing
+next=fix_species_coverage
+```
+
+This means the human PINDER-fragment baseline input is available, but the
+candidate should not be sent into a larger live batch yet because the expanded
+species panel still has a source-ortholog coverage gap.
