@@ -320,3 +320,44 @@ next=fix_species_coverage
 This means the human PINDER-fragment baseline input is available, but the
 candidate should not be sent into a larger live batch yet because the expanded
 species panel still has a source-ortholog coverage gap.
+
+## Canonical SIRT6 candidate manifest
+
+The committed candidate manifest defines the current SIRT6/core3-expanded
+cofolding batch input:
+
+```text
+data/input/sirt6_cofolding_candidate_manifest.csv
+```
+
+It contains six explicit PINDER candidate ids from this shortlist, with the
+chain/source-UniProt pair to audit and lightweight priority/context metadata.
+This turns the previous manually typed smoke manifest into a reproducible
+tracked input for the batch preflight stage.
+
+Local preflight command:
+
+```bash
+uv run cofolding-candidate-preflight-batch \
+  --manifest data/input/sirt6_cofolding_candidate_manifest.csv \
+  --output data/interim/sirt6_cofolding_candidate_preflight_scorecard.csv
+```
+
+Local preflight result:
+
+```text
+candidate rows audited: 6
+fix_species_coverage: 6
+No Boltz API calls were made.
+```
+
+Interpretation:
+
+- all six candidate baseline inputs can be prepared from local PINDER data;
+- none should be promoted to a live species-panel batch yet;
+- the current shared blocker is incomplete source-ortholog/species coverage;
+- the generated scorecard is a local regenerable output under `data/interim/`,
+  while the manifest itself is committed under `data/input/`.
+
+This keeps the workflow moving toward automation without weakening the
+interpretation gate before live Boltz spending.
