@@ -492,3 +492,41 @@ This remains separate from the coverage-only contrast-ready subset: a candidate
 can be eligible for a future contrast-layer dry-run while still blocked from
 strict controlled-evidence claims until species provenance and NEGATOME control
 readiness are resolved.
+
+## Candidate contrast gate checkpoint
+
+The candidate contrast gate joins two no-claims diagnostics:
+
+- coverage-only long-lived vs short-lived contrast readiness
+- NEGATOME/control readiness
+
+Command:
+
+```bash
+uv run candidate-contrast-gate \
+  --contrast-ready-input data/interim/sirt6_contrast_ready_subset.csv \
+  --negatome-readiness-input data/interim/sirt6_candidate_negatome_readiness_matrix.csv \
+  --output data/interim/sirt6_candidate_contrast_gate.csv
+```
+
+Local checkpoint result:
+
+```text
+candidate contrast gate rows: 6
+blocked_species_coverage: 6
+
+No Biohub API calls were made.
+No Boltz API calls were made.
+No enrichment statistics or biological claims were computed.
+```
+
+Interpretation:
+
+```text
+All six SIRT6 manifest candidates are coverage-only contrast-ready, meaning each
+has at least one long-lived and at least one short-lived coverage-ready species.
+
+However, all six remain blocked at the strict contrast gate because species
+provenance coverage is still incomplete. Therefore this checkpoint permits only
+contrast planning, not enrichment statistics or biological claims.
+```

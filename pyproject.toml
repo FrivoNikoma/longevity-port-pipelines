@@ -52,6 +52,7 @@ curated-control-closure = "longevity_port_pipelines.stages.curated_control_closu
 species-coverage-audit = "longevity_port_pipelines.stages.species_coverage_audit:app"
 cofolding-candidate-preflight-batch = "longevity_port_pipelines.stages.cofolding_candidate_preflight_batch:app"
 candidate-species-coverage-matrix = "longevity_port_pipelines.stages.candidate_species_coverage_matrix:app"
+candidate-contrast-gate = "longevity_port_pipelines.stages.candidate_contrast_gate:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
