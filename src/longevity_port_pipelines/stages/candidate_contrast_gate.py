@@ -6,11 +6,14 @@ from typing import Annotated, Any
 import polars as pl
 import typer
 
+from longevity_port_pipelines.stages import candidate_coverage_repair_decisions as repair
+
 DEFAULT_CONTRAST_READY_INPUT = Path("data/interim/sirt6_contrast_ready_subset.csv")
 DEFAULT_NEGATOME_READINESS_INPUT = Path(
     "data/interim/sirt6_candidate_negatome_readiness_matrix.csv"
 )
 DEFAULT_OUTPUT = Path("data/interim/sirt6_candidate_contrast_gate.csv")
+DEFAULT_COVERAGE_REPAIR_DECISIONS_INPUT = repair.DEFAULT_REPAIR_DECISIONS_PATH
 
 KEY_COLUMNS = ["candidate_id", "pdb_id", "chain", "source_uniprot", "priority"]
 
@@ -47,6 +50,12 @@ CONTRAST_GATE_SCHEMA = {
     "ready_short_lived_species": pl.Utf8,
     "baseline_input_status": pl.Utf8,
     "species_coverage_status": pl.Utf8,
+    "coverage_repair_decision_status": pl.Utf8,
+    "n_coverage_repair_decision_rows": pl.Int64,
+    "coverage_repair_target_species": pl.Utf8,
+    "coverage_repair_decisions": pl.Utf8,
+    "coverage_repair_priorities": pl.Utf8,
+    "coverage_repair_claim_policies": pl.Utf8,
     "negatome_status": pl.Utf8,
     "negative_partner_uniprot": pl.Utf8,
     "missing_negatome_species": pl.Utf8,
@@ -133,19 +142,119 @@ def _gate_status(
     return "eligible_for_contrast_dry_run"
 
 
-def _recommended_next_action(gate_status: str) -> str:
+def _joined_unique_values(rows: list[dict[str, Any]], column: str) -> str:
+    values = {_as_str(row, column) for row in rows}
+    return ",".join(sorted(value for value in values if value))
+
+
+def _repair_decision_rows_by_key(
+    coverage_repair_decisions: pl.DataFrame | None,
+) -> dict[tuple[str, str, str, str, str], list[dict[str, Any]]] | None:
+    if coverage_repair_decisions is None:
+        return None
+
+    repair.validate_repair_decisions(coverage_repair_decisions)
+
+    rows_by_key: dict[tuple[str, str, str, str, str], list[dict[str, Any]]] = {}
+    for row in coverage_repair_decisions.iter_rows(named=True):
+        rows_by_key.setdefault(_key(row), []).append(row)
+
+    return rows_by_key
+
+
+def _coverage_repair_decision_status(
+    *,
+    repair_rows: list[dict[str, Any]],
+    repair_table_provided: bool,
+    species_coverage_status: str,
+) -> str:
+    if not repair_table_provided:
+        return "not_audited"
+
+    if species_coverage_status == "complete_species_coverage":
+        return "not_required"
+
+    if not repair_rows:
+        return "missing_repair_decision"
+
+    repair_decisions = {
+        _as_str(row, "repair_decision") for row in repair_rows if _as_str(row, "repair_decision")
+    }
+    claim_policies = {
+        _as_str(row, "claim_policy") for row in repair_rows if _as_str(row, "claim_policy")
+    }
+
+    if repair_decisions == {"needs_external_manual_sequence_review"} and claim_policies == {
+        "deferred_no_claim"
+    }:
+        return "manual_review_required_deferred_no_claim"
+
+    if "deferred_no_claim" in claim_policies:
+        return "mixed_deferred_repair_policy"
+
+    return "repair_policy_review_required"
+
+
+def _coverage_repair_summary(
+    *,
+    repair_rows: list[dict[str, Any]],
+    repair_table_provided: bool,
+    species_coverage_status: str,
+) -> dict[str, Any]:
+    return {
+        "coverage_repair_decision_status": _coverage_repair_decision_status(
+            repair_rows=repair_rows,
+            repair_table_provided=repair_table_provided,
+            species_coverage_status=species_coverage_status,
+        ),
+        "n_coverage_repair_decision_rows": len(repair_rows),
+        "coverage_repair_target_species": _joined_unique_values(
+            repair_rows,
+            "target_species",
+        ),
+        "coverage_repair_decisions": _joined_unique_values(
+            repair_rows,
+            "repair_decision",
+        ),
+        "coverage_repair_priorities": _joined_unique_values(
+            repair_rows,
+            "repair_priority",
+        ),
+        "coverage_repair_claim_policies": _joined_unique_values(
+            repair_rows,
+            "claim_policy",
+        ),
+    }
+
+
+def _recommended_next_action(
+    gate_status: str,
+    coverage_repair_status: str = "not_audited",
+) -> str:
     if gate_status == "blocked_contrast_coverage":
         return "repair_contrast_species_coverage"
     if gate_status == "blocked_baseline_input":
         return "fix_baseline_input"
     if gate_status == "blocked_species_coverage":
+        if coverage_repair_status == "manual_review_required_deferred_no_claim":
+            return "review_manual_coverage_repair_decisions"
+        if coverage_repair_status == "missing_repair_decision":
+            return "add_coverage_repair_decision"
+        if coverage_repair_status in {
+            "mixed_deferred_repair_policy",
+            "repair_policy_review_required",
+        }:
+            return "resolve_coverage_repair_policy"
         return "fix_species_coverage"
     if gate_status == "blocked_negatome_controls":
         return "fix_negatome_controls"
     return "prepare_contrast_dry_run"
 
 
-def _gate_note(gate_status: str) -> str:
+def _gate_note(
+    gate_status: str,
+    coverage_repair_status: str = "not_audited",
+) -> str:
     if gate_status == "blocked_contrast_coverage":
         return (
             "Coverage-only long-lived vs short-lived contrast readiness is incomplete; "
@@ -156,6 +265,19 @@ def _gate_note(gate_status: str) -> str:
         return "Baseline PINDER input is not prepared; candidate contrast cannot proceed."
 
     if gate_status == "blocked_species_coverage":
+        if coverage_repair_status == "manual_review_required_deferred_no_claim":
+            return (
+                "Strict species provenance coverage is incomplete; coverage repair "
+                "decisions require manual sequence/provenance review and remain "
+                "deferred_no_claim. Contrast remains a dry-run planning layer only."
+            )
+
+        if coverage_repair_status == "missing_repair_decision":
+            return (
+                "Strict species provenance coverage is incomplete and no coverage repair "
+                "decision is available yet; contrast remains a dry-run planning layer only."
+            )
+
         return (
             "Strict species provenance coverage is incomplete; contrast remains a "
             "dry-run planning layer only."
@@ -183,6 +305,7 @@ def build_candidate_contrast_gate(
     *,
     contrast_ready: pl.DataFrame,
     negatome_readiness: pl.DataFrame,
+    coverage_repair_decisions: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     validate_required_columns(contrast_ready, CONTRAST_REQUIRED_COLUMNS, "contrast_ready")
     validate_required_columns(
@@ -193,12 +316,14 @@ def build_candidate_contrast_gate(
 
     contrast_by_key = {_key(row): row for row in contrast_ready.iter_rows(named=True)}
     negatome_by_key = {_key(row): row for row in negatome_readiness.iter_rows(named=True)}
+    repair_by_key = _repair_decision_rows_by_key(coverage_repair_decisions)
 
     rows: list[dict[str, Any]] = []
 
     for key in sorted(set(contrast_by_key) | set(negatome_by_key)):
         contrast = contrast_by_key.get(key, {})
         negatome = negatome_by_key.get(key, {})
+        repair_rows = [] if repair_by_key is None else repair_by_key.get(key, [])
 
         contrast_status = _as_str(
             contrast,
@@ -208,6 +333,12 @@ def build_candidate_contrast_gate(
         baseline_status = _as_str(negatome, "baseline_input_status", "not_audited")
         species_status = _as_str(negatome, "species_coverage_status", "not_audited")
         negatome_status = _as_str(negatome, "negatome_status", "not_audited")
+
+        coverage_repair = _coverage_repair_summary(
+            repair_rows=repair_rows,
+            repair_table_provided=repair_by_key is not None,
+            species_coverage_status=species_status,
+        )
 
         gate_status = _gate_status(
             contrast_readiness_status=contrast_status,
@@ -240,6 +371,30 @@ def build_candidate_contrast_gate(
                 ),
                 "baseline_input_status": baseline_status,
                 "species_coverage_status": species_status,
+                "coverage_repair_decision_status": _as_str(
+                    coverage_repair,
+                    "coverage_repair_decision_status",
+                ),
+                "n_coverage_repair_decision_rows": _as_int(
+                    coverage_repair,
+                    "n_coverage_repair_decision_rows",
+                ),
+                "coverage_repair_target_species": _as_str(
+                    coverage_repair,
+                    "coverage_repair_target_species",
+                ),
+                "coverage_repair_decisions": _as_str(
+                    coverage_repair,
+                    "coverage_repair_decisions",
+                ),
+                "coverage_repair_priorities": _as_str(
+                    coverage_repair,
+                    "coverage_repair_priorities",
+                ),
+                "coverage_repair_claim_policies": _as_str(
+                    coverage_repair,
+                    "coverage_repair_claim_policies",
+                ),
                 "negatome_status": negatome_status,
                 "negative_partner_uniprot": _as_str(
                     negatome,
@@ -250,8 +405,14 @@ def build_candidate_contrast_gate(
                     "missing_negatome_species",
                 ),
                 "strict_contrast_gate_status": gate_status,
-                "recommended_next_action": _recommended_next_action(gate_status),
-                "gate_note": _gate_note(gate_status),
+                "recommended_next_action": _recommended_next_action(
+                    gate_status,
+                    _as_str(coverage_repair, "coverage_repair_decision_status"),
+                ),
+                "gate_note": _gate_note(
+                    gate_status,
+                    _as_str(coverage_repair, "coverage_repair_decision_status"),
+                ),
             }
         )
 
@@ -290,6 +451,10 @@ def main(
             )
         ),
     ] = DEFAULT_NEGATOME_READINESS_INPUT,
+    coverage_repair_decisions_input: Annotated[
+        Path,
+        typer.Option(help="CSV/parquet coverage repair decision table."),
+    ] = DEFAULT_COVERAGE_REPAIR_DECISIONS_INPUT,
     output: Annotated[
         Path,
         typer.Option(help="Output CSV path for the candidate contrast gate table."),
@@ -298,10 +463,12 @@ def main(
     """Join coverage and NEGATOME diagnostics into a no-claims contrast gate table."""
     contrast_ready = read_table(contrast_ready_input)
     negatome_readiness = read_table(negatome_readiness_input)
+    coverage_repair_decisions = read_table(coverage_repair_decisions_input)
 
     gate = build_candidate_contrast_gate(
         contrast_ready=contrast_ready,
         negatome_readiness=negatome_readiness,
+        coverage_repair_decisions=coverage_repair_decisions,
     )
 
     output.parent.mkdir(parents=True, exist_ok=True)
