@@ -7,6 +7,7 @@ import polars as pl
 import typer
 
 from longevity_port_pipelines.stages import candidate_coverage_repair_decisions as repair
+from longevity_port_pipelines.stages import candidate_negatome_repair_decisions as negatome_repair
 from longevity_port_pipelines.stages import strict_sirt6_contrast_panel as strict_panel
 
 DEFAULT_CONTRAST_READY_INPUT = Path("data/interim/sirt6_contrast_ready_subset.csv")
@@ -16,6 +17,7 @@ DEFAULT_NEGATOME_READINESS_INPUT = Path(
 DEFAULT_OUTPUT = Path("data/interim/sirt6_candidate_contrast_gate.csv")
 DEFAULT_COVERAGE_REPAIR_DECISIONS_INPUT = repair.DEFAULT_REPAIR_DECISIONS_PATH
 DEFAULT_STRICT_PANEL_SUMMARY_INPUT = strict_panel.DEFAULT_SUMMARY_OUTPUT
+DEFAULT_NEGATOME_REPAIR_DECISIONS_INPUT = negatome_repair.DEFAULT_REPAIR_DECISIONS_PATH
 
 KEY_COLUMNS = ["candidate_id", "pdb_id", "chain", "source_uniprot", "priority"]
 
@@ -72,6 +74,12 @@ CONTRAST_GATE_SCHEMA = {
     "negatome_status": pl.Utf8,
     "negative_partner_uniprot": pl.Utf8,
     "missing_negatome_species": pl.Utf8,
+    "negatome_repair_decision_status": pl.Utf8,
+    "n_negatome_repair_decision_rows": pl.Int64,
+    "negatome_repair_missing_species": pl.Utf8,
+    "negatome_repair_decisions": pl.Utf8,
+    "negatome_repair_priorities": pl.Utf8,
+    "negatome_repair_claim_policies": pl.Utf8,
     "strict_contrast_gate_status": pl.Utf8,
     "recommended_next_action": pl.Utf8,
     "gate_note": pl.Utf8,
@@ -140,6 +148,7 @@ def _gate_status(
     species_coverage_status: str,
     negatome_status: str,
     strict_panel_status: str = "not_audited",
+    negatome_repair_status: str = "not_audited",
 ) -> str:
     if contrast_readiness_status != "contrast_ready":
         return "blocked_contrast_coverage"
@@ -154,6 +163,8 @@ def _gate_status(
         return "blocked_strict_panel"
 
     if negatome_status != "present_existing":
+        if negatome_repair_status not in {"not_audited", "missing_repair_decision"}:
+            return "blocked_negatome_repair_policy"
         return "blocked_negatome_controls"
 
     return "eligible_for_contrast_dry_run"
@@ -162,6 +173,30 @@ def _gate_status(
 def _joined_unique_values(rows: list[dict[str, Any]], column: str) -> str:
     values = {_as_str(row, column) for row in rows}
     return ",".join(sorted(value for value in values if value))
+
+
+def _negatome_repair_key(row: dict[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        _as_str(row, "candidate_id"),
+        _as_str(row, "chain"),
+        _as_str(row, "source_uniprot"),
+        _as_str(row, "negative_partner_uniprot"),
+    )
+
+
+def _negatome_repair_decision_rows_by_key(
+    negatome_repair_decisions: pl.DataFrame | None,
+) -> dict[tuple[str, str, str, str], list[dict[str, Any]]] | None:
+    if negatome_repair_decisions is None:
+        return None
+
+    negatome_repair.validate_repair_decisions(negatome_repair_decisions)
+
+    rows_by_key: dict[tuple[str, str, str, str], list[dict[str, Any]]] = {}
+    for row in negatome_repair_decisions.iter_rows(named=True):
+        rows_by_key.setdefault(_negatome_repair_key(row), []).append(row)
+
+    return rows_by_key
 
 
 def _repair_decision_rows_by_key(
@@ -192,6 +227,72 @@ def _strict_panel_summary_by_key(
     )
 
     return {_key(row): row for row in strict_panel_summary.iter_rows(named=True)}
+
+
+def _negatome_repair_decision_status(
+    *,
+    repair_rows: list[dict[str, Any]],
+    repair_table_provided: bool,
+    negatome_status: str,
+) -> str:
+    if not repair_table_provided:
+        return "not_audited"
+
+    if negatome_status == "present_existing":
+        return "not_required"
+
+    if not repair_rows:
+        return "missing_repair_decision"
+
+    claim_policies = {
+        _as_str(row, "claim_policy") for row in repair_rows if _as_str(row, "claim_policy")
+    }
+
+    if claim_policies == {"deferred_no_claim"}:
+        return "negatome_repair_required_deferred_no_claim"
+
+    if "deferred_no_claim" in claim_policies:
+        return "mixed_deferred_negatome_repair_policy"
+
+    if "excluded_from_controlled_claim" in claim_policies:
+        return "excluded_from_controlled_claim"
+
+    if "allowed_for_limited_dry_run_only" in claim_policies:
+        return "limited_dry_run_only"
+
+    return "negatome_repair_policy_review_required"
+
+
+def _negatome_repair_summary(
+    *,
+    repair_rows: list[dict[str, Any]],
+    repair_table_provided: bool,
+    negatome_status: str,
+) -> dict[str, Any]:
+    return {
+        "negatome_repair_decision_status": _negatome_repair_decision_status(
+            repair_rows=repair_rows,
+            repair_table_provided=repair_table_provided,
+            negatome_status=negatome_status,
+        ),
+        "n_negatome_repair_decision_rows": len(repair_rows),
+        "negatome_repair_missing_species": _joined_unique_values(
+            repair_rows,
+            "missing_negatome_species",
+        ),
+        "negatome_repair_decisions": _joined_unique_values(
+            repair_rows,
+            "repair_decision",
+        ),
+        "negatome_repair_priorities": _joined_unique_values(
+            repair_rows,
+            "repair_priority",
+        ),
+        "negatome_repair_claim_policies": _joined_unique_values(
+            repair_rows,
+            "claim_policy",
+        ),
+    }
 
 
 def _coverage_repair_decision_status(
@@ -263,6 +364,7 @@ def _recommended_next_action(
     gate_status: str,
     coverage_repair_status: str = "not_audited",
     strict_panel_status: str = "not_audited",
+    negatome_repair_status: str = "not_audited",
 ) -> str:
     if gate_status == "blocked_contrast_coverage":
         return "repair_contrast_species_coverage"
@@ -288,7 +390,17 @@ def _recommended_next_action(
             return "repair_strict_panel_species_coverage"
         return "resolve_strict_panel_status"
     if gate_status == "blocked_negatome_controls":
+        if negatome_repair_status == "missing_repair_decision":
+            return "add_negatome_repair_decision"
         return "fix_negatome_controls"
+    if gate_status == "blocked_negatome_repair_policy":
+        if negatome_repair_status == "negatome_repair_required_deferred_no_claim":
+            return "complete_negatome_repair_before_controlled_claim"
+        if negatome_repair_status == "excluded_from_controlled_claim":
+            return "do_not_use_for_controlled_claim"
+        if negatome_repair_status == "limited_dry_run_only":
+            return "keep_as_limited_dry_run_only"
+        return "resolve_negatome_repair_policy"
     return "prepare_contrast_dry_run"
 
 
@@ -296,6 +408,7 @@ def _gate_note(
     gate_status: str,
     coverage_repair_status: str = "not_audited",
     strict_panel_status: str = "not_audited",
+    negatome_repair_status: str = "not_audited",
 ) -> str:
     if gate_status == "blocked_contrast_coverage":
         return (
@@ -350,7 +463,27 @@ def _gate_note(
         )
 
     if gate_status == "blocked_negatome_controls":
+        if negatome_repair_status == "missing_repair_decision":
+            return (
+                "NEGATOME-style controls are incomplete and no NEGATOME repair "
+                "decision is available yet; controlled enrichment cannot be claimed."
+            )
         return "NEGATOME-style controls are incomplete; controlled enrichment cannot be claimed."
+
+    if gate_status == "blocked_negatome_repair_policy":
+        if negatome_repair_status == "negatome_repair_required_deferred_no_claim":
+            return (
+                "NEGATOME repair decision remains deferred_no_claim; complete or "
+                "export missing controls before controlled contrast claims."
+            )
+        if negatome_repair_status == "excluded_from_controlled_claim":
+            return "NEGATOME repair policy excludes this candidate from controlled claims."
+        if negatome_repair_status == "limited_dry_run_only":
+            return (
+                "NEGATOME repair policy allows limited dry-run planning only; "
+                "controlled enrichment cannot be claimed."
+            )
+        return "NEGATOME repair policy is unresolved; controlled enrichment cannot be claimed."
 
     return (
         "Candidate passes dry-run gate checks, but no enrichment statistic or biological "
@@ -373,6 +506,7 @@ def build_candidate_contrast_gate(
     negatome_readiness: pl.DataFrame,
     coverage_repair_decisions: pl.DataFrame | None = None,
     strict_panel_summary: pl.DataFrame | None = None,
+    negatome_repair_decisions: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     validate_required_columns(contrast_ready, CONTRAST_REQUIRED_COLUMNS, "contrast_ready")
     validate_required_columns(
@@ -385,6 +519,7 @@ def build_candidate_contrast_gate(
     negatome_by_key = {_key(row): row for row in negatome_readiness.iter_rows(named=True)}
     repair_by_key = _repair_decision_rows_by_key(coverage_repair_decisions)
     strict_panel_by_key = _strict_panel_summary_by_key(strict_panel_summary)
+    negatome_repair_by_key = _negatome_repair_decision_rows_by_key(negatome_repair_decisions)
 
     rows: list[dict[str, Any]] = []
 
@@ -411,11 +546,38 @@ def build_candidate_contrast_gate(
         baseline_status = _as_str(negatome, "baseline_input_status", "not_audited")
         species_status = _as_str(negatome, "species_coverage_status", "not_audited")
         negatome_status = _as_str(negatome, "negatome_status", "not_audited")
+        negative_partner_uniprot = _as_str(negatome, "negative_partner_uniprot")
+        negatome_repair_rows = (
+            []
+            if negatome_repair_by_key is None
+            else negatome_repair_by_key.get(
+                _negatome_repair_key(
+                    {
+                        "candidate_id": key[0],
+                        "chain": key[2],
+                        "source_uniprot": key[3],
+                        "negative_partner_uniprot": negative_partner_uniprot,
+                    }
+                ),
+                [],
+            )
+        )
 
         coverage_repair = _coverage_repair_summary(
             repair_rows=repair_rows,
             repair_table_provided=repair_by_key is not None,
             species_coverage_status=species_status,
+        )
+
+        negatome_repair_summary = _negatome_repair_summary(
+            repair_rows=negatome_repair_rows,
+            repair_table_provided=negatome_repair_by_key is not None,
+            negatome_status=negatome_status,
+        )
+
+        negatome_repair_status = _as_str(
+            negatome_repair_summary,
+            "negatome_repair_decision_status",
         )
 
         gate_status = _gate_status(
@@ -424,6 +586,7 @@ def build_candidate_contrast_gate(
             species_coverage_status=species_status,
             negatome_status=negatome_status,
             strict_panel_status=strict_panel_status,
+            negatome_repair_status=negatome_repair_status,
         )
 
         rows.append(
@@ -508,24 +671,44 @@ def build_candidate_contrast_gate(
                     "recommended_next_action",
                 ),
                 "negatome_status": negatome_status,
-                "negative_partner_uniprot": _as_str(
-                    negatome,
-                    "negative_partner_uniprot",
-                ),
+                "negative_partner_uniprot": negative_partner_uniprot,
                 "missing_negatome_species": _as_str(
                     negatome,
                     "missing_negatome_species",
+                ),
+                "negatome_repair_decision_status": negatome_repair_status,
+                "n_negatome_repair_decision_rows": _as_int(
+                    negatome_repair_summary,
+                    "n_negatome_repair_decision_rows",
+                ),
+                "negatome_repair_missing_species": _as_str(
+                    negatome_repair_summary,
+                    "negatome_repair_missing_species",
+                ),
+                "negatome_repair_decisions": _as_str(
+                    negatome_repair_summary,
+                    "negatome_repair_decisions",
+                ),
+                "negatome_repair_priorities": _as_str(
+                    negatome_repair_summary,
+                    "negatome_repair_priorities",
+                ),
+                "negatome_repair_claim_policies": _as_str(
+                    negatome_repair_summary,
+                    "negatome_repair_claim_policies",
                 ),
                 "strict_contrast_gate_status": gate_status,
                 "recommended_next_action": _recommended_next_action(
                     gate_status,
                     _as_str(coverage_repair, "coverage_repair_decision_status"),
                     strict_panel_status,
+                    negatome_repair_status,
                 ),
                 "gate_note": _gate_note(
                     gate_status,
                     _as_str(coverage_repair, "coverage_repair_decision_status"),
                     strict_panel_status,
+                    negatome_repair_status,
                 ),
             }
         )
@@ -573,6 +756,10 @@ def main(
         Path,
         typer.Option(help="CSV/parquet strict SIRT6 contrast panel summary."),
     ] = DEFAULT_STRICT_PANEL_SUMMARY_INPUT,
+    negatome_repair_decisions_input: Annotated[
+        Path,
+        typer.Option(help="CSV/parquet NEGATOME repair decision table."),
+    ] = DEFAULT_NEGATOME_REPAIR_DECISIONS_INPUT,
     output: Annotated[
         Path,
         typer.Option(help="Output CSV path for the candidate contrast gate table."),
@@ -583,12 +770,14 @@ def main(
     negatome_readiness = read_table(negatome_readiness_input)
     coverage_repair_decisions = read_table(coverage_repair_decisions_input)
     strict_panel_summary = read_table(strict_panel_summary_input)
+    negatome_repair_decisions = read_table(negatome_repair_decisions_input)
 
     gate = build_candidate_contrast_gate(
         contrast_ready=contrast_ready,
         negatome_readiness=negatome_readiness,
         coverage_repair_decisions=coverage_repair_decisions,
         strict_panel_summary=strict_panel_summary,
+        negatome_repair_decisions=negatome_repair_decisions,
     )
 
     output.parent.mkdir(parents=True, exist_ok=True)

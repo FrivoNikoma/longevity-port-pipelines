@@ -278,3 +278,77 @@ def test_contrast_gate_blocks_missing_strict_panel_summary_row() -> None:
     assert row["strict_contrast_gate_status"] == "blocked_strict_panel"
     assert row["strict_panel_status"] == "missing_strict_panel_summary_row"
     assert row["recommended_next_action"] == "build_strict_panel_summary"
+
+
+def negatome_repair_decision_rows(
+    *,
+    status: str = "partial_existing",
+    claim_policy: str = "deferred_no_claim",
+    candidate_id: str = "candidate_a",
+) -> pl.DataFrame:
+    return pl.DataFrame(
+        [
+            {
+                "candidate_id": candidate_id,
+                "pdb_id": "4xhu",
+                "chain": "receptor",
+                "source_uniprot": "P09874",
+                "priority": "1",
+                "negatome_status": status,
+                "negative_partner_uniprot": "O60907",
+                "missing_negatome_species": "bowhead_whale",
+                "repair_decision": "complete_missing_negatome_species",
+                "repair_priority": "high",
+                "claim_policy": claim_policy,
+                "repair_note": (
+                    "Complete missing NEGATOME-style controls before controlled claims."
+                ),
+            }
+        ]
+    )
+
+
+def test_contrast_gate_uses_negatome_repair_decisions_for_control_blocker() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="partial_existing"),
+        negatome_repair_decisions=negatome_repair_decision_rows(),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_negatome_repair_policy"
+    assert row["negatome_repair_decision_status"] == "negatome_repair_required_deferred_no_claim"
+    assert row["n_negatome_repair_decision_rows"] == 1
+    assert row["negatome_repair_missing_species"] == "bowhead_whale"
+    assert row["negatome_repair_decisions"] == "complete_missing_negatome_species"
+    assert row["negatome_repair_priorities"] == "high"
+    assert row["negatome_repair_claim_policies"] == "deferred_no_claim"
+    assert row["recommended_next_action"] == "complete_negatome_repair_before_controlled_claim"
+    assert "NEGATOME repair decision remains deferred_no_claim" in row["gate_note"]
+
+
+def test_contrast_gate_marks_missing_negatome_repair_decision_when_table_is_provided() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="partial_existing"),
+        negatome_repair_decisions=negatome_repair_decision_rows(candidate_id="other_candidate"),
+    )
+
+    row = result.filter(pl.col("candidate_id") == "candidate_a").row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_negatome_controls"
+    assert row["negatome_repair_decision_status"] == "missing_repair_decision"
+    assert row["recommended_next_action"] == "add_negatome_repair_decision"
+    assert "no NEGATOME repair decision is available yet" in row["gate_note"]
+
+
+def test_contrast_gate_does_not_require_negatome_repair_when_controls_present() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="present_existing"),
+        negatome_repair_decisions=negatome_repair_decision_rows(),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "eligible_for_contrast_dry_run"
+    assert row["negatome_repair_decision_status"] == "not_required"
+    assert row["n_negatome_repair_decision_rows"] == 1
