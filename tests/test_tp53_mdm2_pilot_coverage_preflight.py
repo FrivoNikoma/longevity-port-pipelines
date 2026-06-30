@@ -3,6 +3,7 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from longevity_port_pipelines.stages import tp53_mdm2_ortholog_repair_decisions as repair
 from longevity_port_pipelines.stages.tp53_mdm2_pilot_coverage_preflight import (
     build_tp53_mdm2_pilot_coverage_preflight,
     coverage_preflight_status,
@@ -15,6 +16,10 @@ MANIFEST_PATH = Path("data/input/tp53_mdm2_pilot_manifest.csv")
 
 def load_manifest() -> pl.DataFrame:
     return pl.read_csv(MANIFEST_PATH)
+
+
+def load_repair_decisions() -> pl.DataFrame:
+    return repair.read_repair_decisions()
 
 
 def test_build_tp53_mdm2_pilot_coverage_preflight_uses_committed_manifest() -> None:
@@ -51,14 +56,58 @@ def test_build_tp53_mdm2_pilot_coverage_preflight_preserves_no_claim_policy() ->
     assert set(preflight.get_column("claim_policy").to_list()) == {"technical_checkpoint_no_claim"}
 
 
-def test_build_tp53_mdm2_pilot_coverage_preflight_notes_no_live_actions() -> None:
+def test_build_tp53_mdm2_pilot_coverage_preflight_leaves_repair_fields_blank_without_table() -> (
+    None
+):
     preflight = build_tp53_mdm2_pilot_coverage_preflight(load_manifest())
+
+    assert set(preflight.get_column("repair_decision").to_list()) == {""}
+    assert set(preflight.get_column("repair_priority").to_list()) == {""}
+    assert set(preflight.get_column("repair_claim_policy").to_list()) == {""}
+    assert set(preflight.get_column("repair_note").to_list()) == {""}
+
+
+def test_build_tp53_mdm2_pilot_coverage_preflight_applies_repair_decisions() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
+
+    assert set(preflight.get_column("repair_decision").to_list()) == {
+        "fetch_or_curate_source_ortholog"
+    }
+    assert set(preflight.get_column("repair_priority").to_list()) == {"high"}
+    assert set(preflight.get_column("repair_claim_policy").to_list()) == {"ortholog_repair_only"}
+    assert all(
+        "remains blocked until source ortholog provenance" in note
+        for note in preflight.get_column("repair_note").to_list()
+    )
+
+
+def test_build_tp53_mdm2_pilot_coverage_preflight_rejects_invalid_repair_decisions() -> None:
+    repair_decisions = load_repair_decisions().with_columns(
+        pl.lit("biological_claim").alias("claim_policy")
+    )
+
+    with pytest.raises(ValueError, match="invalid values in claim_policy"):
+        build_tp53_mdm2_pilot_coverage_preflight(
+            load_manifest(),
+            repair_decisions=repair_decisions,
+        )
+
+
+def test_build_tp53_mdm2_pilot_coverage_preflight_notes_no_live_actions() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
 
     note_text = " ".join(preflight.get_column("coverage_preflight_note").to_list())
     assert "No Biohub" not in note_text
     assert "no Biohub" in note_text
     assert "Boltz" in note_text
     assert "biological claims" in note_text
+    assert "repair-decision rows" in note_text
 
 
 def test_build_tp53_mdm2_pilot_coverage_preflight_rejects_invalid_manifest() -> None:
@@ -111,7 +160,10 @@ def test_status_counts_summarizes_preflight_rows() -> None:
 
 
 def test_build_tp53_mdm2_pilot_coverage_preflight_does_not_make_claims() -> None:
-    preflight = build_tp53_mdm2_pilot_coverage_preflight(load_manifest())
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
 
     forbidden_values = {
         "biological_claim",

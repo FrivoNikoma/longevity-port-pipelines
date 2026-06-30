@@ -6,6 +6,11 @@ from typing import Annotated, Any
 import polars as pl
 import typer
 
+from longevity_port_pipelines.stages.tp53_mdm2_ortholog_repair_decisions import (
+    DEFAULT_REPAIR_DECISIONS_PATH,
+    read_repair_decisions,
+    validate_repair_decisions,
+)
 from longevity_port_pipelines.stages.tp53_mdm2_pilot_manifest_validator import (
     DEFAULT_INPUT,
     EXPECTED_CLAIM_POLICY,
@@ -13,6 +18,13 @@ from longevity_port_pipelines.stages.tp53_mdm2_pilot_manifest_validator import (
 )
 
 DEFAULT_OUTPUT = Path("data/interim/tp53_mdm2_pilot_coverage_preflight.csv")
+
+REPAIR_KEY_COLUMNS = (
+    "candidate_id",
+    "source_uniprot",
+    "target_species",
+    "chain",
+)
 
 COVERAGE_PREFLIGHT_SCHEMA = {
     "candidate_set": pl.Utf8,
@@ -27,6 +39,10 @@ COVERAGE_PREFLIGHT_SCHEMA = {
     "source_ortholog_status": pl.Utf8,
     "local_candidate_row_status": pl.Utf8,
     "recommended_next_action": pl.Utf8,
+    "repair_decision": pl.Utf8,
+    "repair_priority": pl.Utf8,
+    "repair_claim_policy": pl.Utf8,
+    "repair_note": pl.Utf8,
     "claim_policy": pl.Utf8,
     "coverage_preflight_note": pl.Utf8,
 }
@@ -47,6 +63,15 @@ def _as_str(row: dict[str, Any], column: str) -> str:
     return str(value).strip()
 
 
+def _repair_key(row: dict[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        _as_str(row, "candidate_id"),
+        _as_str(row, "source_uniprot"),
+        _as_str(row, "target_species"),
+        _as_str(row, "chain"),
+    )
+
+
 def _empty_preflight() -> pl.DataFrame:
     return pl.DataFrame(schema=COVERAGE_PREFLIGHT_SCHEMA)
 
@@ -61,6 +86,26 @@ def _preflight_from_rows(rows: list[dict[str, Any]]) -> pl.DataFrame:
             for column, dtype in COVERAGE_PREFLIGHT_SCHEMA.items()
         ]
     )
+
+
+def _repair_lookup(
+    repair_decisions: pl.DataFrame | None,
+) -> dict[tuple[str, str, str, str], dict[str, str]]:
+    if repair_decisions is None:
+        return {}
+
+    validate_repair_decisions(repair_decisions)
+
+    lookup: dict[tuple[str, str, str, str], dict[str, str]] = {}
+    for row in repair_decisions.iter_rows(named=True):
+        lookup[_repair_key(row)] = {
+            "repair_decision": _as_str(row, "repair_decision"),
+            "repair_priority": _as_str(row, "repair_priority"),
+            "repair_claim_policy": _as_str(row, "claim_policy"),
+            "repair_note": _as_str(row, "repair_note"),
+        }
+
+    return lookup
 
 
 def coverage_preflight_status(strict_contrast_gate_status: str) -> str:
@@ -79,15 +124,21 @@ def recommended_next_action(coverage_status: str) -> str:
     return "resolve_manifest_gate_blocker_before_coverage_preflight"
 
 
-def build_tp53_mdm2_pilot_coverage_preflight(manifest: pl.DataFrame) -> pl.DataFrame:
+def build_tp53_mdm2_pilot_coverage_preflight(
+    manifest: pl.DataFrame,
+    *,
+    repair_decisions: pl.DataFrame | None = None,
+) -> pl.DataFrame:
     """Build a conservative TP53/MDM2 coverage preflight table from manifest rows."""
 
     validate_tp53_mdm2_pilot_manifest(manifest)
+    repair_by_key = _repair_lookup(repair_decisions)
 
     rows: list[dict[str, Any]] = []
     for row in manifest.iter_rows(named=True):
         gate_status = _as_str(row, "strict_contrast_gate_status")
         coverage_status = coverage_preflight_status(gate_status)
+        repair = repair_by_key.get(_repair_key(row), {})
 
         rows.append(
             {
@@ -103,11 +154,15 @@ def build_tp53_mdm2_pilot_coverage_preflight(manifest: pl.DataFrame) -> pl.DataF
                 "source_ortholog_status": "not_checked",
                 "local_candidate_row_status": "not_checked",
                 "recommended_next_action": recommended_next_action(coverage_status),
+                "repair_decision": repair.get("repair_decision", ""),
+                "repair_priority": repair.get("repair_priority", ""),
+                "repair_claim_policy": repair.get("repair_claim_policy", ""),
+                "repair_note": repair.get("repair_note", ""),
                 "claim_policy": _as_str(row, "claim_policy"),
                 "coverage_preflight_note": (
-                    "Coverage preflight uses committed manifest fields only; "
-                    "no Biohub, Boltz, embeddings, cofolding jobs, or biological "
-                    "claims are introduced."
+                    "Coverage preflight uses committed manifest fields and optional "
+                    "repair-decision rows only; no Biohub, Boltz, embeddings, "
+                    "cofolding jobs, or biological claims are introduced."
                 ),
             }
         )
@@ -135,6 +190,13 @@ def main(
             help="TP53/MDM2 pilot manifest CSV to preflight.",
         ),
     ] = DEFAULT_INPUT,
+    repair_decisions_path: Annotated[
+        Path,
+        typer.Option(
+            "--repair-decisions",
+            help="TP53/MDM2 ortholog repair decision CSV to apply.",
+        ),
+    ] = DEFAULT_REPAIR_DECISIONS_PATH,
     output: Annotated[
         Path,
         typer.Option(
@@ -146,7 +208,11 @@ def main(
     """Build a TP53/MDM2 pilot coverage preflight table."""
 
     manifest = pl.read_csv(input_path)
-    preflight = build_tp53_mdm2_pilot_coverage_preflight(manifest)
+    repair_decisions = read_repair_decisions(repair_decisions_path)
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        manifest,
+        repair_decisions=repair_decisions,
+    )
 
     output.parent.mkdir(parents=True, exist_ok=True)
     preflight.write_csv(output)
@@ -156,6 +222,7 @@ def main(
         typer.echo(f"{status}: {count}")
 
     typer.echo(f"Wrote TP53/MDM2 pilot coverage preflight -> {output}")
+    typer.echo(f"Applied TP53/MDM2 repair decisions from -> {repair_decisions_path}")
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
     typer.echo("No orthologs were fetched.")
@@ -166,6 +233,7 @@ def main(
 
     return {
         "input": str(input_path),
+        "repair_decisions": str(repair_decisions_path),
         "output": str(output),
         "rows": preflight.height,
         "claim_policy": EXPECTED_CLAIM_POLICY,
