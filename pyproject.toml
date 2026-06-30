@@ -53,6 +53,7 @@ species-coverage-audit = "longevity_port_pipelines.stages.species_coverage_audit
 cofolding-candidate-preflight-batch = "longevity_port_pipelines.stages.cofolding_candidate_preflight_batch:app"
 candidate-species-coverage-matrix = "longevity_port_pipelines.stages.candidate_species_coverage_matrix:app"
 candidate-contrast-gate = "longevity_port_pipelines.stages.candidate_contrast_gate:app"
+strict-sirt6-contrast-panel = "longevity_port_pipelines.stages.strict_sirt6_contrast_panel:app"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
