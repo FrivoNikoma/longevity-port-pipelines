@@ -1,0 +1,2 @@
+﻿"candidate_id","pdb_id","chain","source_uniprot","priority","negatome_status","negative_partner_uniprot","missing_negatome_species","repair_decision","repair_priority","claim_policy","repair_note"
+"4xhu__A1_P09874--4xhu__B1_Q9UNS1","4xhu","receptor","P09874","1","partial_existing","O60907","bowhead_whale","complete_missing_negatome_species","high","deferred_no_claim","Complete or export missing NEGATOME-style controls before controlled contrast claims; dry-run planning only."
