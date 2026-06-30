@@ -196,3 +196,85 @@ def test_contrast_gate_marks_missing_repair_decision_when_table_is_provided() ->
     assert row["n_coverage_repair_decision_rows"] == 0
     assert row["recommended_next_action"] == "add_coverage_repair_decision"
     assert "no coverage repair decision" in row["gate_note"]
+
+
+def strict_panel_summary_rows(
+    *,
+    status: str = "strict_panel_ready",
+    candidate_id: str = "candidate_a",
+) -> pl.DataFrame:
+    blocked = status != "strict_panel_ready"
+    return pl.DataFrame(
+        [
+            {
+                "candidate_id": candidate_id,
+                "pdb_id": "4xhu",
+                "chain": "receptor",
+                "source_uniprot": "P09874",
+                "priority": "1",
+                "n_strict_panel_ready_species": 2,
+                "n_strict_panel_blocked_species": 1 if blocked else 0,
+                "n_strict_long_lived_ready": 1,
+                "n_strict_short_lived_ready": 1,
+                "strict_long_lived_species": "naked_mole_rat",
+                "strict_short_lived_species": "mouse",
+                "blocked_target_species": "bowhead_whale" if blocked else "",
+                "strict_panel_status": status,
+                "recommended_next_action": (
+                    "resolve_coverage_repair_decisions"
+                    if blocked
+                    else "prepare_strict_contrast_dry_run"
+                ),
+                "strict_panel_note": (
+                    "Strict panel builder only audits coverage and repair policy."
+                ),
+            }
+        ]
+    )
+
+
+def test_contrast_gate_records_strict_panel_ready_summary() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(),
+        strict_panel_summary=strict_panel_summary_rows(),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "eligible_for_contrast_dry_run"
+    assert row["strict_panel_status"] == "strict_panel_ready"
+    assert row["n_strict_panel_ready_species"] == 2
+    assert row["n_strict_panel_blocked_species"] == 0
+    assert row["strict_long_lived_species"] == "naked_mole_rat"
+    assert row["strict_short_lived_species"] == "mouse"
+    assert row["recommended_next_action"] == "prepare_contrast_dry_run"
+
+
+def test_contrast_gate_blocks_strict_panel_before_negatome_controls() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="partial_existing"),
+        strict_panel_summary=strict_panel_summary_rows(
+            status="blocked_species_coverage_repair",
+        ),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_strict_panel"
+    assert row["strict_panel_status"] == "blocked_species_coverage_repair"
+    assert row["blocked_target_species"] == "bowhead_whale"
+    assert row["recommended_next_action"] == "resolve_strict_panel_coverage_repairs"
+    assert "Strict panel summary has unresolved coverage repair rows" in row["gate_note"]
+
+
+def test_contrast_gate_blocks_missing_strict_panel_summary_row() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(),
+        strict_panel_summary=strict_panel_summary_rows(candidate_id="other_candidate"),
+    )
+
+    row = result.filter(pl.col("candidate_id") == "candidate_a").row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_strict_panel"
+    assert row["strict_panel_status"] == "missing_strict_panel_summary_row"
+    assert row["recommended_next_action"] == "build_strict_panel_summary"

@@ -7,6 +7,7 @@ import polars as pl
 import typer
 
 from longevity_port_pipelines.stages import candidate_coverage_repair_decisions as repair
+from longevity_port_pipelines.stages import strict_sirt6_contrast_panel as strict_panel
 
 DEFAULT_CONTRAST_READY_INPUT = Path("data/interim/sirt6_contrast_ready_subset.csv")
 DEFAULT_NEGATOME_READINESS_INPUT = Path(
@@ -14,6 +15,7 @@ DEFAULT_NEGATOME_READINESS_INPUT = Path(
 )
 DEFAULT_OUTPUT = Path("data/interim/sirt6_candidate_contrast_gate.csv")
 DEFAULT_COVERAGE_REPAIR_DECISIONS_INPUT = repair.DEFAULT_REPAIR_DECISIONS_PATH
+DEFAULT_STRICT_PANEL_SUMMARY_INPUT = strict_panel.DEFAULT_SUMMARY_OUTPUT
 
 KEY_COLUMNS = ["candidate_id", "pdb_id", "chain", "source_uniprot", "priority"]
 
@@ -36,6 +38,8 @@ NEGATOME_REQUIRED_COLUMNS = {
     "missing_negatome_species",
 }
 
+STRICT_PANEL_REQUIRED_COLUMNS = set(strict_panel.STRICT_PANEL_SUMMARY_SCHEMA)
+
 CONTRAST_GATE_SCHEMA = {
     "candidate_id": pl.Utf8,
     "pdb_id": pl.Utf8,
@@ -56,6 +60,15 @@ CONTRAST_GATE_SCHEMA = {
     "coverage_repair_decisions": pl.Utf8,
     "coverage_repair_priorities": pl.Utf8,
     "coverage_repair_claim_policies": pl.Utf8,
+    "strict_panel_status": pl.Utf8,
+    "n_strict_panel_ready_species": pl.Int64,
+    "n_strict_panel_blocked_species": pl.Int64,
+    "n_strict_long_lived_ready": pl.Int64,
+    "n_strict_short_lived_ready": pl.Int64,
+    "strict_long_lived_species": pl.Utf8,
+    "strict_short_lived_species": pl.Utf8,
+    "blocked_target_species": pl.Utf8,
+    "strict_panel_recommended_next_action": pl.Utf8,
     "negatome_status": pl.Utf8,
     "negative_partner_uniprot": pl.Utf8,
     "missing_negatome_species": pl.Utf8,
@@ -126,6 +139,7 @@ def _gate_status(
     baseline_input_status: str,
     species_coverage_status: str,
     negatome_status: str,
+    strict_panel_status: str = "not_audited",
 ) -> str:
     if contrast_readiness_status != "contrast_ready":
         return "blocked_contrast_coverage"
@@ -135,6 +149,9 @@ def _gate_status(
 
     if species_coverage_status != "complete_species_coverage":
         return "blocked_species_coverage"
+
+    if strict_panel_status not in {"not_audited", "strict_panel_ready"}:
+        return "blocked_strict_panel"
 
     if negatome_status != "present_existing":
         return "blocked_negatome_controls"
@@ -160,6 +177,21 @@ def _repair_decision_rows_by_key(
         rows_by_key.setdefault(_key(row), []).append(row)
 
     return rows_by_key
+
+
+def _strict_panel_summary_by_key(
+    strict_panel_summary: pl.DataFrame | None,
+) -> dict[tuple[str, str, str, str, str], dict[str, Any]] | None:
+    if strict_panel_summary is None:
+        return None
+
+    validate_required_columns(
+        strict_panel_summary,
+        STRICT_PANEL_REQUIRED_COLUMNS,
+        "strict_panel_summary",
+    )
+
+    return {_key(row): row for row in strict_panel_summary.iter_rows(named=True)}
 
 
 def _coverage_repair_decision_status(
@@ -230,6 +262,7 @@ def _coverage_repair_summary(
 def _recommended_next_action(
     gate_status: str,
     coverage_repair_status: str = "not_audited",
+    strict_panel_status: str = "not_audited",
 ) -> str:
     if gate_status == "blocked_contrast_coverage":
         return "repair_contrast_species_coverage"
@@ -246,6 +279,14 @@ def _recommended_next_action(
         }:
             return "resolve_coverage_repair_policy"
         return "fix_species_coverage"
+    if gate_status == "blocked_strict_panel":
+        if strict_panel_status == "blocked_species_coverage_repair":
+            return "resolve_strict_panel_coverage_repairs"
+        if strict_panel_status == "missing_strict_panel_summary_row":
+            return "build_strict_panel_summary"
+        if strict_panel_status.startswith("insufficient_strict_"):
+            return "repair_strict_panel_species_coverage"
+        return "resolve_strict_panel_status"
     if gate_status == "blocked_negatome_controls":
         return "fix_negatome_controls"
     return "prepare_contrast_dry_run"
@@ -254,6 +295,7 @@ def _recommended_next_action(
 def _gate_note(
     gate_status: str,
     coverage_repair_status: str = "not_audited",
+    strict_panel_status: str = "not_audited",
 ) -> str:
     if gate_status == "blocked_contrast_coverage":
         return (
@@ -283,6 +325,30 @@ def _gate_note(
             "dry-run planning layer only."
         )
 
+    if gate_status == "blocked_strict_panel":
+        if strict_panel_status == "blocked_species_coverage_repair":
+            return (
+                "Strict panel summary has unresolved coverage repair rows; strict "
+                "contrast remains blocked and no biological claim can be made."
+            )
+
+        if strict_panel_status == "missing_strict_panel_summary_row":
+            return (
+                "Strict panel summary is missing for this candidate; build the strict "
+                "panel summary before contrast dry-run planning."
+            )
+
+        if strict_panel_status.startswith("insufficient_strict_"):
+            return (
+                "Strict panel summary does not contain enough long-lived and short-lived "
+                "ready species for strict contrast planning."
+            )
+
+        return (
+            "Strict panel status is not ready; resolve strict panel diagnostics before "
+            "contrast dry-run planning."
+        )
+
     if gate_status == "blocked_negatome_controls":
         return "NEGATOME-style controls are incomplete; controlled enrichment cannot be claimed."
 
@@ -306,6 +372,7 @@ def build_candidate_contrast_gate(
     contrast_ready: pl.DataFrame,
     negatome_readiness: pl.DataFrame,
     coverage_repair_decisions: pl.DataFrame | None = None,
+    strict_panel_summary: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     validate_required_columns(contrast_ready, CONTRAST_REQUIRED_COLUMNS, "contrast_ready")
     validate_required_columns(
@@ -317,13 +384,24 @@ def build_candidate_contrast_gate(
     contrast_by_key = {_key(row): row for row in contrast_ready.iter_rows(named=True)}
     negatome_by_key = {_key(row): row for row in negatome_readiness.iter_rows(named=True)}
     repair_by_key = _repair_decision_rows_by_key(coverage_repair_decisions)
+    strict_panel_by_key = _strict_panel_summary_by_key(strict_panel_summary)
 
     rows: list[dict[str, Any]] = []
 
-    for key in sorted(set(contrast_by_key) | set(negatome_by_key)):
+    key_union = set(contrast_by_key) | set(negatome_by_key)
+    if strict_panel_by_key is not None:
+        key_union |= set(strict_panel_by_key)
+
+    for key in sorted(key_union):
         contrast = contrast_by_key.get(key, {})
         negatome = negatome_by_key.get(key, {})
         repair_rows = [] if repair_by_key is None else repair_by_key.get(key, [])
+        strict_panel = {} if strict_panel_by_key is None else strict_panel_by_key.get(key, {})
+        strict_panel_status = (
+            "not_audited"
+            if strict_panel_by_key is None
+            else _as_str(strict_panel, "strict_panel_status", "missing_strict_panel_summary_row")
+        )
 
         contrast_status = _as_str(
             contrast,
@@ -345,6 +423,7 @@ def build_candidate_contrast_gate(
             baseline_input_status=baseline_status,
             species_coverage_status=species_status,
             negatome_status=negatome_status,
+            strict_panel_status=strict_panel_status,
         )
 
         rows.append(
@@ -395,6 +474,39 @@ def build_candidate_contrast_gate(
                     coverage_repair,
                     "coverage_repair_claim_policies",
                 ),
+                "strict_panel_status": strict_panel_status,
+                "n_strict_panel_ready_species": _as_int(
+                    strict_panel,
+                    "n_strict_panel_ready_species",
+                ),
+                "n_strict_panel_blocked_species": _as_int(
+                    strict_panel,
+                    "n_strict_panel_blocked_species",
+                ),
+                "n_strict_long_lived_ready": _as_int(
+                    strict_panel,
+                    "n_strict_long_lived_ready",
+                ),
+                "n_strict_short_lived_ready": _as_int(
+                    strict_panel,
+                    "n_strict_short_lived_ready",
+                ),
+                "strict_long_lived_species": _as_str(
+                    strict_panel,
+                    "strict_long_lived_species",
+                ),
+                "strict_short_lived_species": _as_str(
+                    strict_panel,
+                    "strict_short_lived_species",
+                ),
+                "blocked_target_species": _as_str(
+                    strict_panel,
+                    "blocked_target_species",
+                ),
+                "strict_panel_recommended_next_action": _as_str(
+                    strict_panel,
+                    "recommended_next_action",
+                ),
                 "negatome_status": negatome_status,
                 "negative_partner_uniprot": _as_str(
                     negatome,
@@ -408,10 +520,12 @@ def build_candidate_contrast_gate(
                 "recommended_next_action": _recommended_next_action(
                     gate_status,
                     _as_str(coverage_repair, "coverage_repair_decision_status"),
+                    strict_panel_status,
                 ),
                 "gate_note": _gate_note(
                     gate_status,
                     _as_str(coverage_repair, "coverage_repair_decision_status"),
+                    strict_panel_status,
                 ),
             }
         )
@@ -455,20 +569,26 @@ def main(
         Path,
         typer.Option(help="CSV/parquet coverage repair decision table."),
     ] = DEFAULT_COVERAGE_REPAIR_DECISIONS_INPUT,
+    strict_panel_summary_input: Annotated[
+        Path,
+        typer.Option(help="CSV/parquet strict SIRT6 contrast panel summary."),
+    ] = DEFAULT_STRICT_PANEL_SUMMARY_INPUT,
     output: Annotated[
         Path,
         typer.Option(help="Output CSV path for the candidate contrast gate table."),
     ] = DEFAULT_OUTPUT,
 ) -> None:
-    """Join coverage and NEGATOME diagnostics into a no-claims contrast gate table."""
+    """Join coverage, strict panel, and NEGATOME diagnostics into a no-claims gate."""
     contrast_ready = read_table(contrast_ready_input)
     negatome_readiness = read_table(negatome_readiness_input)
     coverage_repair_decisions = read_table(coverage_repair_decisions_input)
+    strict_panel_summary = read_table(strict_panel_summary_input)
 
     gate = build_candidate_contrast_gate(
         contrast_ready=contrast_ready,
         negatome_readiness=negatome_readiness,
         coverage_repair_decisions=coverage_repair_decisions,
+        strict_panel_summary=strict_panel_summary,
     )
 
     output.parent.mkdir(parents=True, exist_ok=True)
