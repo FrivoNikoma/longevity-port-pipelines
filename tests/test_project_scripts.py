@@ -14,3 +14,11 @@ def test_lane_manifest_summary_cli_is_registered_as_project_script() -> None:
     scripts = load_pyproject()["project"]["scripts"]
 
     assert scripts["lane-manifest-summary"] == "longevity_port_pipelines.stages.lane_manifest:main"
+
+
+def test_generic_strict_panel_cli_is_registered_as_project_script() -> None:
+    scripts = load_pyproject()["project"]["scripts"]
+
+    assert scripts["strict-contrast-panel"] == (
+        "longevity_port_pipelines.stages.strict_contrast_panel:app"
+    )

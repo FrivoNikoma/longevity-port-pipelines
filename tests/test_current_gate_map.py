@@ -55,18 +55,19 @@ def test_current_gate_map_records_generic_control_helper_adoption() -> None:
     assert "candidate contrast gate records generic control-helper traces" in text
 
 
-def test_current_gate_map_records_generic_strict_panel_schema_and_helper() -> None:
+def test_current_gate_map_records_generic_strict_panel_schema_helper_and_builder() -> None:
     text = read_doc("docs/current_gate_map.md")
 
     assert "generic strict contrast panel helper exists" in text
     assert "SIRT6 strict panel summary records generic strict panel helper trace" in text
-    assert "fully generic strict panel runtime builder" in text
+    assert "generic strict panel runtime builder exists" in text
 
 
-def test_current_gate_map_keeps_strict_panel_runtime_builder_pending() -> None:
+def test_current_gate_map_records_next_strict_panel_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "A fully generic runtime builder is still pending" in text
+    assert "wiring the generic strict panel builder into additional lanes" in text
+    assert "Cross-lane adoption beyond SIRT6 remains pending" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:
