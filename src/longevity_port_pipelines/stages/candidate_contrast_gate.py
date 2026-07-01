@@ -6,9 +6,17 @@ from typing import Annotated, Any
 import polars as pl
 import typer
 
-from longevity_port_pipelines.stages import candidate_coverage_repair_decisions as repair
-from longevity_port_pipelines.stages import candidate_negatome_repair_decisions as negatome_repair
+from longevity_port_pipelines.stages import (
+    candidate_coverage_repair_decisions as repair,
+)
+from longevity_port_pipelines.stages import (
+    candidate_negatome_repair_decisions as negatome_repair,
+)
 from longevity_port_pipelines.stages import strict_sirt6_contrast_panel as strict_panel
+from longevity_port_pipelines.stages.coverage_preflight import (
+    CoveragePreflightResult,
+    coverage_preflight_for_statuses,
+)
 
 DEFAULT_CONTRAST_READY_INPUT = Path("data/interim/sirt6_contrast_ready_subset.csv")
 DEFAULT_NEGATOME_READINESS_INPUT = Path(
@@ -141,6 +149,30 @@ def empty_contrast_gate() -> pl.DataFrame:
     return pl.DataFrame(schema=CONTRAST_GATE_SCHEMA)
 
 
+def _coverage_preflight_from_species_status(
+    species_coverage_status: str,
+) -> CoveragePreflightResult:
+    if species_coverage_status == "complete_species_coverage":
+        return coverage_preflight_for_statuses(
+            coverage_status="coverage_ready",
+            provenance_status="standard_source_present",
+            repair_status="not_needed",
+        )
+
+    if species_coverage_status == "not_audited":
+        return coverage_preflight_for_statuses(
+            coverage_status="unresolved_downstream_provenance",
+            provenance_status="unresolved",
+            repair_status="pending",
+        )
+
+    return coverage_preflight_for_statuses(
+        coverage_status="missing_source_ortholog",
+        provenance_status="unresolved",
+        repair_status="pending",
+    )
+
+
 def _gate_status(
     *,
     contrast_readiness_status: str,
@@ -148,25 +180,24 @@ def _gate_status(
     species_coverage_status: str,
     negatome_status: str,
     strict_panel_status: str = "not_audited",
-    negatome_repair_status: str = "not_audited",
+    negatome_repair_status: str = "not_required",
 ) -> str:
+    species_preflight = _coverage_preflight_from_species_status(species_coverage_status)
+
     if contrast_readiness_status != "contrast_ready":
         return "blocked_contrast_coverage"
-
     if baseline_input_status != "input_prepared":
         return "blocked_baseline_input"
-
-    if species_coverage_status != "complete_species_coverage":
+    if not species_preflight.contrast_dry_run_allowed:
         return "blocked_species_coverage"
-
     if strict_panel_status not in {"not_audited", "strict_panel_ready"}:
         return "blocked_strict_panel"
-
+    if negatome_status != "present_existing" and negatome_repair_status.startswith(
+        "negatome_repair_required_"
+    ):
+        return "blocked_negatome_repair_policy"
     if negatome_status != "present_existing":
-        if negatome_repair_status not in {"not_audited", "missing_repair_decision"}:
-            return "blocked_negatome_repair_policy"
         return "blocked_negatome_controls"
-
     return "eligible_for_contrast_dry_run"
 
 
@@ -535,7 +566,11 @@ def build_candidate_contrast_gate(
         strict_panel_status = (
             "not_audited"
             if strict_panel_by_key is None
-            else _as_str(strict_panel, "strict_panel_status", "missing_strict_panel_summary_row")
+            else _as_str(
+                strict_panel,
+                "strict_panel_status",
+                "missing_strict_panel_summary_row",
+            )
         )
 
         contrast_status = _as_str(

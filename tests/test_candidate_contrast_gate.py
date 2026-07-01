@@ -352,3 +352,19 @@ def test_contrast_gate_does_not_require_negatome_repair_when_controls_present() 
     assert row["strict_contrast_gate_status"] == "eligible_for_contrast_dry_run"
     assert row["negatome_repair_decision_status"] == "not_required"
     assert row["n_negatome_repair_decision_rows"] == 1
+
+
+def test_contrast_gate_maps_complete_species_coverage_through_generic_preflight() -> None:
+    result = gate._coverage_preflight_from_species_status("complete_species_coverage")
+
+    assert result.coverage_preflight_status == "coverage_preflight_ready"
+    assert result.contrast_dry_run_allowed is True
+    assert result.strict_panel_allowed is True
+
+
+def test_contrast_gate_maps_incomplete_species_coverage_through_generic_preflight() -> None:
+    result = gate._coverage_preflight_from_species_status("missing_species_coverage")
+
+    assert result.coverage_preflight_status == "blocked_pending_repair_review"
+    assert result.contrast_dry_run_allowed is False
+    assert result.strict_panel_allowed is False
