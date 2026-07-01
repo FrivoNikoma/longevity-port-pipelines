@@ -1,0 +1,151 @@
+schema_version: 1
+schema_id: generic_control_readiness_schema
+pipeline_gate: control_readiness
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: control_readiness
+description: >
+  Generic LongevityPort control readiness schema. This file defines the shared
+  vocabulary for shuffled-mask, NEGATOME-style, and curated negative-partner
+  controls before a candidate can enter controlled contrast planning.
+
+control_types:
+  shuffled_mask:
+    purpose: >
+      Checks whether an apparent interface signal is stronger than a random
+      interface-size-matched residue mask.
+    required_for: technical_contrast_readiness
+  negatome:
+    purpose: >
+      Checks whether an apparent interface signal remains specific relative to
+      curated non-interacting or negative-partner controls.
+    required_for: controlled_contrast_readiness
+  curated_negative_partner:
+    purpose: >
+      Records candidate-specific negative partners that can support a
+      NEGATOME-style control worklist.
+    required_for: negatome_readiness
+
+allowed_control_readiness_statuses:
+  - controls_ready
+  - controls_accepted_for_limited_dry_run
+  - missing_controls
+  - partial_controls_ready
+  - blocked_missing_shuffled_control
+  - blocked_missing_negatome
+  - blocked_missing_curated_negative_partner
+  - blocked_pending_control_repair
+  - excluded_from_controlled_claims
+  - deferred_pending_source
+  - needs_manual_review
+
+allowed_control_repair_statuses:
+  - not_needed
+  - repaired_for_planning
+  - accepted_for_planning_after_review
+  - pending
+  - in_review
+  - excluded_from_controlled_claims
+  - deferred_pending_source
+  - needs_manual_review
+
+status_groups:
+  dry_run_ready:
+    - controls_ready
+    - controls_accepted_for_limited_dry_run
+  blocked:
+    - missing_controls
+    - partial_controls_ready
+    - blocked_missing_shuffled_control
+    - blocked_missing_negatome
+    - blocked_missing_curated_negative_partner
+    - blocked_pending_control_repair
+    - excluded_from_controlled_claims
+    - deferred_pending_source
+    - needs_manual_review
+
+decision_rules:
+  controls_ready:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: run_contrast_gate_without_biological_claims
+  controls_accepted_for_limited_dry_run:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: run_limited_contrast_dry_run_with_control_caveat
+  missing_controls:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_shuffled_and_negatome_control_inputs
+  partial_controls_ready:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: complete_missing_control_layers_before_contrast
+  blocked_missing_shuffled_control:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_or_recompute_shuffled_mask_control
+  blocked_missing_negatome:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: curate_or_attach_negatome_control_partner
+  blocked_missing_curated_negative_partner:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: curate_negative_partner_before_controlled_contrast
+  blocked_pending_control_repair:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: resolve_control_repair_decision
+  excluded_from_controlled_claims:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: keep_row_excluded_from_controlled_claims
+  deferred_pending_source:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: defer_until_stronger_control_source_exists
+  needs_manual_review:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: perform_manual_control_review
+
+required_output_fields:
+  - candidate_set
+  - candidate_id
+  - source_uniprot
+  - shuffled_control_status
+  - negatome_control_status
+  - curated_negative_partner_status
+  - control_repair_status
+  - control_readiness_status
+  - recommended_next_action
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - notes
+
+allowed_language:
+  - control readiness
+  - controls ready for dry-run
+  - limited control dry-run
+  - missing controls
+  - partial controls
+  - NEGATOME readiness
+  - curated negative partner worklist
+
+disallowed_language:
+  - controls prove the biological signal
+  - NEGATOME validates the candidate
+  - validated longevity signal
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+
+required_guardrails:
+  - no Biohub calls from control-readiness schema checks
+  - no Boltz calls from control-readiness schema checks
+  - no live structural calls from control-readiness schema checks
+  - no biological claims from control readiness alone
+  - no controlled claims before validation evidence
