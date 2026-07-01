@@ -69,16 +69,20 @@ def test_current_gate_map_records_next_gate8_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
     assert "generic gated contrast runtime into calibration lanes" in text
-    assert "contrast robustness flags" in text
+    assert "contrast robustness flags" not in text
 
 
 def test_current_gate_map_records_generic_gated_contrast_runtime() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic Gate 8 gated contrast schema, helper, and runtime calculator now exist" in text
+    assert (
+        "generic Gate 8 gated contrast schema, helper, runtime calculator, "
+        "and robustness annotations now exist"
+    ) in text
     assert "generic gated contrast schema exists" in text
     assert "generic gated contrast helper exists" in text
     assert "generic gated contrast runtime calculator exists" in text
+    assert "generic gated contrast runtime records contrast robustness annotations" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:
