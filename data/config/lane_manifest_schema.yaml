@@ -1,0 +1,123 @@
+schema_version: 1
+schema_id: generic_lane_manifest_schema
+
+claim_policy: no_biological_claims_until_validation
+maximum_prevalidation_claim_status: planning_only
+
+manifest_purpose: >
+  Define the required planning-only manifest fields for any LongevityPort
+  candidate lane before coverage, repair, contrast, cofolding, or validation
+  stages are allowed to make downstream decisions.
+
+allowed_lane_lifecycle_statuses:
+  - calibration
+  - planned
+  - legacy_alignment
+
+allowed_biological_modes:
+  - maintained_or_enhanced_repair
+  - beneficial_breakage
+  - transferable_function
+  - signaling_rewiring
+  - hub_risk_review
+
+required_manifest_fields:
+  - candidate_set
+  - candidate_id
+  - lane_name
+  - lane_lifecycle_status
+  - biological_mode
+  - source_species
+  - source_species_taxid
+  - target_species
+  - target_species_taxid
+  - gene_symbol
+  - source_uniprot
+  - target_uniprot
+  - partner_gene_symbol
+  - partner_source_uniprot
+  - partner_target_uniprot
+  - interaction_role
+  - evidence_scope
+  - gate_sequence
+  - manifest_status
+  - claim_policy
+  - claim_status
+  - reviewer_note
+
+optional_manifest_fields:
+  - pdb_id
+  - chain
+  - priority
+  - candidate_description
+  - biological_rationale
+  - expected_direction
+  - breakage_policy
+  - contrast_policy
+  - cofolding_policy
+  - validation_plan_id
+  - source_publication
+  - source_database
+  - source_file
+
+allowed_manifest_statuses:
+  - planning_only
+  - seeded_manifest
+  - coverage_pending
+  - coverage_ready
+  - blocked_pending_repair
+  - blocked_by_policy
+  - ready_for_contrast_dry_run
+  - ready_for_cofolding_dry_run
+  - validation_required
+
+required_gate_status_fields:
+  candidate_set_configuration: candidate_set_configuration_status
+  manifest: manifest_status
+  coverage_provenance_preflight: coverage_provenance_preflight_status
+  repair_decisions: repair_decisions_status
+  control_readiness: control_readiness_status
+  strict_panel_or_contrast_gate: strict_panel_or_contrast_gate_status
+  longevity_contrast: longevity_contrast_status
+  cofolding_readiness: cofolding_readiness_status
+  decision_package: decision_package_status
+
+allowed_claim_statuses:
+  - planning_only
+  - technical_checkpoint
+  - coverage_readiness
+  - repair_worklist
+  - control_readiness
+  - contrast_readiness
+  - cofolding_readiness
+  - structural_compatibility_checkpoint
+  - validation_required
+
+required_manifest_guardrails:
+  - no biological claims from manifest rows
+  - no live Biohub calls from manifest validation
+  - no live Boltz calls from manifest validation
+  - no embedding generation from manifest validation
+  - no cofolding input generation from manifest validation
+  - no signed URLs or external credentials in manifest rows
+  - no therapeutic or rejuvenation claims before validation
+
+disallowed_prevalidation_language:
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+  - rejuvenation intervention
+  - therapeutic candidate
+
+lane_manifest_minimum_review:
+  - manifest fields are present
+  - lane exists in candidate lane registry
+  - biological mode is allowed by candidate lane registry
+  - candidate set is declared
+  - claim policy is conservative
+  - required gate sequence is represented
+  - missing ortholog coverage remains a blocker
+  - validation is required before biological claims
