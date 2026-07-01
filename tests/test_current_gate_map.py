@@ -38,6 +38,23 @@ def test_current_gate_map_distinguishes_current_calibration_lanes() -> None:
     assert "beneficial_breakage" in text
 
 
+def test_current_gate_map_records_generic_coverage_helper_adoption() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "both calibration lanes now expose generic coverage-helper traces" in text
+    assert "TP53/MDM2 uses the generic coverage helper" in text
+    assert "SIRT6 uses the generic coverage helper" in text
+    assert "generic coverage preflight helper exists" in text
+
+
+def test_current_gate_map_keeps_strict_panel_generalization_pending() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "fully generic strict contrast panel builder is still pending" in text
+    assert "not yet generic" in text
+    assert "generic control / NEGATOME readiness" in text
+
+
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:
     text = read_doc("docs/current_gate_map.md")
 

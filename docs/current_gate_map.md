@@ -1,21 +1,22 @@
 ﻿# Current LongevityPort gate map
 
-This document tracks the current state of the LongevityPort gated decision pipeline.
-
-It is intentionally conservative. A gate can be useful even when it blocks a candidate, because blocked rows become an explicit repair, exclude, or defer worklist.
+This document tracks the current state of the LongevityPort gated decision
+pipeline. It is intentionally conservative. A gate can be useful even when it
+blocks a candidate, because blocked rows become an explicit repair, exclude, or
+defer worklist.
 
 ## Gate summary
 
 | Gate | Purpose | Current status |
 | --- | --- | --- |
-| Gate 0 - candidate sets configured | Candidate modules exist with biological modes. | Partly done. SIRT6, TP53/MDM2, HAS2/CD44, IGF/RHEB/mTOR, and AMPK are represented as candidate sets. |
-| Gate 1 - candidate lane contract | Define what every biological lane must provide. | Not done. Next roadmap PR should document the generic lane contract. |
-| Gate 2 - lane registry | Register all lanes in one machine-readable format. | Not done. Needed before broad generalization. |
+| Gate 0 - candidate sets configured | Candidate modules exist with biological modes. | Done for current configured lanes. SIRT6, TP53/MDM2, HAS2/CD44, IGF/RHEB/mTOR, and AMPK are represented as candidate sets. |
+| Gate 1 - candidate lane contract | Define what every biological lane must provide. | Partly done / implemented as architecture docs and lane manifest constraints; continue extending as new lanes are added. |
+| Gate 2 - lane registry | Register all lanes in one machine-readable format. | Done for current configured lanes. `data/config/candidate_lanes.yaml` records SIRT6, TP53/MDM2, HAS2/CD44, IGF/RHEB/mTOR, and AMPK. |
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
-| Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6; started for TP53/MDM2; pending for other lanes. |
-| Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6; started for TP53/MDM2; pending for other lanes. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; not yet generic. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; not yet generic. |
+| Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
+| Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; not yet generic. This is the next major frontier after generic coverage adoption. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 strict panel now records generic coverage-helper trace, but a fully generic strict contrast panel builder is still pending. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic calculator still pending. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic readiness checklist pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -24,7 +25,8 @@ It is intentionally conservative. A gate can be useful even when it blocks a can
 
 ## Current interpretation
 
-The project has moved from a SIRT6-only coverage-repair phase into a multi-lane gate architecture phase.
+The project has moved from a SIRT6-only coverage-repair phase into a multi-lane
+gate architecture phase.
 
 Current calibration lanes:
 
@@ -32,24 +34,31 @@ Current calibration lanes:
   - first calibration lane
   - most advanced gate stack
   - technical contrast checkpoint exists
+  - generic coverage-helper trace is recorded in the strict panel layer
   - not a validated biological claim
-
 - TP53/MDM2 elephant:
   - second calibration lane
-  - useful because biological_mode = beneficial_breakage
-  - coverage/provenance repair lane has started
+  - useful because `biological_mode = beneficial_breakage`
+  - generic coverage-helper trace is recorded in the coverage preflight layer
   - not yet at SIRT6-level gate maturity
+  - not a validated biological claim
+
+Current generic adoption checkpoint:
+
+- the generic candidate lane registry exists for the current configured lanes
+- the generic coverage preflight helper exists
+- TP53/MDM2 uses the generic coverage helper
+- SIRT6 uses the generic coverage helper
+- the next major frontier is generic control / NEGATOME readiness
 
 Planned lanes:
 
 - HAS2/CD44:
   - transferable_function lane
   - requires extracellular matrix and hyaluronan caveats
-
 - IGF/RHEB/mTOR:
   - signaling_rewiring lane
   - requires hub-risk and network interpretation
-
 - AMPK:
   - signaling_rewiring lane
   - useful for checking that the generic contract handles earlier pilot data
@@ -76,9 +85,8 @@ Disallowed language unless later validation closes the appropriate gates:
 
 ## Boltz policy
 
-Boltz is a downstream compatibility classifier.
-
-It should not be used as a discovery shortcut.
+Boltz is a downstream compatibility classifier. It should not be used as a
+discovery shortcut.
 
 Live Boltz calls require:
 
