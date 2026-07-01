@@ -55,11 +55,17 @@ def test_current_gate_map_records_generic_control_helper_adoption() -> None:
     assert "candidate contrast gate records generic control-helper traces" in text
 
 
-def test_current_gate_map_keeps_strict_panel_generalization_pending() -> None:
+def test_current_gate_map_records_generic_strict_panel_schema() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "fully generic strict contrast panel builder is still pending" in text
-    assert "fully generic strict panel / contrast gate" in text
+    assert "generic strict contrast panel schema exists" in text
+    assert "fully generic strict panel runtime builder" in text
+
+
+def test_current_gate_map_keeps_strict_panel_runtime_builder_pending() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "A fully generic runtime builder is still pending" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:

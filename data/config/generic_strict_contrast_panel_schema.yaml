@@ -1,0 +1,193 @@
+schema_version: 1
+schema_id: generic_strict_contrast_panel_schema
+pipeline_gate: strict_panel_or_contrast_gate
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: strict_panel_readiness
+description: >
+  Generic LongevityPort strict contrast panel schema. This file defines the
+  shared vocabulary for deciding whether a candidate has enough coverage,
+  control-readiness, and long-lived-vs-short-lived panel balance to enter a
+  technical contrast dry run.
+
+purpose: >
+  The strict contrast panel is a readiness gate, not a biological validation
+  layer. It should classify rows as ready, limited dry-run only, blocked,
+  excluded, deferred, or needing manual review before any longevity contrast or
+  cofolding readiness step is allowed.
+
+required_input_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - target_species
+  - target_species_taxid
+  - species_group
+  - coverage_preflight_status
+  - control_readiness_status
+  - contrast_readiness_status
+  - claim_policy
+
+required_output_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - n_strict_panel_ready_species
+  - n_strict_panel_blocked_species
+  - n_strict_long_lived_ready
+  - n_strict_short_lived_ready
+  - strict_long_lived_species
+  - strict_short_lived_species
+  - blocked_target_species
+  - coverage_preflight_statuses
+  - control_readiness_statuses
+  - strict_panel_status
+  - recommended_next_action
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - strict_panel_note
+
+allowed_strict_panel_statuses:
+  - strict_panel_ready
+  - strict_panel_accepted_for_limited_dry_run
+  - blocked_missing_candidate_rows
+  - blocked_missing_coverage_preflight
+  - blocked_species_coverage_repair
+  - blocked_control_readiness
+  - insufficient_strict_panel_species
+  - insufficient_strict_long_lived_species
+  - insufficient_strict_short_lived_species
+  - excluded_from_strict_panel
+  - deferred_pending_source
+  - needs_manual_review
+
+status_groups:
+  dry_run_ready:
+    - strict_panel_ready
+    - strict_panel_accepted_for_limited_dry_run
+  blocked:
+    - blocked_missing_candidate_rows
+    - blocked_missing_coverage_preflight
+    - blocked_species_coverage_repair
+    - blocked_control_readiness
+    - insufficient_strict_panel_species
+    - insufficient_strict_long_lived_species
+    - insufficient_strict_short_lived_species
+    - excluded_from_strict_panel
+    - deferred_pending_source
+    - needs_manual_review
+
+minimum_panel_requirements:
+  min_long_lived_ready_species: 1
+  min_short_lived_ready_species: 1
+  min_total_ready_species: 2
+  required_group_contrast: long_lived_vs_short_lived
+  note: >
+    These are minimal technical dry-run requirements. They do not establish
+    biological significance, functional portability, or compatibility.
+
+decision_rules:
+  strict_panel_ready:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: run_strict_contrast_dry_run_without_biological_claims
+  strict_panel_accepted_for_limited_dry_run:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: run_limited_strict_contrast_dry_run_with_caveat
+  blocked_missing_candidate_rows:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_or_rebuild_candidate_rows
+  blocked_missing_coverage_preflight:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: run_coverage_preflight_before_strict_panel
+  blocked_species_coverage_repair:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: resolve_coverage_repair_decisions
+  blocked_control_readiness:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: resolve_control_readiness_before_strict_panel
+  insufficient_strict_panel_species:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_ready_long_lived_and_short_lived_species
+  insufficient_strict_long_lived_species:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_ready_long_lived_species
+  insufficient_strict_short_lived_species:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_ready_short_lived_control_species
+  excluded_from_strict_panel:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: keep_row_excluded_from_strict_panel
+  deferred_pending_source:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: defer_until_stronger_coverage_or_control_source_exists
+  needs_manual_review:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: perform_manual_strict_panel_review
+
+biological_mode_interpretation:
+  maintained_or_enhanced_repair: >
+    A ready strict panel may support technical contrast planning for maintained
+    compatibility hypotheses, but it does not validate repair function.
+  beneficial_breakage: >
+    A ready strict panel may support technical contrast planning for breakage or
+    weakening hypotheses, but it does not validate regulatory escape.
+  transferable_function: >
+    A ready strict panel may support technical planning only. Context such as
+    extracellular matrix, membrane state, or post-translational modification may
+    still dominate interpretation.
+  signaling_rewiring: >
+    A ready strict panel may support technical planning only. Hub-risk and
+    pathway context remain required before any portability interpretation.
+  hub_risk_review: >
+    A ready strict panel must still be treated as a high-risk technical
+    checkpoint rather than a transferability claim.
+
+allowed_language:
+  - strict panel readiness
+  - technical contrast dry-run
+  - strict contrast planning
+  - limited strict contrast dry-run
+  - blocked strict panel row
+  - coverage/control readiness trace
+  - no-claims gate
+
+disallowed_language:
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - confirmed conserved function
+  - safe to port
+  - proven pro-longevity variant
+  - strict panel validates the candidate
+
+required_guardrails:
+  - no Biohub calls from strict-panel schema checks
+  - no Boltz calls from strict-panel schema checks
+  - no live structural calls from strict-panel schema checks
+  - no embedding generation from strict-panel schema checks
+  - no cofolding input generation from strict-panel schema checks
+  - no enrichment statistic computation from strict-panel schema checks
+  - no biological claims from strict-panel readiness alone
+  - no controlled claims before validation evidence
