@@ -1,0 +1,109 @@
+schema_version: 1
+
+description: >
+  Generic LongevityPort candidate lane registry. Each lane is an instance of the
+  shared candidate lane contract and should pass through the same gated evidence
+  trail before contrast or cofolding readiness is claimed.
+
+allowed_biological_modes:
+  - maintained_or_enhanced_repair
+  - beneficial_breakage
+  - transferable_function
+  - signaling_rewiring
+  - hub_risk_review
+
+claim_policy: no_biological_claims_until_validation
+
+required_gate_sequence:
+  - candidate_set_configuration
+  - manifest
+  - coverage_provenance_preflight
+  - repair_decisions
+  - control_readiness
+  - strict_panel_or_contrast_gate
+  - longevity_contrast
+  - cofolding_readiness
+  - decision_package
+
+lanes:
+  sirt6_dna_repair:
+    candidate_set: sirt6_dna_repair
+    display_name: SIRT6 DNA repair
+    biological_mode: maintained_or_enhanced_repair
+    focus_genes:
+      - SIRT6
+    partner_genes: []
+    lane_role: calibration_lane
+    current_gate_status: advanced_calibration_lane
+    interpretation_policy: >
+      Interface constraint or maintained compatibility can be treated as a
+      technical checkpoint for DNA-repair portability, but not as a validated
+      longevity signal.
+    notes: >
+      First calibration lane and most mature gate stack.
+
+  tp53_mdm2_elephant:
+    candidate_set: tp53_mdm2_elephant
+    display_name: TP53 MDM2 elephant
+    biological_mode: beneficial_breakage
+    focus_genes:
+      - TP53
+    partner_genes:
+      - MDM2
+    lane_role: calibration_lane
+    current_gate_status: seeded_calibration_lane
+    interpretation_policy: >
+      Interface divergence or weakening may be desirable when the biological
+      hypothesis is regulatory escape from MDM2-mediated TP53 suppression.
+    notes: >
+      Second calibration lane; useful because its desired direction can differ
+      from maintained repair.
+
+  has2_cd44_nmr:
+    candidate_set: has2_cd44_nmr
+    display_name: HAS2 CD44 naked mole rat
+    biological_mode: transferable_function
+    focus_genes:
+      - HAS2
+    partner_genes:
+      - CD44
+    lane_role: planned_biological_lane
+    current_gate_status: planned_lane
+    interpretation_policy: >
+      Transferability must be interpreted in extracellular matrix and hyaluronan
+      context, not as a simple interface-only portability claim.
+    notes: >
+      Planned lane for matrix biology and naked mole rat biology.
+
+  igf_rheb_mtor:
+    candidate_set: igf_rheb_mtor
+    display_name: IGF RHEB mTOR
+    biological_mode: signaling_rewiring
+    focus_genes:
+      - IGF1R
+      - RHEB
+      - MTOR
+    partner_genes: []
+    lane_role: planned_biological_lane
+    current_gate_status: planned_lane
+    interpretation_policy: >
+      Signals in this lane require hub-risk and network-context review before
+      any portability interpretation.
+    notes: >
+      Planned signaling lane with high pathway-level pleiotropy risk.
+
+  ampk_pilot:
+    candidate_set: ampk_pilot
+    display_name: AMPK pilot
+    biological_mode: signaling_rewiring
+    focus_genes:
+      - PRKAA1
+      - PRKAA2
+    partner_genes: []
+    lane_role: legacy_pilot_alignment_lane
+    current_gate_status: alignment_needed
+    interpretation_policy: >
+      Earlier AMPK pilot outputs should be aligned with the generic lane
+      registry before being compared with newer gated lanes.
+    notes: >
+      Existing pilot lane to align with the generic architecture.
