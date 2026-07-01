@@ -269,3 +269,71 @@ def test_write_lane_manifest_status_summary_writes_markdown(tmp_path: Path) -> N
     assert "# Lane manifest status summary" in markdown
     assert "| planning_only | 1 |" in markdown
     assert "No biological validation claims" in markdown
+
+
+def test_load_lane_manifest_csv_reads_manifest(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "manifest.csv"
+    manifest_frame(manifest_row()).write_csv(manifest_path)
+
+    manifest = lane_manifest.load_lane_manifest_csv(manifest_path)
+
+    assert manifest.height == 1
+    assert manifest.row(0, named=True)["lane_name"] == "sirt6_dna_repair"
+
+
+def test_run_lane_manifest_status_summary_cli_validates_and_writes_report(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    manifest_path = tmp_path / "manifest.csv"
+    output_path = tmp_path / "reports/lane_manifest_status_summary.md"
+    manifest_frame(manifest_row()).write_csv(manifest_path)
+
+    summary = lane_manifest.run_lane_manifest_status_summary_cli(
+        [
+            str(manifest_path),
+            "--output-path",
+            str(output_path),
+            "--schema-path",
+            str(LANE_MANIFEST_SCHEMA_PATH),
+            "--candidate-lanes-path",
+            str(CANDIDATE_LANES_PATH),
+        ],
+    )
+
+    captured = capsys.readouterr()
+
+    assert summary["row_count"] == 1
+    assert output_path.exists()
+    assert "Wrote lane manifest status summary" in captured.out
+
+    markdown = output_path.read_text(encoding="utf-8")
+    assert "# Lane manifest status summary" in markdown
+    assert "sirt6_dna_repair" in markdown
+    assert "No live Biohub calls" in markdown
+
+
+def test_run_lane_manifest_status_summary_cli_rejects_invalid_manifest(
+    tmp_path: Path,
+) -> None:
+    manifest_path = tmp_path / "manifest.csv"
+    output_path = tmp_path / "lane_manifest_status_summary.md"
+
+    row = manifest_row()
+    row["claim_policy"] = "validated_biological_claims_allowed"
+    manifest_frame(row).write_csv(manifest_path)
+
+    with pytest.raises(ValueError, match="invalid claim_policy"):
+        lane_manifest.run_lane_manifest_status_summary_cli(
+            [
+                str(manifest_path),
+                "--output-path",
+                str(output_path),
+                "--schema-path",
+                str(LANE_MANIFEST_SCHEMA_PATH),
+                "--candidate-lanes-path",
+                str(CANDIDATE_LANES_PATH),
+            ],
+        )
+
+    assert not output_path.exists()

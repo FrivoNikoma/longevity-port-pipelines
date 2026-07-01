@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, cast
 
@@ -397,3 +399,73 @@ def write_lane_manifest_status_summary(
         encoding="utf-8",
     )
     return summary
+
+
+def load_lane_manifest_csv(path: Path) -> pl.DataFrame:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing lane manifest CSV: {path}")
+
+    return pl.read_csv(path)
+
+
+def build_lane_manifest_status_summary_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Validate a generic lane manifest CSV and write a planning-only "
+            "Markdown status summary."
+        ),
+    )
+    parser.add_argument(
+        "manifest_path",
+        help="Path to a lane manifest CSV.",
+    )
+    parser.add_argument(
+        "--output-path",
+        required=True,
+        help="Path where the Markdown summary should be written.",
+    )
+    parser.add_argument(
+        "--schema-path",
+        default=str(DEFAULT_LANE_MANIFEST_SCHEMA_PATH),
+        help="Path to the generic lane manifest schema YAML.",
+    )
+    parser.add_argument(
+        "--candidate-lanes-path",
+        default=str(DEFAULT_CANDIDATE_LANES_PATH),
+        help="Path to the candidate lane registry YAML.",
+    )
+    return parser
+
+
+def run_lane_manifest_status_summary_cli(
+    argv: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    parser = build_lane_manifest_status_summary_parser()
+    args = parser.parse_args(argv)
+
+    manifest_path = Path(args.manifest_path)
+    output_path = Path(args.output_path)
+    schema_path = Path(args.schema_path)
+    candidate_lanes_path = Path(args.candidate_lanes_path)
+
+    manifest = load_lane_manifest_csv(manifest_path)
+    schema = load_lane_manifest_schema(schema_path)
+    candidate_lanes = load_candidate_lanes(candidate_lanes_path)
+
+    validate_lane_manifest(
+        manifest,
+        schema=schema,
+        candidate_lanes=candidate_lanes,
+    )
+    summary = write_lane_manifest_status_summary(manifest, output_path)
+
+    print(f"Wrote lane manifest status summary: {output_path}")
+    return summary
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    run_lane_manifest_status_summary_cli(argv)
+
+
+if __name__ == "__main__":
+    main()
