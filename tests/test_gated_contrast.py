@@ -126,6 +126,13 @@ def test_build_generic_gated_contrast_marks_ready_candidate() -> None:
     assert row["enrichment_log2_ratio"] == pytest.approx(0.8479969)
     assert row["contrast_class"] == "long_lived_specific_interface_divergence"
     assert row["contrast_priority"] == 1
+    assert row["has_multiple_short_lived_controls"] is False
+    assert row["has_multiple_long_lived_species"] is False
+    assert row["short_lived_baseline_is_single_species"] is True
+    assert row["contrast_class_is_directional"] is True
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "technical_single_baseline_review"
+    assert "single-species" in row["robustness_note"]
     assert row["contrast_status"] == "technical_contrast_ready"
     assert (
         row["recommended_next_action"]
@@ -163,10 +170,14 @@ def test_build_generic_gated_contrast_allows_limited_dry_run() -> None:
     )
 
     row = contrast.row(0, named=True)
+
     assert row["contrast_status"] == "technical_contrast_limited_dry_run"
     assert row["recommended_next_action"] == "review_limited_technical_contrast_with_caveat"
     assert row["contrast_dry_run_allowed"] is True
     assert row["controlled_claim_allowed"] is False
+    assert row["contrast_class_is_directional"] is True
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "technical_limited_dry_run_review"
 
 
 def test_build_generic_gated_contrast_blocks_strict_panel_not_ready() -> None:
@@ -197,10 +208,14 @@ def test_build_generic_gated_contrast_blocks_strict_panel_not_ready() -> None:
 
     assert contrast.height == 1
     row = contrast.row(0, named=True)
+
     assert row["contrast_status"] == "blocked_strict_panel_not_ready"
     assert row["recommended_next_action"] == "resolve_strict_panel_before_contrast"
     assert row["contrast_dry_run_allowed"] is False
     assert row["contrast_class"] == "weak_or_unresolved_contrast"
+    assert row["contrast_class_is_directional"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "blocked_before_robustness_review"
 
 
 def test_build_generic_gated_contrast_blocks_missing_long_lived_rows() -> None:
@@ -219,8 +234,12 @@ def test_build_generic_gated_contrast_blocks_missing_long_lived_rows() -> None:
     )
 
     row = contrast.row(0, named=True)
+
     assert row["contrast_status"] == "blocked_missing_long_lived_rows"
     assert row["recommended_next_action"] == "add_ready_long_lived_rows_before_contrast"
+    assert row["contrast_class_is_directional"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "blocked_before_robustness_review"
 
 
 def test_build_generic_gated_contrast_blocks_missing_short_lived_controls() -> None:
@@ -239,17 +258,25 @@ def test_build_generic_gated_contrast_blocks_missing_short_lived_controls() -> N
     )
 
     row = contrast.row(0, named=True)
+
     assert row["contrast_status"] == "blocked_missing_short_lived_controls"
     assert row["recommended_next_action"] == "add_ready_short_lived_control_rows_before_contrast"
+    assert row["contrast_class_is_directional"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "blocked_before_robustness_review"
 
 
 def test_build_generic_gated_contrast_blocks_missing_metrics() -> None:
     frame = ready_input().with_columns(pl.lit(None).cast(pl.Float64).alias("p_two_sided"))
-    contrast = build_generic_gated_contrast(frame)
 
+    contrast = build_generic_gated_contrast(frame)
     row = contrast.row(0, named=True)
+
     assert row["contrast_status"] == "blocked_missing_required_metrics"
     assert row["recommended_next_action"] == "compute_required_metrics_before_contrast"
+    assert row["contrast_class_is_directional"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "blocked_before_robustness_review"
 
 
 def test_build_generic_gated_contrast_aggregates_multiple_short_lived_controls() -> None:
@@ -289,10 +316,97 @@ def test_build_generic_gated_contrast_aggregates_multiple_short_lived_controls()
     )
 
     row = contrast.row(0, named=True)
+
     assert row["short_lived_species"] == "hamster,mouse,rat"
     assert row["short_lived_control_count"] == 3
     assert row["short_enrichment_ratio"] == pytest.approx(1.0)
     assert row["contrast_class"] == "long_lived_specific_interface_divergence"
+    assert row["has_multiple_short_lived_controls"] is True
+    assert row["short_lived_baseline_is_single_species"] is False
+    assert row["has_multiple_long_lived_species"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "technical_single_long_lived_review"
+
+
+def test_build_generic_gated_contrast_marks_multiple_long_lived_species() -> None:
+    contrast = build_generic_gated_contrast(
+        gated_rows(
+            [
+                _row(
+                    target_species="naked_mole_rat",
+                    target_species_taxid=10181,
+                    species_group="long_lived_small_body",
+                    enrichment_ratio=1.8,
+                    effect_size=0.9,
+                ),
+                _row(
+                    target_species="myotis",
+                    target_species_taxid=59463,
+                    species_group="long_lived_small_body",
+                    enrichment_ratio=1.7,
+                    effect_size=0.8,
+                ),
+                _row(
+                    target_species="mouse",
+                    target_species_taxid=10090,
+                    species_group="short_lived_control",
+                    enrichment_ratio=1.0,
+                    effect_size=0.0,
+                ),
+                _row(
+                    target_species="rat",
+                    target_species_taxid=10116,
+                    species_group="short_lived_control",
+                    enrichment_ratio=1.0,
+                    effect_size=0.0,
+                ),
+            ]
+        )
+    )
+
+    assert contrast.height == 2
+    assert set(contrast["long_lived_species"].to_list()) == {
+        "myotis",
+        "naked_mole_rat",
+    }
+
+    for row in contrast.iter_rows(named=True):
+        assert row["has_multiple_short_lived_controls"] is True
+        assert row["has_multiple_long_lived_species"] is True
+        assert row["short_lived_baseline_is_single_species"] is False
+        assert row["contrast_class_is_directional"] is True
+        assert row["contrast_requires_review"] is False
+        assert row["robustness_status"] == "technical_multispecies_contrast"
+
+
+def test_build_generic_gated_contrast_marks_weak_or_unresolved_for_review() -> None:
+    contrast = build_generic_gated_contrast(
+        gated_rows(
+            [
+                _row(
+                    target_species="naked_mole_rat",
+                    target_species_taxid=10181,
+                    species_group="long_lived_small_body",
+                    enrichment_ratio=1.05,
+                    effect_size=0.05,
+                ),
+                _row(
+                    target_species="mouse",
+                    target_species_taxid=10090,
+                    species_group="short_lived_control",
+                    enrichment_ratio=1.0,
+                    effect_size=0.0,
+                ),
+            ]
+        )
+    )
+
+    row = contrast.row(0, named=True)
+
+    assert row["contrast_class"] == "weak_or_unresolved_contrast"
+    assert row["contrast_class_is_directional"] is False
+    assert row["contrast_requires_review"] is True
+    assert row["robustness_status"] == "technical_weak_or_unresolved_review"
 
 
 def test_build_generic_gated_contrast_keeps_multiple_candidates_separate() -> None:

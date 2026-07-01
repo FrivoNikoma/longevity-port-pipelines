@@ -70,6 +70,13 @@ GATED_CONTRAST_SCHEMA = {
     "enrichment_log2_ratio": pl.Float64,
     "contrast_class": pl.Utf8,
     "contrast_priority": pl.Int64,
+    "has_multiple_short_lived_controls": pl.Boolean,
+    "has_multiple_long_lived_species": pl.Boolean,
+    "short_lived_baseline_is_single_species": pl.Boolean,
+    "contrast_class_is_directional": pl.Boolean,
+    "contrast_requires_review": pl.Boolean,
+    "robustness_status": pl.Utf8,
+    "robustness_note": pl.Utf8,
     "contrast_status": pl.Utf8,
     "recommended_next_action": pl.Utf8,
     "contrast_dry_run_allowed": pl.Boolean,
@@ -192,6 +199,88 @@ def _summary_from_rows(rows: list[dict[str, Any]]) -> pl.DataFrame:
             for column, dtype in GATED_CONTRAST_SCHEMA.items()
         ]
     )
+
+
+DIRECTIONAL_CONTRAST_CLASSES = frozenset(
+    {
+        "long_lived_specific_interface_divergence",
+        "long_lived_enhanced_interface_divergence",
+        "long_lived_specific_interface_constraint",
+        "long_lived_enhanced_interface_constraint",
+        "shared_nonhuman_interface_divergence",
+        "shared_interface_constraint",
+        "short_lived_baseline_stronger_signal",
+    }
+)
+
+
+def _robustness_fields(
+    *,
+    contrast_class: str,
+    contrast_status: str,
+    short_lived_control_count: int,
+    long_lived_species_count: int,
+) -> dict[str, Any]:
+    has_multiple_short_lived_controls = short_lived_control_count >= 2
+    has_multiple_long_lived_species = long_lived_species_count >= 2
+    short_lived_baseline_is_single_species = short_lived_control_count == 1
+    contrast_class_is_directional = contrast_class in DIRECTIONAL_CONTRAST_CLASSES
+
+    if contrast_status not in {
+        "technical_contrast_ready",
+        "technical_contrast_limited_dry_run",
+    }:
+        return {
+            "has_multiple_short_lived_controls": has_multiple_short_lived_controls,
+            "has_multiple_long_lived_species": has_multiple_long_lived_species,
+            "short_lived_baseline_is_single_species": short_lived_baseline_is_single_species,
+            "contrast_class_is_directional": False,
+            "contrast_requires_review": True,
+            "robustness_status": "blocked_before_robustness_review",
+            "robustness_note": (
+                "Upstream gated contrast readiness is blocked; robustness is not evaluated."
+            ),
+        }
+
+    if contrast_status == "technical_contrast_limited_dry_run":
+        robustness_status = "technical_limited_dry_run_review"
+        robustness_note = "Limited dry-run contrast requires review before downstream planning."
+    elif contrast_class == "weak_or_unresolved_contrast":
+        robustness_status = "technical_weak_or_unresolved_review"
+        robustness_note = "Contrast is weak or unresolved under current thresholds."
+    elif contrast_class == "short_lived_baseline_stronger_signal":
+        robustness_status = "technical_short_lived_baseline_review"
+        robustness_note = (
+            "Short-lived baseline has the stronger directional signal; "
+            "review before downstream planning."
+        )
+    elif short_lived_baseline_is_single_species:
+        robustness_status = "technical_single_baseline_review"
+        robustness_note = (
+            "Short-lived baseline is single-species; review for species-specific artifacts."
+        )
+    elif not has_multiple_long_lived_species:
+        robustness_status = "technical_single_long_lived_review"
+        robustness_note = (
+            "Long-lived side is single-species; "
+            "review before treating contrast as multi-species supported."
+        )
+    else:
+        robustness_status = "technical_multispecies_contrast"
+        robustness_note = (
+            "Contrast has multiple short-lived controls and multiple long-lived species "
+            "represented."
+        )
+
+    return {
+        "has_multiple_short_lived_controls": has_multiple_short_lived_controls,
+        "has_multiple_long_lived_species": has_multiple_long_lived_species,
+        "short_lived_baseline_is_single_species": short_lived_baseline_is_single_species,
+        "contrast_class_is_directional": contrast_class_is_directional,
+        "contrast_requires_review": robustness_status != "technical_multispecies_contrast",
+        "robustness_status": robustness_status,
+        "robustness_note": robustness_note,
+    }
 
 
 def _class_priority(contrast_class: str) -> int:
@@ -330,6 +419,12 @@ def _blocked_record(
         "enrichment_log2_ratio": math.nan,
         "contrast_class": "weak_or_unresolved_contrast",
         "contrast_priority": _class_priority("weak_or_unresolved_contrast"),
+        **_robustness_fields(
+            contrast_class="weak_or_unresolved_contrast",
+            contrast_status=readiness_status,
+            short_lived_control_count=len(short_species),
+            long_lived_species_count=len(long_species),
+        ),
         "contrast_status": readiness_status,
         "recommended_next_action": recommended_next_action,
         "contrast_dry_run_allowed": contrast_dry_run_allowed,
@@ -357,6 +452,7 @@ def _ready_records(
     key_row: dict[str, Any],
     long_rows: list[dict[str, Any]],
     short_baseline: dict[str, Any],
+    long_lived_species_count: int,
     readiness_status: str,
     recommended_next_action: str,
     contrast_dry_run_allowed: bool,
@@ -369,6 +465,7 @@ def _ready_records(
 
     short_ratio = float(short_baseline["short_enrichment_ratio"])
     short_effect = float(short_baseline["short_effect_size"])
+    short_lived_control_count = int(short_baseline["short_lived_control_count"])
 
     for long_row in long_rows:
         long_ratio = _as_float(long_row, "enrichment_ratio")
@@ -387,13 +484,19 @@ def _ready_records(
                 **key_row,
                 "long_lived_species": _as_str(long_row, "target_species"),
                 "short_lived_species": short_baseline["short_lived_species"],
-                "short_lived_control_count": short_baseline["short_lived_control_count"],
+                "short_lived_control_count": short_lived_control_count,
                 "long_enrichment_ratio": long_ratio,
                 "short_enrichment_ratio": short_ratio,
                 "enrichment_delta": enrichment_delta,
                 "enrichment_log2_ratio": _safe_log2_ratio(long_ratio, short_ratio),
                 "contrast_class": contrast_class,
                 "contrast_priority": _class_priority(contrast_class),
+                **_robustness_fields(
+                    contrast_class=contrast_class,
+                    contrast_status=readiness_status,
+                    short_lived_control_count=short_lived_control_count,
+                    long_lived_species_count=long_lived_species_count,
+                ),
                 "contrast_status": readiness_status,
                 "recommended_next_action": recommended_next_action,
                 "contrast_dry_run_allowed": contrast_dry_run_allowed,
@@ -438,6 +541,9 @@ def build_generic_gated_contrast(gated_contrast_input: pl.DataFrame) -> pl.DataF
             if _is_short_lived_group(_as_str(row, "species_group"))
             and _as_str(row, "target_species")
         ]
+        long_lived_species_count = len(
+            {_as_str(row, "target_species") for row in long_rows if _as_str(row, "target_species")}
+        )
 
         metrics_ready = _required_metrics_ready(candidate_rows)
         readiness = gated_contrast_readiness_for_statuses(
@@ -477,6 +583,7 @@ def build_generic_gated_contrast(gated_contrast_input: pl.DataFrame) -> pl.DataF
                 key_row=key_row,
                 long_rows=long_rows,
                 short_baseline=short_baseline,
+                long_lived_species_count=long_lived_species_count,
                 readiness_status=readiness.contrast_status,
                 recommended_next_action=readiness.recommended_next_action,
                 contrast_dry_run_allowed=readiness.contrast_dry_run_allowed,
