@@ -6,6 +6,8 @@ from typing import Annotated, Any
 import polars as pl
 import typer
 
+from longevity_port_pipelines.config import SPECIES_REGISTRY
+from longevity_port_pipelines.stages import strict_contrast_panel as strict_panel
 from longevity_port_pipelines.stages.coverage_preflight import (
     CONSERVATIVE_CLAIM_POLICY,
     coverage_preflight_for_statuses,
@@ -22,6 +24,14 @@ from longevity_port_pipelines.stages.tp53_mdm2_pilot_manifest_validator import (
 )
 
 DEFAULT_OUTPUT = Path("data/interim/tp53_mdm2_pilot_coverage_preflight.csv")
+DEFAULT_STRICT_PANEL_OUTPUT = Path("data/interim/tp53_mdm2_pilot_generic_strict_panel_summary.csv")
+
+TP53_MDM2_LANE_NAME = "tp53_mdm2_elephant"
+TP53_MDM2_DEFAULT_PRIORITY = "1"
+TP53_MDM2_CONTROL_READINESS_STATUS = "controls_not_evaluated_coverage_blocked"
+TP53_MDM2_SPECIES_GROUP_BY_TARGET = {
+    "elephant": "long_lived_large_body",
+}
 
 REPAIR_KEY_COLUMNS = (
     "candidate_id",
@@ -83,6 +93,31 @@ def _repair_key(row: dict[str, Any]) -> tuple[str, str, str, str]:
         _as_str(row, "target_species"),
         _as_str(row, "chain"),
     )
+
+
+def _target_species_taxid(target_species: str) -> int | str:
+    species = SPECIES_REGISTRY.get(target_species)
+    if species is not None:
+        return species.taxid
+
+    for registered_species in SPECIES_REGISTRY.values():
+        if registered_species.name == target_species:
+            return registered_species.taxid
+
+    return ""
+
+
+def _species_group_for_target_species(target_species: str) -> str:
+    return TP53_MDM2_SPECIES_GROUP_BY_TARGET.get(
+        target_species,
+        "unresolved_species_group",
+    )
+
+
+def _validate_preflight_columns(preflight: pl.DataFrame, required: set[str]) -> None:
+    missing = required - set(preflight.columns)
+    if missing:
+        raise ValueError(f"TP53/MDM2 coverage preflight is missing columns: {sorted(missing)}")
 
 
 def _empty_preflight() -> pl.DataFrame:
@@ -252,6 +287,80 @@ def build_tp53_mdm2_pilot_coverage_preflight(
     return _preflight_from_rows(rows).sort(["coverage_preflight_status", "candidate_id", "chain"])
 
 
+def build_tp53_mdm2_generic_strict_panel_input(preflight: pl.DataFrame) -> pl.DataFrame:
+    """Map TP53/MDM2 coverage preflight rows into the generic Gate 7 input schema."""
+
+    _validate_preflight_columns(
+        preflight,
+        {
+            "candidate_set",
+            "candidate_id",
+            "pdb_id",
+            "chain",
+            "source_uniprot",
+            "target_species",
+            "strict_contrast_gate_status",
+            "generic_coverage_preflight_status",
+            "generic_claim_policy",
+        },
+    )
+
+    rows: list[dict[str, Any]] = []
+    for row in preflight.iter_rows(named=True):
+        target_species = _as_str(row, "target_species")
+        rows.append(
+            {
+                "candidate_set": _as_str(row, "candidate_set"),
+                "lane_name": TP53_MDM2_LANE_NAME,
+                "candidate_id": _as_str(row, "candidate_id"),
+                "pdb_id": _as_str(row, "pdb_id"),
+                "chain": _as_str(row, "chain"),
+                "source_uniprot": _as_str(row, "source_uniprot"),
+                "priority": TP53_MDM2_DEFAULT_PRIORITY,
+                "target_species": target_species,
+                "target_species_taxid": _target_species_taxid(target_species),
+                "species_group": _species_group_for_target_species(target_species),
+                "coverage_preflight_status": _as_str(
+                    row,
+                    "generic_coverage_preflight_status",
+                ),
+                "control_readiness_status": TP53_MDM2_CONTROL_READINESS_STATUS,
+                "contrast_readiness_status": _as_str(row, "strict_contrast_gate_status"),
+                "claim_policy": (_as_str(row, "generic_claim_policy") or CONSERVATIVE_CLAIM_POLICY),
+            }
+        )
+
+    if not rows:
+        return pl.DataFrame(schema={column: pl.Utf8 for column in strict_panel.REQUIRED_COLUMNS})
+
+    return pl.DataFrame(rows).select(
+        [
+            "candidate_set",
+            "lane_name",
+            "candidate_id",
+            "pdb_id",
+            "chain",
+            "source_uniprot",
+            "priority",
+            "target_species",
+            "target_species_taxid",
+            "species_group",
+            "coverage_preflight_status",
+            "control_readiness_status",
+            "contrast_readiness_status",
+            "claim_policy",
+        ]
+    )
+
+
+def build_tp53_mdm2_generic_strict_panel_summary(preflight: pl.DataFrame) -> pl.DataFrame:
+    """Build the TP53/MDM2 generic strict panel summary from coverage preflight rows."""
+
+    return strict_panel.build_generic_strict_panel_summary(
+        build_tp53_mdm2_generic_strict_panel_input(preflight)
+    )
+
+
 def status_counts(preflight: pl.DataFrame) -> dict[str, int]:
     if preflight.is_empty():
         return {}
@@ -286,6 +395,13 @@ def main(
             help="Output CSV path for the TP53/MDM2 coverage preflight table.",
         ),
     ] = DEFAULT_OUTPUT,
+    strict_panel_output: Annotated[
+        Path,
+        typer.Option(
+            "--strict-panel-output",
+            help="Output CSV path for the TP53/MDM2 generic strict panel summary.",
+        ),
+    ] = DEFAULT_STRICT_PANEL_OUTPUT,
 ) -> dict[str, Any]:
     """Build a TP53/MDM2 pilot coverage preflight table."""
 
@@ -296,14 +412,24 @@ def main(
         repair_decisions=repair_decisions,
     )
 
+    strict_panel_summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
+
     output.parent.mkdir(parents=True, exist_ok=True)
     preflight.write_csv(output)
+
+    strict_panel_output.parent.mkdir(parents=True, exist_ok=True)
+    strict_panel_summary.write_csv(strict_panel_output)
 
     typer.echo(f"TP53/MDM2 pilot coverage preflight rows: {preflight.height}")
     for status, count in sorted(status_counts(preflight).items()):
         typer.echo(f"{status}: {count}")
 
     typer.echo(f"Wrote TP53/MDM2 pilot coverage preflight -> {output}")
+    typer.echo(f"Wrote TP53/MDM2 generic strict panel summary -> {strict_panel_output}")
+    for status, count in sorted(
+        strict_panel.strict_panel_status_counts(strict_panel_summary).items()
+    ):
+        typer.echo(f"strict panel {status}: {count}")
     typer.echo(f"Applied TP53/MDM2 repair decisions from -> {repair_decisions_path}")
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
@@ -317,7 +443,9 @@ def main(
         "input": str(input_path),
         "repair_decisions": str(repair_decisions_path),
         "output": str(output),
+        "strict_panel_output": str(strict_panel_output),
         "rows": preflight.height,
+        "strict_panel_rows": strict_panel_summary.height,
         "claim_policy": EXPECTED_CLAIM_POLICY,
         "no_live_actions": True,
     }

@@ -16,7 +16,7 @@ defer worklist.
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper now exist, and the candidate contrast gate records generic control-helper traces. Fully generic control outputs across all lanes are still pending. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace, and the generic strict panel runtime builder now exists. Cross-lane adoption beyond SIRT6 remains pending. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace, the generic strict panel runtime builder exists, and TP53/MDM2 preflight now emits a generic strict panel summary while remaining blocked by coverage. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic calculator still pending. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic readiness checklist pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -40,6 +40,7 @@ Current calibration lanes:
   - second calibration lane
   - useful because `biological_mode = beneficial_breakage`
   - generic coverage-helper trace is recorded in the coverage preflight layer
+  - generic strict panel builder emits a blocked Gate 7 summary
   - not yet at SIRT6-level gate maturity
   - not a validated biological claim
 
@@ -56,7 +57,8 @@ Current generic adoption checkpoint:
 - the generic strict contrast panel helper exists
 - the SIRT6 strict panel summary records generic strict panel helper trace
 - the generic strict panel runtime builder exists
-- the next major frontier is wiring the generic strict panel builder into additional lanes
+- TP53/MDM2 uses the generic strict panel builder
+- the next major frontier is wiring the generic strict panel builder into remaining lanes or starting the Gate 8 generic contrast calculator
 
 Planned lanes:
 

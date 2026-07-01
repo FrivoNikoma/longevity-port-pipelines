@@ -3,8 +3,11 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from longevity_port_pipelines.stages import strict_contrast_panel as strict_panel
 from longevity_port_pipelines.stages import tp53_mdm2_ortholog_repair_decisions as repair
 from longevity_port_pipelines.stages.tp53_mdm2_pilot_coverage_preflight import (
+    build_tp53_mdm2_generic_strict_panel_input,
+    build_tp53_mdm2_generic_strict_panel_summary,
     build_tp53_mdm2_pilot_coverage_preflight,
     coverage_preflight_status,
     recommended_next_action,
@@ -218,3 +221,83 @@ def test_build_tp53_mdm2_pilot_coverage_preflight_uses_generic_helper_without_re
     }
     assert set(preflight.get_column("strict_panel_allowed").to_list()) == {False}
     assert set(preflight.get_column("contrast_dry_run_allowed").to_list()) == {False}
+
+
+def test_build_tp53_mdm2_generic_strict_panel_input_uses_generic_schema_fields() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
+
+    strict_input = build_tp53_mdm2_generic_strict_panel_input(preflight)
+
+    assert strict_input.height == preflight.height
+    assert set(strict_panel.REQUIRED_COLUMNS).issubset(set(strict_input.columns))
+    assert set(strict_input.get_column("lane_name").to_list()) == {"tp53_mdm2_elephant"}
+    assert set(strict_input.get_column("target_species").to_list()) == {"elephant"}
+    assert set(strict_input.get_column("target_species_taxid").to_list()) == {9785}
+    assert set(strict_input.get_column("species_group").to_list()) == {"long_lived_large_body"}
+    assert set(strict_input.get_column("coverage_preflight_status").to_list()) == {
+        "blocked_pending_repair_review"
+    }
+    assert set(strict_input.get_column("control_readiness_status").to_list()) == {
+        "controls_not_evaluated_coverage_blocked"
+    }
+    assert set(strict_input.get_column("claim_policy").to_list()) == {
+        "no_biological_claims_until_validation"
+    }
+
+
+def test_build_tp53_mdm2_generic_strict_panel_summary_blocks_current_rows() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
+
+    summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
+
+    assert summary.height == 2
+    assert set(summary.get_column("candidate_id").to_list()) == {
+        "tp53_mdm2_elephant_seed_tp53_chain",
+        "tp53_mdm2_elephant_seed_mdm2_chain",
+    }
+    assert set(summary.get_column("strict_panel_status").to_list()) == {
+        "blocked_species_coverage_repair"
+    }
+    assert set(summary.get_column("recommended_next_action").to_list()) == {
+        "resolve_coverage_repair_decisions"
+    }
+    assert set(summary.get_column("contrast_dry_run_allowed").to_list()) == {False}
+    assert set(summary.get_column("controlled_claim_allowed").to_list()) == {False}
+    assert set(summary.get_column("n_strict_panel_ready_species").to_list()) == {0}
+    assert set(summary.get_column("n_strict_panel_blocked_species").to_list()) == {1}
+    assert set(summary.get_column("n_strict_long_lived_ready").to_list()) == {0}
+    assert set(summary.get_column("n_strict_short_lived_ready").to_list()) == {0}
+    assert set(summary.get_column("blocked_target_species").to_list()) == {"elephant"}
+
+
+def test_build_tp53_mdm2_generic_strict_panel_summary_does_not_make_claims() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
+
+    summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
+
+    assert set(summary.get_column("claim_policy").to_list()) == {
+        "no_biological_claims_until_validation"
+    }
+    assert set(summary.get_column("claim_status").to_list()) == {"strict_panel_readiness"}
+    assert set(summary.get_column("controlled_claim_allowed").to_list()) == {False}
+
+    forbidden_values = {
+        "biological_claim",
+        "validated_biological_signal",
+        "eligible_for_cofolding_live_run",
+        "submit_live_boltz_now",
+    }
+    observed_values = set()
+    for column in summary.columns:
+        observed_values.update(str(value) for value in summary.get_column(column).to_list())
+
+    assert observed_values.isdisjoint(forbidden_values)

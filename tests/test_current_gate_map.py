@@ -61,13 +61,15 @@ def test_current_gate_map_records_generic_strict_panel_schema_helper_and_builder
     assert "generic strict contrast panel helper exists" in text
     assert "SIRT6 strict panel summary records generic strict panel helper trace" in text
     assert "generic strict panel runtime builder exists" in text
+    assert "TP53/MDM2 uses the generic strict panel builder" in text
+    assert "TP53/MDM2 preflight now emits a generic strict panel summary" in text
 
 
 def test_current_gate_map_records_next_strict_panel_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "wiring the generic strict panel builder into additional lanes" in text
-    assert "Cross-lane adoption beyond SIRT6 remains pending" in text
+    assert "generic strict panel builder into remaining lanes" in text
+    assert "Gate 8 generic contrast calculator" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:
