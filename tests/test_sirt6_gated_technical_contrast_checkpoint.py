@@ -13,10 +13,13 @@ def test_sirt6_gated_technical_contrast_checkpoint_records_command_and_outputs()
     text = DOC_PATH.read_text(encoding="utf8")
 
     assert "uv run longevity-contrast" in text
+    assert "uv run sirt6-generic-gated-contrast" in text
     assert "data/output/sirt6_mini_pilot_v2_enrichment_mapped.parquet" in text
     assert "data/interim/sirt6_candidate_contrast_gate.csv" in text
     assert "data/output/sirt6_gated_longevity_contrast.csv" in text
     assert "data/output/sirt6_gated_longevity_contrast_blocked.csv" in text
+    assert "data/interim/sirt6_generic_gated_contrast_input.csv" in text
+    assert "data/output/sirt6_generic_gated_contrast_summary.csv" in text
 
 
 def test_sirt6_gated_technical_contrast_checkpoint_records_gate_policy() -> None:
@@ -47,3 +50,12 @@ def test_sirt6_gated_technical_contrast_checkpoint_records_no_live_actions() -> 
     assert "compute new enrichment statistics" in text
     assert "submit cofolding jobs" in text
     assert "make wet-lab or biological validation claims" in text
+
+
+def test_sirt6_gated_technical_contrast_checkpoint_records_generic_gate8_wrapper() -> None:
+    text = DOC_PATH.read_text(encoding="utf8")
+
+    assert "generic Gate 8 dry-run wrapper" in text
+    assert "SIRT6 generic gated contrast input bridge" in text
+    assert "shared generic gated contrast runtime" in text
+    assert "Generic robustness annotations are review aids" in text

@@ -68,7 +68,8 @@ def test_current_gate_map_records_generic_strict_panel_schema_helper_and_builder
 def test_current_gate_map_records_next_gate8_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic gated contrast runtime into calibration lanes" in text
+    assert "generic gated contrast runtime into additional calibration lanes beyond SIRT6" in text
+    assert "generic gated contrast runtime into calibration lanes" not in text
     assert "contrast robustness flags" not in text
 
 
@@ -77,7 +78,8 @@ def test_current_gate_map_records_generic_gated_contrast_runtime() -> None:
 
     assert (
         "generic Gate 8 gated contrast schema, helper, runtime calculator, "
-        "and robustness annotations now exist"
+        "robustness annotations, SIRT6 generic input bridge, and SIRT6 generic "
+        "dry-run wrapper now exist"
     ) in text
     assert "generic gated contrast schema exists" in text
     assert "generic gated contrast helper exists" in text
@@ -92,3 +94,12 @@ def test_current_gate_map_contains_claim_policy_guardrails() -> None:
     assert "validated longevity signal" in text
     assert "proven pro-longevity variant" in text
     assert "Disallowed language" in text
+
+
+def test_current_gate_map_records_sirt6_generic_gate8_dry_run_path() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic Gate 8 input bridge exists" in text
+    assert "generic Gate 8 dry-run wrapper exists" in text
+    assert "SIRT6 generic gated contrast input bridge exists" in text
+    assert "SIRT6 generic gated contrast dry-run wrapper exists" in text
