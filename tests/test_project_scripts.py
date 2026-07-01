@@ -22,3 +22,9 @@ def test_generic_strict_panel_cli_is_registered_as_project_script() -> None:
     assert scripts["strict-contrast-panel"] == (
         "longevity_port_pipelines.stages.strict_contrast_panel:app"
     )
+
+
+def test_generic_gated_contrast_cli_is_registered_as_project_script() -> None:
+    scripts = load_pyproject()["project"]["scripts"]
+
+    assert scripts["gated-contrast"] == "longevity_port_pipelines.stages.gated_contrast:app"
