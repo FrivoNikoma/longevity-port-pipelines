@@ -55,10 +55,11 @@ def test_current_gate_map_records_generic_control_helper_adoption() -> None:
     assert "candidate contrast gate records generic control-helper traces" in text
 
 
-def test_current_gate_map_records_generic_strict_panel_schema() -> None:
+def test_current_gate_map_records_generic_strict_panel_schema_and_helper() -> None:
     text = read_doc("docs/current_gate_map.md")
 
     assert "generic strict contrast panel schema exists" in text
+    assert "generic strict contrast panel helper exists" in text
     assert "fully generic strict panel runtime builder" in text
 
 
