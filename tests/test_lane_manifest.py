@@ -1,0 +1,185 @@
+from pathlib import Path
+
+import polars as pl
+import pytest
+
+from longevity_port_pipelines.stages import lane_manifest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+LANE_MANIFEST_SCHEMA_PATH = ROOT / "data/config/lane_manifest_schema.yaml"
+CANDIDATE_LANES_PATH = ROOT / "data/config/candidate_lanes.yaml"
+
+
+def load_schema() -> dict:
+    return lane_manifest.load_lane_manifest_schema(LANE_MANIFEST_SCHEMA_PATH)
+
+
+def load_candidate_lanes() -> dict:
+    return lane_manifest.load_candidate_lanes(CANDIDATE_LANES_PATH)
+
+
+def manifest_row() -> dict[str, str]:
+    schema = load_schema()
+    candidate_lanes = load_candidate_lanes()
+    lane_name = "sirt6_dna_repair"
+    lane = candidate_lanes["lanes"][lane_name]
+
+    return {
+        "candidate_set": lane["candidate_set"],
+        "candidate_id": "sirt6_example_candidate",
+        "lane_name": lane_name,
+        "lane_lifecycle_status": "calibration",
+        "biological_mode": lane["biological_mode"],
+        "source_species": "human",
+        "source_species_taxid": "9606",
+        "target_species": "naked_mole_rat",
+        "target_species_taxid": "10181",
+        "gene_symbol": "SIRT6",
+        "source_uniprot": "Q8N6T7",
+        "target_uniprot": "example_target_uniprot",
+        "partner_gene_symbol": "XRCC6",
+        "partner_source_uniprot": "P12956",
+        "partner_target_uniprot": "example_partner_target_uniprot",
+        "interaction_role": "receptor",
+        "evidence_scope": "planning_manifest_only",
+        "gate_sequence": ",".join(schema["required_gate_status_fields"]),
+        "manifest_status": "planning_only",
+        "claim_policy": schema["claim_policy"],
+        "claim_status": "planning_only",
+        "reviewer_note": "Synthetic validator smoke row; no biological claim.",
+    }
+
+
+def manifest_frame(*rows: dict[str, str]) -> pl.DataFrame:
+    return pl.DataFrame(list(rows))
+
+
+def test_load_lane_manifest_schema_reads_committed_schema() -> None:
+    schema = load_schema()
+
+    assert schema["schema_id"] == "generic_lane_manifest_schema"
+    assert schema["claim_policy"] == "no_biological_claims_until_validation"
+
+
+def test_empty_lane_manifest_uses_required_schema_fields() -> None:
+    schema = load_schema()
+    empty = lane_manifest.empty_lane_manifest(schema)
+
+    assert empty.is_empty()
+    assert set(empty.columns) == set(schema["required_manifest_fields"])
+
+
+def test_validate_lane_manifest_accepts_valid_manifest_row() -> None:
+    lane_manifest.validate_lane_manifest(
+        manifest_frame(manifest_row()),
+        schema=load_schema(),
+        candidate_lanes=load_candidate_lanes(),
+    )
+
+
+def test_validate_lane_manifest_rejects_missing_required_columns() -> None:
+    row = manifest_row()
+    row.pop("reviewer_note")
+
+    with pytest.raises(ValueError, match="missing required columns"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_blank_required_fields() -> None:
+    row = manifest_row()
+    row["target_uniprot"] = ""
+
+    with pytest.raises(ValueError, match="blank required fields"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_duplicate_manifest_keys() -> None:
+    row = manifest_row()
+
+    with pytest.raises(ValueError, match="duplicate manifest identity rows"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row, row.copy()),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_unknown_lane_name() -> None:
+    row = manifest_row()
+    row["lane_name"] = "unknown_lane"
+
+    with pytest.raises(ValueError, match="unknown lane_name"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_candidate_set_mismatch() -> None:
+    row = manifest_row()
+    row["candidate_set"] = "wrong_candidate_set"
+
+    with pytest.raises(ValueError, match="candidate_set does not match"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_biological_mode_mismatch() -> None:
+    row = manifest_row()
+    row["biological_mode"] = "beneficial_breakage"
+
+    with pytest.raises(ValueError, match="biological_mode does not match"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_invalid_manifest_status() -> None:
+    row = manifest_row()
+    row["manifest_status"] = "validated_biological_hit"
+
+    with pytest.raises(ValueError, match="invalid manifest_status"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_nonconservative_claim_policy() -> None:
+    row = manifest_row()
+    row["claim_policy"] = "validated_biological_claims_allowed"
+
+    with pytest.raises(ValueError, match="invalid claim_policy"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
+
+
+def test_validate_lane_manifest_rejects_incomplete_gate_sequence() -> None:
+    row = manifest_row()
+    row["gate_sequence"] = "manifest"
+
+    with pytest.raises(ValueError, match="gate_sequence is missing gates"):
+        lane_manifest.validate_lane_manifest(
+            manifest_frame(row),
+            schema=load_schema(),
+            candidate_lanes=load_candidate_lanes(),
+        )
