@@ -6,6 +6,10 @@ from typing import Annotated, Any
 import polars as pl
 import typer
 
+from longevity_port_pipelines.stages.coverage_preflight import (
+    CONSERVATIVE_CLAIM_POLICY,
+    coverage_preflight_for_statuses,
+)
 from longevity_port_pipelines.stages.tp53_mdm2_ortholog_repair_decisions import (
     DEFAULT_REPAIR_DECISIONS_PATH,
     read_repair_decisions,
@@ -45,8 +49,17 @@ COVERAGE_PREFLIGHT_SCHEMA = {
     "repair_note": pl.Utf8,
     "claim_policy": pl.Utf8,
     "coverage_preflight_note": pl.Utf8,
+    "generic_coverage_status": pl.Utf8,
+    "generic_provenance_status": pl.Utf8,
+    "generic_repair_status": pl.Utf8,
+    "generic_coverage_preflight_status": pl.Utf8,
+    "generic_recommended_next_action": pl.Utf8,
+    "strict_panel_allowed": pl.Boolean,
+    "contrast_dry_run_allowed": pl.Boolean,
+    "generic_claim_policy": pl.Utf8,
+    "generic_claim_status": pl.Utf8,
+    "generic_coverage_preflight_note": pl.Utf8,
 }
-
 
 app = typer.Typer(
     help=(
@@ -124,6 +137,43 @@ def recommended_next_action(coverage_status: str) -> str:
     return "resolve_manifest_gate_blocker_before_coverage_preflight"
 
 
+def generic_coverage_status_for_gate(strict_contrast_gate_status: str) -> str:
+    if strict_contrast_gate_status == "eligible_for_contrast_dry_run":
+        return "coverage_ready"
+    if strict_contrast_gate_status == "blocked_contrast_coverage":
+        return "missing_source_ortholog"
+    return "unresolved_downstream_provenance"
+
+
+def generic_provenance_status_for_source_ortholog_status(
+    source_ortholog_status: str,
+) -> str:
+    if source_ortholog_status == "present_source_ortholog":
+        return "standard_source_present"
+    if source_ortholog_status == "manual_review_required":
+        return "manual_review_required"
+    return "unresolved"
+
+
+def generic_repair_status_for_decision(
+    *,
+    repair_decision: str,
+    generic_coverage_status: str,
+) -> str:
+    if repair_decision == "coverage_ready":
+        return "repaired_for_planning"
+    if repair_decision == "fetch_or_curate_source_ortholog":
+        return "pending"
+    if repair_decision in {
+        "defer_until_manual_review",
+        "review_local_rows_without_source_ortholog",
+    }:
+        return "needs_manual_review"
+    if generic_coverage_status == "coverage_ready":
+        return "not_needed"
+    return ""
+
+
 def build_tp53_mdm2_pilot_coverage_preflight(
     manifest: pl.DataFrame,
     *,
@@ -140,6 +190,28 @@ def build_tp53_mdm2_pilot_coverage_preflight(
         coverage_status = coverage_preflight_status(gate_status)
         repair = repair_by_key.get(_repair_key(row), {})
 
+        source_ortholog_status = "not_checked"
+        local_candidate_row_status = "not_checked"
+        repair_decision = repair.get("repair_decision", "")
+        repair_priority = repair.get("repair_priority", "")
+        repair_claim_policy = repair.get("repair_claim_policy", "")
+        repair_note = repair.get("repair_note", "")
+
+        generic_coverage_status = generic_coverage_status_for_gate(gate_status)
+        generic_provenance_status = generic_provenance_status_for_source_ortholog_status(
+            source_ortholog_status
+        )
+        generic_repair_status = generic_repair_status_for_decision(
+            repair_decision=repair_decision,
+            generic_coverage_status=generic_coverage_status,
+        )
+        generic_preflight = coverage_preflight_for_statuses(
+            coverage_status=generic_coverage_status,
+            provenance_status=generic_provenance_status,
+            repair_status=generic_repair_status,
+            claim_policy=CONSERVATIVE_CLAIM_POLICY,
+        )
+
         rows.append(
             {
                 "candidate_set": _as_str(row, "candidate_set"),
@@ -151,19 +223,29 @@ def build_tp53_mdm2_pilot_coverage_preflight(
                 "target_species": _as_str(row, "target_species"),
                 "strict_contrast_gate_status": gate_status,
                 "coverage_preflight_status": coverage_status,
-                "source_ortholog_status": "not_checked",
-                "local_candidate_row_status": "not_checked",
+                "source_ortholog_status": source_ortholog_status,
+                "local_candidate_row_status": local_candidate_row_status,
                 "recommended_next_action": recommended_next_action(coverage_status),
-                "repair_decision": repair.get("repair_decision", ""),
-                "repair_priority": repair.get("repair_priority", ""),
-                "repair_claim_policy": repair.get("repair_claim_policy", ""),
-                "repair_note": repair.get("repair_note", ""),
+                "repair_decision": repair_decision,
+                "repair_priority": repair_priority,
+                "repair_claim_policy": repair_claim_policy,
+                "repair_note": repair_note,
                 "claim_policy": _as_str(row, "claim_policy"),
                 "coverage_preflight_note": (
                     "Coverage preflight uses committed manifest fields and optional "
                     "repair-decision rows only; no Biohub, Boltz, embeddings, "
                     "cofolding jobs, or biological claims are introduced."
                 ),
+                "generic_coverage_status": generic_coverage_status,
+                "generic_provenance_status": generic_provenance_status,
+                "generic_repair_status": generic_repair_status,
+                "generic_coverage_preflight_status": (generic_preflight.coverage_preflight_status),
+                "generic_recommended_next_action": generic_preflight.recommended_next_action,
+                "strict_panel_allowed": generic_preflight.strict_panel_allowed,
+                "contrast_dry_run_allowed": generic_preflight.contrast_dry_run_allowed,
+                "generic_claim_policy": generic_preflight.claim_policy,
+                "generic_claim_status": generic_preflight.claim_status,
+                "generic_coverage_preflight_note": generic_preflight.notes,
             }
         )
 

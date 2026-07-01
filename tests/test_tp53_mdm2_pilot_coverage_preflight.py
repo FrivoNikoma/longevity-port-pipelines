@@ -177,3 +177,44 @@ def test_build_tp53_mdm2_pilot_coverage_preflight_does_not_make_claims() -> None
         observed_values.update(str(value) for value in preflight.get_column(column).to_list())
 
     assert observed_values.isdisjoint(forbidden_values)
+
+
+def test_build_tp53_mdm2_pilot_coverage_preflight_records_generic_helper_trace() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+    )
+
+    assert set(preflight.get_column("generic_coverage_status").to_list()) == {
+        "missing_source_ortholog"
+    }
+    assert set(preflight.get_column("generic_provenance_status").to_list()) == {"unresolved"}
+    assert set(preflight.get_column("generic_repair_status").to_list()) == {"pending"}
+    assert set(preflight.get_column("generic_coverage_preflight_status").to_list()) == {
+        "blocked_pending_repair_review"
+    }
+    assert set(preflight.get_column("generic_recommended_next_action").to_list()) == {
+        "complete_ortholog_repair_decision_review"
+    }
+    assert set(preflight.get_column("strict_panel_allowed").to_list()) == {False}
+    assert set(preflight.get_column("contrast_dry_run_allowed").to_list()) == {False}
+    assert set(preflight.get_column("generic_claim_policy").to_list()) == {
+        "no_biological_claims_until_validation"
+    }
+    assert set(preflight.get_column("generic_claim_status").to_list()) == {"repair_worklist"}
+
+
+def test_build_tp53_mdm2_pilot_coverage_preflight_uses_generic_helper_without_repair_table() -> (
+    None
+):
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(load_manifest())
+
+    assert set(preflight.get_column("generic_repair_status").to_list()) == {""}
+    assert set(preflight.get_column("generic_coverage_preflight_status").to_list()) == {
+        "blocked_pending_repair_review"
+    }
+    assert set(preflight.get_column("generic_recommended_next_action").to_list()) == {
+        "complete_ortholog_repair_decision_review"
+    }
+    assert set(preflight.get_column("strict_panel_allowed").to_list()) == {False}
+    assert set(preflight.get_column("contrast_dry_run_allowed").to_list()) == {False}
