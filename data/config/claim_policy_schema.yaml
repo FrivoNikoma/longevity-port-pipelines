@@ -1,0 +1,134 @@
+schema_version: 1
+
+policy_id: no_biological_claims_until_validation
+
+description: >
+  Generic LongevityPort claim policy schema. This file defines which kinds of
+  language are allowed at each pipeline stage before structural, functional, or
+  wet-lab validation closes the relevant gates.
+
+allowed_claim_policies:
+  - no_biological_claims_until_validation
+
+allowed_claim_statuses:
+  - planning_only
+  - technical_checkpoint
+  - coverage_readiness
+  - repair_worklist
+  - control_readiness
+  - contrast_readiness
+  - cofolding_readiness
+  - structural_compatibility_checkpoint
+  - validation_required
+
+default_policy:
+  claim_policy: no_biological_claims_until_validation
+  maximum_prevalidation_status: technical_checkpoint
+  summary: >
+    Before validation, LongevityPort outputs may describe technical readiness,
+    gate status, and candidate prioritization, but they must not be described as
+    validated biological or longevity findings.
+
+allowed_prevalidation_language:
+  - technical checkpoint
+  - dry-run gate
+  - coverage-aware planning
+  - repair worklist
+  - control readiness
+  - contrast readiness
+  - cofolding readiness
+  - candidate for review
+  - validation required
+
+disallowed_prevalidation_language:
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+  - rejuvenation intervention
+  - therapeutic candidate
+
+pipeline_stage_policies:
+  candidate_set_configuration:
+    maximum_claim_status: planning_only
+    allowed_summary: candidate set exists for planning
+    disallowed_summary: candidate set proves a biological mechanism
+
+  manifest:
+    maximum_claim_status: planning_only
+    allowed_summary: exact rows are selected for downstream checks
+    disallowed_summary: manifest rows are validated hits
+
+  coverage_provenance_preflight:
+    maximum_claim_status: coverage_readiness
+    allowed_summary: coverage and provenance are ready, blocked, or unresolved
+    disallowed_summary: ortholog coverage confirms conserved function
+
+  repair_decisions:
+    maximum_claim_status: repair_worklist
+    allowed_summary: missing or ambiguous rows have reviewable handling decisions
+    disallowed_summary: repaired rows are biologically validated
+
+  control_readiness:
+    maximum_claim_status: control_readiness
+    allowed_summary: controls are ready, missing, incomplete, or blocked
+    disallowed_summary: controls prove the biological signal
+
+  strict_panel_or_contrast_gate:
+    maximum_claim_status: contrast_readiness
+    allowed_summary: a row is eligible or blocked for contrast dry-run
+    disallowed_summary: contrast gate proves longevity relevance
+
+  longevity_contrast:
+    maximum_claim_status: technical_checkpoint
+    allowed_summary: long-lived vs short-lived contrast is a technical checkpoint
+    disallowed_summary: contrast output is a validated longevity signal
+
+  cofolding_readiness:
+    maximum_claim_status: cofolding_readiness
+    allowed_summary: dry-run structural inputs are ready or blocked
+    disallowed_summary: readiness means binding change is confirmed
+
+  live_structural_compatibility:
+    maximum_claim_status: structural_compatibility_checkpoint
+    allowed_summary: live structural output is a compatibility checkpoint
+    disallowed_summary: structural output proves functional benefit
+
+  decision_package:
+    maximum_claim_status: validation_required
+    allowed_summary: evidence is packaged for review and validation planning
+    disallowed_summary: package proves a safe or effective intervention
+
+validation_unlocks:
+  structural_validation:
+    can_support:
+      - confirmed structural compatibility
+    still_requires:
+      - functional validation
+      - biological interpretation review
+      - claim-policy review
+
+  functional_validation:
+    can_support:
+      - measured functional effect
+    still_requires:
+      - biological context review
+      - safety review
+      - claim-policy review
+
+  wetlab_validation:
+    can_support:
+      - validated biological effect in the tested assay
+    still_requires:
+      - replication
+      - organism or model-system context review
+      - safety review
+
+required_guardrails:
+  - no live structural calls without explicit opt-in
+  - no Biohub calls from claim-policy schema checks
+  - no Boltz calls from claim-policy schema checks
+  - no signed structure URLs in committed outputs
+  - no biological claims without validation evidence
