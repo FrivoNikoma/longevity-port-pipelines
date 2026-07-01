@@ -308,3 +308,92 @@ def summarize_lane_manifest_status(manifest: pl.DataFrame) -> dict[str, Any]:
             value="validation_required",
         ),
     }
+
+
+def _render_count_block(title: str, counts: dict[str, int]) -> list[str]:
+    lines = [f"## {title}", ""]
+
+    if not counts:
+        lines.extend(["No rows.", ""])
+        return lines
+
+    lines.extend(["| Value | Count |", "| --- | ---: |"])
+    for value, count in sorted(counts.items()):
+        lines.append(f"| {value} | {count} |")
+
+    lines.append("")
+    return lines
+
+
+def render_lane_manifest_status_summary_markdown(
+    summary: dict[str, Any],
+) -> str:
+    lines = [
+        "# Lane manifest status summary",
+        "",
+        "This is a planning-only technical summary.",
+        "",
+        "It does not make biological validation claims.",
+        "",
+        "## Overview",
+        "",
+        f"- Row count: {summary['row_count']}",
+        f"- Lane names: {', '.join(summary['lane_names']) or 'none'}",
+        f"- Candidate sets: {', '.join(summary['candidate_sets']) or 'none'}",
+        f"- Planning-only rows: {summary['planning_only_rows']}",
+        f"- Validation-required rows: {summary['validation_required_rows']}",
+        "",
+    ]
+
+    lines.extend(
+        _render_count_block(
+            "Manifest status counts",
+            summary["manifest_status_counts"],
+        )
+    )
+    lines.extend(
+        _render_count_block(
+            "Claim status counts",
+            summary["claim_status_counts"],
+        )
+    )
+    lines.extend(
+        _render_count_block(
+            "Lane name counts",
+            summary["lane_name_counts"],
+        )
+    )
+    lines.extend(
+        _render_count_block(
+            "Candidate set counts",
+            summary["candidate_set_counts"],
+        )
+    )
+
+    lines.extend(
+        [
+            "## Guardrails",
+            "",
+            "- No live Biohub calls.",
+            "- No live Boltz calls.",
+            "- No embedding generation.",
+            "- No cofolding input generation.",
+            "- No biological validation claims.",
+            "",
+        ]
+    )
+
+    return "\n".join(lines)
+
+
+def write_lane_manifest_status_summary(
+    manifest: pl.DataFrame,
+    output_path: Path,
+) -> dict[str, Any]:
+    summary = summarize_lane_manifest_status(manifest)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        render_lane_manifest_status_summary_markdown(summary),
+        encoding="utf-8",
+    )
+    return summary

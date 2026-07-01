@@ -236,3 +236,36 @@ def test_summarize_lane_manifest_status_counts_manifest_rows() -> None:
     assert summary["candidate_set_counts"] == {"sirt6_dna_repair": 2}
     assert summary["planning_only_rows"] == 1
     assert summary["validation_required_rows"] == 0
+
+
+def test_render_lane_manifest_status_summary_markdown_records_guardrails() -> None:
+    summary = lane_manifest.summarize_lane_manifest_status(manifest_frame(manifest_row()))
+
+    markdown = lane_manifest.render_lane_manifest_status_summary_markdown(summary)
+
+    assert "# Lane manifest status summary" in markdown
+    assert "planning-only technical summary" in markdown
+    assert "does not make biological validation claims" in markdown
+    assert "sirt6_dna_repair" in markdown
+    assert "No live Biohub calls" in markdown
+    assert "No live Boltz calls" in markdown
+    assert "No embedding generation" in markdown
+    assert "No cofolding input generation" in markdown
+
+
+def test_write_lane_manifest_status_summary_writes_markdown(tmp_path: Path) -> None:
+    manifest = manifest_frame(manifest_row())
+    output_path = tmp_path / "lane_manifest_status_summary.md"
+
+    summary = lane_manifest.write_lane_manifest_status_summary(
+        manifest,
+        output_path,
+    )
+
+    assert summary["row_count"] == 1
+    assert output_path.exists()
+
+    markdown = output_path.read_text(encoding="utf-8")
+    assert "# Lane manifest status summary" in markdown
+    assert "| planning_only | 1 |" in markdown
+    assert "No biological validation claims" in markdown
