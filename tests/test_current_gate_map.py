@@ -47,12 +47,19 @@ def test_current_gate_map_records_generic_coverage_helper_adoption() -> None:
     assert "generic coverage preflight helper exists" in text
 
 
+def test_current_gate_map_records_generic_control_helper_adoption() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic control readiness schema exists" in text
+    assert "generic control readiness helper exists" in text
+    assert "candidate contrast gate records generic control-helper traces" in text
+
+
 def test_current_gate_map_keeps_strict_panel_generalization_pending() -> None:
     text = read_doc("docs/current_gate_map.md")
 
     assert "fully generic strict contrast panel builder is still pending" in text
-    assert "not yet generic" in text
-    assert "generic control / NEGATOME readiness" in text
+    assert "fully generic strict panel / contrast gate" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:

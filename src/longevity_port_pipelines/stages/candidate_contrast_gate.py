@@ -13,6 +13,10 @@ from longevity_port_pipelines.stages import (
     candidate_negatome_repair_decisions as negatome_repair,
 )
 from longevity_port_pipelines.stages import strict_sirt6_contrast_panel as strict_panel
+from longevity_port_pipelines.stages.control_readiness import (
+    ControlReadinessResult,
+    control_readiness_for_statuses,
+)
 from longevity_port_pipelines.stages.coverage_preflight import (
     CoveragePreflightResult,
     coverage_preflight_for_statuses,
@@ -88,6 +92,13 @@ CONTRAST_GATE_SCHEMA = {
     "negatome_repair_decisions": pl.Utf8,
     "negatome_repair_priorities": pl.Utf8,
     "negatome_repair_claim_policies": pl.Utf8,
+    "generic_control_readiness_status": pl.Utf8,
+    "generic_control_recommended_next_action": pl.Utf8,
+    "generic_control_contrast_dry_run_allowed": pl.Boolean,
+    "generic_controlled_claim_allowed": pl.Boolean,
+    "generic_control_claim_policy": pl.Utf8,
+    "generic_control_claim_status": pl.Utf8,
+    "generic_control_readiness_note": pl.Utf8,
     "strict_contrast_gate_status": pl.Utf8,
     "recommended_next_action": pl.Utf8,
     "gate_note": pl.Utf8,
@@ -170,6 +181,47 @@ def _coverage_preflight_from_species_status(
         coverage_status="missing_source_ortholog",
         provenance_status="unresolved",
         repair_status="pending",
+    )
+
+
+def _control_repair_status_from_negatome_repair_status(negatome_repair_status: str) -> str:
+    if negatome_repair_status in {"not_audited", "not_required"}:
+        return "not_needed"
+
+    if negatome_repair_status == "missing_repair_decision":
+        return "pending"
+
+    if negatome_repair_status == "negatome_repair_required_deferred_no_claim":
+        return "deferred_pending_source"
+
+    if negatome_repair_status == "mixed_deferred_negatome_repair_policy":
+        return "in_review"
+
+    if negatome_repair_status == "excluded_from_controlled_claim":
+        return "excluded_from_controlled_claims"
+
+    if negatome_repair_status == "limited_dry_run_only":
+        return "accepted_for_planning_after_review"
+
+    if negatome_repair_status == "negatome_repair_policy_review_required":
+        return "needs_manual_review"
+
+    return negatome_repair_status
+
+
+def _control_readiness_from_gate_inputs(
+    *,
+    negatome_status: str,
+    negative_partner_uniprot: str,
+    negatome_repair_status: str,
+) -> ControlReadinessResult:
+    return control_readiness_for_statuses(
+        shuffled_control_status="not_needed",
+        negatome_control_status="present" if negatome_status == "present_existing" else "missing",
+        curated_negative_partner_status="present" if negative_partner_uniprot else "missing",
+        control_repair_status=_control_repair_status_from_negatome_repair_status(
+            negatome_repair_status
+        ),
     )
 
 
@@ -615,6 +667,12 @@ def build_candidate_contrast_gate(
             "negatome_repair_decision_status",
         )
 
+        generic_control_readiness = _control_readiness_from_gate_inputs(
+            negatome_status=negatome_status,
+            negative_partner_uniprot=negative_partner_uniprot,
+            negatome_repair_status=negatome_repair_status,
+        )
+
         gate_status = _gate_status(
             contrast_readiness_status=contrast_status,
             baseline_input_status=baseline_status,
@@ -732,6 +790,21 @@ def build_candidate_contrast_gate(
                     negatome_repair_summary,
                     "negatome_repair_claim_policies",
                 ),
+                "generic_control_readiness_status": (
+                    generic_control_readiness.control_readiness_status
+                ),
+                "generic_control_recommended_next_action": (
+                    generic_control_readiness.recommended_next_action
+                ),
+                "generic_control_contrast_dry_run_allowed": (
+                    generic_control_readiness.contrast_dry_run_allowed
+                ),
+                "generic_controlled_claim_allowed": (
+                    generic_control_readiness.controlled_claim_allowed
+                ),
+                "generic_control_claim_policy": generic_control_readiness.claim_policy,
+                "generic_control_claim_status": generic_control_readiness.claim_status,
+                "generic_control_readiness_note": generic_control_readiness.notes,
                 "strict_contrast_gate_status": gate_status,
                 "recommended_next_action": _recommended_next_action(
                     gate_status,

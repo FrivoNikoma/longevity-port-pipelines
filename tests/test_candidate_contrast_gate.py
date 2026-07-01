@@ -368,3 +368,61 @@ def test_contrast_gate_maps_incomplete_species_coverage_through_generic_prefligh
     assert result.coverage_preflight_status == "blocked_pending_repair_review"
     assert result.contrast_dry_run_allowed is False
     assert result.strict_panel_allowed is False
+
+
+def test_contrast_gate_records_generic_control_readiness_trace_for_ready_controls() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "eligible_for_contrast_dry_run"
+    assert row["generic_control_readiness_status"] == "controls_ready"
+    assert (
+        row["generic_control_recommended_next_action"]
+        == "run_contrast_gate_without_biological_claims"
+    )
+    assert row["generic_control_contrast_dry_run_allowed"] is True
+    assert row["generic_controlled_claim_allowed"] is False
+    assert row["generic_control_claim_policy"] == "no_biological_claims_until_validation"
+    assert row["generic_control_claim_status"] == "control_readiness"
+    assert "not a biological claim" in row["generic_control_readiness_note"]
+
+
+def test_contrast_gate_records_generic_control_blocker_for_missing_negatome() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="partial_existing"),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_negatome_controls"
+    assert row["generic_control_readiness_status"] == "blocked_missing_negatome"
+    assert (
+        row["generic_control_recommended_next_action"]
+        == "curate_or_attach_negatome_control_partner"
+    )
+    assert row["generic_control_contrast_dry_run_allowed"] is False
+    assert row["generic_controlled_claim_allowed"] is False
+
+
+def test_contrast_gate_records_generic_limited_control_dry_run_trace() -> None:
+    result = gate.build_candidate_contrast_gate(
+        contrast_ready=contrast_ready_rows(),
+        negatome_readiness=negatome_readiness_rows(negatome_status="partial_existing"),
+        negatome_repair_decisions=negatome_repair_decision_rows(
+            claim_policy="allowed_for_limited_dry_run_only"
+        ),
+    )
+
+    row = result.row(0, named=True)
+    assert row["strict_contrast_gate_status"] == "blocked_negatome_controls"
+    assert row["negatome_repair_decision_status"] == "limited_dry_run_only"
+    assert row["generic_control_readiness_status"] == "controls_accepted_for_limited_dry_run"
+    assert (
+        row["generic_control_recommended_next_action"]
+        == "run_limited_contrast_dry_run_with_control_caveat"
+    )
+    assert row["generic_control_contrast_dry_run_allowed"] is True
+    assert row["generic_controlled_claim_allowed"] is False
