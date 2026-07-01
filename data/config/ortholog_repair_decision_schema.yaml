@@ -1,0 +1,120 @@
+schema_version: 1
+
+schema_id: generic_ortholog_repair_decision_schema
+
+description: >
+  Generic LongevityPort schema for ortholog coverage repair decisions. This file
+  defines the shared vocabulary for missing, ambiguous, manually curated, or
+  downstream-only ortholog coverage rows before strict panels, contrast gates, or
+  cofolding readiness are allowed.
+
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+
+required_decision_fields:
+  - candidate_set
+  - candidate_id
+  - lane_name
+  - source_species
+  - target_species
+  - gene_symbol
+  - source_uniprot
+  - target_uniprot
+  - coverage_status
+  - provenance_status
+  - repair_decision
+  - repair_status
+  - claim_policy
+  - reviewer_note
+
+allowed_coverage_statuses:
+  - coverage_ready
+  - missing_source_ortholog
+  - missing_target_species
+  - local_rows_without_source_ortholog
+  - source_ortholog_without_local_rows
+  - ambiguous_ortholog_mapping
+  - sequence_or_accession_mismatch
+  - unresolved_downstream_provenance
+  - excluded_from_candidate_lane
+
+allowed_provenance_statuses:
+  - standard_source_present
+  - curated_source_present
+  - local_row_present_without_source
+  - manual_review_required
+  - external_review_required
+  - unresolved
+  - not_applicable
+
+allowed_repair_decisions:
+  - no_repair_needed
+  - curate_source_ortholog
+  - fetch_or_curate_source_ortholog
+  - generate_local_candidate_rows
+  - review_local_rows_without_source_ortholog
+  - accept_existing_local_row_after_provenance_review
+  - exclude_from_strict_panel
+  - defer_until_stronger_source
+  - needs_external_manual_sequence_review
+
+allowed_repair_statuses:
+  - not_needed
+  - pending
+  - in_review
+  - repaired_for_planning
+  - accepted_for_planning_after_review
+  - excluded_from_strict_panel
+  - deferred_pending_source
+  - needs_manual_review
+
+strict_panel_effects:
+  may_enter_strict_panel:
+    - not_needed
+    - repaired_for_planning
+    - accepted_for_planning_after_review
+
+  must_not_enter_strict_panel:
+    - pending
+    - in_review
+    - excluded_from_strict_panel
+    - deferred_pending_source
+    - needs_manual_review
+
+contrast_gate_effects:
+  may_enter_contrast_dry_run:
+    - not_needed
+    - repaired_for_planning
+    - accepted_for_planning_after_review
+
+  blocked_contrast_coverage:
+    - pending
+    - in_review
+    - excluded_from_strict_panel
+    - deferred_pending_source
+    - needs_manual_review
+
+claim_guardrails:
+  allowed_language:
+    - repair worklist
+    - coverage-aware planning
+    - provenance review
+    - accepted for planning after review
+    - deferred pending stronger source
+    - excluded from strict panel
+
+  disallowed_language:
+    - validated ortholog
+    - confirmed conserved function
+    - validated biological hit
+    - validated longevity signal
+    - proven pro-longevity variant
+    - safe to port
+
+no_live_action_guardrails:
+  - schema validation must not fetch orthologs
+  - schema validation must not call Biohub
+  - schema validation must not call Boltz
+  - schema validation must not generate embeddings
+  - schema validation must not create cofolding inputs
+  - schema validation must not make biological claims
