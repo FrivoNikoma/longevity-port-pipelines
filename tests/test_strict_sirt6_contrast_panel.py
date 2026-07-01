@@ -176,6 +176,48 @@ def test_empty_strict_panel_summary_has_schema() -> None:
     assert summary.columns == list(strict.STRICT_PANEL_SUMMARY_SCHEMA)
 
 
+def test_strict_panel_candidate_summary_records_generic_strict_helper_ready_trace() -> None:
+    panel = strict.build_strict_sirt6_contrast_panel(
+        coverage_matrix=ready_only_coverage_rows(),
+        repair_decisions=repair_decision_rows(),
+    )
+
+    summary = strict.strict_panel_candidate_summary(panel)
+
+    row = summary.row(0, named=True)
+    assert row["strict_panel_status"] == "strict_panel_ready"
+    assert row["generic_strict_panel_status"] == "strict_panel_ready"
+    assert (
+        row["generic_strict_panel_recommended_next_action"]
+        == "run_strict_contrast_dry_run_without_biological_claims"
+    )
+    assert row["generic_strict_panel_contrast_dry_run_allowed"] is True
+    assert row["generic_strict_panel_controlled_claim_allowed"] is False
+    assert row["generic_strict_panel_claim_policy"] == ("no_biological_claims_until_validation")
+    assert row["generic_strict_panel_claim_status"] == "strict_panel_readiness"
+    assert "not a biological claim" in row["generic_strict_panel_note"]
+
+
+def test_strict_panel_candidate_summary_records_generic_strict_helper_blocked_trace() -> None:
+    panel = strict.build_strict_sirt6_contrast_panel(
+        coverage_matrix=coverage_matrix_rows(),
+        repair_decisions=repair_decision_rows(),
+    )
+
+    summary = strict.strict_panel_candidate_summary(panel)
+
+    row = summary.row(0, named=True)
+    assert row["strict_panel_status"] == "blocked_species_coverage_repair"
+    assert row["generic_strict_panel_status"] == "needs_manual_review"
+    assert (
+        row["generic_strict_panel_recommended_next_action"] == "perform_manual_strict_panel_review"
+    )
+    assert row["generic_strict_panel_contrast_dry_run_allowed"] is False
+    assert row["generic_strict_panel_controlled_claim_allowed"] is False
+    assert row["generic_strict_panel_claim_policy"] == ("no_biological_claims_until_validation")
+    assert row["generic_strict_panel_claim_status"] == "strict_panel_readiness"
+
+
 def test_strict_panel_records_generic_helper_trace_for_ready_rows() -> None:
     panel = strict.build_strict_sirt6_contrast_panel(
         coverage_matrix=ready_only_coverage_rows(),

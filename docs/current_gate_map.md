@@ -16,7 +16,7 @@ defer worklist.
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper now exist, and the candidate contrast gate records generic control-helper traces. Fully generic control outputs across all lanes are still pending. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; generic strict contrast panel schema and helper exist. A fully generic runtime builder is still pending. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary now records generic strict panel helper trace. A fully generic runtime builder is still pending. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic calculator still pending. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic readiness checklist pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -54,6 +54,7 @@ Current generic adoption checkpoint:
 - the candidate contrast gate records generic control-helper traces
 - the generic strict contrast panel schema exists
 - the generic strict contrast panel helper exists
+- the SIRT6 strict panel summary records generic strict panel helper trace
 - the next major frontier is a fully generic strict panel runtime builder
 
 Planned lanes:

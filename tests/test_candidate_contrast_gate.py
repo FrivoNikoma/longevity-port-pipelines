@@ -228,6 +228,21 @@ def strict_panel_summary_rows(
                 "strict_panel_note": (
                     "Strict panel builder only audits coverage and repair policy."
                 ),
+                "generic_strict_panel_status": (
+                    "needs_manual_review" if blocked else "strict_panel_ready"
+                ),
+                "generic_strict_panel_recommended_next_action": (
+                    "perform_manual_strict_panel_review"
+                    if blocked
+                    else "run_strict_contrast_dry_run_without_biological_claims"
+                ),
+                "generic_strict_panel_contrast_dry_run_allowed": not blocked,
+                "generic_strict_panel_controlled_claim_allowed": False,
+                "generic_strict_panel_claim_policy": ("no_biological_claims_until_validation"),
+                "generic_strict_panel_claim_status": "strict_panel_readiness",
+                "generic_strict_panel_note": (
+                    "Generic strict panel helper fixture; not a biological claim."
+                ),
             }
         ]
     )

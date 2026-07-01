@@ -12,6 +12,9 @@ from longevity_port_pipelines.stages.coverage_preflight import (
     CONSERVATIVE_CLAIM_POLICY,
     coverage_preflight_for_statuses,
 )
+from longevity_port_pipelines.stages.strict_contrast_panel_readiness import (
+    strict_panel_readiness_for_statuses,
+)
 
 DEFAULT_COVERAGE_MATRIX_INPUT = Path("data/interim/sirt6_candidate_species_coverage_matrix.csv")
 DEFAULT_REPAIR_DECISIONS_INPUT = repair.DEFAULT_REPAIR_DECISIONS_PATH
@@ -77,6 +80,13 @@ STRICT_PANEL_SUMMARY_SCHEMA = {
     "strict_panel_status": pl.Utf8,
     "recommended_next_action": pl.Utf8,
     "strict_panel_note": pl.Utf8,
+    "generic_strict_panel_status": pl.Utf8,
+    "generic_strict_panel_recommended_next_action": pl.Utf8,
+    "generic_strict_panel_contrast_dry_run_allowed": pl.Boolean,
+    "generic_strict_panel_controlled_claim_allowed": pl.Boolean,
+    "generic_strict_panel_claim_policy": pl.Utf8,
+    "generic_strict_panel_claim_status": pl.Utf8,
+    "generic_strict_panel_note": pl.Utf8,
 }
 
 app = typer.Typer(add_completion=False)
@@ -475,6 +485,18 @@ def strict_panel_candidate_summary(panel: pl.DataFrame) -> pl.DataFrame:
             n_long_lived_ready=len(ready_long_lived),
             n_short_lived_ready=len(ready_short_lived),
         )
+        generic_statuses = _joined_unique_values(
+            list(candidate_rows.iter_rows(named=True)),
+            "generic_coverage_preflight_status",
+        )
+        generic_readiness = strict_panel_readiness_for_statuses(
+            n_candidate_rows=candidate_rows.height,
+            n_strict_long_lived_ready=len(ready_long_lived),
+            n_strict_short_lived_ready=len(ready_short_lived),
+            coverage_preflight_statuses=generic_statuses,
+            control_readiness_statuses=["controls_ready"],
+            claim_policy=CONSERVATIVE_CLAIM_POLICY,
+        )
 
         rows.append(
             {
@@ -492,6 +514,19 @@ def strict_panel_candidate_summary(panel: pl.DataFrame) -> pl.DataFrame:
                     "Strict panel builder only audits coverage and repair policy; "
                     "it does not compute enrichment statistics or biological claims."
                 ),
+                "generic_strict_panel_status": generic_readiness.strict_panel_status,
+                "generic_strict_panel_recommended_next_action": (
+                    generic_readiness.recommended_next_action
+                ),
+                "generic_strict_panel_contrast_dry_run_allowed": (
+                    generic_readiness.contrast_dry_run_allowed
+                ),
+                "generic_strict_panel_controlled_claim_allowed": (
+                    generic_readiness.controlled_claim_allowed
+                ),
+                "generic_strict_panel_claim_policy": generic_readiness.claim_policy,
+                "generic_strict_panel_claim_status": generic_readiness.claim_status,
+                "generic_strict_panel_note": generic_readiness.strict_panel_note,
             }
         )
 
