@@ -65,19 +65,20 @@ def test_current_gate_map_records_generic_strict_panel_schema_helper_and_builder
     assert "TP53/MDM2 preflight now emits a generic strict panel summary" in text
 
 
-def test_current_gate_map_records_next_strict_panel_frontier() -> None:
+def test_current_gate_map_records_next_gate8_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic strict panel builder into remaining lanes" in text
-    assert "Gate 8 generic runtime contrast calculator" in text
+    assert "generic gated contrast runtime into calibration lanes" in text
+    assert "contrast robustness flags" in text
 
 
-def test_current_gate_map_records_generic_gated_contrast_schema() -> None:
+def test_current_gate_map_records_generic_gated_contrast_runtime() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic Gate 8 gated contrast schema now exists" in text
+    assert "generic Gate 8 gated contrast schema, helper, and runtime calculator now exist" in text
     assert "generic gated contrast schema exists" in text
-    assert "generic runtime calculator is still pending" in text
+    assert "generic gated contrast helper exists" in text
+    assert "generic gated contrast runtime calculator exists" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:
