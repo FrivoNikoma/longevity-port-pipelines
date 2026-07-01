@@ -183,3 +183,56 @@ def test_validate_lane_manifest_rejects_incomplete_gate_sequence() -> None:
             schema=load_schema(),
             candidate_lanes=load_candidate_lanes(),
         )
+
+
+def test_summarize_lane_manifest_status_counts_empty_manifest() -> None:
+    schema = load_schema()
+    empty = lane_manifest.empty_lane_manifest(schema)
+
+    summary = lane_manifest.summarize_lane_manifest_status(empty)
+
+    assert summary == {
+        "row_count": 0,
+        "lane_names": [],
+        "candidate_sets": [],
+        "manifest_status_counts": {},
+        "claim_status_counts": {},
+        "lane_name_counts": {},
+        "candidate_set_counts": {},
+        "planning_only_rows": 0,
+        "validation_required_rows": 0,
+    }
+
+
+def test_summarize_lane_manifest_status_counts_manifest_rows() -> None:
+    row_a = manifest_row()
+    row_b = manifest_row()
+    row_b["candidate_id"] = "sirt6_second_seed_row"
+    row_b["manifest_status"] = "coverage_pending"
+    row_b["claim_status"] = "coverage_readiness"
+
+    manifest = manifest_frame(row_a, row_b)
+
+    lane_manifest.validate_lane_manifest(
+        manifest,
+        schema=load_schema(),
+        candidate_lanes=load_candidate_lanes(),
+    )
+
+    summary = lane_manifest.summarize_lane_manifest_status(manifest)
+
+    assert summary["row_count"] == 2
+    assert summary["lane_names"] == ["sirt6_dna_repair"]
+    assert summary["candidate_sets"] == ["sirt6_dna_repair"]
+    assert summary["manifest_status_counts"] == {
+        "coverage_pending": 1,
+        "planning_only": 1,
+    }
+    assert summary["claim_status_counts"] == {
+        "coverage_readiness": 1,
+        "planning_only": 1,
+    }
+    assert summary["lane_name_counts"] == {"sirt6_dna_repair": 2}
+    assert summary["candidate_set_counts"] == {"sirt6_dna_repair": 2}
+    assert summary["planning_only_rows"] == 1
+    assert summary["validation_required_rows"] == 0

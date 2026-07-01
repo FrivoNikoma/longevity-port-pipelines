@@ -239,3 +239,72 @@ def validate_lane_manifest(
             candidate_lanes=candidate_lanes,
             row_number=row_number,
         )
+
+
+def _unique_text_values(manifest: pl.DataFrame, column: str) -> list[str]:
+    if manifest.is_empty() or column not in manifest.columns:
+        return []
+
+    values = set()
+    for value in manifest.get_column(column).to_list():
+        if value is None:
+            continue
+
+        text = str(value).strip()
+        if text:
+            values.add(text)
+
+    return sorted(values)
+
+
+def _value_counts(manifest: pl.DataFrame, column: str) -> dict[str, int]:
+    if manifest.is_empty() or column not in manifest.columns:
+        return {}
+
+    counts = manifest.group_by(column).len().sort(column)
+
+    result: dict[str, int] = {}
+    for row in counts.iter_rows(named=True):
+        value = row[column]
+        if value is None:
+            continue
+
+        text = str(value).strip()
+        if text:
+            result[text] = int(row["len"])
+
+    return result
+
+
+def _count_rows_with_value(
+    manifest: pl.DataFrame,
+    *,
+    column: str,
+    value: str,
+) -> int:
+    if manifest.is_empty() or column not in manifest.columns:
+        return 0
+
+    return manifest.filter(pl.col(column) == value).height
+
+
+def summarize_lane_manifest_status(manifest: pl.DataFrame) -> dict[str, Any]:
+    return {
+        "row_count": manifest.height,
+        "lane_names": _unique_text_values(manifest, "lane_name"),
+        "candidate_sets": _unique_text_values(manifest, "candidate_set"),
+        "manifest_status_counts": _value_counts(manifest, "manifest_status"),
+        "claim_status_counts": _value_counts(manifest, "claim_status"),
+        "lane_name_counts": _value_counts(manifest, "lane_name"),
+        "candidate_set_counts": _value_counts(manifest, "candidate_set"),
+        "planning_only_rows": _count_rows_with_value(
+            manifest,
+            column="manifest_status",
+            value="planning_only",
+        ),
+        "validation_required_rows": _count_rows_with_value(
+            manifest,
+            column="manifest_status",
+            value="validation_required",
+        ),
+    }
