@@ -28,3 +28,11 @@ def test_generic_gated_contrast_cli_is_registered_as_project_script() -> None:
     scripts = load_pyproject()["project"]["scripts"]
 
     assert scripts["gated-contrast"] == "longevity_port_pipelines.stages.gated_contrast:app"
+
+
+def test_sirt6_generic_gated_contrast_input_cli_is_registered_as_project_script() -> None:
+    scripts = load_pyproject()["project"]["scripts"]
+
+    assert scripts["sirt6-generic-gated-contrast-input"] == (
+        "longevity_port_pipelines.stages.sirt6_generic_gated_contrast_input:app"
+    )
