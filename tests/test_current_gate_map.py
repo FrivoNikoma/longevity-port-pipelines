@@ -69,7 +69,15 @@ def test_current_gate_map_records_next_strict_panel_frontier() -> None:
     text = read_doc("docs/current_gate_map.md")
 
     assert "generic strict panel builder into remaining lanes" in text
-    assert "Gate 8 generic contrast calculator" in text
+    assert "Gate 8 generic runtime contrast calculator" in text
+
+
+def test_current_gate_map_records_generic_gated_contrast_schema() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic Gate 8 gated contrast schema now exists" in text
+    assert "generic gated contrast schema exists" in text
+    assert "generic runtime calculator is still pending" in text
 
 
 def test_current_gate_map_contains_claim_policy_guardrails() -> None:

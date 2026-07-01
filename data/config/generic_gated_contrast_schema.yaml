@@ -1,0 +1,165 @@
+schema_version: 1
+schema_id: generic_gated_contrast_schema
+pipeline_gate: longevity_contrast
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_contrast_checkpoint
+
+description: >
+  Generic LongevityPort Gate 8 schema for gated long-lived-vs-short-lived
+  technical contrast.
+
+purpose: >
+  Gate 8 is a technical contrast checkpoint, not a biological validation layer.
+  It may compare long-lived and short-lived species metrics after upstream gates
+  pass, but it must not claim validated longevity signal, confirmed functional
+  effect, safe portability, or structural compatibility.
+
+required_input_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - strict_panel_status
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - target_species
+  - target_species_taxid
+  - species_group
+  - enrichment_ratio
+  - effect_size
+  - interface_mean_delta
+  - noninterface_mean_delta
+  - p_two_sided
+  - is_predicted_structure
+  - claim_policy
+
+required_output_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - long_lived_species
+  - short_lived_species
+  - short_lived_control_count
+  - long_enrichment_ratio
+  - short_enrichment_ratio
+  - enrichment_delta
+  - enrichment_log2_ratio
+  - contrast_class
+  - contrast_priority
+  - contrast_status
+  - recommended_next_action
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - contrast_note
+
+allowed_contrast_statuses:
+  - technical_contrast_ready
+  - technical_contrast_limited_dry_run
+  - blocked_strict_panel_not_ready
+  - blocked_missing_enrichment_rows
+  - blocked_missing_long_lived_rows
+  - blocked_missing_short_lived_controls
+  - blocked_missing_required_metrics
+  - blocked_unmatched_candidate_rows
+  - excluded_from_gated_contrast
+  - needs_manual_review
+
+status_groups:
+  dry_run_outputs:
+    - technical_contrast_ready
+    - technical_contrast_limited_dry_run
+  blocked:
+    - blocked_strict_panel_not_ready
+    - blocked_missing_enrichment_rows
+    - blocked_missing_long_lived_rows
+    - blocked_missing_short_lived_controls
+    - blocked_missing_required_metrics
+    - blocked_unmatched_candidate_rows
+    - excluded_from_gated_contrast
+    - needs_manual_review
+
+allowed_contrast_classes:
+  - long_lived_specific_interface_divergence
+  - shared_nonhuman_interface_divergence
+  - long_lived_enhanced_interface_divergence
+  - long_lived_specific_interface_constraint
+  - shared_interface_constraint
+  - long_lived_enhanced_interface_constraint
+  - short_lived_baseline_stronger_signal
+  - weak_or_unresolved_contrast
+
+minimum_input_requirements:
+  requires_strict_panel_contrast_dry_run_allowed: true
+  min_long_lived_ready_species: 1
+  min_short_lived_control_species: 1
+  min_total_species_groups: 2
+  required_group_contrast: long_lived_vs_short_lived
+
+decision_rules:
+  technical_contrast_ready:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: review_technical_contrast_checkpoint_without_biological_claims
+  technical_contrast_limited_dry_run:
+    contrast_dry_run_allowed: true
+    controlled_claim_allowed: false
+    recommended_next_action: review_limited_technical_contrast_with_caveat
+  blocked_strict_panel_not_ready:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: resolve_strict_panel_before_contrast
+  blocked_missing_enrichment_rows:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: build_or_repair_enrichment_rows_before_contrast
+  blocked_missing_long_lived_rows:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_ready_long_lived_rows_before_contrast
+  blocked_missing_short_lived_controls:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_ready_short_lived_control_rows_before_contrast
+  blocked_missing_required_metrics:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: compute_required_metrics_before_contrast
+  blocked_unmatched_candidate_rows:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: align_strict_panel_and_metric_candidate_keys
+  excluded_from_gated_contrast:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: keep_row_excluded_from_gated_contrast
+  needs_manual_review:
+    contrast_dry_run_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: perform_manual_gated_contrast_review
+
+disallowed_language:
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+  - contrast validates the candidate
+
+required_guardrails:
+  - no Biohub calls from gated-contrast schema checks
+  - no Boltz calls from gated-contrast schema checks
+  - no live structural calls from gated-contrast schema checks
+  - no embedding generation from gated-contrast schema checks
+  - no cofolding input generation from gated-contrast schema checks
+  - no biological claims from Gate 8 alone
+  - strict panel dry-run permission is required before gated contrast
