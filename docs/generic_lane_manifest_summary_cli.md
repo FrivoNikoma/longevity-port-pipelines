@@ -11,7 +11,7 @@ It is intended as a local reporting command for the manifest layer of the Longev
 Run from the repository root:
 
 ```powershell
-uv run python -m longevity_port_pipelines.stages.lane_manifest `
+uv run lane-manifest-summary `
   data/interim/generic_lane_manifest_seed.csv `
   --output-path reports/lane_manifest_status_summary.md
 
@@ -32,7 +32,7 @@ By default, the CLI uses the committed generic lane manifest schema and candidat
 You can override them explicitly:
 
 ```powershell
-uv run python -m longevity_port_pipelines.stages.lane_manifest `
+uv run lane-manifest-summary `
   data/interim/generic_lane_manifest_seed.csv `
   --output-path reports/lane_manifest_status_summary.md `
   --schema-path data/config/lane_manifest_schema.yaml `

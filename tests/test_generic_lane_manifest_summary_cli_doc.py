@@ -15,7 +15,7 @@ def test_generic_lane_manifest_summary_cli_doc_exists() -> None:
 def test_generic_lane_manifest_summary_cli_doc_records_command() -> None:
     doc = read_doc()
 
-    assert "uv run python -m longevity_port_pipelines.stages.lane_manifest" in doc
+    assert "uv run lane-manifest-summary" in doc
     assert "data/interim/generic_lane_manifest_seed.csv" in doc
     assert "--output-path reports/lane_manifest_status_summary.md" in doc
 
