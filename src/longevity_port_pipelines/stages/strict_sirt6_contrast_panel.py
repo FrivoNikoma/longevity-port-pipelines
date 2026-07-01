@@ -8,6 +8,10 @@ import typer
 
 from longevity_port_pipelines.stages import candidate_coverage_repair_decisions as repair
 from longevity_port_pipelines.stages import candidate_species_coverage_matrix as coverage
+from longevity_port_pipelines.stages.coverage_preflight import (
+    CONSERVATIVE_CLAIM_POLICY,
+    coverage_preflight_for_statuses,
+)
 
 DEFAULT_COVERAGE_MATRIX_INPUT = Path("data/interim/sirt6_candidate_species_coverage_matrix.csv")
 DEFAULT_REPAIR_DECISIONS_INPUT = repair.DEFAULT_REPAIR_DECISIONS_PATH
@@ -45,6 +49,16 @@ STRICT_PANEL_SCHEMA = {
     "strict_panel_claim_policy": pl.Utf8,
     "recommended_next_action": pl.Utf8,
     "strict_panel_note": pl.Utf8,
+    "generic_coverage_status": pl.Utf8,
+    "generic_provenance_status": pl.Utf8,
+    "generic_repair_status": pl.Utf8,
+    "generic_coverage_preflight_status": pl.Utf8,
+    "generic_recommended_next_action": pl.Utf8,
+    "generic_strict_panel_allowed": pl.Boolean,
+    "generic_contrast_dry_run_allowed": pl.Boolean,
+    "generic_claim_policy": pl.Utf8,
+    "generic_claim_status": pl.Utf8,
+    "generic_coverage_preflight_note": pl.Utf8,
 }
 
 STRICT_PANEL_SUMMARY_SCHEMA = {
@@ -129,6 +143,106 @@ def _joined_unique_values(rows: list[dict[str, Any]], column: str) -> str:
     return ",".join(sorted(value for value in values if value))
 
 
+def generic_coverage_status_for_sirt6_row(
+    *,
+    coverage_gap_status: str,
+    recommended_coverage_action: str,
+) -> str:
+    if recommended_coverage_action == "coverage_ready":
+        return "coverage_ready"
+    if recommended_coverage_action == "generate_local_candidate_rows":
+        return "source_ortholog_without_local_rows"
+    if recommended_coverage_action == "fetch_or_curate_source_ortholog":
+        return "missing_source_ortholog"
+    if recommended_coverage_action in {
+        "review_local_rows_without_source_ortholog",
+        "local_downstream_evidence_without_source_ortholog",
+    }:
+        return "local_rows_without_source_ortholog"
+    if coverage_gap_status == "not_audited":
+        return "unresolved_downstream_provenance"
+    return "unresolved_downstream_provenance"
+
+
+def generic_provenance_status_for_sirt6_row(
+    *,
+    recommended_coverage_action: str,
+) -> str:
+    if recommended_coverage_action == "coverage_ready":
+        return "standard_source_present"
+    if recommended_coverage_action == "generate_local_candidate_rows":
+        return "standard_source_present"
+    if recommended_coverage_action in {
+        "review_local_rows_without_source_ortholog",
+        "local_downstream_evidence_without_source_ortholog",
+    }:
+        return "local_row_present_without_source"
+    return "unresolved"
+
+
+def generic_repair_status_for_sirt6_decision(
+    *,
+    recommended_coverage_action: str,
+    repair_decision: str,
+) -> str:
+    if recommended_coverage_action == "coverage_ready":
+        return "not_needed"
+    if repair_decision == "exclude_from_strict_panel":
+        return "excluded_from_strict_panel"
+    if repair_decision == "defer_until_stronger_source":
+        return "deferred_pending_source"
+    if repair_decision == "needs_external_manual_sequence_review":
+        return "needs_manual_review"
+    if repair_decision == "curate_source_ortholog":
+        return "pending"
+    if repair_decision == "accept_existing_local_row_after_provenance_review":
+        return "in_review"
+    return ""
+
+
+def generic_preflight_trace_for_sirt6_row(
+    *,
+    coverage_row: dict[str, Any],
+    repair_row: dict[str, Any] | None,
+) -> dict[str, Any]:
+    recommended_action = _as_str(coverage_row, "recommended_coverage_action")
+    coverage_gap_status = _as_str(coverage_row, "coverage_gap_status")
+    repair_decision = ""
+    if repair_row is not None:
+        repair_decision = _as_str(repair_row, "repair_decision")
+
+    generic_coverage_status = generic_coverage_status_for_sirt6_row(
+        coverage_gap_status=coverage_gap_status,
+        recommended_coverage_action=recommended_action,
+    )
+    generic_provenance_status = generic_provenance_status_for_sirt6_row(
+        recommended_coverage_action=recommended_action,
+    )
+    generic_repair_status = generic_repair_status_for_sirt6_decision(
+        recommended_coverage_action=recommended_action,
+        repair_decision=repair_decision,
+    )
+    generic_preflight = coverage_preflight_for_statuses(
+        coverage_status=generic_coverage_status,
+        provenance_status=generic_provenance_status,
+        repair_status=generic_repair_status,
+        claim_policy=CONSERVATIVE_CLAIM_POLICY,
+    )
+
+    return {
+        "generic_coverage_status": generic_coverage_status,
+        "generic_provenance_status": generic_provenance_status,
+        "generic_repair_status": generic_repair_status,
+        "generic_coverage_preflight_status": generic_preflight.coverage_preflight_status,
+        "generic_recommended_next_action": generic_preflight.recommended_next_action,
+        "generic_strict_panel_allowed": generic_preflight.strict_panel_allowed,
+        "generic_contrast_dry_run_allowed": generic_preflight.contrast_dry_run_allowed,
+        "generic_claim_policy": generic_preflight.claim_policy,
+        "generic_claim_status": generic_preflight.claim_status,
+        "generic_coverage_preflight_note": generic_preflight.notes,
+    }
+
+
 def _empty_panel() -> pl.DataFrame:
     return pl.DataFrame(schema=STRICT_PANEL_SCHEMA)
 
@@ -172,6 +286,10 @@ def _strict_row_decision(
 ) -> dict[str, Any]:
     recommended_action = _as_str(coverage_row, "recommended_coverage_action")
     coverage_gap_status = _as_str(coverage_row, "coverage_gap_status")
+    generic_trace = generic_preflight_trace_for_sirt6_row(
+        coverage_row=coverage_row,
+        repair_row=repair_row,
+    )
 
     if recommended_action == "coverage_ready":
         return {
@@ -187,6 +305,7 @@ def _strict_row_decision(
                 "allows strict panel planning; no enrichment statistic or biological "
                 "claim is computed here."
             ),
+            **generic_trace,
         }
 
     if repair_row is None:
@@ -201,6 +320,7 @@ def _strict_row_decision(
             "strict_panel_note": (
                 "Species coverage is not ready and no repair decision is available."
             ),
+            **generic_trace,
         }
 
     repair_decision = _as_str(repair_row, "repair_decision")
@@ -242,6 +362,7 @@ def _strict_row_decision(
         "strict_panel_claim_policy": "no_claim",
         "recommended_next_action": next_action,
         "strict_panel_note": f"{note} coverage_gap_status={coverage_gap_status}.",
+        **generic_trace,
     }
 
 

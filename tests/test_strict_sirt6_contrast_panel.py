@@ -174,3 +174,64 @@ def test_empty_strict_panel_summary_has_schema() -> None:
     assert panel.columns == list(strict.STRICT_PANEL_SCHEMA)
     assert summary.is_empty()
     assert summary.columns == list(strict.STRICT_PANEL_SUMMARY_SCHEMA)
+
+
+def test_strict_panel_records_generic_helper_trace_for_ready_rows() -> None:
+    panel = strict.build_strict_sirt6_contrast_panel(
+        coverage_matrix=ready_only_coverage_rows(),
+        repair_decisions=repair_decision_rows(),
+    )
+
+    assert set(panel.get_column("generic_coverage_status").to_list()) == {"coverage_ready"}
+    assert set(panel.get_column("generic_provenance_status").to_list()) == {
+        "standard_source_present"
+    }
+    assert set(panel.get_column("generic_repair_status").to_list()) == {"not_needed"}
+    assert set(panel.get_column("generic_coverage_preflight_status").to_list()) == {
+        "coverage_preflight_ready"
+    }
+    assert set(panel.get_column("generic_recommended_next_action").to_list()) == {
+        "run_strict_panel_or_contrast_gate"
+    }
+    assert set(panel.get_column("generic_strict_panel_allowed").to_list()) == {True}
+    assert set(panel.get_column("generic_contrast_dry_run_allowed").to_list()) == {True}
+    assert set(panel.get_column("generic_claim_policy").to_list()) == {
+        "no_biological_claims_until_validation"
+    }
+    assert set(panel.get_column("generic_claim_status").to_list()) == {"repair_worklist"}
+
+
+def test_strict_panel_records_generic_helper_trace_for_blocked_repair_rows() -> None:
+    panel = strict.build_strict_sirt6_contrast_panel(
+        coverage_matrix=coverage_matrix_rows(),
+        repair_decisions=repair_decision_rows(),
+    )
+
+    row = panel.filter(pl.col("target_species") == "bowhead_whale").row(0, named=True)
+
+    assert row["generic_coverage_status"] == "local_rows_without_source_ortholog"
+    assert row["generic_provenance_status"] == "local_row_present_without_source"
+    assert row["generic_repair_status"] == "needs_manual_review"
+    assert row["generic_coverage_preflight_status"] == "blocked_needs_manual_review"
+    assert row["generic_recommended_next_action"] == ("request_external_manual_sequence_review")
+    assert row["generic_strict_panel_allowed"] is False
+    assert row["generic_contrast_dry_run_allowed"] is False
+    assert row["generic_claim_policy"] == "no_biological_claims_until_validation"
+    assert row["generic_claim_status"] == "repair_worklist"
+
+
+def test_strict_panel_records_generic_helper_trace_without_repair_decision() -> None:
+    panel = strict.build_strict_sirt6_contrast_panel(
+        coverage_matrix=coverage_matrix_rows(),
+        repair_decisions=repair_decision_rows().head(0),
+    )
+
+    row = panel.filter(pl.col("target_species") == "bowhead_whale").row(0, named=True)
+
+    assert row["generic_coverage_status"] == "local_rows_without_source_ortholog"
+    assert row["generic_provenance_status"] == "local_row_present_without_source"
+    assert row["generic_repair_status"] == ""
+    assert row["generic_coverage_preflight_status"] == "blocked_pending_repair_review"
+    assert row["generic_recommended_next_action"] == ("complete_ortholog_repair_decision_review")
+    assert row["generic_strict_panel_allowed"] is False
+    assert row["generic_contrast_dry_run_allowed"] is False
