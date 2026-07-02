@@ -290,3 +290,22 @@ def test_current_gate_map_records_brandts_bat_p09874_controlled_fill_noop_checkp
     assert "does not call Boltz" in text
     assert "does not rerun enrichment/contrast" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_controlled_missing_embedding_blocker_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Controlled missing embedding blocker checkpoint" in text
+    assert "docs/controlled_missing_embedding_blocker_checkpoint.md" in text
+    assert "8f86" in text
+    assert "P84233" in text
+    assert "blocked by missing ortholog coverage" in text
+    assert "not selected for controlled dry-run or live fill" in text
+    assert "coverage/provenance repair before any new embedding dry-run candidate selection" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not use `curated_embedding_single --yes-live`" in text
+    assert "does not commit `data/output/` embedding artifacts" in text
+    assert "does not call Boltz" in text
+    assert "does not rerun enrichment/contrast" in text
+    assert "does not make biological claims" in text

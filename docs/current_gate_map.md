@@ -171,3 +171,11 @@ This is a table-only dry-run worklist builder. It consumes curated embedding pre
 The first controlled embedding fill worklist checkpoint is recorded in `data/interim/controlled_embedding_fill_worklist_brandts_bat_p09874_checkpoint.csv`.
 
 This is a no-op table-only checkpoint. The Brandt's bat `P09874` embedding is already present, so the controlled fill worklist assigns `fill_status: do_not_fill` and `allowed_next_action: do_not_fill`. It does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.
+
+## Controlled missing embedding blocker checkpoint
+
+The first controlled inspection for a reviewed missing embedding fill candidate is recorded in `docs/controlled_missing_embedding_blocker_checkpoint.md`.
+
+This is a blocker checkpoint. The legacy `8f86` ligand-side `P84233` missing case is blocked by missing ortholog coverage and lacks reviewed target species, target taxid, target accession, and embedding path evidence. It is not selected for controlled dry-run or live fill.
+
+The next safe action is coverage/provenance repair before any new embedding dry-run candidate selection. This checkpoint does not call Biohub, does not generate embeddings, does not use `curated_embedding_single --yes-live`, does not commit `data/output/` embedding artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.
