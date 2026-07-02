@@ -17,6 +17,12 @@ Those tools are useful, but live embedding generation must stay behind explicit 
 
 After the Gate 8 / Gate 9 calibration checkpoint, the next safe step is not to generate more embeddings immediately. The next safe step is to decide which missing embeddings are eligible for review, which are blocked, and which should be deferred.
 
+## Controlled fill protocol
+
+The reusable controlled embedding fill protocol is recorded in `docs/controlled_embedding_fill_protocol.md`.
+
+That protocol formalizes the Brandt's bat `P09874` live embedding precedent. It keeps live embedding generation behind `curated_embedding_preflight`, `curated_embedding_single` dry-run evidence, `sequence_length_status == matches`, explicit human approval for `--yes-live`, local `.npy` artifact validation, no committed `data/output/` artifacts, no Boltz calls, no enrichment/contrast rerun by default, and no biological claims.
+
 ## Gate-aware fill statuses
 
 Use these statuses in embedding-fill review notes and future worklists:

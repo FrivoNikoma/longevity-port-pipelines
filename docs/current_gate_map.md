@@ -147,3 +147,9 @@ Each PR description should answer:
 The gate-aware embedding fill plan is now recorded in `docs/gate_aware_embedding_fill_plan.md`.
 
 This is a planning checkpoint only. It does not call Biohub, generate embeddings, submit Boltz jobs, or make biological claims.
+
+## Controlled embedding fill protocol checkpoint
+
+The controlled embedding fill protocol is now recorded in `docs/controlled_embedding_fill_protocol.md`.
+
+This is a governance checkpoint only. It formalizes the Brandt's bat `P09874` precedent and requires `curated_embedding_preflight`, `curated_embedding_single` dry-run evidence, `sequence_length_status == matches`, explicit `--yes-live` approval for live calls, local `.npy` validation, no committed `data/output/` artifacts, no enrichment/contrast rerun by default, no Boltz calls, and no biological claims.

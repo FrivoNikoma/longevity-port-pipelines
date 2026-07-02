@@ -42,3 +42,11 @@ def test_gate_aware_embedding_fill_plan_records_claim_guardrails() -> None:
     assert "biological hit" in text
     assert "proven pro-longevity variant" in text
     assert "This is a planning checkpoint only" in text
+
+
+def test_gate_aware_embedding_fill_plan_points_to_controlled_protocol() -> None:
+    text = read_doc("docs/gate_aware_embedding_fill_plan.md")
+
+    assert "docs/controlled_embedding_fill_protocol.md" in text
+    assert "Brandt's bat `P09874` live embedding precedent" in text
+    assert "no enrichment/contrast rerun by default" in text
