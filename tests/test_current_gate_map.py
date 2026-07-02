@@ -115,6 +115,18 @@ def test_current_gate_map_records_generic_cofolding_readiness_schema() -> None:
 def test_current_gate_map_records_generic_cofolding_readiness_helper() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic Gate 9 cofolding readiness schema and helper now exist" in text
+    assert (
+        "generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist" in text
+    )
     assert "the generic cofolding readiness helper exists" in text
-    assert "generic runtime checklist pending" in text
+    assert "generic dry-run manifest pending" in text
+
+
+def test_current_gate_map_records_generic_cofolding_readiness_runtime() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert (
+        "generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist" in text
+    )
+    assert "the generic cofolding readiness runtime checklist exists" in text
+    assert "generic dry-run manifest pending" in text
