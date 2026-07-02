@@ -108,6 +108,13 @@ def test_current_gate_map_records_sirt6_generic_gate8_dry_run_path() -> None:
 def test_current_gate_map_records_generic_cofolding_readiness_schema() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "generic Gate 9 cofolding readiness schema now exists" in text
+    assert "generic Gate 9 cofolding readiness schema" in text
     assert "the generic cofolding readiness schema exists" in text
-    assert "generic helper/runtime checklist pending" in text
+
+
+def test_current_gate_map_records_generic_cofolding_readiness_helper() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic Gate 9 cofolding readiness schema and helper now exist" in text
+    assert "the generic cofolding readiness helper exists" in text
+    assert "generic runtime checklist pending" in text
