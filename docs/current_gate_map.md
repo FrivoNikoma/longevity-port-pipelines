@@ -273,3 +273,15 @@ This checkpoint adds reviewed provenance decisions for the elephant TP53 and MDM
 Both TP53/MDM2 rows remain blocked at Gate 4 / Gate 5 as repair_worklist rows. The reviewed overlay fixture now records three reviewed rows total: one SIRT6 row and two TP53/MDM2 rows.
 
 This checkpoint does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Ortholog evidence intake checklist
+
+The ortholog evidence intake checklist is documented in docs/ortholog_evidence_intake_checklist.md.
+
+This checklist defines how accession-level ortholog evidence should be recorded before a future reviewed-decision PR. It covers required row identity fields, minimum accession-level evidence fields, acceptable evidence sources, unacceptable evidence sources, intake outcomes, and blocker-first guardrails.
+
+The checklist applies to the current SIRT6/core3 and TP53/MDM2 elephant lanes. It does not add new accessions, does not accept target orthologs, and does not change any repair queue row status.
+
+Each intake row remains a Gate 4 / Gate 5 repair-queue worklist item until a later reviewed-decision PR and explicit Gate 4 / Gate 5 policy update say otherwise.
+
+This checklist does not fetch sequences, does not curate orthologs automatically, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.

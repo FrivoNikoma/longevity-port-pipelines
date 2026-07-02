@@ -531,3 +531,27 @@ def test_current_gate_map_records_tp53_mdm2_provenance_review_checkpoint() -> No
     assert "does not rerun enrichment or contrast" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_ortholog_evidence_intake_checklist() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "Ortholog evidence intake checklist" in text
+    assert "docs/ortholog_evidence_intake_checklist.md" in text
+    assert "accession-level ortholog evidence" in text
+    assert "required row identity fields" in text
+    assert "minimum accession-level evidence fields" in text
+    assert "acceptable evidence sources" in text
+    assert "unacceptable evidence sources" in text
+    assert "SIRT6/core3 and TP53/MDM2 elephant lanes" in text
+    assert "does not add new accessions" in text
+    assert "does not accept target orthologs" in text
+    assert "does not change any repair queue row status" in text
+    assert "Gate 4 / Gate 5 repair-queue worklist item" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs automatically" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not rerun enrichment or contrast" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text
