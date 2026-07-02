@@ -399,3 +399,18 @@ def test_current_gate_map_records_generic_repair_queue_usage_guide() -> None:
     assert "Gate 8 promotion" in text
     assert "Gate 9 promotion" in text
     assert "biological claims" in text
+
+
+def test_current_gate_map_records_generic_repair_queue_review_checklist() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "Generic repair queue review checklist" in text
+    assert "docs/generic_repair_queue_review_checklist.md" in text
+    assert "reviewed-for-planning provenance evidence" in text
+    assert "valid blocked repair-queue worklist item" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text

@@ -211,3 +211,11 @@ The generic Gate 4 / Gate 5 repair queue usage guide is recorded in `docs/generi
 The guide explains how to run `generic-repair-queue-summary`, how to interpret `repair_queue_status`, `downstream_block_status`, and `allowed_next_action`, and why these fields are repair-planning signals rather than downstream permissions.
 
 The current committed repair queue summary is expected to contain 13 rows: 11 SIRT6/core3 rows and 2 TP53/MDM2 elephant rows. The guide explicitly keeps downstream gates blocked until ortholog/provenance evidence is reviewed and does not authorize sequence fetch, manual ortholog curation, Biohub calls, embedding generation, Boltz calls, Gate 8 promotion, Gate 9 promotion, or biological claims.
+
+## Generic repair queue review checklist
+
+The generic Gate 4 / Gate 5 repair queue review checklist is recorded in `docs/generic_repair_queue_review_checklist.md`.
+
+The checklist explains how a reviewer should inspect repair queue rows before any row can be treated as reviewed-for-planning provenance evidence. It preserves blocker-first semantics: an unreviewed row remains a valid blocked repair-queue worklist item, not an invalid row.
+
+This checklist does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.
