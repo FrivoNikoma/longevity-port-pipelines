@@ -309,3 +309,20 @@ def test_current_gate_map_records_controlled_missing_embedding_blocker_checkpoin
     assert "does not call Boltz" in text
     assert "does not rerun enrichment/contrast" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_coverage_provenance_repair_queue_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Coverage/provenance repair queue checkpoint" in text
+    assert "docs/coverage_provenance_repair_queue_checkpoint.md" in text
+    assert "Gate 4 / Gate 5 repair frontier" in text
+    assert "SIRT6/core3 has 11 rows" in text
+    assert "data/input/sirt6_candidate_coverage_repair_decisions.csv" in text
+    assert "TP53/MDM2 elephant has two blocked seed rows" in text
+    assert "data/input/tp53_mdm2_ortholog_repair_decisions.csv" in text
+    assert "coverage/provenance blockers" in text
+    assert (
+        "must not be bypassed by embedding fill, contrast, cofolding, live structural calls, or biological claims"
+        in text
+    )

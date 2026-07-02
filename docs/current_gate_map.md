@@ -179,3 +179,11 @@ The first controlled inspection for a reviewed missing embedding fill candidate 
 This is a blocker checkpoint. The legacy `8f86` ligand-side `P84233` missing case is blocked by missing ortholog coverage and lacks reviewed target species, target taxid, target accession, and embedding path evidence. It is not selected for controlled dry-run or live fill.
 
 The next safe action is coverage/provenance repair before any new embedding dry-run candidate selection. This checkpoint does not call Biohub, does not generate embeddings, does not use `curated_embedding_single --yes-live`, does not commit `data/output/` embedding artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.
+
+## Coverage/provenance repair queue checkpoint
+
+The current Gate 4 / Gate 5 repair frontier is recorded in `docs/coverage_provenance_repair_queue_checkpoint.md`.
+
+This checkpoint aligns the tracked SIRT6/core3 and TP53/MDM2 elephant repair queues without changing ortholog rows or fetching sequences. SIRT6/core3 has 11 rows in `data/input/sirt6_candidate_coverage_repair_decisions.csv` that require external/manual sequence provenance review. TP53/MDM2 elephant has two blocked seed rows in `data/input/tp53_mdm2_ortholog_repair_decisions.csv` that require source ortholog fetch/curation.
+
+Both queues remain coverage/provenance blockers. They must not be bypassed by embedding fill, contrast, cofolding, live structural calls, or biological claims.
