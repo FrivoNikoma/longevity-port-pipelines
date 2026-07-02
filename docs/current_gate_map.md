@@ -1,4 +1,4 @@
-# Current LongevityPort gate map
+﻿# Current LongevityPort gate map
 
 This document tracks the current state of the LongevityPort gated decision
 pipeline. It is intentionally conservative. A gate can be useful even when it
@@ -219,3 +219,11 @@ The generic Gate 4 / Gate 5 repair queue review checklist is recorded in `docs/g
 The checklist explains how a reviewer should inspect repair queue rows before any row can be treated as reviewed-for-planning provenance evidence. It preserves blocker-first semantics: an unreviewed row remains a valid blocked repair-queue worklist item, not an invalid row.
 
 This checklist does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Generic repair queue reviewed-decision schema
+
+The generic Gate 4 / Gate 5 repair queue reviewed-decision schema is recorded in `data/config/generic_repair_queue_review_schema.yaml`.
+
+The schema defines how future manual provenance review decisions should be recorded machine-readably after checklist-based review. It covers row identity, pre-review blocker state, reviewed evidence, review decision vocabulary, downstream blocking policy, allowed next action, claim policy, claim status, and forbidden actions.
+
+This schema does not record a reviewed biological provenance row by itself. It does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.

@@ -414,3 +414,21 @@ def test_current_gate_map_records_generic_repair_queue_review_checklist() -> Non
     assert "does not call Boltz" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_generic_repair_queue_review_schema() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "Generic repair queue reviewed-decision schema" in text
+    assert "data/config/generic_repair_queue_review_schema.yaml" in text
+    assert "manual provenance review decisions" in text
+    assert "machine-readably" in text
+    assert "review decision vocabulary" in text
+    assert "downstream blocking policy" in text
+    assert "does not record a reviewed biological provenance row by itself" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text
