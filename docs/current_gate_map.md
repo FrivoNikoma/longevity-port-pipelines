@@ -253,3 +253,13 @@ The generic repair queue summary checkpoint fixtures are recorded in tests/fixtu
 These fixtures freeze the expected base and reviewed-overlay repair queue summaries as regression checkpoints. The base fixture records 13 blocked Gate 4 / Gate 5 repair rows. The reviewed-overlay fixture records the same 13 rows with the reviewed SIRT6 row remaining deferred and blocked.
 
 These fixtures do not fetch sequences, do not curate orthologs, do not call Biohub, do not generate embeddings, do not call Boltz, do not rerun enrichment or contrast, do not promote Gate 8 or Gate 9, and do not make biological claims.
+
+## Gate 4 / Gate 5 repair policy helper
+
+The Gate 4 / Gate 5 repair policy helper is documented in docs/gate_repair_policy_helper.md and implemented in src/longevity_port_pipelines/stages/gate_repair_policy.py.
+
+The helper interprets repair queue and reviewed provenance states conservatively. Current blocked, deferred, rejected, second-review, and unknown states remain blocked at Gate 4 / Gate 5.
+
+A reviewed-for-planning state may allow only a later explicit Gate 4 / Gate 5 policy update to be considered. It does not make a row Gate 8 eligible, does not make a row Gate 9 eligible, does not make embeddings ready, does not make Boltz ready, and does not allow biological claims.
+
+The helper does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
