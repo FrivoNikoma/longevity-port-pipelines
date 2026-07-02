@@ -375,3 +375,27 @@ def test_current_gate_map_records_generic_repair_queue_summary_builder_checkpoin
     assert "does not call Boltz" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_generic_repair_queue_usage_guide() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Generic repair queue usage guide" in text
+    assert "docs/generic_repair_queue_usage_guide.md" in text
+    assert "generic-repair-queue-summary" in text
+    assert "repair_queue_status" in text
+    assert "downstream_block_status" in text
+    assert "allowed_next_action" in text
+    assert "repair-planning signals rather than downstream permissions" in text
+    assert "13 rows" in text
+    assert "11 SIRT6/core3 rows" in text
+    assert "2 TP53/MDM2 elephant rows" in text
+    assert "keeps downstream gates blocked" in text
+    assert "does not authorize sequence fetch" in text
+    assert "manual ortholog curation" in text
+    assert "Biohub calls" in text
+    assert "embedding generation" in text
+    assert "Boltz calls" in text
+    assert "Gate 8 promotion" in text
+    assert "Gate 9 promotion" in text
+    assert "biological claims" in text

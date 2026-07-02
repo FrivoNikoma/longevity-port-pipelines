@@ -203,3 +203,11 @@ The first generic Gate 4 / Gate 5 repair queue summary builder is recorded in `d
 The builder combines `data/input/sirt6_candidate_coverage_repair_decisions.csv` and `data/input/tp53_mdm2_ortholog_repair_decisions.csv` into a machine-readable repair queue summary. Current committed inputs are expected to produce 13 repair queue rows: 11 SIRT6/core3 rows and 2 TP53/MDM2 elephant rows.
 
 The summary uses blocker-oriented fields including `repair_queue_status`, `downstream_block_status`, and `allowed_next_action`. It does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Generic repair queue usage guide
+
+The generic Gate 4 / Gate 5 repair queue usage guide is recorded in `docs/generic_repair_queue_usage_guide.md`.
+
+The guide explains how to run `generic-repair-queue-summary`, how to interpret `repair_queue_status`, `downstream_block_status`, and `allowed_next_action`, and why these fields are repair-planning signals rather than downstream permissions.
+
+The current committed repair queue summary is expected to contain 13 rows: 11 SIRT6/core3 rows and 2 TP53/MDM2 elephant rows. The guide explicitly keeps downstream gates blocked until ortholog/provenance evidence is reviewed and does not authorize sequence fetch, manual ortholog curation, Biohub calls, embedding generation, Boltz calls, Gate 8 promotion, Gate 9 promotion, or biological claims.
