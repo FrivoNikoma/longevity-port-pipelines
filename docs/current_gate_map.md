@@ -237,3 +237,11 @@ This checkpoint reviews one concrete SIRT6 repair queue row as Level 1 biologica
 The reviewed row remains blocked at Gate 4 / Gate 5 because the reviewed evidence records a deferred provenance decision rather than downstream eligibility. The row remains a valid blocked repair-queue worklist item.
 
 This fixture does not fetch sequences, does not curate orthologs globally, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Generic repair queue reviewed-decision overlay
+
+The generic repair queue summary builder can optionally consume reviewed decisions from data/input/generic_repair_queue_review_decisions.csv.
+
+The overlay reads already-reviewed Gate 4 / Gate 5 provenance decisions and reflects them in the generic repair queue summary. Deferred decisions remain blocked at Gate 4 / Gate 5 and do not become downstream eligibility.
+
+This overlay does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.

@@ -107,3 +107,23 @@ A safe workflow is:
 5. Keep downstream gates blocked until explicit ortholog/provenance evidence is reviewed.
 
 The summary is useful because it makes blockers visible. It does not remove those blockers.
+
+## Reviewed-decision overlay
+
+A later checkpoint may provide reviewed repair queue decisions in:
+
+```text
+data/input/generic_repair_queue_review_decisions.csv
+```
+
+To apply those reviewed decisions as an overlay on the base repair queue summary, run:
+
+```powershell
+uv run generic-repair-queue-summary `
+  --review-decisions data/input/generic_repair_queue_review_decisions.csv `
+  --output data/interim/generic_repair_queue_summary.csv
+```
+
+The overlay only consumes already-reviewed decision rows. It does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+For deferred_pending_source review decisions, the row remains blocked at Gate 4 / Gate 5. The overlay records the reviewed decision in the summary without converting reviewed-for-planning provenance evidence into downstream eligibility.

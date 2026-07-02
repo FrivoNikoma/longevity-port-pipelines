@@ -8,6 +8,7 @@ import typer
 
 DEFAULT_SIRT6_REPAIR = Path("data/input/sirt6_candidate_coverage_repair_decisions.csv")
 DEFAULT_TP53_MDM2_REPAIR = Path("data/input/tp53_mdm2_ortholog_repair_decisions.csv")
+DEFAULT_REVIEW_DECISIONS = Path("data/input/generic_repair_queue_review_decisions.csv")
 DEFAULT_OUTPUT = Path("data/interim/generic_repair_queue_summary.csv")
 
 CLAIM_STATUS = "repair_worklist"
@@ -52,6 +53,49 @@ TP53_MDM2_REQUIRED_COLUMNS = (
     "repair_priority",
     "claim_policy",
     "reviewer_note",
+)
+
+REVIEW_DECISION_REQUIRED_COLUMNS = (
+    "candidate_set",
+    "lane_name",
+    "candidate_id",
+    "source_table",
+    "source_row_index",
+    "gene_symbol",
+    "source_species",
+    "target_species",
+    "target_species_taxid",
+    "source_uniprot",
+    "partner_uniprot",
+    "target_uniprot_before_review",
+    "coverage_status_before_review",
+    "provenance_status_before_review",
+    "repair_queue_status_before_review",
+    "downstream_block_status_before_review",
+    "allowed_next_action_before_review",
+    "claim_policy_before_review",
+    "review_decision",
+    "reviewed_target_uniprot",
+    "reviewed_source_database",
+    "reviewed_source_accession",
+    "reviewed_sequence_length",
+    "reviewed_taxid",
+    "review_evidence_uri_or_note",
+    "reviewer_note",
+    "downstream_block_status_after_review",
+    "allowed_next_action_after_review",
+    "claim_policy_after_review",
+    "claim_status_after_review",
+    "forbidden_actions_after_review",
+)
+
+REVIEW_MATCH_COLUMNS = (
+    "candidate_set",
+    "candidate_id",
+    "source_table",
+    "source_row_index",
+    "target_species",
+    "source_uniprot",
 )
 
 SUMMARY_SCHEMA = {
@@ -108,11 +152,9 @@ def _row_value(row: dict[str, object], column: str, default: str = "unresolved")
     value = row.get(column, default)
     if value is None:
         return default
-
     text = str(value).strip()
     if not text:
         return default
-
     return text
 
 
@@ -139,19 +181,26 @@ def _repair_queue_status(repair_status: str) -> str:
         "accepted_for_planning_after_review",
     }:
         return "not_needed_or_repaired_for_planning"
-
     if repair_status == "needs_manual_review":
         return "blocked_pending_manual_review"
-
     if repair_status == "pending":
         return "blocked_pending_source_ortholog_repair"
-
     if repair_status == "deferred_pending_source":
         return "blocked_deferred_pending_source"
-
     if repair_status == "excluded_from_strict_panel":
         return "excluded_from_downstream_gates"
+    return "blocked_pending_repair_review"
 
+
+def _review_repair_queue_status(review_decision: str) -> str:
+    if review_decision == "accepted_for_planning_after_review":
+        return "reviewed_for_planning_still_policy_blocked"
+    if review_decision == "rejected_after_review":
+        return "excluded_from_downstream_gates"
+    if review_decision == "deferred_pending_source":
+        return "blocked_deferred_pending_source"
+    if review_decision == "needs_second_reviewer":
+        return "blocked_pending_second_reviewer"
     return "blocked_pending_repair_review"
 
 
@@ -162,27 +211,32 @@ def _downstream_block_status(repair_status: str) -> str:
         "accepted_for_planning_after_review",
     }:
         return "not_blocked_by_repair_queue"
-
     return "blocked_gate4_gate5"
 
 
 def _allowed_next_action(repair_queue_status: str, fallback_action: str) -> str:
     if repair_queue_status == "blocked_pending_manual_review":
         return "manual_sequence_provenance_review"
-
     if repair_queue_status == "blocked_pending_source_ortholog_repair":
         return "fetch_or_curate_source_ortholog"
-
     if repair_queue_status == "blocked_deferred_pending_source":
         return "defer_until_stronger_source"
-
     if repair_queue_status == "excluded_from_downstream_gates":
         return "do_not_promote_downstream"
-
     if repair_queue_status == "not_needed_or_repaired_for_planning":
         return "no_repair_queue_action_needed"
-
     return fallback_action
+
+
+def _match_value(row: dict[str, object], column: str) -> str:
+    value = _row_value(row, column)
+    if column == "source_table":
+        return value.replace("\\", "/")
+    return value
+
+
+def _match_key(row: dict[str, object]) -> tuple[str, ...]:
+    return tuple(_match_value(row, column) for column in REVIEW_MATCH_COLUMNS)
 
 
 def sirt6_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
@@ -191,7 +245,6 @@ def sirt6_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
         required_columns=SIRT6_REQUIRED_COLUMNS,
         table_name="SIRT6 repair table",
     )
-
     summary_rows = []
     for index, row in enumerate(rows.to_dicts(), start=1):
         coverage_status = _sirt6_coverage_status(_row_value(row, "coverage_gap_status"))
@@ -201,7 +254,6 @@ def sirt6_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
             repair_queue_status,
             _row_value(row, "recommended_coverage_action"),
         )
-
         summary_rows.append(
             {
                 "candidate_set": "sirt6_dna_repair",
@@ -231,7 +283,6 @@ def sirt6_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
                 "reviewer_note": _row_value(row, "repair_note"),
             }
         )
-
     return pl.DataFrame(summary_rows, schema=SUMMARY_SCHEMA)
 
 
@@ -241,7 +292,6 @@ def tp53_mdm2_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
         required_columns=TP53_MDM2_REQUIRED_COLUMNS,
         table_name="TP53/MDM2 repair table",
     )
-
     summary_rows = []
     for index, row in enumerate(rows.to_dicts(), start=1):
         repair_status = _row_value(row, "repair_status")
@@ -250,7 +300,6 @@ def tp53_mdm2_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
             repair_queue_status,
             _row_value(row, "recommended_next_action"),
         )
-
         summary_rows.append(
             {
                 "candidate_set": _row_value(row, "candidate_set"),
@@ -280,14 +329,96 @@ def tp53_mdm2_rows_to_generic_summary(rows: pl.DataFrame) -> pl.DataFrame:
                 "reviewer_note": _row_value(row, "reviewer_note"),
             }
         )
-
     return pl.DataFrame(summary_rows, schema=SUMMARY_SCHEMA)
+
+
+def _review_decision_lookup(
+    review_decision_rows: pl.DataFrame,
+) -> dict[tuple[str, ...], dict[str, object]]:
+    validate_required_columns(
+        review_decision_rows,
+        required_columns=REVIEW_DECISION_REQUIRED_COLUMNS,
+        table_name="review decision table",
+    )
+    lookup: dict[tuple[str, ...], dict[str, object]] = {}
+    for row in review_decision_rows.to_dicts():
+        key = _match_key(row)
+        if key in lookup:
+            raise ValueError(f"Duplicate review decision for repair queue row: {key}")
+        lookup[key] = row
+    return lookup
+
+
+def apply_review_decision_overlay(
+    summary: pl.DataFrame,
+    review_decision_rows: pl.DataFrame,
+) -> pl.DataFrame:
+    """Overlay reviewed provenance decisions onto an existing repair queue summary.
+
+    This function consumes already-reviewed decision rows only. It does not fetch
+    sequences, curate orthologs, call Biohub, generate embeddings, call Boltz,
+    promote Gate 8 or Gate 9, or make biological claims.
+    """
+    if review_decision_rows.is_empty():
+        return summary
+
+    lookup = _review_decision_lookup(review_decision_rows)
+    updated_rows = []
+    matched_keys: set[tuple[str, ...]] = set()
+
+    for row in summary.to_dicts():
+        key = _match_key(row)
+        review = lookup.get(key)
+        if review is None:
+            updated_rows.append(row)
+            continue
+
+        matched_keys.add(key)
+        review_decision = _row_value(review, "review_decision")
+        reviewer_note = _row_value(review, "reviewer_note")
+        row.update(
+            {
+                "repair_decision": review_decision,
+                "repair_status": review_decision,
+                "repair_queue_status": _review_repair_queue_status(review_decision),
+                "downstream_block_status": _row_value(
+                    review,
+                    "downstream_block_status_after_review",
+                ),
+                "allowed_next_action": _row_value(
+                    review,
+                    "allowed_next_action_after_review",
+                ),
+                "claim_policy": _row_value(review, "claim_policy_after_review"),
+                "claim_status": _row_value(
+                    review,
+                    "claim_status_after_review",
+                    CLAIM_STATUS,
+                ),
+                "forbidden_actions": _row_value(
+                    review,
+                    "forbidden_actions_after_review",
+                    FORBIDDEN_ACTIONS,
+                ),
+                "reviewer_note": (
+                    f"Reviewed provenance decision: {review_decision}. {reviewer_note}"
+                ),
+            }
+        )
+        updated_rows.append(row)
+
+    unmatched_keys = sorted(set(lookup) - matched_keys)
+    if unmatched_keys:
+        raise ValueError(f"Review decisions do not match summary rows: {unmatched_keys}")
+
+    return pl.DataFrame(updated_rows, schema=SUMMARY_SCHEMA)
 
 
 def build_generic_repair_queue_summary(
     *,
     sirt6_rows: pl.DataFrame,
     tp53_mdm2_rows: pl.DataFrame,
+    review_decision_rows: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """Build a table-only Gate 4 / Gate 5 generic repair queue summary.
 
@@ -301,15 +432,18 @@ def build_generic_repair_queue_summary(
     ]
     non_empty_parts = [part for part in parts if not part.is_empty()]
     if not non_empty_parts:
-        return empty_generic_repair_queue_summary()
+        summary = empty_generic_repair_queue_summary()
+    else:
+        summary = pl.concat(non_empty_parts).select(list(SUMMARY_SCHEMA))
 
-    return pl.concat(non_empty_parts).select(list(SUMMARY_SCHEMA))
+    if review_decision_rows is None:
+        return summary
+    return apply_review_decision_overlay(summary, review_decision_rows)
 
 
 def repair_queue_status_counts(summary: pl.DataFrame) -> pl.DataFrame:
     if summary.is_empty():
         return pl.DataFrame({"repair_queue_status": [], "n_rows": []})
-
     return summary.group_by("repair_queue_status").len(name="n_rows").sort(["repair_queue_status"])
 
 
@@ -317,12 +451,17 @@ def repair_queue_status_counts(summary: pl.DataFrame) -> pl.DataFrame:
 def main(
     sirt6_repair: Annotated[Path, typer.Option()] = DEFAULT_SIRT6_REPAIR,
     tp53_mdm2_repair: Annotated[Path, typer.Option()] = DEFAULT_TP53_MDM2_REPAIR,
+    review_decisions: Annotated[Path | None, typer.Option()] = None,
     output: Annotated[Path, typer.Option()] = DEFAULT_OUTPUT,
 ) -> None:
     """Write the generic repair queue summary CSV."""
+    review_decision_rows = None
+    if review_decisions is not None:
+        review_decision_rows = read_repair_table(review_decisions)
     summary = build_generic_repair_queue_summary(
         sirt6_rows=read_repair_table(sirt6_repair),
         tp53_mdm2_rows=read_repair_table(tp53_mdm2_repair),
+        review_decision_rows=review_decision_rows,
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     summary.write_csv(output)
