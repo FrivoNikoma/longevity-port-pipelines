@@ -245,3 +245,11 @@ The generic repair queue summary builder can optionally consume reviewed decisio
 The overlay reads already-reviewed Gate 4 / Gate 5 provenance decisions and reflects them in the generic repair queue summary. Deferred decisions remain blocked at Gate 4 / Gate 5 and do not become downstream eligibility.
 
 This overlay does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Generic repair queue summary checkpoint fixtures
+
+The generic repair queue summary checkpoint fixtures are recorded in tests/fixtures/generic_repair_queue_summary_base.csv and tests/fixtures/generic_repair_queue_summary_reviewed_overlay.csv.
+
+These fixtures freeze the expected base and reviewed-overlay repair queue summaries as regression checkpoints. The base fixture records 13 blocked Gate 4 / Gate 5 repair rows. The reviewed-overlay fixture records the same 13 rows with the reviewed SIRT6 row remaining deferred and blocked.
+
+These fixtures do not fetch sequences, do not curate orthologs, do not call Biohub, do not generate embeddings, do not call Boltz, do not rerun enrichment or contrast, do not promote Gate 8 or Gate 9, and do not make biological claims.

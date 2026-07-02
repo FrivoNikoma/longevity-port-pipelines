@@ -468,3 +468,20 @@ def test_current_gate_map_records_generic_repair_queue_review_overlay() -> None:
     assert "does not rerun enrichment or contrast" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_generic_repair_queue_summary_fixtures() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "Generic repair queue summary checkpoint fixtures" in text
+    assert "tests/fixtures/generic_repair_queue_summary_base.csv" in text
+    assert "tests/fixtures/generic_repair_queue_summary_reviewed_overlay.csv" in text
+    assert "13 blocked Gate 4 / Gate 5 repair rows" in text
+    assert "reviewed SIRT6 row remaining deferred and blocked" in text
+    assert "do not fetch sequences" in text
+    assert "do not curate orthologs" in text
+    assert "do not call Biohub" in text
+    assert "do not generate embeddings" in text
+    assert "do not call Boltz" in text
+    assert "do not rerun enrichment or contrast" in text
+    assert "do not promote Gate 8 or Gate 9" in text
+    assert "do not make biological claims" in text
