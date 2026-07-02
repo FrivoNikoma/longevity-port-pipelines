@@ -165,3 +165,9 @@ This is a schema checkpoint only. It defines machine-readable fill statuses, req
 The controlled embedding fill worklist builder is now recorded in `src/longevity_port_pipelines/stages/controlled_embedding_fill_worklist.py`.
 
 This is a table-only dry-run worklist builder. It consumes curated embedding preflight rows and emits controlled fill statuses under `data/config/controlled_embedding_fill_worklist_schema.yaml`. It does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.
+
+## Brandt's bat P09874 controlled fill no-op checkpoint
+
+The first controlled embedding fill worklist checkpoint is recorded in `data/interim/controlled_embedding_fill_worklist_brandts_bat_p09874_checkpoint.csv`.
+
+This is a no-op table-only checkpoint. The Brandt's bat `P09874` embedding is already present, so the controlled fill worklist assigns `fill_status: do_not_fill` and `allowed_next_action: do_not_fill`. It does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.

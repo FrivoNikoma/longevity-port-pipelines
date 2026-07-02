@@ -274,3 +274,19 @@ def test_current_gate_map_records_controlled_embedding_fill_worklist_builder() -
     assert "does not call Boltz" in text
     assert "does not rerun enrichment/contrast" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_brandts_bat_p09874_controlled_fill_noop_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Brandt's bat P09874 controlled fill no-op checkpoint" in text
+    assert "controlled_embedding_fill_worklist_brandts_bat_p09874_checkpoint.csv" in text
+    assert "no-op table-only checkpoint" in text
+    assert "fill_status: do_not_fill" in text
+    assert "allowed_next_action: do_not_fill" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not commit `data/output/` artifacts" in text
+    assert "does not call Boltz" in text
+    assert "does not rerun enrichment/contrast" in text
+    assert "does not make biological claims" in text
