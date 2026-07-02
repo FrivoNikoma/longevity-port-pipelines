@@ -207,7 +207,7 @@ The generic pipeline can now represent both:
 
 ### Recommended next safe steps
 
-1. Add a gate-aware embedding fill plan.
+1. Add a gate-aware embedding fill plan. See `docs/gate_aware_embedding_fill_plan.md`.
 2. Add a first controlled embedding fill protocol.
 3. Run only reviewed, small, explicit embedding-fill checkpoints.
 4. Repair TP53/MDM2 coverage before any real TP53/MDM2 contrast attempt.

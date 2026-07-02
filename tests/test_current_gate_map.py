@@ -220,3 +220,13 @@ def test_current_gate_map_records_gate8_gate9_calibration_roadmap_checkpoint() -
     assert "the Gate 8/Gate 9 calibration-lane roadmap checkpoint is recorded" in text
     assert "genericdry-run" not in text
     assert "calculator,robustness" not in text
+
+
+def test_current_gate_map_records_gate_aware_embedding_fill_plan() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "gate-aware embedding fill plan is now recorded" in text
+    assert "docs/gate_aware_embedding_fill_plan.md" in text
+    assert "does not call Biohub" in text
+    assert "genericdry-run" not in text
+    assert "calculator,robustness" not in text

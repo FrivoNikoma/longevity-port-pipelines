@@ -141,3 +141,9 @@ Each PR description should answer:
 - Does it introduce data, code, docs, or runtime outputs?
 - Does it allow any new claim?
 - What remains blocked?
+
+## Gate-aware embedding fill checkpoint
+
+The gate-aware embedding fill plan is now recorded in `docs/gate_aware_embedding_fill_plan.md`.
+
+This is a planning checkpoint only. It does not call Biohub, generate embeddings, submit Boltz jobs, or make biological claims.
