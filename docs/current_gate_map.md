@@ -195,3 +195,11 @@ The TP53/MDM2 elephant ortholog repair decision table is now aligned with the ge
 The tracked table `data/input/tp53_mdm2_ortholog_repair_decisions.csv` now exposes generic fields including `lane_name`, `source_species`, `gene_symbol`, `target_uniprot`, `coverage_status`, `provenance_status`, `repair_status`, and `reviewer_note`.
 
 Both TP53/MDM2 elephant seed rows remain blocked: `target_uniprot` is `unresolved`, `coverage_status` is `unresolved_downstream_provenance`, `provenance_status` is `unresolved`, and `repair_status` is `pending`. This alignment does not fetch sequences, does not resolve elephant orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote cofolding readiness, and does not make biological claims.
+
+## Generic repair queue summary builder checkpoint
+
+The first generic Gate 4 / Gate 5 repair queue summary builder is recorded in `docs/generic_repair_queue_summary_builder_checkpoint.md`.
+
+The builder combines `data/input/sirt6_candidate_coverage_repair_decisions.csv` and `data/input/tp53_mdm2_ortholog_repair_decisions.csv` into a machine-readable repair queue summary. Current committed inputs are expected to produce 13 repair queue rows: 11 SIRT6/core3 rows and 2 TP53/MDM2 elephant rows.
+
+The summary uses blocker-oriented fields including `repair_queue_status`, `downstream_block_status`, and `allowed_next_action`. It does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.

@@ -353,3 +353,25 @@ def test_current_gate_map_records_tp53_mdm2_generic_repair_alignment_checkpoint(
     assert "does not call Boltz" in text
     assert "does not promote cofolding readiness" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_generic_repair_queue_summary_builder_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Generic repair queue summary builder checkpoint" in text
+    assert "docs/generic_repair_queue_summary_builder_checkpoint.md" in text
+    assert "data/input/sirt6_candidate_coverage_repair_decisions.csv" in text
+    assert "data/input/tp53_mdm2_ortholog_repair_decisions.csv" in text
+    assert "produce 13 repair queue rows" in text
+    assert "11 SIRT6/core3 rows" in text
+    assert "2 TP53/MDM2 elephant rows" in text
+    assert "`repair_queue_status`" in text
+    assert "`downstream_block_status`" in text
+    assert "`allowed_next_action`" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text
