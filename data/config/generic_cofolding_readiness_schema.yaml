@@ -1,0 +1,269 @@
+﻿schema_version: 1
+schema_id: generic_cofolding_readiness_schema
+pipeline_gate: cofolding_readiness
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: cofolding_readiness
+
+description: >
+  Generic LongevityPort Gate 9 schema for contrast-gated cofolding readiness.
+  This file defines the shared vocabulary for deciding whether a Gate 8
+  technical contrast row may enter cofolding dry-run planning.
+
+purpose: >
+  Gate 9 is a downstream compatibility-planning readiness gate, not a
+  structural validation layer, not a binding validation layer, and not a
+  biological validation layer. It may classify rows for cofolding dry-run
+  planning after upstream gates pass, but it must not submit live structural
+  jobs, spend Boltz credits, claim structural compatibility, or claim validated
+  longevity biology.
+
+required_upstream_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - long_lived_species
+  - short_lived_species
+  - short_lived_control_count
+  - contrast_class
+  - contrast_requires_review
+  - robustness_status
+  - robustness_note
+  - contrast_status
+  - recommended_next_action
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - contrast_note
+
+required_context_fields:
+  - partner_uniprot
+  - partner_context_status
+  - source_provenance_status
+  - cofolding_input_review_status
+  - live_opt_in_status
+
+required_input_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - long_lived_species
+  - short_lived_species
+  - short_lived_control_count
+  - contrast_class
+  - contrast_requires_review
+  - robustness_status
+  - robustness_note
+  - contrast_status
+  - recommended_next_action
+  - contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - contrast_note
+  - partner_uniprot
+  - partner_context_status
+  - source_provenance_status
+  - cofolding_input_review_status
+  - live_opt_in_status
+
+required_output_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - priority
+  - target_species
+  - partner_uniprot
+  - contrast_class
+  - contrast_status
+  - robustness_status
+  - cofolding_input_review_status
+  - cofolding_readiness_status
+  - recommended_next_action
+  - cofolding_dry_run_allowed
+  - live_cofolding_allowed
+  - controlled_claim_allowed
+  - claim_policy
+  - claim_status
+  - cofolding_readiness_note
+
+allowed_cofolding_readiness_statuses:
+  - cofolding_dry_run_ready
+  - cofolding_limited_dry_run_review
+  - blocked_contrast_not_ready
+  - blocked_contrast_requires_review
+  - blocked_missing_candidate_context
+  - blocked_missing_species_context
+  - blocked_missing_source_provenance
+  - blocked_missing_partner_context
+  - blocked_unreviewed_dry_run_inputs
+  - blocked_claim_policy
+  - excluded_from_cofolding
+  - needs_manual_review
+
+status_groups:
+  dry_run_ready:
+    - cofolding_dry_run_ready
+    - cofolding_limited_dry_run_review
+  blocked:
+    - blocked_contrast_not_ready
+    - blocked_contrast_requires_review
+    - blocked_missing_candidate_context
+    - blocked_missing_species_context
+    - blocked_missing_source_provenance
+    - blocked_missing_partner_context
+    - blocked_unreviewed_dry_run_inputs
+    - blocked_claim_policy
+    - excluded_from_cofolding
+    - needs_manual_review
+
+allowed_context_statuses:
+  partner_context:
+    - partner_context_ready
+    - missing_partner_context
+    - partner_context_needs_review
+  source_provenance:
+    - source_provenance_ready
+    - missing_source_provenance
+    - source_provenance_needs_review
+  cofolding_input_review:
+    - dry_run_inputs_reviewed
+    - dry_run_inputs_unreviewed
+    - dry_run_inputs_need_manual_review
+  live_opt_in:
+    - live_not_requested
+    - live_requested_requires_separate_review
+    - live_explicitly_blocked
+
+minimum_input_requirements:
+  requires_gate8_contrast_dry_run_allowed: true
+  allowed_gate8_contrast_statuses:
+    - technical_contrast_ready
+    - technical_contrast_limited_dry_run
+  requires_conservative_claim_policy: true
+  requires_controlled_claim_allowed_false: true
+  requires_reviewed_dry_run_inputs_before_ready_status: true
+  requires_live_not_requested_for_schema_checks: true
+
+decision_rules:
+  cofolding_dry_run_ready:
+    cofolding_dry_run_allowed: true
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: prepare_cofolding_dry_run_manifest_without_live_calls
+  cofolding_limited_dry_run_review:
+    cofolding_dry_run_allowed: true
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: review_limited_cofolding_dry_run_context_before_manifest
+  blocked_contrast_not_ready:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: resolve_gate8_contrast_status_before_cofolding
+  blocked_contrast_requires_review:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: review_gate8_robustness_before_cofolding
+  blocked_missing_candidate_context:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_candidate_context_before_cofolding
+  blocked_missing_species_context:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: add_target_species_context_before_cofolding
+  blocked_missing_source_provenance:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: record_source_provenance_before_cofolding
+  blocked_missing_partner_context:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: record_partner_context_before_cofolding
+  blocked_unreviewed_dry_run_inputs:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: review_cofolding_dry_run_inputs_before_manifest
+  blocked_claim_policy:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: restore_conservative_claim_policy_before_cofolding
+  excluded_from_cofolding:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: keep_row_excluded_from_cofolding
+  needs_manual_review:
+    cofolding_dry_run_allowed: false
+    live_cofolding_allowed: false
+    controlled_claim_allowed: false
+    recommended_next_action: perform_manual_cofolding_readiness_review
+
+biological_mode_interpretation:
+  maintained_or_enhanced_repair: >
+    Cofolding readiness may support technical compatibility planning for
+    maintained repair hypotheses, but it does not validate repair function.
+  beneficial_breakage: >
+    Cofolding readiness may support technical planning for breakage or weakening
+    hypotheses, but it does not validate regulatory escape.
+  transferable_function: >
+    Cofolding readiness may support technical planning only. Extracellular
+    matrix, membrane state, and post-translational context may dominate
+    interpretation.
+  signaling_rewiring: >
+    Cofolding readiness may support technical planning only. Hub-risk and
+    pathway context remain required before any portability interpretation.
+  hub_risk_review: >
+    Cofolding readiness must be treated as a high-risk technical checkpoint,
+    not as a transferability or safety claim.
+
+allowed_language:
+  - cofolding readiness
+  - cofolding dry-run planning
+  - contrast-gated cofolding planning
+  - downstream compatibility planning
+  - blocked cofolding readiness row
+  - limited cofolding dry-run review
+  - no-live-call gate
+
+disallowed_language:
+  - cofolding validates the candidate
+  - Boltz validates the candidate
+  - validated structural compatibility
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+
+required_guardrails:
+  - no Biohub calls from cofolding-readiness schema checks
+  - no Boltz calls from cofolding-readiness schema checks
+  - no live structural calls from cofolding-readiness schema checks
+  - no embedding generation from cofolding-readiness schema checks
+  - no cofolding input generation from cofolding-readiness schema checks
+  - no cofolding job submission from cofolding-readiness schema checks
+  - no Boltz credit spend from cofolding-readiness schema checks
+  - no committed signed structure URLs from cofolding-readiness schema checks
+  - no biological claims from cofolding readiness alone
+  - live cofolding requires a separate explicit opt-in step

@@ -103,3 +103,11 @@ def test_current_gate_map_records_sirt6_generic_gate8_dry_run_path() -> None:
     assert "generic Gate 8 dry-run wrapper exists" in text
     assert "SIRT6 generic gated contrast input bridge exists" in text
     assert "SIRT6 generic gated contrast dry-run wrapper exists" in text
+
+
+def test_current_gate_map_records_generic_cofolding_readiness_schema() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic Gate 9 cofolding readiness schema now exists" in text
+    assert "the generic cofolding readiness schema exists" in text
+    assert "generic helper/runtime checklist pending" in text
