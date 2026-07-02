@@ -121,7 +121,9 @@ def test_current_gate_map_records_generic_cofolding_readiness_helper() -> None:
     assert "the generic cofolding readiness helper exists" in text
     assert "generic dry-run manifest builder now exists" in text
     assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert "additional lane context builders pending" in text
 
 
@@ -134,7 +136,9 @@ def test_current_gate_map_records_generic_cofolding_readiness_runtime() -> None:
     assert "the generic cofolding readiness runtime checklist exists" in text
     assert "generic dry-run manifest builder now exists" in text
     assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert "additional lane context builders pending" in text
 
 
@@ -144,7 +148,9 @@ def test_current_gate_map_records_generic_cofolding_dry_run_manifest() -> None:
     assert "generic dry-run manifest builder now exists" in text
     assert "the generic cofolding dry-run manifest builder exists" in text
     assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert "additional lane context builders pending" in text
 
 
@@ -153,7 +159,9 @@ def test_current_gate_map_records_sirt6_cofolding_readiness_context_builder() ->
 
     assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "the SIRT6 Gate 9 cofolding context builder exists" in text
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert "additional lane context builders pending" in text
 
 
@@ -162,7 +170,9 @@ def test_current_gate_map_records_sirt6_gate9_dry_run_path() -> None:
 
     assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "the SIRT6 Gate 9 dry-run path is recorded" in text
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert "additional lane context builders pending" in text
     assert "genericdry-run" not in text
 
@@ -180,9 +190,22 @@ def test_current_gate_map_records_tp53_mdm2_generic_gate8_blocked_summary() -> N
 def test_current_gate_map_records_tp53_mdm2_gate9_blocked_context() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "TP53/MDM2 Gate 9 blocked context builder now exists" in text
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
     assert (
         "TP53/MDM2 emits a generic Gate 9 blocked context while coverage remains unresolved" in text
     )
     assert "additional lane context builders pending" in text
     assert "not a validated biological claim" in text
+
+
+def test_current_gate_map_records_tp53_mdm2_gate9_blocked_dry_run_path() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert (
+        "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
+    )
+    assert "TP53/MDM2 Gate 9 blocked dry-run path is recorded" in text
+    assert "empty eligible manifest expectation" in text
+    assert "additional lane context builders pending" in text

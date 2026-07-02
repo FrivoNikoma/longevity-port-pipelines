@@ -138,3 +138,47 @@ This policy does not:
 ## Next step
 
 After this policy is reviewed, the next safe implementation step would be a committed TP53/MDM2 pilot manifest or manifest validator that records the candidate-set policy without running live stages by default.
+
+## Generic Gate 9 blocked dry-run path
+
+This section records the safe TP53/MDM2 Gate 9 blocked dry-run path.
+
+The path connects the TP53/MDM2 blocked Gate 8 summary to the shared generic Gate 9 cofolding readiness and dry-run manifest layers:
+
+    tp53-mdm2-generic-gated-contrast
+    -> tp53-mdm2-cofolding-readiness-context
+    -> cofolding-readiness
+    -> cofolding-dry-run-manifest
+
+Run from the repository root after the TP53/MDM2 generic Gate 8 blocked summary exists:
+
+    uv run tp53-mdm2-cofolding-readiness-context `
+      --gate8-summary data/interim/tp53_mdm2_generic_gated_contrast_summary.csv `
+      --repair-context-input data/input/tp53_mdm2_ortholog_repair_decisions.csv `
+      --output data/interim/tp53_mdm2_generic_cofolding_readiness_context.csv
+
+    uv run cofolding-readiness `
+      --gate8-summary data/interim/tp53_mdm2_generic_gated_contrast_summary.csv `
+      --cofolding-context data/interim/tp53_mdm2_generic_cofolding_readiness_context.csv `
+      --output data/interim/tp53_mdm2_generic_cofolding_readiness_summary.csv
+
+    uv run cofolding-dry-run-manifest `
+      --readiness-summary data/interim/tp53_mdm2_generic_cofolding_readiness_summary.csv `
+      --output data/interim/tp53_mdm2_generic_cofolding_dry_run_manifest.csv `
+      --blocked-output data/interim/tp53_mdm2_generic_cofolding_dry_run_blocked_manifest.csv
+
+Expected outputs:
+
+    data/interim/tp53_mdm2_generic_cofolding_readiness_context.csv
+    data/interim/tp53_mdm2_generic_cofolding_readiness_summary.csv
+    data/interim/tp53_mdm2_generic_cofolding_dry_run_manifest.csv
+    data/interim/tp53_mdm2_generic_cofolding_dry_run_blocked_manifest.csv
+
+Expected policy result:
+
+    eligible manifest: empty
+    blocked manifest: blocked_gate8_not_ready
+
+This is expected because TP53/MDM2 currently remains blocked at generic Gate 8 while coverage remains unresolved.
+
+This path does not make TP53/MDM2 eligible for cofolding. It does not call Biohub or Boltz, generate embeddings, compute enrichment metrics, generate cofolding inputs, submit cofolding jobs, spend Boltz credits, make live structural calls, or make biological claims.
