@@ -227,3 +227,13 @@ The generic Gate 4 / Gate 5 repair queue reviewed-decision schema is recorded in
 The schema defines how future manual provenance review decisions should be recorded machine-readably after checklist-based review. It covers row identity, pre-review blocker state, reviewed evidence, review decision vocabulary, downstream blocking policy, allowed next action, claim policy, claim status, and forbidden actions.
 
 This schema does not record a reviewed biological provenance row by itself. It does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## First SIRT6 manual provenance review fixture
+
+The first SIRT6 manual provenance review fixture is recorded in `data/input/generic_repair_queue_review_decisions.csv` and documented in `docs/sirt6_manual_provenance_review_checkpoint.md`.
+
+This checkpoint reviews one concrete SIRT6 repair queue row as Level 1 biological provenance data. It checks whether the row can move from an unreviewed Gate 4 / Gate 5 blocker toward reviewed-for-planning provenance evidence.
+
+The reviewed row remains blocked at Gate 4 / Gate 5 because the reviewed evidence records a deferred provenance decision rather than downstream eligibility. The row remains a valid blocked repair-queue worklist item.
+
+This fixture does not fetch sequences, does not curate orthologs globally, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote Gate 8 or Gate 9, and does not make biological claims.

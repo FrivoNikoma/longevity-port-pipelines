@@ -432,3 +432,22 @@ def test_current_gate_map_records_generic_repair_queue_review_schema() -> None:
     assert "does not call Boltz" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_first_sirt6_manual_provenance_review_fixture() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "First SIRT6 manual provenance review fixture" in text
+    assert "data/input/generic_repair_queue_review_decisions.csv" in text
+    assert "docs/sirt6_manual_provenance_review_checkpoint.md" in text
+    assert "Level 1 biological provenance data" in text
+    assert "unreviewed Gate 4 / Gate 5 blocker" in text
+    assert "reviewed-for-planning provenance evidence" in text
+    assert "deferred provenance decision" in text
+    assert "valid blocked repair-queue worklist item" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs globally" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text
