@@ -119,7 +119,8 @@ def test_current_gate_map_records_generic_cofolding_readiness_helper() -> None:
         "generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist" in text
     )
     assert "the generic cofolding readiness helper exists" in text
-    assert "generic dry-run manifest pending" in text
+    assert "generic dry-run manifest builder now exists" in text
+    assert "lane-specific context builders pending" in text
 
 
 def test_current_gate_map_records_generic_cofolding_readiness_runtime() -> None:
@@ -129,4 +130,13 @@ def test_current_gate_map_records_generic_cofolding_readiness_runtime() -> None:
         "generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist" in text
     )
     assert "the generic cofolding readiness runtime checklist exists" in text
-    assert "generic dry-run manifest pending" in text
+    assert "generic dry-run manifest builder now exists" in text
+    assert "lane-specific context builders pending" in text
+
+
+def test_current_gate_map_records_generic_cofolding_dry_run_manifest() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "generic dry-run manifest builder now exists" in text
+    assert "the generic cofolding dry-run manifest builder exists" in text
+    assert "lane-specific context builders pending" in text
