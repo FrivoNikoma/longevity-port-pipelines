@@ -209,3 +209,14 @@ def test_current_gate_map_records_tp53_mdm2_gate9_blocked_dry_run_path() -> None
     assert "TP53/MDM2 Gate 9 blocked dry-run path is recorded" in text
     assert "empty eligible manifest expectation" in text
     assert "additional lane context builders pending" in text
+
+
+def test_current_gate_map_records_gate8_gate9_calibration_roadmap_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Gate 8/Gate 9 calibration checkpoint" in text
+    assert "SIRT6 has a recorded dry-run path" in text
+    assert "TP53/MDM2 has a recorded blocked dry-run path" in text
+    assert "the Gate 8/Gate 9 calibration-lane roadmap checkpoint is recorded" in text
+    assert "genericdry-run" not in text
+    assert "calculator,robustness" not in text

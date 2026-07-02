@@ -165,3 +165,54 @@ Build a reusable multi-lane gated decision pipeline first; use SIRT6 and TP53/MD
 
 ```
 
+## Checkpoint after Gate 8 and Gate 9 calibration lanes
+
+This checkpoint records the state after wiring SIRT6 and TP53/MDM2 through the generic Gate 8 and Gate 9 evidence trail.
+
+### SIRT6/core3
+
+- Generic Gate 8 input bridge exists.
+- Generic Gate 8 dry-run wrapper exists.
+- Gate 9 cofolding readiness context builder exists.
+- Gate 9 dry-run path is recorded.
+- Outputs remain table-only planning/worklist artifacts.
+
+### TP53/MDM2 elephant
+
+- Generic Gate 8-compatible blocked summary exists.
+- Gate 9 blocked context builder exists.
+- Gate 9 blocked dry-run path is recorded.
+- Expected eligible manifest is empty.
+- Expected blocked manifest records `blocked_gate8_not_ready`.
+
+### What this means
+
+The project is now a reusable gated decision pipeline, not a SIRT6-only workflow.
+
+The generic pipeline can now represent both:
+
+- an advanced calibration lane with a safe dry-run path;
+- a second calibration lane that enters the same generic gates but remains blocked by policy.
+
+### Remaining blockers
+
+- TP53/MDM2 coverage repair.
+- TP53/MDM2 real contrast eligibility.
+- TP53/MDM2 cofolding manifest eligibility.
+- Generic control outputs across all lanes.
+- Additional lane context builders beyond SIRT6 and TP53/MDM2.
+- HAS2/CD44, IGF/RHEB/mTOR, and AMPK wiring into the newer generic Gate 8/Gate 9 architecture.
+- Live Boltz calls by default.
+- Biological or wet-lab validation claims.
+
+### Recommended next safe steps
+
+1. Add a gate-aware embedding fill plan.
+2. Add a first controlled embedding fill protocol.
+3. Run only reviewed, small, explicit embedding-fill checkpoints.
+4. Repair TP53/MDM2 coverage before any real TP53/MDM2 contrast attempt.
+5. Keep live Boltz calls opt-in only after dry-run review and guardrail checks.
+
+Allowed language: technical checkpoint, coverage-aware planning, dry-run gate, repair worklist, contrast readiness, cofolding readiness, blocked calibration lane.
+
+Disallowed language: validated longevity signal, validated biological hit, confirmed binding change, confirmed functional effect, safe to port, proven pro-longevity variant.

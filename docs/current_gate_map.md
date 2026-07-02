@@ -26,7 +26,9 @@ defer worklist.
 ## Current interpretation
 
 The project has moved from a SIRT6-only coverage-repair phase into a multi-lane
-gate architecture phase.
+gate architecture phase. After the Gate 8/Gate 9 calibration checkpoint, SIRT6 has a recorded dry-run path and TP53/MDM2 has a recorded blocked dry-run path.
+
+- the Gate 8/Gate 9 calibration-lane roadmap checkpoint is recorded
 
 Current calibration lanes:
 
