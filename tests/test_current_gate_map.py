@@ -160,3 +160,13 @@ def test_current_gate_map_records_sirt6_gate9_dry_run_path() -> None:
     assert "the SIRT6 Gate 9 dry-run path is recorded" in text
     assert "additional lane context builders pending" in text
     assert "genericdry-run" not in text
+
+
+def test_current_gate_map_records_tp53_mdm2_generic_gate8_blocked_summary() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "TP53/MDM2 now emits a generic Gate 8 blocked summary" in text
+    assert (
+        "TP53/MDM2 emits a generic Gate 8 blocked summary while coverage remains unresolved" in text
+    )
+    assert "not a validated biological claim" in text

@@ -17,7 +17,7 @@ defer worklist.
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper now exist, and the candidate contrast gate records generic control-helper traces. Fully generic control outputs across all lanes are still pending. |
 | Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace, the generic strict panel runtime builder exists, and TP53/MDM2 preflight now emits a generic strict panel summary while remaining blocked by coverage. |
-| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist. |
+| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
 | Gate 11 - decision package | Summarize candidate status, allowed claims, forbidden claims, and next action. | Not done. |
@@ -44,6 +44,7 @@ Current calibration lanes:
   - generic coverage-helper trace is recorded in the coverage preflight layer
   - generic strict panel builder emits a blocked Gate 7 summary
   - not yet at SIRT6-level gate maturity
+  - emits a generic Gate 8 blocked summary while coverage remains unresolved
   - not a validated biological claim
 
 Current generic adoption checkpoint:
@@ -66,6 +67,7 @@ Current generic adoption checkpoint:
 - the generic gated contrast runtime records contrast robustness annotations
 - SIRT6 generic gated contrast input bridge exists
 - SIRT6 generic gated contrast dry-run wrapper exists
+- TP53/MDM2 emits a generic Gate 8 blocked summary while coverage remains unresolved
 - the generic cofolding readiness schema exists
 - the generic cofolding readiness helper exists
 - the generic cofolding readiness runtime checklist exists

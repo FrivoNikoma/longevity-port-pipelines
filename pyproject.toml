@@ -65,6 +65,7 @@ sirt6-generic-gated-contrast = "longevity_port_pipelines.stages.sirt6_generic_ga
 sirt6-cofolding-readiness-context = "longevity_port_pipelines.stages.sirt6_cofolding_readiness_context:app"
 tp53-mdm2-pilot-manifest-validator = "longevity_port_pipelines.stages.tp53_mdm2_pilot_manifest_validator:app"
 tp53-mdm2-pilot-coverage-preflight = "longevity_port_pipelines.stages.tp53_mdm2_pilot_coverage_preflight:app"
+tp53-mdm2-generic-gated-contrast = "longevity_port_pipelines.stages.tp53_mdm2_generic_gated_contrast:app"
 lane-manifest-summary = "longevity_port_pipelines.stages.lane_manifest:main"
 
 [build-system]
