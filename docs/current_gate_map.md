@@ -159,3 +159,9 @@ This is a governance checkpoint only. It formalizes the Brandt's bat `P09874` pr
 The controlled embedding fill worklist schema is now recorded in `data/config/controlled_embedding_fill_worklist_schema.yaml`.
 
 This is a schema checkpoint only. It defines machine-readable fill statuses, required worklist fields, single-row live-fill guardrails, `--yes-live` opt-in requirements, `sequence_length_status == matches`, no committed `data/output/` artifacts, no Biohub calls from schema checks, no Boltz calls, no enrichment/contrast rerun, and no biological claims.
+
+## Controlled embedding fill worklist builder checkpoint
+
+The controlled embedding fill worklist builder is now recorded in `src/longevity_port_pipelines/stages/controlled_embedding_fill_worklist.py`.
+
+This is a table-only dry-run worklist builder. It consumes curated embedding preflight rows and emits controlled fill statuses under `data/config/controlled_embedding_fill_worklist_schema.yaml`. It does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.

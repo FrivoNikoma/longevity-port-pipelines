@@ -259,3 +259,18 @@ def test_current_gate_map_records_controlled_embedding_fill_worklist_schema() ->
     assert "no Boltz calls" in text
     assert "no enrichment/contrast rerun" in text
     assert "no biological claims" in text
+
+
+def test_current_gate_map_records_controlled_embedding_fill_worklist_builder() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "controlled embedding fill worklist builder is now recorded" in text
+    assert "src/longevity_port_pipelines/stages/controlled_embedding_fill_worklist.py" in text
+    assert "table-only dry-run worklist builder" in text
+    assert "data/config/controlled_embedding_fill_worklist_schema.yaml" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not commit `data/output/` artifacts" in text
+    assert "does not call Boltz" in text
+    assert "does not rerun enrichment/contrast" in text
+    assert "does not make biological claims" in text
