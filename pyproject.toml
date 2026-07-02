@@ -62,6 +62,7 @@ cofolding-readiness = "longevity_port_pipelines.stages.cofolding_readiness_runti
 cofolding-dry-run-manifest = "longevity_port_pipelines.stages.cofolding_dry_run_manifest:app"
 sirt6-generic-gated-contrast-input = "longevity_port_pipelines.stages.sirt6_generic_gated_contrast_input:app"
 sirt6-generic-gated-contrast = "longevity_port_pipelines.stages.sirt6_generic_gated_contrast:app"
+sirt6-cofolding-readiness-context = "longevity_port_pipelines.stages.sirt6_cofolding_readiness_context:app"
 tp53-mdm2-pilot-manifest-validator = "longevity_port_pipelines.stages.tp53_mdm2_pilot_manifest_validator:app"
 tp53-mdm2-pilot-coverage-preflight = "longevity_port_pipelines.stages.tp53_mdm2_pilot_coverage_preflight:app"
 lane-manifest-summary = "longevity_port_pipelines.stages.lane_manifest:main"
