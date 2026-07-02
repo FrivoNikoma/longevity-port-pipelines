@@ -326,3 +326,30 @@ def test_current_gate_map_records_coverage_provenance_repair_queue_checkpoint() 
         "must not be bypassed by embedding fill, contrast, cofolding, live structural calls, or biological claims"
         in text
     )
+
+
+def test_current_gate_map_records_tp53_mdm2_generic_repair_alignment_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "TP53/MDM2 generic repair alignment checkpoint" in text
+    assert "docs/tp53_mdm2_generic_repair_alignment_checkpoint.md" in text
+    assert "data/input/tp53_mdm2_ortholog_repair_decisions.csv" in text
+    assert "`lane_name`" in text
+    assert "`source_species`" in text
+    assert "`gene_symbol`" in text
+    assert "`target_uniprot`" in text
+    assert "`coverage_status`" in text
+    assert "`provenance_status`" in text
+    assert "`repair_status`" in text
+    assert "`reviewer_note`" in text
+    assert "`target_uniprot` is `unresolved`" in text
+    assert "`coverage_status` is `unresolved_downstream_provenance`" in text
+    assert "`provenance_status` is `unresolved`" in text
+    assert "`repair_status` is `pending`" in text
+    assert "does not fetch sequences" in text
+    assert "does not resolve elephant orthologs" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not promote cofolding readiness" in text
+    assert "does not make biological claims" in text

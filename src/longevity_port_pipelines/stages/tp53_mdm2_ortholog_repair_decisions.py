@@ -7,23 +7,50 @@ import polars as pl
 DEFAULT_REPAIR_DECISIONS_PATH = Path("data/input/tp53_mdm2_ortholog_repair_decisions.csv")
 
 EXPECTED_CANDIDATE_SET = "tp53_mdm2_elephant"
+EXPECTED_SOURCE_SPECIES = "human"
+EXPECTED_TARGET_SPECIES = "elephant"
 
 REQUIRED_COLUMNS = (
     "candidate_set",
     "candidate_id",
+    "lane_name",
     "pdb_id",
     "chain",
+    "source_species",
+    "target_species",
+    "gene_symbol",
     "source_uniprot",
     "partner_uniprot",
-    "target_species",
+    "target_uniprot",
     "coverage_preflight_status",
     "source_ortholog_status",
     "local_candidate_row_status",
+    "coverage_status",
+    "provenance_status",
     "recommended_next_action",
     "repair_decision",
+    "repair_status",
     "repair_priority",
     "claim_policy",
     "repair_note",
+    "reviewer_note",
+)
+
+GENERIC_REPAIR_COLUMNS = (
+    "candidate_set",
+    "candidate_id",
+    "lane_name",
+    "source_species",
+    "target_species",
+    "gene_symbol",
+    "source_uniprot",
+    "target_uniprot",
+    "coverage_status",
+    "provenance_status",
+    "repair_decision",
+    "repair_status",
+    "claim_policy",
+    "reviewer_note",
 )
 
 DECISION_KEY_COLUMNS = (
@@ -32,6 +59,11 @@ DECISION_KEY_COLUMNS = (
     "target_species",
     "chain",
 )
+
+ALLOWED_GENE_SYMBOLS = {
+    "TP53",
+    "MDM2",
+}
 
 ALLOWED_REPAIR_DECISIONS = {
     "fetch_or_curate_source_ortholog",
@@ -72,6 +104,47 @@ ALLOWED_LOCAL_CANDIDATE_ROW_STATUSES = {
     "manual_review_required",
 }
 
+ALLOWED_COVERAGE_STATUSES = {
+    "coverage_ready",
+    "missing_source_ortholog",
+    "missing_target_species",
+    "local_rows_without_source_ortholog",
+    "source_ortholog_without_local_rows",
+    "ambiguous_ortholog_mapping",
+    "sequence_or_accession_mismatch",
+    "unresolved_downstream_provenance",
+    "excluded_from_candidate_lane",
+}
+
+ALLOWED_PROVENANCE_STATUSES = {
+    "standard_source_present",
+    "curated_source_present",
+    "local_row_present_without_source",
+    "manual_review_required",
+    "external_review_required",
+    "unresolved",
+    "not_applicable",
+}
+
+ALLOWED_REPAIR_STATUSES = {
+    "not_needed",
+    "pending",
+    "in_review",
+    "repaired_for_planning",
+    "accepted_for_planning_after_review",
+    "excluded_from_strict_panel",
+    "deferred_pending_source",
+    "needs_manual_review",
+}
+
+BLOCKED_GENERIC_REPAIR_STATUSES = {
+    "pending",
+    "in_review",
+    "excluded_from_strict_panel",
+    "deferred_pending_source",
+    "needs_manual_review",
+}
+
 
 def read_repair_decisions(
     path: Path = DEFAULT_REPAIR_DECISIONS_PATH,
@@ -108,6 +181,16 @@ def find_duplicate_decision_keys(rows: pl.DataFrame) -> pl.DataFrame:
     )
 
 
+def generic_repair_columns(rows: pl.DataFrame) -> pl.DataFrame:
+    """Return the generic repair-vocabulary view for TP53/MDM2 rows."""
+    return rows.select(list(GENERIC_REPAIR_COLUMNS))
+
+
+def blocked_generic_repair_rows(rows: pl.DataFrame) -> pl.DataFrame:
+    """Return rows that must not enter strict panel or contrast gates."""
+    return rows.filter(pl.col("repair_status").is_in(BLOCKED_GENERIC_REPAIR_STATUSES))
+
+
 def validate_repair_decisions(rows: pl.DataFrame) -> None:
     """Validate TP53/MDM2 ortholog repair decisions without making claims."""
 
@@ -125,10 +208,17 @@ def validate_repair_decisions(rows: pl.DataFrame) -> None:
 
     checks = {
         "candidate_set": {EXPECTED_CANDIDATE_SET},
+        "lane_name": {EXPECTED_CANDIDATE_SET},
+        "source_species": {EXPECTED_SOURCE_SPECIES},
+        "target_species": {EXPECTED_TARGET_SPECIES},
+        "gene_symbol": ALLOWED_GENE_SYMBOLS,
         "coverage_preflight_status": ALLOWED_COVERAGE_PREFLIGHT_STATUSES,
         "source_ortholog_status": ALLOWED_SOURCE_ORTHOLOG_STATUSES,
         "local_candidate_row_status": ALLOWED_LOCAL_CANDIDATE_ROW_STATUSES,
+        "coverage_status": ALLOWED_COVERAGE_STATUSES,
+        "provenance_status": ALLOWED_PROVENANCE_STATUSES,
         "repair_decision": ALLOWED_REPAIR_DECISIONS,
+        "repair_status": ALLOWED_REPAIR_STATUSES,
         "repair_priority": ALLOWED_REPAIR_PRIORITIES,
         "claim_policy": ALLOWED_CLAIM_POLICIES,
     }
@@ -141,17 +231,7 @@ def validate_repair_decisions(rows: pl.DataFrame) -> None:
             )
 
     blank_required = []
-    for column in (
-        "candidate_set",
-        "candidate_id",
-        "source_uniprot",
-        "partner_uniprot",
-        "target_species",
-        "repair_decision",
-        "repair_priority",
-        "claim_policy",
-        "repair_note",
-    ):
+    for column in REQUIRED_COLUMNS:
         if rows.filter(pl.col(column).str.strip_chars() == "").height:
             blank_required.append(column)
 

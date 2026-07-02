@@ -187,3 +187,11 @@ The current Gate 4 / Gate 5 repair frontier is recorded in `docs/coverage_proven
 This checkpoint aligns the tracked SIRT6/core3 and TP53/MDM2 elephant repair queues without changing ortholog rows or fetching sequences. SIRT6/core3 has 11 rows in `data/input/sirt6_candidate_coverage_repair_decisions.csv` that require external/manual sequence provenance review. TP53/MDM2 elephant has two blocked seed rows in `data/input/tp53_mdm2_ortholog_repair_decisions.csv` that require source ortholog fetch/curation.
 
 Both queues remain coverage/provenance blockers. They must not be bypassed by embedding fill, contrast, cofolding, live structural calls, or biological claims.
+
+## TP53/MDM2 generic repair alignment checkpoint
+
+The TP53/MDM2 elephant ortholog repair decision table is now aligned with the generic repair vocabulary in `docs/tp53_mdm2_generic_repair_alignment_checkpoint.md`.
+
+The tracked table `data/input/tp53_mdm2_ortholog_repair_decisions.csv` now exposes generic fields including `lane_name`, `source_species`, `gene_symbol`, `target_uniprot`, `coverage_status`, `provenance_status`, `repair_status`, and `reviewer_note`.
+
+Both TP53/MDM2 elephant seed rows remain blocked: `target_uniprot` is `unresolved`, `coverage_status` is `unresolved_downstream_provenance`, `provenance_status` is `unresolved`, and `repair_status` is `pending`. This alignment does not fetch sequences, does not resolve elephant orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not promote cofolding readiness, and does not make biological claims.
