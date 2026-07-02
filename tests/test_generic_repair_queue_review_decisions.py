@@ -20,13 +20,27 @@ def load_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
+def reviewed_rows() -> list[dict[str, str]]:
+    return read_csv_rows(REVIEW_DECISIONS_PATH)
+
+
 def reviewed_row() -> dict[str, str]:
-    rows = read_csv_rows(REVIEW_DECISIONS_PATH)
-    assert len(rows) == 1
-    return rows[0]
+    rows = reviewed_rows()
+    assert len(rows) == 3
+
+    matching_rows = [
+        row
+        for row in rows
+        if row["candidate_set"] == "sirt6_dna_repair"
+        and row["candidate_id"] == "4xhu__A1_P09874--4xhu__B1_Q9UNS1"
+        and row["source_table"] == "data/input/sirt6_candidate_coverage_repair_decisions.csv"
+        and row["source_row_index"] == "1"
+    ]
+    assert len(matching_rows) == 1
+    return matching_rows[0]
 
 
-def test_review_decision_fixture_exists_and_has_one_sirt6_row() -> None:
+def test_review_decision_fixture_exists_and_has_one_sirt6_row_among_three_review_rows() -> None:
     row = reviewed_row()
     assert row["candidate_set"] == "sirt6_dna_repair"
     assert row["lane_name"] == "SIRT6/core3"

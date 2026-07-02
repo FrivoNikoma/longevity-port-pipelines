@@ -85,16 +85,28 @@ def test_reviewed_overlay_fixture_records_deferred_sirt6_review_without_unblocki
     assert "Reviewed provenance decision" in reviewed["reviewer_note"]
 
 
-def test_reviewed_overlay_fixture_changes_only_one_summary_row() -> None:
+def test_reviewed_overlay_fixture_changes_expected_reviewed_rows() -> None:
     base_rows = {fixture_key(row): row for row in read_rows(BASE_FIXTURE)}
     reviewed_rows = {fixture_key(row): row for row in read_rows(REVIEWED_FIXTURE)}
     assert set(base_rows) == set(reviewed_rows)
 
     changed_keys = [key for key, base_row in base_rows.items() if reviewed_rows[key] != base_row]
-    assert len(changed_keys) == 1
-    changed = reviewed_rows[changed_keys[0]]
-    assert changed["candidate_id"] == REVIEWED_CANDIDATE_ID
-    assert changed["repair_queue_status"] == "blocked_deferred_pending_source"
+    assert len(changed_keys) == 3
+
+    changed_rows = [reviewed_rows[key] for key in changed_keys]
+    assert {row["candidate_set"] for row in changed_rows} == {
+        "sirt6_dna_repair",
+        "tp53_mdm2_elephant",
+    }
+    assert {row["candidate_id"] for row in changed_rows} == {
+        REVIEWED_CANDIDATE_ID,
+        "tp53_mdm2_elephant_seed_tp53_chain",
+        "tp53_mdm2_elephant_seed_mdm2_chain",
+    }
+    assert {row["repair_queue_status"] for row in changed_rows} == {
+        "blocked_deferred_pending_source"
+    }
+    assert {row["downstream_block_status"] for row in changed_rows} == {"blocked_gate4_gate5"}
 
 
 def test_summary_fixtures_do_not_encode_downstream_permission_or_biological_claims() -> None:

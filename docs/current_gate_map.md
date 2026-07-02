@@ -263,3 +263,13 @@ The helper interprets repair queue and reviewed provenance states conservatively
 A reviewed-for-planning state may allow only a later explicit Gate 4 / Gate 5 policy update to be considered. It does not make a row Gate 8 eligible, does not make a row Gate 9 eligible, does not make embeddings ready, does not make Boltz ready, and does not allow biological claims.
 
 The helper does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## TP53/MDM2 provenance review checkpoint
+
+The TP53/MDM2 provenance review checkpoint is documented in docs/tp53_mdm2_provenance_review_checkpoint.md.
+
+This checkpoint adds reviewed provenance decisions for the elephant TP53 and MDM2 seed repair rows. Both reviewed decisions are deferred_pending_source because no accession-level elephant target ortholog evidence is accepted in this checkpoint.
+
+Both TP53/MDM2 rows remain blocked at Gate 4 / Gate 5 as repair_worklist rows. The reviewed overlay fixture now records three reviewed rows total: one SIRT6 row and two TP53/MDM2 rows.
+
+This checkpoint does not fetch sequences, does not curate orthologs, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.

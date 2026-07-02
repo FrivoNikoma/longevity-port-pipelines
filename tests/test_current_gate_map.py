@@ -510,3 +510,24 @@ def test_current_gate_map_records_gate_repair_policy_helper() -> None:
     assert "does not rerun enrichment or contrast" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_tp53_mdm2_provenance_review_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "TP53/MDM2 provenance review checkpoint" in text
+    assert "docs/tp53_mdm2_provenance_review_checkpoint.md" in text
+    assert "elephant TP53 and MDM2 seed repair rows" in text
+    assert "deferred_pending_source" in text
+    assert "no accession-level elephant target ortholog evidence is accepted" in text
+    assert "remain blocked at Gate 4 / Gate 5" in text
+    assert "repair_worklist rows" in text
+    assert "three reviewed rows total" in text
+    assert "one SIRT6 row and two TP53/MDM2 rows" in text
+    assert "does not fetch sequences" in text
+    assert "does not curate orthologs" in text
+    assert "does not call Biohub" in text
+    assert "does not generate embeddings" in text
+    assert "does not call Boltz" in text
+    assert "does not rerun enrichment or contrast" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make biological claims" in text

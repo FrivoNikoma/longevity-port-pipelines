@@ -271,7 +271,7 @@ def test_committed_repair_tables_build_expected_summary_without_downstream_promo
     }
 
 
-def test_committed_review_overlay_keeps_deferred_row_blocked() -> None:
+def test_committed_review_overlay_keeps_deferred_rows_blocked() -> None:
     repair_summary = summary.build_generic_repair_queue_summary(
         sirt6_rows=summary.read_repair_table(summary.DEFAULT_SIRT6_REPAIR),
         tp53_mdm2_rows=summary.read_repair_table(summary.DEFAULT_TP53_MDM2_REPAIR),
@@ -282,13 +282,31 @@ def test_committed_review_overlay_keeps_deferred_row_blocked() -> None:
     reviewed_rows = repair_summary.filter(
         pl.col("repair_queue_status") == "blocked_deferred_pending_source"
     )
-    assert reviewed_rows.height == 1
-    reviewed = reviewed_rows.row(0, named=True)
-    assert reviewed["candidate_set"] == "sirt6_dna_repair"
-    assert reviewed["repair_decision"] == "deferred_pending_source"
-    assert reviewed["downstream_block_status"] == "blocked_gate4_gate5"
-    assert reviewed["allowed_next_action"] == "defer_until_stronger_source_evidence_exists"
-    assert reviewed["claim_status"] == "repair_worklist"
+    assert reviewed_rows.height == 3
+
+    reviewed_records = reviewed_rows.to_dicts()
+    assert {row["candidate_id"] for row in reviewed_records} == {
+        "4xhu__A1_P09874--4xhu__B1_Q9UNS1",
+        "tp53_mdm2_elephant_seed_tp53_chain",
+        "tp53_mdm2_elephant_seed_mdm2_chain",
+    }
+    assert {row["downstream_block_status"] for row in reviewed_records} == {"blocked_gate4_gate5"}
+    assert {row["allowed_next_action"] for row in reviewed_records} == {
+        "defer_until_stronger_source_evidence_exists"
+    }
+    assert {row["claim_policy"] for row in reviewed_records} == {
+        "no_biological_claims_until_validation"
+    }
+    assert {row["claim_status"] for row in reviewed_records} == {"repair_worklist"}
+
+    for reviewed in reviewed_records:
+        assert "sequence fetch" in reviewed["forbidden_actions"]
+        assert "Biohub call" in reviewed["forbidden_actions"]
+        assert "embedding generation" in reviewed["forbidden_actions"]
+        assert "Boltz call" in reviewed["forbidden_actions"]
+        assert "Gate 8 promotion" in reviewed["forbidden_actions"]
+        assert "Gate 9 promotion" in reviewed["forbidden_actions"]
+        assert "biological claim" in reviewed["forbidden_actions"]
 
 
 def test_repair_queue_status_counts_counts_blocker_types() -> None:
