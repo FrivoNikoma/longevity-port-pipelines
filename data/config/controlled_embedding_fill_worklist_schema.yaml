@@ -1,0 +1,187 @@
+schema_version: 1
+schema_id: controlled_embedding_fill_worklist_schema
+pipeline_gate: controlled_embedding_fill_worklist
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_checkpoint
+description: >
+  Controlled LongevityPort embedding fill worklist schema. This file defines the
+  shared vocabulary for reviewed curated embedding-fill rows after the Gate 8 /
+  Gate 9 calibration checkpoint and after the controlled embedding fill protocol
+  has been recorded.
+
+protocol_reference: docs/controlled_embedding_fill_protocol.md
+planning_reference: docs/gate_aware_embedding_fill_plan.md
+precedent_reference: docs/brandts_bat_p09874_live_embedding_generation.md
+
+allowed_fill_statuses:
+  - ready_for_preflight
+  - needs_coverage_repair
+  - needs_source_provenance_review
+  - defer_until_gate8_ready
+  - reviewed_for_single_live_fill
+  - do_not_fill
+
+status_groups:
+  preflight_ready:
+    - ready_for_preflight
+  live_review_ready:
+    - reviewed_for_single_live_fill
+  blocked:
+    - needs_coverage_repair
+    - needs_source_provenance_review
+    - defer_until_gate8_ready
+    - do_not_fill
+
+allowed_gate_dependencies:
+  - gate4_coverage_provenance
+  - gate5_repair_decisions
+  - gate6_control_readiness
+  - gate7_strict_panel_contrast_gate
+  - gate8_long_lived_vs_short_lived_contrast
+  - gate9_cofolding_readiness
+  - manual_review
+
+allowed_source_provenance_statuses:
+  - reviewed
+  - needs_review
+  - unresolved
+  - rejected
+
+allowed_coverage_repair_statuses:
+  - not_needed
+  - repaired_for_planning
+  - accepted_for_planning_after_review
+  - pending
+  - in_review
+  - excluded
+  - deferred
+  - needs_manual_review
+
+allowed_next_actions:
+  - run_curated_embedding_preflight
+  - run_curated_embedding_single_dry_run
+  - request_source_provenance_review
+  - repair_coverage_before_fill
+  - defer_until_gate8_ready
+  - consider_single_live_fill_after_human_approval
+  - do_not_fill
+  - keep_blocked
+
+decision_rules:
+  ready_for_preflight:
+    dry_run_preflight_allowed: true
+    dry_run_single_allowed: false
+    live_call_allowed: false
+    live_opt_in_required: true
+    max_live_batch_size: 0
+    recommended_next_action: run_curated_embedding_preflight
+  needs_coverage_repair:
+    dry_run_preflight_allowed: false
+    dry_run_single_allowed: false
+    live_call_allowed: false
+    live_opt_in_required: true
+    max_live_batch_size: 0
+    recommended_next_action: repair_coverage_before_fill
+  needs_source_provenance_review:
+    dry_run_preflight_allowed: false
+    dry_run_single_allowed: false
+    live_call_allowed: false
+    live_opt_in_required: true
+    max_live_batch_size: 0
+    recommended_next_action: request_source_provenance_review
+  defer_until_gate8_ready:
+    dry_run_preflight_allowed: false
+    dry_run_single_allowed: false
+    live_call_allowed: false
+    live_opt_in_required: true
+    max_live_batch_size: 0
+    recommended_next_action: defer_until_gate8_ready
+  reviewed_for_single_live_fill:
+    dry_run_preflight_allowed: true
+    dry_run_single_allowed: true
+    live_call_allowed: true
+    live_opt_in_required: true
+    max_live_batch_size: 1
+    required_live_flag: --yes-live
+    required_sequence_length_status: matches
+    required_embedding_exists_before_live: false
+    recommended_next_action: consider_single_live_fill_after_human_approval
+  do_not_fill:
+    dry_run_preflight_allowed: false
+    dry_run_single_allowed: false
+    live_call_allowed: false
+    live_opt_in_required: true
+    max_live_batch_size: 0
+    recommended_next_action: do_not_fill
+
+required_output_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - complex_id
+  - chain
+  - source_uniprot
+  - target_species
+  - target_species_taxid
+  - target_accession
+  - target_accession_db
+  - target_sequence_length
+  - actual_sequence_length
+  - sequence_length_status
+  - embedding_path
+  - embedding_exists
+  - embedding_status
+  - fill_status
+  - fill_reason
+  - gate_dependency
+  - source_provenance_status
+  - coverage_repair_status
+  - dry_run_required
+  - live_opt_in_required
+  - max_live_batch_size
+  - allowed_next_action
+  - forbidden_actions
+  - claim_policy
+  - claim_status
+  - review_note
+
+required_review_fields_before_live:
+  - candidate_id
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - target_accession
+  - reviewed_target_sequence
+  - reviewed_source_provenance
+  - no_unresolved_coverage_blocker
+  - fill_reason
+  - curated_embedding_preflight_output
+  - curated_embedding_single_dry_run_output
+  - human_approval_for_yes_live
+
+allowed_language:
+  - controlled embedding fill worklist
+  - dry-run preflight
+  - reviewed worklist
+  - source provenance review
+  - coverage repair dependency
+  - live embedding opt-in
+  - local runtime artifact validation
+  - blocked embedding fill row
+
+disallowed_language:
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
+
+required_guardrails:
+  - no Biohub calls from worklist schema checks
+  - no embeddings generated by worklist schema checks
+  - no data/output artifacts committed from worklist schema checks
+  - no Boltz calls from worklist schema checks
+  - no enrichment or contrast rerun from worklist schema checks
+  - no biological claims from embedding fill worklist status
+  - TP53/MDM2 remains blocked while coverage/provenance is unresolved

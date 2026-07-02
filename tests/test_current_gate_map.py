@@ -244,3 +244,18 @@ def test_current_gate_map_records_controlled_embedding_fill_protocol() -> None:
     assert "no enrichment/contrast rerun by default" in text
     assert "no Boltz calls" in text
     assert "no biological claims" in text
+
+
+def test_current_gate_map_records_controlled_embedding_fill_worklist_schema() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "controlled embedding fill worklist schema is now recorded" in text
+    assert "data/config/controlled_embedding_fill_worklist_schema.yaml" in text
+    assert "machine-readable fill statuses" in text
+    assert "`--yes-live` opt-in requirements" in text
+    assert "sequence_length_status == matches" in text
+    assert "no committed `data/output/` artifacts" in text
+    assert "no Biohub calls from schema checks" in text
+    assert "no Boltz calls" in text
+    assert "no enrichment/contrast rerun" in text
+    assert "no biological claims" in text

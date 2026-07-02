@@ -153,3 +153,9 @@ This is a planning checkpoint only. It does not call Biohub, generate embeddings
 The controlled embedding fill protocol is now recorded in `docs/controlled_embedding_fill_protocol.md`.
 
 This is a governance checkpoint only. It formalizes the Brandt's bat `P09874` precedent and requires `curated_embedding_preflight`, `curated_embedding_single` dry-run evidence, `sequence_length_status == matches`, explicit `--yes-live` approval for live calls, local `.npy` validation, no committed `data/output/` artifacts, no enrichment/contrast rerun by default, no Boltz calls, and no biological claims.
+
+## Controlled embedding fill worklist schema checkpoint
+
+The controlled embedding fill worklist schema is now recorded in `data/config/controlled_embedding_fill_worklist_schema.yaml`.
+
+This is a schema checkpoint only. It defines machine-readable fill statuses, required worklist fields, single-row live-fill guardrails, `--yes-live` opt-in requirements, `sequence_length_status == matches`, no committed `data/output/` artifacts, no Biohub calls from schema checks, no Boltz calls, no enrichment/contrast rerun, and no biological claims.
