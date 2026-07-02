@@ -120,7 +120,7 @@ def test_current_gate_map_records_generic_cofolding_readiness_helper() -> None:
     )
     assert "the generic cofolding readiness helper exists" in text
     assert "generic dry-run manifest builder now exists" in text
-    assert "SIRT6 Gate 9 context builder now exists" in text
+    assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "additional lane context builders pending" in text
 
 
@@ -132,7 +132,7 @@ def test_current_gate_map_records_generic_cofolding_readiness_runtime() -> None:
     )
     assert "the generic cofolding readiness runtime checklist exists" in text
     assert "generic dry-run manifest builder now exists" in text
-    assert "SIRT6 Gate 9 context builder now exists" in text
+    assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "additional lane context builders pending" in text
 
 
@@ -141,13 +141,22 @@ def test_current_gate_map_records_generic_cofolding_dry_run_manifest() -> None:
 
     assert "generic dry-run manifest builder now exists" in text
     assert "the generic cofolding dry-run manifest builder exists" in text
-    assert "SIRT6 Gate 9 context builder now exists" in text
+    assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "additional lane context builders pending" in text
 
 
 def test_current_gate_map_records_sirt6_cofolding_readiness_context_builder() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "SIRT6 Gate 9 context builder now exists" in text
+    assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
     assert "the SIRT6 Gate 9 cofolding context builder exists" in text
     assert "additional lane context builders pending" in text
+
+
+def test_current_gate_map_records_sirt6_gate9_dry_run_path() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "SIRT6 Gate 9 context builder and dry-run path are now recorded" in text
+    assert "the SIRT6 Gate 9 dry-run path is recorded" in text
+    assert "additional lane context builders pending" in text
+    assert "genericdry-run" not in text
