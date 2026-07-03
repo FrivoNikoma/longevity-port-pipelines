@@ -315,10 +315,15 @@ The current ladder includes:
 - `tests/test_ortholog_stronger_source_lookup_plan_schema.py`
 - `tests/test_ortholog_stronger_source_lookup_plan_table.py`
 - `tests/test_ortholog_stronger_source_lookup_plan_validator.py`
+- `tests/fixtures/ortholog_stronger_source_fixture_lookup_results.csv`
+- `src/longevity_port_pipelines/stages/ortholog_stronger_source_fixture_lookup.py`
+- `tests/test_ortholog_stronger_source_fixture_lookup.py`
 
 The stronger-source evidence collection layer has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
 
-The stronger-source lookup layer now has an API-boundary policy, a lookup plan schema, a header-only lookup plan table scaffold, and a table-only lookup plan validator. This is a planning layer only. It does not include a fixture-backed source client, real API client, live external lookup, source evidence collection, sequence fetch, or manual source evidence rows.
+The stronger-source lookup layer has an API-boundary policy, a lookup plan schema, a header-only lookup plan table scaffold, and a table-only lookup plan validator.
+
+The stronger-source fixture lookup layer now adds a local fixture-backed lookup helper and synthetic fixture results under `tests/fixtures`. This layer can join fixture-backed lookup plan rows to committed synthetic fixture result rows. These results remain fixture-only payloads: they are not source evidence rows, not curated target decisions, not reviewed ortholog decisions, and not downstream-gate permissions.
 
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
@@ -340,11 +345,12 @@ Current `G3SX30` status:
 - stronger-source lookup policy status: `policy_only_no_live_lookup`
 - stronger-source lookup plan table status: `header_only_scaffold`
 - stronger-source lookup plan rows: none
-- fixture-backed source client: none
+- fixture-backed source client status: `fixture_only_local_synthetic`
+- fixture lookup result status: `synthetic_fixture_only_non_evidence`
 - live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is either to keep the gate map aligned with this lookup planning layer, or later to add a fixture-backed source lookup client with live external lookup disabled by default. Any later fixture-backed client must remain blocker-first and must not collect source evidence, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The next safe action is either to keep the gate map aligned with this fixture-backed lookup layer, or later to add an explicit live-lookup opt-in boundary with live external lookup disabled by default. Any later live-lookup boundary must remain blocker-first and must not collect source evidence, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
