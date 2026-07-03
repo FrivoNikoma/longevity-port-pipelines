@@ -1,0 +1,142 @@
+schema_version: 1
+schema_id: generic_ortholog_stronger_source_lookup_plan_schema
+pipeline_gate: ortholog_stronger_source_lookup_plan
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+policy_document: docs/ortholog_stronger_source_lookup_api_policy.md
+purpose: >
+  Defines how future stronger-source ortholog evidence lookup plans should be
+  represented before any source lookup client, live external query, evidence
+  row, reviewed decision, or downstream gate update exists. A lookup plan row
+  records what may be checked later. It is not collected evidence, not an
+  accepted ortholog, not a curated ortholog candidate, and not downstream
+  eligibility.
+
+plan_scope:
+  from_request_status:
+    - pending_source_collection
+    - source_collection_in_progress
+  from_request_decision:
+    - needs_manual_source_collection
+  lookup_plan_status:
+    - lookup_planned_still_blocked
+  default_live_lookup_allowed: false
+  default_sequence_fetch_allowed: false
+  ci_external_api_allowed: false
+  allowed_output_target:
+    - data/input/ortholog_stronger_source_evidence_collection.csv
+  does_not_authorize:
+    - live external database lookup by default
+    - sequence fetch
+    - curated ortholog candidate creation
+    - standard ortholog coverage population
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - Biohub calls
+    - embedding generation
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - accepted ortholog claims
+    - validated ortholog claims
+    - reviewed decision creation
+    - biological claims
+
+required_request_trace_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - request_table
+  - request_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - requested_evidence_source_database
+  - requested_evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+
+required_lookup_plan_fields:
+  - planned_lookup_source_type
+  - planned_lookup_source_name
+  - planned_lookup_query_identifier
+  - planned_lookup_query_taxid
+  - planned_lookup_mode
+  - live_lookup_allowed
+  - sequence_fetch_allowed
+  - planned_output_target
+  - lookup_plan_status
+  - downstream_block_status_after_lookup_plan
+  - allowed_next_action_after_lookup_plan
+  - claim_policy_after_lookup_plan
+  - claim_status_after_lookup_plan
+  - forbidden_actions_after_lookup_plan
+  - reviewer_note
+
+allowed_planned_lookup_source_types:
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+
+allowed_planned_lookup_modes:
+  - dry_run_plan_only
+  - fixture_backed_only
+  - explicit_live_opt_in_required
+
+allowed_live_lookup_allowed_values:
+  - false
+
+allowed_sequence_fetch_allowed_values:
+  - false
+
+allowed_lookup_plan_statuses:
+  - lookup_planned_still_blocked
+  - lookup_deferred_keep_blocked
+  - lookup_not_planned_keep_blocked
+
+allowed_downstream_block_statuses_after_lookup_plan:
+  - blocked_gate4_gate5
+
+allowed_next_actions_after_lookup_plan:
+  - add_lookup_plan_table_row
+  - add_lookup_plan_validator
+  - add_fixture_backed_lookup_client
+  - add_manual_source_evidence_row_later
+  - keep_blocked
+
+allowed_claim_statuses_after_lookup_plan:
+  - repair_worklist
+
+allowed_claim_policies_after_lookup_plan:
+  - no_biological_claims_until_validation
+
+required_guardrails:
+  - lookup plan rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - lookup plan rows do not collect evidence by themselves
+  - lookup plan rows do not accept orthologs automatically
+  - lookup plan rows do not create curated ortholog candidates automatically
+  - lookup plan rows do not populate standard ortholog coverage automatically
+  - lookup plan rows do not create reviewed decisions automatically
+  - lookup plan rows do not update Gate 4 / Gate 5 policy automatically
+  - lookup plan rows do not permit live external database lookup by default
+  - lookup plan rows do not fetch sequences
+  - lookup plan rows do not call Biohub
+  - lookup plan rows do not generate embeddings
+  - lookup plan rows do not call Boltz
+  - lookup plan rows do not call AF3
+  - lookup plan rows do not call Chai
+  - lookup plan rows do not rerun enrichment or contrast
+  - lookup plan rows do not promote Gate 8
+  - lookup plan rows do not promote Gate 9
+  - lookup plan rows do not make biological claims
