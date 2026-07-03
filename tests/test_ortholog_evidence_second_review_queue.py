@@ -25,7 +25,7 @@ def second_review_rows() -> list[dict[str, str]]:
     return rows
 
 
-def test_second_review_queue_has_pending_g3sx30_mdm2_row() -> None:
+def test_second_review_queue_has_completed_still_blocked_g3sx30_mdm2_row() -> None:
     row = second_review_rows()[0]
 
     assert row["candidate_set"] == "tp53_mdm2_elephant"
@@ -36,8 +36,8 @@ def test_second_review_queue_has_pending_g3sx30_mdm2_row() -> None:
     assert row["target_species_name"] == "Loxodonta africana"
     assert row["target_protein_accession"] == "G3SX30"
     assert row["target_sequence_length"] == "492"
-    assert row["second_review_status"] == "pending_second_review"
-    assert row["second_review_decision"] == "pending"
+    assert row["second_review_status"] == "second_review_complete_still_blocked"
+    assert row["second_review_decision"] == "needs_additional_source_evidence"
 
 
 def test_second_review_queue_uses_schema_required_fields() -> None:
@@ -127,6 +127,10 @@ def test_second_review_queue_records_guardrails_and_no_claims() -> None:
     assert row["claim_policy_after_second_review"] == "no_biological_claims_until_validation"
     assert row["claim_status_after_second_review"] == "repair_worklist"
     assert row["reviewed_target_uniprot_after_second_review"] == "unresolved"
+    assert (
+        row["allowed_next_action_after_second_review"]
+        == "defer_until_stronger_source_evidence_exists"
+    )
     assert "ortholog acceptance" in forbidden_actions
     assert "reviewed decision creation" in forbidden_actions
     assert "Gate 4 or Gate 5 policy update" in forbidden_actions

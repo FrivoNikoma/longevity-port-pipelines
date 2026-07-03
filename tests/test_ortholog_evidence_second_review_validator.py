@@ -30,8 +30,8 @@ def test_committed_second_review_queue_is_valid() -> None:
     row = rows.row(0, named=True)
     assert row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
     assert row["evidence_source_accession"] == "G3SX30"
-    assert row["second_review_status"] == "pending_second_review"
-    assert row["second_review_decision"] == "pending"
+    assert row["second_review_status"] == "second_review_complete_still_blocked"
+    assert row["second_review_decision"] == "needs_additional_source_evidence"
     assert row["downstream_block_status_after_second_review"] == (second_review.BLOCKED_GATE4_GATE5)
     assert row["claim_status_after_second_review"] == (second_review.REPAIR_WORKLIST_CLAIM_STATUS)
 
@@ -65,8 +65,8 @@ def test_validator_allowed_statuses_and_decisions_match_schema() -> None:
 def test_second_review_helpers_classify_committed_rows() -> None:
     rows = committed_rows()
 
-    assert second_review.pending_second_review_rows(rows).height == 1
-    assert second_review.completed_still_blocked_second_review_rows(rows).height == 0
+    assert second_review.pending_second_review_rows(rows).height == 0
+    assert second_review.completed_still_blocked_second_review_rows(rows).height == 1
     assert second_review.ready_for_later_reviewed_decision_rows(rows).height == 0
 
 
