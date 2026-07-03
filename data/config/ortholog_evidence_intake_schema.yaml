@@ -1,0 +1,217 @@
+﻿schema_version: 1
+schema_id: generic_ortholog_evidence_intake_schema
+pipeline_gate: ortholog_evidence_intake
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Generic LongevityPort schema for accession-level ortholog evidence intake.
+  This schema records how candidate ortholog evidence should be captured before
+  any later reviewed Gate 4 / Gate 5 provenance decision is allowed.
+purpose: >
+  Defines a conservative intake record for evidence candidates from UniProt,
+  NCBI, Ensembl, OMA, OrthoDB, primary literature, or project-curated tables.
+  The schema preserves blocker-first semantics: an intake row is evidence for
+  later review, not an accepted ortholog and not downstream eligibility.
+
+intake_scope:
+  from_status: gate4_gate5_repair_queue_worklist_item
+  to_status: accession_level_evidence_candidate_for_later_review_decision
+  does_not_authorize:
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - embedding generation
+    - Biohub calls
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - accepted ortholog claims
+    - validated ortholog claims
+    - validated biological signal claims
+
+required_row_identity_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - source_table
+  - source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - target_uniprot_before_intake
+  - coverage_status_before_intake
+  - provenance_status_before_intake
+  - repair_queue_status_before_intake
+  - downstream_block_status_before_intake
+  - allowed_next_action_before_intake
+  - claim_policy_before_intake
+
+required_evidence_fields:
+  - evidence_source_type
+  - evidence_source_database
+  - evidence_source_accession
+  - evidence_uri_or_reproducible_lookup_note
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+  - reviewer_note
+  - ambiguity_flag
+  - second_reviewer_required
+  - intake_outcome
+  - downstream_block_status_after_intake
+  - allowed_next_action_after_intake
+  - claim_policy_after_intake
+  - claim_status_after_intake
+  - forbidden_actions_after_intake
+
+allowed_evidence_source_types:
+  - reviewed_uniprot_entry
+  - uniprot_ortholog_or_taxonomy_evidence
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology_evidence
+  - oma_orthology_evidence
+  - orthodb_orthology_evidence
+  - primary_literature_with_accession_level_evidence
+  - project_curated_table_with_source_accession_and_reviewer_note
+
+unacceptable_evidence_source_types:
+  - model_output_without_accession_level_provenance
+  - embedding_similarity_alone
+  - sequence_similarity_without_species_or_taxid_provenance
+  - llm_generated_assertion_without_external_source_evidence
+  - filename_or_local_cache_path_without_source_provenance
+  - candidate_name_without_accession_evidence
+  - downstream_enrichment_result
+  - boltz_af3_chai_or_cofolding_result
+  - biological_narrative_without_source_accession_evidence
+
+allowed_intake_outcomes:
+  - evidence_ready_for_review_decision
+  - evidence_insufficient_defer
+  - evidence_conflict_reject_or_exclude
+  - evidence_ambiguous_needs_second_reviewer
+
+status_groups:
+  candidate_for_later_review_decision:
+    - evidence_ready_for_review_decision
+  blocked_or_unresolved:
+    - evidence_insufficient_defer
+    - evidence_conflict_reject_or_exclude
+    - evidence_ambiguous_needs_second_reviewer
+
+mapping_to_review_decisions:
+  evidence_ready_for_review_decision: accepted_for_planning_after_review
+  evidence_insufficient_defer: deferred_pending_source
+  evidence_conflict_reject_or_exclude: rejected_after_review
+  evidence_ambiguous_needs_second_reviewer: needs_second_reviewer
+
+intake_outcome_rules:
+  evidence_ready_for_review_decision:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    does_not_auto_accept_ortholog: true
+    downstream_block_status_after_intake: blocked_gate4_gate5
+    allowed_next_action_after_intake: prepare_later_reviewed_decision_pr
+    claim_status_after_intake: repair_worklist
+  evidence_insufficient_defer:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    does_not_auto_accept_ortholog: true
+    downstream_block_status_after_intake: blocked_gate4_gate5
+    allowed_next_action_after_intake: defer_until_stronger_source_evidence_exists
+    claim_status_after_intake: repair_worklist
+  evidence_conflict_reject_or_exclude:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    does_not_auto_accept_ortholog: true
+    downstream_block_status_after_intake: blocked_gate4_gate5
+    allowed_next_action_after_intake: prepare_later_rejection_or_exclusion_review
+    claim_status_after_intake: repair_worklist
+  evidence_ambiguous_needs_second_reviewer:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    does_not_auto_accept_ortholog: true
+    downstream_block_status_after_intake: blocked_gate4_gate5
+    allowed_next_action_after_intake: perform_second_reviewer_evidence_intake_review
+    claim_status_after_intake: repair_worklist
+
+allowed_language:
+  - ortholog evidence intake
+  - accession-level evidence review
+  - evidence candidate for later reviewed decision
+  - reviewed-for-planning provenance evidence
+  - Gate 4 / Gate 5 blocker review
+  - later explicit Gate 4 / Gate 5 policy update
+
+disallowed_language:
+  - accepted ortholog
+  - validated ortholog
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - embedding ready
+  - Biohub ready
+  - Boltz ready
+  - AF3 ready
+  - Chai ready
+  - safe to port
+  - proven pro-longevity variant
+
+required_guardrails:
+  - intake rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - intake rows do not accept orthologs automatically
+  - intake rows do not create reviewed decisions automatically
+  - intake rows do not update Gate 4 / Gate 5 policy automatically
+  - intake rows do not fetch sequences
+  - intake rows do not call Biohub
+  - intake rows do not generate embeddings
+  - intake rows do not call Boltz
+  - intake rows do not call AF3
+  - intake rows do not call Chai
+  - intake rows do not rerun enrichment or contrast
+  - intake rows do not promote Gate 8
+  - intake rows do not promote Gate 9
+  - intake rows do not make biological claims
