@@ -302,6 +302,14 @@ The current ladder includes:
 - `data/config/ortholog_stronger_source_evidence_request_schema.yaml`
 - `data/input/ortholog_stronger_source_evidence_requests.csv`
 - `src/longevity_port_pipelines/stages/ortholog_stronger_source_evidence_request.py`
+- `data/config/ortholog_stronger_source_evidence_collection_schema.yaml`
+- `data/input/ortholog_stronger_source_evidence_collection.csv`
+- `src/longevity_port_pipelines/stages/ortholog_stronger_source_evidence_collection.py`
+- `tests/test_ortholog_stronger_source_evidence_collection_schema.py`
+- `tests/test_ortholog_stronger_source_evidence_collection_table.py`
+- `tests/test_ortholog_stronger_source_evidence_collection_validator.py`
+
+The stronger-source evidence collection layer now has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
 
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
@@ -318,9 +326,11 @@ Current `G3SX30` status:
 - reviewed target UniProt after second review: `unresolved`
 - stronger-source request status: `pending_source_collection`
 - stronger-source request decision: `needs_manual_source_collection`
+- stronger-source collection table status: `header_only_scaffold`
+- manually collected stronger-source evidence rows: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is manual stronger-source evidence collection under the request scaffold, or another explicit accession-level evidence candidate row. Any later evidence collection must remain blocker-first until a separate reviewed-decision PR and explicit Gate 4 / Gate 5 policy update are added.
+The next safe action is either to keep the gate map aligned with the collection schema, header-only collection table, and collection validator, or later to add manually collected stronger-source evidence rows under the collection table and validator. Any later evidence collection must remain blocker-first until a separate reviewed-decision PR and explicit Gate 4 / Gate 5 policy update are added.
