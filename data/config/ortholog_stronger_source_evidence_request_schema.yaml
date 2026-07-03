@@ -1,0 +1,111 @@
+schema_version: 1
+schema_id: generic_ortholog_stronger_source_evidence_request_schema
+pipeline_gate: ortholog_stronger_source_evidence_request
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+purpose: >
+  Records manual stronger-source evidence requests after a conservative
+  second-review decision. A request row is a worklist item only: not an accepted
+  ortholog, not a reviewed decision, and not downstream eligibility.
+
+request_scope:
+  from_second_review_status:
+    - second_review_complete_still_blocked
+  from_second_review_decision:
+    - needs_additional_source_evidence
+  to_status: stronger_source_evidence_request
+  does_not_authorize:
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - sequence fetch
+    - external database query
+    - Biohub calls
+    - embedding generation
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - accepted ortholog claims
+    - validated ortholog claims
+    - reviewed decision creation
+    - biological claims
+
+required_row_identity_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - second_review_table
+  - second_review_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - evidence_source_database
+  - evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+
+required_request_fields:
+  - second_review_status_before_request
+  - second_review_decision_before_request
+  - reviewed_target_uniprot_before_request
+  - request_reason
+  - requested_source_types
+  - requested_source_examples
+  - request_status
+  - request_decision
+  - downstream_block_status_after_request
+  - allowed_next_action_after_request
+  - claim_policy_after_request
+  - claim_status_after_request
+  - forbidden_actions_after_request
+  - reviewer_note
+
+allowed_second_review_statuses_before_request:
+  - second_review_complete_still_blocked
+
+allowed_second_review_decisions_before_request:
+  - needs_additional_source_evidence
+
+allowed_request_statuses:
+  - pending_source_collection
+  - source_collection_in_progress
+  - source_collection_complete_still_blocked
+
+allowed_request_decisions:
+  - pending
+  - needs_manual_source_collection
+  - ready_for_later_evidence_intake_pr
+  - conflict_or_exclude
+  - keep_blocked_until_manual_review
+
+allowed_downstream_block_statuses_after_request:
+  - blocked_gate4_gate5
+
+allowed_claim_statuses_after_request:
+  - repair_worklist
+
+allowed_claim_policies_after_request:
+  - no_biological_claims_until_validation
+
+required_guardrails:
+  - stronger-source request rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - stronger-source request rows do not accept orthologs automatically
+  - stronger-source request rows do not create reviewed decisions automatically
+  - stronger-source request rows do not update Gate 4 / Gate 5 policy automatically
+  - stronger-source request rows do not fetch sequences
+  - stronger-source request rows do not query external databases
+  - stronger-source request rows do not call Biohub
+  - stronger-source request rows do not generate embeddings
+  - stronger-source request rows do not call Boltz
+  - stronger-source request rows do not call AF3
+  - stronger-source request rows do not call Chai
+  - stronger-source request rows do not rerun enrichment or contrast
+  - stronger-source request rows do not promote Gate 8
+  - stronger-source request rows do not promote Gate 9
+  - stronger-source request rows do not make biological claims
