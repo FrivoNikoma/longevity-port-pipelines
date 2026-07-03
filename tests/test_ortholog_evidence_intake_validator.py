@@ -18,7 +18,7 @@ def load_yaml(path: Path) -> dict:
 
 def committed_rows() -> pl.DataFrame:
     rows = intake.read_intake_rows()
-    assert rows.height == 3
+    assert rows.height == 4
     return rows
 
 
@@ -31,8 +31,11 @@ def test_committed_ortholog_evidence_intake_table_is_valid() -> None:
         "sirt6_dna_repair",
         "tp53_mdm2_elephant",
     }
-    assert set(rows.get_column("intake_outcome").to_list()) == {"evidence_insufficient_defer"}
-    assert set(rows.get_column("target_protein_accession").to_list()) == {"unresolved"}
+    assert set(rows.get_column("intake_outcome").to_list()) == {
+        "evidence_insufficient_defer",
+        "evidence_ambiguous_needs_second_reviewer",
+    }
+    assert set(rows.get_column("target_protein_accession").to_list()) == {"unresolved", "G3SX30"}
     assert set(rows.get_column("downstream_block_status_after_intake").to_list()) == {
         intake.BLOCKED_GATE4_GATE5
     }
@@ -61,7 +64,7 @@ def test_validator_allowed_sources_and_outcomes_match_schema() -> None:
 def test_blocked_and_ready_helpers_classify_committed_rows() -> None:
     rows = committed_rows()
 
-    assert intake.blocked_or_unresolved_intake_rows(rows).height == 3
+    assert intake.blocked_or_unresolved_intake_rows(rows).height == 4
     assert intake.evidence_ready_for_review_decision_rows(rows).height == 0
 
 

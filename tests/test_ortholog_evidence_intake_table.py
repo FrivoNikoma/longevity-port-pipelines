@@ -21,22 +21,83 @@ def load_yaml(path: Path) -> dict:
 
 def intake_rows() -> list[dict[str, str]]:
     rows = read_csv_rows(INTAKE_TABLE_PATH)
-    assert len(rows) == 3
+    assert len(rows) == 4
     return rows
 
 
-def test_ortholog_evidence_intake_table_exists_with_conservative_scaffold_rows() -> None:
+def test_ortholog_evidence_intake_table_exists_with_scaffold_and_first_candidate_row() -> None:
     rows = intake_rows()
 
-    assert {(row["candidate_set"], row["candidate_id"]) for row in rows} == {
-        ("sirt6_dna_repair", "4xhu__A1_P09874--4xhu__B1_Q9UNS1"),
-        ("tp53_mdm2_elephant", "tp53_mdm2_elephant_seed_tp53_chain"),
-        ("tp53_mdm2_elephant", "tp53_mdm2_elephant_seed_mdm2_chain"),
+    assert {
+        (
+            row["source_table"],
+            row["source_row_index"],
+            row["candidate_id"],
+            row["evidence_source_accession"],
+        )
+        for row in rows
+    } == {
+        (
+            "data/input/sirt6_candidate_coverage_repair_decisions.csv",
+            "1",
+            "4xhu__A1_P09874--4xhu__B1_Q9UNS1",
+            "NCBI Taxonomy:27602; UniProt Taxonomy:27602",
+        ),
+        (
+            "data/input/tp53_mdm2_ortholog_repair_decisions.csv",
+            "1",
+            "tp53_mdm2_elephant_seed_tp53_chain",
+            "data/input/tp53_mdm2_ortholog_repair_decisions.csv#1",
+        ),
+        (
+            "data/input/tp53_mdm2_ortholog_repair_decisions.csv",
+            "2",
+            "tp53_mdm2_elephant_seed_mdm2_chain",
+            "data/input/tp53_mdm2_ortholog_repair_decisions.csv#2",
+        ),
+        (
+            "data/input/tp53_mdm2_ortholog_repair_decisions.csv",
+            "2",
+            "tp53_mdm2_elephant_seed_mdm2_chain",
+            "G3SX30",
+        ),
     }
 
-    assert {row["intake_outcome"] for row in rows} == {"evidence_insufficient_defer"}
-    assert {row["target_protein_accession"] for row in rows} == {"unresolved"}
+    assert {row["intake_outcome"] for row in rows} == {
+        "evidence_insufficient_defer",
+        "evidence_ambiguous_needs_second_reviewer",
+    }
+    assert {row["target_protein_accession"] for row in rows} == {"unresolved", "G3SX30"}
     assert {row["downstream_block_status_after_intake"] for row in rows} == {"blocked_gate4_gate5"}
+
+
+def test_first_real_mdm2_elephant_evidence_candidate_row_is_accession_level_only() -> None:
+    rows = intake_rows()
+    matching = [
+        row
+        for row in rows
+        if row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+        and row["evidence_source_accession"] == "G3SX30"
+    ]
+
+    assert len(matching) == 1
+    row = matching[0]
+
+    assert row["gene_symbol"] == "MDM2"
+    assert row["target_species"] == "elephant"
+    assert row["target_species_taxid"] == "9785"
+    assert row["evidence_source_type"] == "uniprot_ortholog_or_taxonomy_evidence"
+    assert row["evidence_source_database"] == "UniProtKB TrEMBL"
+    assert row["target_species_name"] == "Loxodonta africana"
+    assert row["target_gene_symbol"] == "MDM2"
+    assert row["target_protein_accession"] == "G3SX30"
+    assert row["target_sequence_length"] == "492"
+    assert row["ambiguity_flag"] == "true"
+    assert row["second_reviewer_required"] == "true"
+    assert row["intake_outcome"] == "evidence_ambiguous_needs_second_reviewer"
+    assert row["allowed_next_action_after_intake"] == (
+        "perform_second_reviewer_evidence_intake_review"
+    )
 
 
 def test_ortholog_evidence_intake_table_uses_schema_required_fields() -> None:
@@ -110,9 +171,9 @@ def test_ortholog_evidence_intake_table_keeps_downstream_blocked_by_schema_rule(
         assert rule["does_not_auto_accept_ortholog"] is True
         assert (
             row["downstream_block_status_after_intake"]
-            == (rule["downstream_block_status_after_intake"])
+            == rule["downstream_block_status_after_intake"]
         )
-        assert row["allowed_next_action_after_intake"] == (rule["allowed_next_action_after_intake"])
+        assert row["allowed_next_action_after_intake"] == rule["allowed_next_action_after_intake"]
         assert row["claim_status_after_intake"] == rule["claim_status_after_intake"]
 
 
