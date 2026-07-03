@@ -269,6 +269,12 @@ DRY_RUN_LOOKUP_JOIN_COLUMNS = (
     "planned_lookup_query_identifier",
 )
 
+DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE = "injected_fake_or_noop_provider"
+
+DRY_RUN_DERIVED_PAYLOAD_REF_MARKERS = ("dry_run", "not_persisted")
+DRY_RUN_DERIVED_SUMMARY_MARKERS = ("dry-run", "non-evidence")
+DRY_RUN_DERIVED_REVIEWER_NOTE_MARKERS = ("dry-run-derived", "not source evidence")
+
 
 def empty_raw_metadata_response_rows() -> pl.DataFrame:
     """Return an empty typed raw metadata response frame."""
@@ -428,6 +434,79 @@ def build_raw_metadata_response_rows_from_dry_run_summary(
     rows = pl.DataFrame(response_rows).select(list(REQUIRED_COLUMNS))
     validate_stronger_source_raw_metadata_response_rows(rows)
     return rows.sort(list(RAW_METADATA_RESPONSE_KEY_COLUMNS))
+
+
+def raw_metadata_row_is_dry_run_derived(row: Mapping[str, object]) -> bool:
+    """Return true when a row is explicitly derived from fake/noop dry-run output."""
+
+    return _text(row.get("raw_metadata_source_type")) == DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE
+
+
+def _contains_all_markers(value: object, markers: tuple[str, ...]) -> bool:
+    text = _text(value).lower()
+    return all(marker in text for marker in markers)
+
+
+def validate_dry_run_derived_rows_remain_explicit(rows: pl.DataFrame) -> None:
+    """Validate that dry-run-derived rows cannot look like real metadata.
+
+    Dry-run-derived raw metadata response rows may be exported as table rows, but
+    they must remain explicit fake/noop dry-run artifacts. They are not real
+    external database metadata, not source evidence, not reviewed decisions, not
+    Gate 4 / Gate 5 policy updates, not downstream eligibility, and not
+    biological claims.
+    """
+
+    validate_required_columns(rows)
+
+    bad_rows: list[str] = []
+    for row in rows.iter_rows(named=True):
+        if not raw_metadata_row_is_dry_run_derived(row):
+            continue
+
+        if not (
+            _contains_all_markers(
+                row.get("raw_metadata_payload_ref"),
+                DRY_RUN_DERIVED_PAYLOAD_REF_MARKERS,
+            )
+            and _contains_all_markers(
+                row.get("raw_metadata_summary"),
+                DRY_RUN_DERIVED_SUMMARY_MARKERS,
+            )
+            and _contains_all_markers(
+                row.get("reviewer_note"),
+                DRY_RUN_DERIVED_REVIEWER_NOTE_MARKERS,
+            )
+        ):
+            bad_rows.append(_text(row.get("candidate_id", "")))
+
+    if bad_rows:
+        raise ValueError(
+            "Dry-run-derived raw metadata response rows must remain explicit "
+            "fake/noop non-evidence artifacts: " + ", ".join(sorted(bad_rows))
+        )
+
+
+def write_raw_metadata_response_rows(
+    rows: pl.DataFrame,
+    output_path: Path,
+) -> Path:
+    """Write already-built raw metadata response rows to an explicit table path.
+
+    This is a table-only exporter. It writes only rows passed by the caller. It
+    does not build rows, call providers, query external databases, fetch
+    sequences, create source evidence, create manual review rows, create
+    reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9,
+    call Biohub, generate embeddings, call Boltz/AF3/Chai, rerun contrast, or
+    make biological claims.
+    """
+
+    validate_stronger_source_raw_metadata_response_rows(rows)
+    validate_dry_run_derived_rows_remain_explicit(rows)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    rows.select(list(REQUIRED_COLUMNS)).write_csv(output_path)
+    return output_path
 
 
 def forbidden_actions_present(row: dict[str, object]) -> bool:
