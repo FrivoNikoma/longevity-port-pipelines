@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 
 import polars as pl
@@ -259,6 +260,174 @@ def _text(value: object) -> str:
     if value is None:
         return ""
     return str(value).strip()
+
+
+DRY_RUN_LOOKUP_JOIN_COLUMNS = (
+    "candidate_set",
+    "candidate_id",
+    "planned_lookup_source_type",
+    "planned_lookup_query_identifier",
+)
+
+
+def empty_raw_metadata_response_rows() -> pl.DataFrame:
+    """Return an empty typed raw metadata response frame."""
+
+    return pl.DataFrame(schema={column: pl.String for column in REQUIRED_COLUMNS})
+
+
+def raw_metadata_response_status_for_dry_run_summary_row(
+    dry_run_summary_row: Mapping[str, object],
+) -> str | None:
+    """Return raw metadata response status for a dry-run summary row.
+
+    Only dry-run rows where the injected fake/noop provider was called are
+    mapped into raw metadata response rows. Policy-denied dry-run rows are
+    skipped because they did not request or receive raw metadata.
+    """
+
+    if (
+        _text(dry_run_summary_row.get("dry_run_status"))
+        == "dry_run_raw_metadata_candidate_still_blocked"
+    ):
+        return "raw_metadata_received_unreviewed_still_blocked"
+
+    return None
+
+
+def raw_metadata_response_row_from_dry_run_summary_row(
+    *,
+    lookup_plan_row: Mapping[str, object],
+    dry_run_summary_row: Mapping[str, object],
+) -> dict[str, str] | None:
+    """Build one conservative raw metadata response row from dry-run output.
+
+    The row is built in memory only. It preserves request/provenance trace from
+    the lookup plan and runtime dry-run status from the dry-run summary. It does
+    not write files, call providers, query external databases, fetch sequences,
+    create source evidence, create review rows, create reviewed decisions,
+    update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, or make biological
+    claims.
+    """
+
+    raw_metadata_response_status = raw_metadata_response_status_for_dry_run_summary_row(
+        dry_run_summary_row
+    )
+    if raw_metadata_response_status is None:
+        return None
+
+    planned_lookup_query_identifier = _text(
+        dry_run_summary_row.get("planned_lookup_query_identifier")
+    )
+
+    return {
+        "candidate_set": _text(lookup_plan_row.get("candidate_set")),
+        "lane_name": _text(lookup_plan_row.get("lane_name")),
+        "candidate_id": _text(lookup_plan_row.get("candidate_id")),
+        "request_table": _text(lookup_plan_row.get("request_table")),
+        "request_source_row_index": _text(lookup_plan_row.get("request_source_row_index")),
+        "gene_symbol": _text(lookup_plan_row.get("gene_symbol")),
+        "source_species": _text(lookup_plan_row.get("source_species")),
+        "target_species": _text(lookup_plan_row.get("target_species")),
+        "target_species_taxid": _text(lookup_plan_row.get("target_species_taxid")),
+        "source_uniprot": _text(lookup_plan_row.get("source_uniprot")),
+        "partner_uniprot": _text(lookup_plan_row.get("partner_uniprot")),
+        "requested_evidence_source_database": _text(
+            lookup_plan_row.get("requested_evidence_source_database")
+        ),
+        "requested_evidence_source_accession": _text(
+            lookup_plan_row.get("requested_evidence_source_accession")
+        ),
+        "target_taxid": _text(lookup_plan_row.get("target_taxid")),
+        "target_species_name": _text(lookup_plan_row.get("target_species_name")),
+        "target_gene_symbol": _text(lookup_plan_row.get("target_gene_symbol")),
+        "target_protein_accession": _text(lookup_plan_row.get("target_protein_accession")),
+        "target_sequence_length": _text(lookup_plan_row.get("target_sequence_length")),
+        "planned_lookup_source_type": _text(dry_run_summary_row.get("planned_lookup_source_type")),
+        "planned_lookup_source_name": _text(lookup_plan_row.get("planned_lookup_source_name")),
+        "planned_lookup_query_identifier": planned_lookup_query_identifier,
+        "planned_lookup_query_taxid": _text(lookup_plan_row.get("planned_lookup_query_taxid")),
+        "live_lookup_policy_decision": _text(
+            dry_run_summary_row.get("live_lookup_policy_decision")
+        ),
+        "dry_run_status": _text(dry_run_summary_row.get("dry_run_status")),
+        "dry_run_provider_mode": _text(dry_run_summary_row.get("dry_run_provider_mode")),
+        "raw_metadata_status": _text(dry_run_summary_row.get("raw_metadata_status")),
+        "raw_metadata_response_status": raw_metadata_response_status,
+        "raw_metadata_review_status": "unreviewed_raw_metadata",
+        "raw_metadata_source_type": "injected_fake_or_noop_provider",
+        "raw_metadata_source_name": _text(dry_run_summary_row.get("dry_run_provider_mode")),
+        "raw_metadata_source_identifier": f"dry_run:{planned_lookup_query_identifier}",
+        "raw_metadata_payload_ref": "dry_run_summary_payload_not_persisted",
+        "raw_metadata_summary": (
+            "Raw metadata response row built in memory from dry-run summary only; "
+            "raw metadata remains unreviewed and non-evidence."
+        ),
+        "sequence_fetched": "false",
+        "source_evidence_created": "false",
+        "reviewed_decision_created": "false",
+        "gate4_gate5_policy_updated": "false",
+        "gate8_promoted": "false",
+        "gate9_promoted": "false",
+        "downstream_block_status_after_raw_metadata": BLOCKED_GATE4_GATE5,
+        "claim_policy_after_raw_metadata": NO_BIOLOGICAL_CLAIMS_POLICY,
+        "claim_status_after_raw_metadata": REPAIR_WORKLIST_CLAIM_STATUS,
+        "biological_claim_status": BIOLOGICAL_CLAIM_STATUS_NONE,
+        "forbidden_actions_after_raw_metadata": "; ".join(sorted(RUNTIME_SIDE_EFFECTS)),
+        "reviewer_note": (
+            "In-memory dry-run-derived raw metadata response only; not source "
+            "evidence, not reviewed, not a Gate 4 / Gate 5 update, and not "
+            "downstream eligibility."
+        ),
+    }
+
+
+def build_raw_metadata_response_rows_from_dry_run_summary(
+    *,
+    lookup_plan_rows: pl.DataFrame,
+    dry_run_summary_rows: pl.DataFrame,
+) -> pl.DataFrame:
+    """Build raw metadata response rows from dry-run summary rows in memory only."""
+
+    if lookup_plan_rows.is_empty() or dry_run_summary_rows.is_empty():
+        return empty_raw_metadata_response_rows()
+
+    candidate_dry_run_rows = dry_run_summary_rows.filter(
+        pl.col("dry_run_status") == "dry_run_raw_metadata_candidate_still_blocked"
+    )
+    if candidate_dry_run_rows.is_empty():
+        return empty_raw_metadata_response_rows()
+
+    joined_rows = lookup_plan_rows.join(
+        candidate_dry_run_rows,
+        on=list(DRY_RUN_LOOKUP_JOIN_COLUMNS),
+        how="inner",
+    )
+
+    if joined_rows.height != candidate_dry_run_rows.height:
+        raise ValueError(
+            "Could not match every raw metadata candidate dry-run summary row "
+            "to lookup plan provenance."
+        )
+
+    response_rows = [
+        response_row
+        for joined_row in joined_rows.iter_rows(named=True)
+        if (
+            response_row := raw_metadata_response_row_from_dry_run_summary_row(
+                lookup_plan_row=joined_row,
+                dry_run_summary_row=joined_row,
+            )
+        )
+        is not None
+    ]
+
+    if not response_rows:
+        return empty_raw_metadata_response_rows()
+
+    rows = pl.DataFrame(response_rows).select(list(REQUIRED_COLUMNS))
+    validate_stronger_source_raw_metadata_response_rows(rows)
+    return rows.sort(list(RAW_METADATA_RESPONSE_KEY_COLUMNS))
 
 
 def forbidden_actions_present(row: dict[str, object]) -> bool:
