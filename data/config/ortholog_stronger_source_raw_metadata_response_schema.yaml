@@ -1,0 +1,173 @@
+schema_version: 1
+schema_id: generic_ortholog_stronger_source_raw_metadata_response_schema
+pipeline_gate: ortholog_stronger_source_raw_metadata_response
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+purpose: >
+  Defines the data contract for future raw metadata lookup artifacts after the
+  stronger-source live metadata dry-run boundary. A raw metadata response row is
+  unreviewed metadata only: not source evidence, not a manual review row, not an
+  accepted ortholog, not a reviewed decision, and not downstream eligibility.
+
+response_scope:
+  from_dry_run_status:
+    - dry_run_raw_metadata_candidate_still_blocked
+  to_status: raw_metadata_received_unreviewed_still_blocked
+  raw_metadata_is:
+    - unreviewed
+    - non_evidence
+    - blocked_gate4_gate5
+    - repair_worklist
+  does_not_authorize:
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - sequence fetch
+    - source evidence creation
+    - manual review row creation
+    - reviewed decision creation
+    - accepted ortholog claims
+    - validated ortholog claims
+    - automated external database query
+    - runtime persistence from live provider
+    - Biohub calls
+    - embedding generation
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - biological claims
+
+required_request_trace_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - request_table
+  - request_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - requested_evidence_source_database
+  - requested_evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+
+required_lookup_trace_fields:
+  - planned_lookup_source_type
+  - planned_lookup_source_name
+  - planned_lookup_query_identifier
+  - planned_lookup_query_taxid
+  - live_lookup_policy_decision
+  - dry_run_status
+  - dry_run_provider_mode
+  - raw_metadata_status
+
+required_raw_metadata_response_fields:
+  - raw_metadata_response_status
+  - raw_metadata_review_status
+  - raw_metadata_source_type
+  - raw_metadata_source_name
+  - raw_metadata_source_identifier
+  - raw_metadata_payload_ref
+  - raw_metadata_summary
+  - sequence_fetched
+  - source_evidence_created
+  - reviewed_decision_created
+  - gate4_gate5_policy_updated
+  - gate8_promoted
+  - gate9_promoted
+  - downstream_block_status_after_raw_metadata
+  - claim_policy_after_raw_metadata
+  - claim_status_after_raw_metadata
+  - biological_claim_status
+  - forbidden_actions_after_raw_metadata
+  - reviewer_note
+
+allowed_planned_lookup_source_types:
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+
+allowed_dry_run_statuses:
+  - dry_run_raw_metadata_candidate_still_blocked
+  - dry_run_skipped_policy_denied_still_blocked
+
+allowed_dry_run_provider_modes:
+  - injected_fake_or_noop_provider_only
+
+allowed_raw_metadata_statuses:
+  - raw_metadata_dry_run_noop_unreviewed
+  - raw_metadata_received_unreviewed
+  - raw_metadata_fake_provider_unreviewed
+  - not_requested_policy_denied
+
+allowed_raw_metadata_response_statuses:
+  - raw_metadata_received_unreviewed_still_blocked
+  - raw_metadata_not_requested_policy_denied
+  - raw_metadata_deferred_keep_blocked
+  - raw_metadata_conflict_keep_blocked
+
+allowed_raw_metadata_review_statuses:
+  - unreviewed_raw_metadata
+  - raw_metadata_requires_manual_review
+
+allowed_raw_metadata_source_types:
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+  - injected_fake_or_noop_provider
+
+allowed_false_flags:
+  - sequence_fetched
+  - source_evidence_created
+  - reviewed_decision_created
+  - gate4_gate5_policy_updated
+  - gate8_promoted
+  - gate9_promoted
+
+allowed_downstream_block_statuses_after_raw_metadata:
+  - blocked_gate4_gate5
+
+allowed_claim_statuses_after_raw_metadata:
+  - repair_worklist
+
+allowed_claim_policies_after_raw_metadata:
+  - no_biological_claims_until_validation
+
+allowed_biological_claim_statuses:
+  - no_biological_claim
+
+required_guardrails:
+  - raw metadata response rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - raw metadata response rows remain unreviewed
+  - raw metadata response rows are not source evidence
+  - raw metadata response rows do not create manual review rows
+  - raw metadata response rows do not create reviewed decisions
+  - raw metadata response rows do not accept orthologs
+  - raw metadata response rows do not validate orthologs
+  - raw metadata response rows do not update Gate 4 / Gate 5 policy
+  - raw metadata response rows do not fetch sequences
+  - raw metadata response rows do not write runtime persistence from live providers
+  - raw metadata response rows do not run automated external database queries
+  - raw metadata response rows do not call Biohub
+  - raw metadata response rows do not generate embeddings
+  - raw metadata response rows do not call Boltz
+  - raw metadata response rows do not call AF3
+  - raw metadata response rows do not call Chai
+  - raw metadata response rows do not rerun enrichment or contrast
+  - raw metadata response rows do not promote Gate 8
+  - raw metadata response rows do not promote Gate 9
+  - raw metadata response rows do not make biological claims

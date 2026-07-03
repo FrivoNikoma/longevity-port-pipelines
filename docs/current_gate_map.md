@@ -333,6 +333,8 @@ The stronger-source live metadata client scaffold now wires future live metadata
 
 The stronger-source live metadata dry-run wrapper now adds an operator/runtime dry-run boundary around this scaffold. It wires lookup plan rows through the explicit live lookup policy decision and then through the scaffold-only metadata client using only injected fake/noop providers. Default-denied, CI-denied, sequence-fetch-requested, and missing-blocker-acknowledgement paths do not call the provider. Authorized context can call only the injected fake/noop provider, and output remains a typed dry-run summary: raw metadata candidate only, no persistence, no source evidence, no reviewed decision, no Gate 4 / Gate 5 policy update, no Gate 8 or Gate 9 promotion, no network lookup, and no biological claims.
 
+The stronger-source raw metadata response layer now defines the future raw metadata response data contract with `data/config/ortholog_stronger_source_raw_metadata_response_schema.yaml`, header-only `data/input/ortholog_stronger_source_raw_metadata_responses.csv`, and `src/longevity_port_pipelines/stages/ortholog_stronger_source_raw_metadata_response.py`. The response table remains header-only: no raw metadata response rows have been added. A raw metadata response remains unreviewed, non-evidence, not source evidence, not a manual review row, not a reviewed decision, not runtime persistence from a live provider, not a Gate 4 / Gate 5 policy update, not Gate 8 or Gate 9 promotion, and not a biological claim.
+
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
 Current `G3SX30` status:
@@ -358,10 +360,13 @@ Current `G3SX30` status:
 - live lookup opt-in boundary status: `policy_helper_only_default_denied`
 - live metadata client scaffold status: `scaffold_only_injected_provider_no_network`
 - live metadata dry-run wrapper status: `runtime_operator_dry_run_fake_provider_only`
+- raw metadata response schema status: `schema_only_unreviewed_non_evidence`
+- raw metadata response table status: `header_only_scaffold`
+- raw metadata response rows: none
 - live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is to add a raw metadata response schema/table in a later separate PR, or to add a CLI-like shell around this dry-run helper if runtime ergonomics are needed, while keeping real network lookup separate. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The next safe action is to add a CLI-like shell or table-only exporter around the dry-run/raw-metadata-response helpers if runtime ergonomics are needed, while keeping real network lookup separate. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
