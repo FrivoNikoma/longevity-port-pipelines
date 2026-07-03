@@ -318,12 +318,16 @@ The current ladder includes:
 - `tests/fixtures/ortholog_stronger_source_fixture_lookup_results.csv`
 - `src/longevity_port_pipelines/stages/ortholog_stronger_source_fixture_lookup.py`
 - `tests/test_ortholog_stronger_source_fixture_lookup.py`
+- `src/longevity_port_pipelines/stages/ortholog_stronger_source_live_lookup_policy.py`
+- `tests/test_ortholog_stronger_source_live_lookup_policy.py`
 
 The stronger-source evidence collection layer has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
 
 The stronger-source lookup layer has an API-boundary policy, a lookup plan schema, a header-only lookup plan table scaffold, and a table-only lookup plan validator.
 
-The stronger-source fixture lookup layer now adds a local fixture-backed lookup helper and synthetic fixture results under `tests/fixtures`. This layer can join fixture-backed lookup plan rows to committed synthetic fixture result rows. These results remain fixture-only payloads: they are not source evidence rows, not curated target decisions, not reviewed ortholog decisions, and not downstream-gate permissions.
+The stronger-source fixture lookup layer adds a local fixture-backed lookup helper and synthetic fixture results under `tests/fixtures`. This layer can join fixture-backed lookup plan rows to committed synthetic fixture result rows. These results remain fixture-only payloads: they are not source evidence rows, not curated target decisions, not reviewed ortholog decisions, and not downstream-gate permissions.
+
+The stronger-source live-lookup opt-in boundary now adds a policy helper for future live metadata lookup. The default decision remains denied. A future live-lookup path can pass this boundary only with explicit runtime opt-in, non-CI context, no sequence fetch request, the allowed stronger-source collection output target, preserved Gate 4 / Gate 5 blocker status, preserved `repair_worklist` claim status, and explicit operator acknowledgement that results remain blocked and non-reviewed. This boundary does not implement a real API client and does not perform live external lookup.
 
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
@@ -347,10 +351,11 @@ Current `G3SX30` status:
 - stronger-source lookup plan rows: none
 - fixture-backed source client status: `fixture_only_local_synthetic`
 - fixture lookup result status: `synthetic_fixture_only_non_evidence`
+- live lookup opt-in boundary status: `policy_helper_only_default_denied`
 - live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is either to keep the gate map aligned with this fixture-backed lookup layer, or later to add an explicit live-lookup opt-in boundary with live external lookup disabled by default. Any later live-lookup boundary must remain blocker-first and must not collect source evidence, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The next safe action is either to keep the gate map aligned with this live-lookup opt-in boundary, or later to add a real live metadata lookup client behind this boundary with live external lookup still disabled by default. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
