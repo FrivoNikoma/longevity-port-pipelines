@@ -1,0 +1,184 @@
+schema_version: 1
+schema_id: generic_ortholog_evidence_second_review_schema
+pipeline_gate: ortholog_evidence_second_review
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Conservative second-review scaffold for ambiguous accession-level ortholog
+  evidence intake rows. This schema records which intake rows require another
+  reviewer before any later reviewed Gate 4 / Gate 5 decision PR can be opened.
+purpose: >
+  Defines a blocker-first second-review worklist for evidence rows with
+  evidence_ambiguous_needs_second_reviewer. A second-review queue row is not
+  an accepted ortholog, not a reviewed decision, and not downstream eligibility.
+
+second_review_scope:
+  from_intake_outcome:
+    - evidence_ambiguous_needs_second_reviewer
+  to_status: second_review_worklist_item
+  does_not_authorize:
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - sequence fetch
+    - Biohub calls
+    - embedding generation
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - accepted ortholog claims
+    - validated ortholog claims
+    - biological claims
+
+required_row_identity_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - intake_table
+  - intake_source_table
+  - intake_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - evidence_source_type
+  - evidence_source_database
+  - evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+
+required_second_review_fields:
+  - intake_outcome_before_second_review
+  - second_review_reason
+  - required_second_review_checks
+  - second_review_status
+  - second_review_decision
+  - reviewed_target_uniprot_after_second_review
+  - downstream_block_status_after_second_review
+  - allowed_next_action_after_second_review
+  - claim_policy_after_second_review
+  - claim_status_after_second_review
+  - forbidden_actions_after_second_review
+  - reviewer_note
+
+allowed_second_review_statuses:
+  - pending_second_review
+  - second_review_in_progress
+  - second_review_complete_still_blocked
+
+allowed_second_review_decisions:
+  - pending
+  - ready_for_later_reviewed_decision_pr
+  - needs_additional_source_evidence
+  - conflict_or_exclude
+  - keep_blocked_until_manual_review
+
+allowed_intake_outcomes_before_second_review:
+  - evidence_ambiguous_needs_second_reviewer
+
+allowed_downstream_block_statuses_after_second_review:
+  - blocked_gate4_gate5
+
+allowed_claim_statuses_after_second_review:
+  - repair_worklist
+
+allowed_claim_policies_after_second_review:
+  - no_biological_claims_until_validation
+
+second_review_decision_rules:
+  pending:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    downstream_block_status_after_second_review: blocked_gate4_gate5
+    allowed_next_action_after_second_review: perform_second_reviewer_evidence_intake_review
+    claim_status_after_second_review: repair_worklist
+  ready_for_later_reviewed_decision_pr:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    downstream_block_status_after_second_review: blocked_gate4_gate5
+    allowed_next_action_after_second_review: prepare_later_reviewed_decision_pr
+    claim_status_after_second_review: repair_worklist
+  needs_additional_source_evidence:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    downstream_block_status_after_second_review: blocked_gate4_gate5
+    allowed_next_action_after_second_review: defer_until_stronger_source_evidence_exists
+    claim_status_after_second_review: repair_worklist
+  conflict_or_exclude:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    downstream_block_status_after_second_review: blocked_gate4_gate5
+    allowed_next_action_after_second_review: prepare_later_rejection_or_exclusion_review
+    claim_status_after_second_review: repair_worklist
+  keep_blocked_until_manual_review:
+    gate4_gate5_policy_update_allowed: false
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    accepted_ortholog_claim_allowed: false
+    validated_ortholog_claim_allowed: false
+    biological_claim_allowed: false
+    downstream_block_status_after_second_review: blocked_gate4_gate5
+    allowed_next_action_after_second_review: perform_second_reviewer_evidence_intake_review
+    claim_status_after_second_review: repair_worklist
+
+required_guardrails:
+  - second-review rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - second-review rows do not accept orthologs automatically
+  - second-review rows do not create reviewed decisions automatically
+  - second-review rows do not update Gate 4 / Gate 5 policy automatically
+  - second-review rows do not fetch sequences
+  - second-review rows do not call Biohub
+  - second-review rows do not generate embeddings
+  - second-review rows do not call Boltz
+  - second-review rows do not call AF3
+  - second-review rows do not call Chai
+  - second-review rows do not rerun enrichment or contrast
+  - second-review rows do not promote Gate 8
+  - second-review rows do not promote Gate 9
+  - second-review rows do not make biological claims
