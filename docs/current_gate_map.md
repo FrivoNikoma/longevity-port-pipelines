@@ -331,6 +331,8 @@ The stronger-source live-lookup opt-in boundary now adds a policy helper for fut
 
 The stronger-source live metadata client scaffold now wires future live metadata lookup attempts through this opt-in boundary using only an injected provider interface. Denied policy rows do not call the provider. Authorized policy rows can call an injected provider, but returned values remain raw metadata candidates only, with `sequence_included=false`, `evidence_row_created=false`, `reviewed_decision_created=false`, `blocked_gate4_gate5`, and `repair_worklist`. This scaffold does not implement a real API client, does not import network libraries, does not persist raw metadata tables, does not collect source evidence, does not create reviewed decisions, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, and does not make biological claims.
 
+The stronger-source live metadata dry-run wrapper now adds an operator/runtime dry-run boundary around this scaffold. It wires lookup plan rows through the explicit live lookup policy decision and then through the scaffold-only metadata client using only injected fake/noop providers. Default-denied, CI-denied, sequence-fetch-requested, and missing-blocker-acknowledgement paths do not call the provider. Authorized context can call only the injected fake/noop provider, and output remains a typed dry-run summary: raw metadata candidate only, no persistence, no source evidence, no reviewed decision, no Gate 4 / Gate 5 policy update, no Gate 8 or Gate 9 promotion, no network lookup, and no biological claims.
+
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
 Current `G3SX30` status:
@@ -355,10 +357,11 @@ Current `G3SX30` status:
 - fixture lookup result status: `synthetic_fixture_only_non_evidence`
 - live lookup opt-in boundary status: `policy_helper_only_default_denied`
 - live metadata client scaffold status: `scaffold_only_injected_provider_no_network`
+- live metadata dry-run wrapper status: `runtime_operator_dry_run_fake_provider_only`
 - live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is to add a dry-run wrapper around this scaffold, still fake/injected-provider only, or to add a raw metadata response schema/table in a later separate PR. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The next safe action is to add a raw metadata response schema/table in a later separate PR, or to add a CLI-like shell around this dry-run helper if runtime ergonomics are needed, while keeping real network lookup separate. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
