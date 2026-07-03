@@ -308,8 +308,17 @@ The current ladder includes:
 - `tests/test_ortholog_stronger_source_evidence_collection_schema.py`
 - `tests/test_ortholog_stronger_source_evidence_collection_table.py`
 - `tests/test_ortholog_stronger_source_evidence_collection_validator.py`
+- `docs/ortholog_stronger_source_lookup_api_policy.md`
+- `data/config/ortholog_stronger_source_lookup_plan_schema.yaml`
+- `data/input/ortholog_stronger_source_lookup_plan.csv`
+- `src/longevity_port_pipelines/stages/ortholog_stronger_source_lookup_plan.py`
+- `tests/test_ortholog_stronger_source_lookup_plan_schema.py`
+- `tests/test_ortholog_stronger_source_lookup_plan_table.py`
+- `tests/test_ortholog_stronger_source_lookup_plan_validator.py`
 
-The stronger-source evidence collection layer now has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
+The stronger-source evidence collection layer has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
+
+The stronger-source lookup layer now has an API-boundary policy, a lookup plan schema, a header-only lookup plan table scaffold, and a table-only lookup plan validator. This is a planning layer only. It does not include a fixture-backed source client, real API client, live external lookup, source evidence collection, sequence fetch, or manual source evidence rows.
 
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
 
@@ -328,9 +337,14 @@ Current `G3SX30` status:
 - stronger-source request decision: `needs_manual_source_collection`
 - stronger-source collection table status: `header_only_scaffold`
 - manually collected stronger-source evidence rows: none
+- stronger-source lookup policy status: `policy_only_no_live_lookup`
+- stronger-source lookup plan table status: `header_only_scaffold`
+- stronger-source lookup plan rows: none
+- fixture-backed source client: none
+- live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
-This ladder does not accept or validate an ortholog. It does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is either to keep the gate map aligned with the collection schema, header-only collection table, and collection validator, or later to add manually collected stronger-source evidence rows under the collection table and validator. Any later evidence collection must remain blocker-first until a separate reviewed-decision PR and explicit Gate 4 / Gate 5 policy update are added.
+The next safe action is either to keep the gate map aligned with this lookup planning layer, or later to add a fixture-backed source lookup client with live external lookup disabled by default. Any later fixture-backed client must remain blocker-first and must not collect source evidence, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
