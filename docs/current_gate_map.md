@@ -339,6 +339,8 @@ The raw metadata response builder status is `in_memory_builder_only`. Its input 
 
 The raw metadata response exporter status is `explicit_table_writer_only`. It writes only already-built, already-validated raw metadata response rows to an explicit table path. It does not call the builder, provider, client, or network by itself. Exported dry-run-derived rows must remain explicit through `raw_metadata_source_type`, `raw_metadata_payload_ref`, `raw_metadata_summary`, and `reviewer_note`.
 
+The raw metadata response review checklist is documented in `docs/ortholog_stronger_source_raw_metadata_response_review_checklist.md`. The raw metadata response review checklist status is `docs_only_human_review_protocol`. It defines how a reviewer should inspect raw metadata response rows before any later source evidence intake. The raw metadata response review checklist does not create source evidence, does not create manual review rows, does not create reviewed decisions, does not update Gate 4 / Gate 5, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
 The committed response table remains header-only: no raw metadata response rows have been added. A raw metadata response remains unreviewed, non-evidence, not source evidence, not a manual review row, not a reviewed decision, not runtime persistence from a live provider, not a Gate 4 / Gate 5 policy update, not Gate 8 or Gate 9 promotion, and not a biological claim.
 
 The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
@@ -372,6 +374,7 @@ Current `G3SX30` status:
 - raw metadata response builder input: `live_metadata_dry_run_summary_rows_plus_lookup_plan_provenance`
 - raw metadata response builder output: `dry_run_derived_raw_metadata_response_rows`
 - raw metadata response exporter status: `explicit_table_writer_only`
+- raw metadata response review checklist status: `docs_only_human_review_protocol`
 - raw metadata response rows: none
 - live external lookup status: none
 - downstream block status: `blocked_gate4_gate5`
@@ -379,4 +382,4 @@ Current `G3SX30` status:
 
 This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe action is to document and review the raw metadata response review checklist before any raw metadata response can become source evidence intake. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The next safe main-track action is the first real metadata ingestion sandbox for G3SX30: one row only, metadata only, explicit live opt-in, no sequence fetch, no source evidence auto-creation, no reviewed decision, no Gate 4 / Gate 5 update, no Gate 8 or Gate 9, no embeddings, no Boltz, and no biological claim. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
