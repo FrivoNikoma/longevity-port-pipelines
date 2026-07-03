@@ -1,4 +1,4 @@
-﻿# Current LongevityPort gate map
+# Current LongevityPort gate map
 
 This document tracks the current state of the LongevityPort gated decision
 pipeline. It is intentionally conservative. A gate can be useful even when it
@@ -285,3 +285,42 @@ The checklist applies to the current SIRT6/core3 and TP53/MDM2 elephant lanes. I
 Each intake row remains a Gate 4 / Gate 5 repair-queue worklist item until a later reviewed-decision PR and explicit Gate 4 / Gate 5 policy update say otherwise.
 
 This checklist does not fetch sequences, does not curate orthologs automatically, does not call Biohub, does not generate embeddings, does not call Boltz, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+## Ortholog evidence intake ladder checkpoint
+
+The Level 2 accession-level ortholog evidence intake ladder is now underway for the current Gate 4 / Gate 5 repair frontier.
+
+The current ladder includes:
+
+- `docs/ortholog_evidence_intake_checklist.md`
+- `data/config/ortholog_evidence_intake_schema.yaml`
+- `data/input/ortholog_evidence_intake.csv`
+- `src/longevity_port_pipelines/stages/ortholog_evidence_intake.py`
+- `data/config/ortholog_evidence_second_review_schema.yaml`
+- `data/input/ortholog_evidence_second_review_queue.csv`
+- `src/longevity_port_pipelines/stages/ortholog_evidence_second_review.py`
+- `data/config/ortholog_stronger_source_evidence_request_schema.yaml`
+- `data/input/ortholog_stronger_source_evidence_requests.csv`
+- `src/longevity_port_pipelines/stages/ortholog_stronger_source_evidence_request.py`
+
+The first concrete TP53/MDM2 elephant accession-level evidence candidate is the MDM2 `G3SX30` row. It remains an accession-level evidence candidate only.
+
+Current `G3SX30` status:
+
+- evidence source database: `UniProtKB TrEMBL`
+- evidence source accession: `G3SX30`
+- target species: `Loxodonta africana`
+- target taxid: `9785`
+- target gene symbol: `MDM2`
+- target sequence length: `492`
+- second-review status: `second_review_complete_still_blocked`
+- second-review decision: `needs_additional_source_evidence`
+- reviewed target UniProt after second review: `unresolved`
+- stronger-source request status: `pending_source_collection`
+- stronger-source request decision: `needs_manual_source_collection`
+- downstream block status: `blocked_gate4_gate5`
+- claim status: `repair_worklist`
+
+This ladder does not accept or validate an ortholog. It does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+The next safe action is manual stronger-source evidence collection under the request scaffold, or another explicit accession-level evidence candidate row. Any later evidence collection must remain blocker-first until a separate reviewed-decision PR and explicit Gate 4 / Gate 5 policy update are added.
