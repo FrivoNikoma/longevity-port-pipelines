@@ -1,0 +1,115 @@
+schema_version: 1
+schema_id: generic_ortholog_stronger_source_evidence_collection_schema
+pipeline_gate: ortholog_stronger_source_evidence_collection
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+purpose: >
+  Defines how manually collected stronger-source ortholog evidence should be
+  recorded after a stronger-source evidence request. A collection row records
+  source evidence only: not an accepted ortholog, not a reviewed decision, and
+  not downstream eligibility.
+
+collection_scope:
+  from_request_status:
+    - pending_source_collection
+    - source_collection_in_progress
+  from_request_decision:
+    - needs_manual_source_collection
+  to_status: stronger_source_evidence_collected_still_blocked
+  does_not_authorize:
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - sequence fetch
+    - automated external database query
+    - Biohub calls
+    - embedding generation
+    - Boltz readiness
+    - AF3 readiness
+    - Chai readiness
+    - accepted ortholog claims
+    - validated ortholog claims
+    - reviewed decision creation
+    - biological claims
+
+required_request_trace_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - request_table
+  - request_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - requested_evidence_source_database
+  - requested_evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+
+required_collection_fields:
+  - collected_source_type
+  - collected_source_name
+  - collected_source_identifier
+  - collected_source_review_status
+  - collected_evidence_summary
+  - collection_status
+  - collection_decision
+  - downstream_block_status_after_collection
+  - allowed_next_action_after_collection
+  - claim_policy_after_collection
+  - claim_status_after_collection
+  - forbidden_actions_after_collection
+  - reviewer_note
+
+allowed_collected_source_types:
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+
+allowed_collection_statuses:
+  - pending_manual_collection
+  - manual_collection_in_progress
+  - manual_collection_complete_still_blocked
+
+allowed_collection_decisions:
+  - pending
+  - evidence_recorded_for_later_intake_pr
+  - evidence_insufficient_keep_blocked
+  - evidence_conflict_or_exclude
+  - needs_additional_manual_review
+
+allowed_downstream_block_statuses_after_collection:
+  - blocked_gate4_gate5
+
+allowed_claim_statuses_after_collection:
+  - repair_worklist
+
+allowed_claim_policies_after_collection:
+  - no_biological_claims_until_validation
+
+required_guardrails:
+  - collection rows remain Gate 4 / Gate 5 repair-queue worklist items
+  - collection rows do not accept orthologs automatically
+  - collection rows do not create reviewed decisions automatically
+  - collection rows do not update Gate 4 / Gate 5 policy automatically
+  - collection rows do not fetch sequences
+  - collection rows do not run automated external database queries
+  - collection rows do not call Biohub
+  - collection rows do not generate embeddings
+  - collection rows do not call Boltz
+  - collection rows do not call AF3
+  - collection rows do not call Chai
+  - collection rows do not rerun enrichment or contrast
+  - collection rows do not promote Gate 8
+  - collection rows do not promote Gate 9
+  - collection rows do not make biological claims
