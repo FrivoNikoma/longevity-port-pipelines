@@ -89,6 +89,7 @@ required_raw_metadata_response_fields:
   - reviewer_note
 
 allowed_planned_lookup_source_types:
+  - uniprot_entry_metadata
   - reviewed_uniprot
   - ncbi_protein_or_gene_record
   - ensembl_orthology

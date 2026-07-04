@@ -78,11 +78,16 @@ def valid_raw_metadata_response_rows() -> pl.DataFrame:
     return pl.DataFrame([valid_raw_metadata_response_row()])
 
 
-def test_raw_metadata_response_reader_loads_committed_header_only_table() -> None:
+def test_raw_metadata_response_reader_loads_committed_g3sx30_dry_run_row() -> None:
     rows = raw_metadata.read_raw_metadata_response_rows()
 
-    assert rows.height == 0
+    assert rows.height == 1
     assert rows.columns == list(raw_metadata.REQUIRED_COLUMNS)
+    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
+    assert rows.item(0, "raw_metadata_source_type") == (
+        raw_metadata.DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE
+    )
 
 
 def test_default_path_points_to_committed_raw_metadata_response_table() -> None:
@@ -92,11 +97,13 @@ def test_default_path_points_to_committed_raw_metadata_response_table() -> None:
     )
 
 
-def test_raw_metadata_candidate_helper_accepts_empty_committed_table() -> None:
+def test_raw_metadata_candidate_helper_returns_committed_g3sx30_dry_run_row() -> None:
     rows = raw_metadata.read_raw_metadata_response_rows()
     candidate_rows = raw_metadata.raw_metadata_candidate_rows(rows)
 
-    assert candidate_rows.height == 0
+    assert candidate_rows.height == 1
+    assert candidate_rows.item(0, "candidate_id") == ("tp53_mdm2_elephant_seed_mdm2_chain")
+    assert candidate_rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
 
 
 def test_constants_preserve_blocker_first_policy() -> None:

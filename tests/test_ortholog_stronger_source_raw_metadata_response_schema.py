@@ -143,3 +143,9 @@ def test_raw_metadata_response_schema_guardrails_block_runtime_side_effects() ->
     assert "raw metadata response rows do not promote Gate 8" in guardrails
     assert "raw metadata response rows do not promote Gate 9" in guardrails
     assert "raw metadata response rows do not make biological claims" in guardrails
+
+
+def test_raw_metadata_response_schema_allows_uniprot_entry_metadata_lookup_trace() -> None:
+    schema = load_schema()
+
+    assert "uniprot_entry_metadata" in schema["allowed_planned_lookup_source_types"]

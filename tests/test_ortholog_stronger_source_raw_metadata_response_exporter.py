@@ -38,7 +38,7 @@ def lookup_plan_row(**overrides: object) -> dict[str, object]:
         "target_species_name": "Loxodonta africana",
         "target_gene_symbol": "MDM2",
         "target_protein_accession": "G3SX30",
-        "target_sequence_length": "491",
+        "target_sequence_length": "492",
         "planned_lookup_source_type": "reviewed_uniprot",
         "planned_lookup_source_name": "UniProt reviewed record",
         "planned_lookup_query_identifier": "G3SX30",
@@ -149,8 +149,15 @@ def test_dry_run_derived_guardrail_rejects_rows_that_look_like_real_metadata() -
         raw_metadata.validate_dry_run_derived_rows_remain_explicit(rows)
 
 
-def test_committed_raw_metadata_response_table_remains_header_only() -> None:
+def test_committed_raw_metadata_response_table_has_one_dry_run_derived_row() -> None:
     rows = raw_metadata.read_raw_metadata_response_rows()
 
-    assert rows.is_empty()
+    assert rows.height == 1
     assert rows.columns == list(raw_metadata.REQUIRED_COLUMNS)
+    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
+    assert rows.item(0, "raw_metadata_source_type") == (
+        raw_metadata.DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE
+    )
+    raw_metadata.validate_stronger_source_raw_metadata_response_rows(rows)
+    raw_metadata.validate_dry_run_derived_rows_remain_explicit(rows)
