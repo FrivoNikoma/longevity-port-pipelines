@@ -1,0 +1,218 @@
+schema_version: 1
+schema_id: ortholog_stronger_source_raw_metadata_review_schema
+pipeline_gate: raw_metadata_response_human_review
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Schema for human review of stronger-source raw metadata response rows.
+purpose: >
+  Defines how a reviewer may record metadata-only human review of raw metadata
+  response rows before any later source evidence intake PR. The review layer
+  remains blocker-first: reviewed raw metadata is still non-evidence and does
+  not accept an ortholog, create source evidence, create a reviewed decision,
+  update Gate 4 / Gate 5 policy, promote downstream gates, or make biological
+  claims.
+
+review_scope:
+  from_status:
+    - unreviewed_raw_metadata
+    - raw_metadata_requires_manual_review
+  to_status:
+    - raw_metadata_human_review_complete_still_blocked
+  does_not_authorize:
+    - source evidence creation
+    - reviewed ortholog decision
+    - Gate 4 / Gate 5 policy update
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - sequence fetch
+    - embedding generation
+    - Boltz readiness
+    - biological claims
+
+required_raw_metadata_response_trace_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - raw_metadata_response_table
+  - raw_metadata_response_source_row_index
+  - gene_symbol
+  - source_species
+  - target_species
+  - target_species_taxid
+  - source_uniprot
+  - partner_uniprot
+  - requested_evidence_source_database
+  - requested_evidence_source_accession
+  - target_taxid
+  - target_species_name
+  - target_gene_symbol
+  - target_protein_accession
+  - target_sequence_length
+  - planned_lookup_source_type
+  - planned_lookup_query_identifier
+  - raw_metadata_source_type
+  - raw_metadata_source_name
+  - raw_metadata_source_identifier
+  - raw_metadata_status_before_review
+  - raw_metadata_response_status_before_review
+  - raw_metadata_review_status_before_review
+
+required_review_fields:
+  - raw_metadata_human_review_status
+  - raw_metadata_human_review_decision
+  - reviewed_metadata_source_type
+  - reviewed_metadata_source_name
+  - reviewed_metadata_source_identifier
+  - reviewed_accession
+  - reviewed_entry_name
+  - reviewed_reviewed_status
+  - reviewed_gene_symbol
+  - reviewed_organism_name
+  - reviewed_taxid
+  - reviewed_sequence_length
+  - sequence_review_scope
+  - sequence_fetched
+  - source_evidence_created
+  - source_evidence_creation_status
+  - reviewed_decision_created
+  - reviewed_decision_creation_status
+  - gate4_gate5_policy_updated
+  - gate8_promoted
+  - gate9_promoted
+  - downstream_block_status_after_review
+  - allowed_next_action_after_review
+  - claim_policy_after_review
+  - claim_status_after_review
+  - biological_claim_status
+  - forbidden_actions_after_review
+  - reviewer_note
+
+allowed_raw_metadata_source_types:
+  - uniprot_entry_metadata
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+  - injected_fake_or_noop_provider
+
+allowed_raw_metadata_statuses_before_review:
+  - raw_metadata_dry_run_noop_unreviewed
+  - raw_metadata_received_unreviewed
+  - raw_metadata_fake_provider_unreviewed
+  - not_requested_policy_denied
+
+allowed_raw_metadata_response_statuses_before_review:
+  - raw_metadata_received_unreviewed_still_blocked
+  - raw_metadata_not_requested_policy_denied
+  - raw_metadata_deferred_keep_blocked
+  - raw_metadata_conflict_keep_blocked
+
+allowed_raw_metadata_review_statuses_before_review:
+  - unreviewed_raw_metadata
+  - raw_metadata_requires_manual_review
+
+allowed_human_review_statuses:
+  - pending_raw_metadata_human_review
+  - raw_metadata_human_review_complete_still_blocked
+
+allowed_human_review_decisions:
+  - pending
+  - metadata_consistent_prepare_source_evidence_intake_later
+  - metadata_conflict_keep_blocked
+  - metadata_insufficient_keep_blocked
+
+review_decision_rules:
+  pending:
+    raw_metadata_human_review_status: pending_raw_metadata_human_review
+    downstream_block_status_after_review: blocked_gate4_gate5
+    allowed_next_action_after_review: perform_raw_metadata_human_review
+    claim_status_after_review: repair_worklist
+  metadata_consistent_prepare_source_evidence_intake_later:
+    raw_metadata_human_review_status: raw_metadata_human_review_complete_still_blocked
+    downstream_block_status_after_review: blocked_gate4_gate5
+    allowed_next_action_after_review: prepare_later_source_evidence_intake_pr
+    claim_status_after_review: repair_worklist
+  metadata_conflict_keep_blocked:
+    raw_metadata_human_review_status: raw_metadata_human_review_complete_still_blocked
+    downstream_block_status_after_review: blocked_gate4_gate5
+    allowed_next_action_after_review: resolve_metadata_conflict_before_source_evidence
+    claim_status_after_review: repair_worklist
+  metadata_insufficient_keep_blocked:
+    raw_metadata_human_review_status: raw_metadata_human_review_complete_still_blocked
+    downstream_block_status_after_review: blocked_gate4_gate5
+    allowed_next_action_after_review: keep_blocked_until_additional_metadata
+    claim_status_after_review: repair_worklist
+
+allowed_reviewed_metadata_source_types:
+  - unresolved
+  - uniprot_entry_metadata
+  - reviewed_uniprot
+  - ncbi_protein_or_gene_record
+  - ensembl_orthology
+  - oma_orthology
+  - orthodb_orthology
+  - primary_literature
+  - other_manual_source
+  - injected_fake_or_noop_provider
+
+allowed_reviewed_statuses:
+  - unresolved
+  - reviewed
+  - unreviewed
+  - unknown
+
+allowed_sequence_review_scopes:
+  - not_reviewed_pending
+  - metadata_only_no_sequence_reviewed
+  - no_sequence_requested_or_reviewed
+
+allowed_false_flags:
+  - sequence_fetched
+  - source_evidence_created
+  - reviewed_decision_created
+  - gate4_gate5_policy_updated
+  - gate8_promoted
+  - gate9_promoted
+
+allowed_downstream_block_statuses_after_review:
+  - blocked_gate4_gate5
+
+allowed_claim_policies_after_review:
+  - no_biological_claims_until_validation
+
+allowed_claim_statuses_after_review:
+  - repair_worklist
+
+allowed_biological_claim_statuses:
+  - no_biological_claim
+
+required_guardrails:
+  - raw metadata human review rows remain metadata-only review records
+  - raw metadata human review rows do not create source evidence
+  - raw metadata human review rows do not create reviewed ortholog decisions
+  - raw metadata human review rows do not update Gate 4 or Gate 5 policy
+  - raw metadata human review rows do not promote Gate 8
+  - raw metadata human review rows do not promote Gate 9
+  - raw metadata human review rows do not fetch sequences
+  - raw metadata human review rows do not call Biohub
+  - raw metadata human review rows do not generate embeddings
+  - raw metadata human review rows do not call Boltz
+  - raw metadata human review rows do not call AF3 or Chai
+  - raw metadata human review rows do not rerun enrichment or contrast
+  - raw metadata human review rows do not make biological claims
+
+disallowed_language:
+  - accepted ortholog
+  - validated ortholog
+  - validated longevity signal
+  - confirmed binding change
+  - confirmed functional effect
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - embedding ready
+  - Boltz ready
+  - safe to port
