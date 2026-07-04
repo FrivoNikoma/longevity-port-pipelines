@@ -639,3 +639,22 @@ def test_current_gate_map_records_g3sx30_blocked_embedding_fill_exit_criteria() 
     assert "later exit requires reviewed target sequence provenance" in text
     assert "`sequence_length_status=matches`" in text
     assert "explicit separate dry-run preflight decision" in text
+
+
+def test_current_gate_map_records_reviewed_target_sequence_provenance_scaffold() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Reviewed target sequence provenance scaffold checkpoint" in text
+    assert "data/config/reviewed_target_sequence_provenance_schema.yaml" in text
+    assert "data/input/reviewed_target_sequence_provenance.csv" in text
+    assert "src/longevity_port_pipelines/stages/reviewed_target_sequence_provenance.py" in text
+    assert "header-only reviewed target sequence provenance table" in text
+    assert "does not add a G3SX30 sequence row" in text
+    assert "does not fetch sequences" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
