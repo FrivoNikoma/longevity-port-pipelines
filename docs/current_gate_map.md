@@ -369,17 +369,17 @@ Current `G3SX30` status:
 - live metadata client scaffold status: `scaffold_only_injected_provider_no_network`
 - live metadata dry-run wrapper status: `runtime_operator_dry_run_fake_provider_only`
 - raw metadata response schema status: `schema_only_unreviewed_non_evidence`
-- raw metadata response table status: `one_dry_run_derived_row_still_blocked`
+- raw metadata response table status: `two_rows_dry_run_and_real_metadata_still_blocked`
 - raw metadata response builder status: `in_memory_builder_only`
 - raw metadata response builder input: `live_metadata_dry_run_summary_rows_plus_lookup_plan_provenance`
 - raw metadata response builder output: `dry_run_derived_raw_metadata_response_rows`
 - raw metadata response exporter status: `explicit_table_writer_only`
 - raw metadata response review checklist status: `docs_only_human_review_protocol`
-- raw metadata response rows: one G3SX30 dry-run-derived fake/noop non-evidence row
-- live external lookup status: none; committed raw metadata response row is dry-run-derived fake/noop only
+- raw metadata response rows: one G3SX30 dry-run-derived fake/noop non-evidence row; one G3SX30 UniProtKB metadata-only sandbox row requiring manual review
+- metadata-only external probe status: one explicit UniProtKB metadata-only manual probe recorded; no sequence fetched; no source evidence created
 - downstream block status: `blocked_gate4_gate5`
 - claim status: `repair_worklist`
 
-This ladder does not accept or validate an ortholog. It does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not query external databases, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+This ladder does not accept or validate an ortholog. It records one explicit UniProtKB metadata-only manual probe, but it does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The next safe main-track action is the first real metadata ingestion sandbox for G3SX30, after the committed dry-run-derived fake/noop metadata response checkpoint: one row only, metadata only, explicit live opt-in, no sequence fetch, no source evidence auto-creation, no reviewed decision, no Gate 4 / Gate 5 update, no Gate 8 or Gate 9, no embeddings, no Boltz, and no biological claim. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The first real metadata ingestion sandbox for G3SX30 is now represented by the committed UniProtKB metadata-only sandbox row. The next safe main-track action is raw metadata response human review for the G3SX30 UniProtKB metadata-only sandbox row: review metadata only, do not fetch sequence, do not auto-create source evidence, do not create a reviewed decision, do not update Gate 4 / Gate 5, do not promote Gate 8 or Gate 9, do not generate embeddings, do not call Boltz, and do not make biological claims. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.

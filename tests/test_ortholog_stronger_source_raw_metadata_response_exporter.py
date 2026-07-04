@@ -149,15 +149,16 @@ def test_dry_run_derived_guardrail_rejects_rows_that_look_like_real_metadata() -
         raw_metadata.validate_dry_run_derived_rows_remain_explicit(rows)
 
 
-def test_committed_raw_metadata_response_table_has_one_dry_run_derived_row() -> None:
+def test_committed_raw_metadata_response_table_has_dry_run_and_real_metadata_rows() -> None:
     rows = raw_metadata.read_raw_metadata_response_rows()
 
-    assert rows.height == 1
+    assert rows.height == 2
     assert rows.columns == list(raw_metadata.REQUIRED_COLUMNS)
-    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
-    assert rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
-    assert rows.item(0, "raw_metadata_source_type") == (
-        raw_metadata.DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE
-    )
+    assert set(rows.get_column("candidate_id").to_list()) == {"tp53_mdm2_elephant_seed_mdm2_chain"}
+    assert set(rows.get_column("planned_lookup_query_identifier").to_list()) == {"G3SX30"}
+    assert set(rows.get_column("raw_metadata_source_type").to_list()) == {
+        raw_metadata.DRY_RUN_DERIVED_RAW_METADATA_SOURCE_TYPE,
+        "uniprot_entry_metadata",
+    }
     raw_metadata.validate_stronger_source_raw_metadata_response_rows(rows)
     raw_metadata.validate_dry_run_derived_rows_remain_explicit(rows)

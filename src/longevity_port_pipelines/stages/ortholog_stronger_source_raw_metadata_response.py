@@ -128,11 +128,13 @@ ALLOWED_PLANNED_LOOKUP_SOURCE_TYPES = {
 
 ALLOWED_DRY_RUN_STATUSES = {
     "dry_run_raw_metadata_candidate_still_blocked",
+    "real_metadata_ingestion_sandbox_after_dry_run_still_blocked",
     "dry_run_skipped_policy_denied_still_blocked",
 }
 
 ALLOWED_DRY_RUN_PROVIDER_MODES = {
     "injected_fake_or_noop_provider_only",
+    "uniprot_metadata_only_manual_probe_no_sequence",
 }
 
 ALLOWED_RAW_METADATA_STATUSES = {
@@ -155,6 +157,7 @@ ALLOWED_RAW_METADATA_REVIEW_STATUSES = {
 }
 
 ALLOWED_RAW_METADATA_SOURCE_TYPES = {
+    "uniprot_entry_metadata",
     "reviewed_uniprot",
     "ncbi_protein_or_gene_record",
     "ensembl_orthology",

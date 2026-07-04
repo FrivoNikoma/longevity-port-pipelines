@@ -88,8 +88,12 @@ def test_raw_metadata_response_schema_allowed_values_are_conservative() -> None:
     assert set(schema["allowed_dry_run_statuses"]) == {
         "dry_run_raw_metadata_candidate_still_blocked",
         "dry_run_skipped_policy_denied_still_blocked",
+        "real_metadata_ingestion_sandbox_after_dry_run_still_blocked",
     }
-    assert schema["allowed_dry_run_provider_modes"] == ["injected_fake_or_noop_provider_only"]
+    assert schema["allowed_dry_run_provider_modes"] == [
+        "injected_fake_or_noop_provider_only",
+        "uniprot_metadata_only_manual_probe_no_sequence",
+    ]
     assert set(schema["allowed_raw_metadata_response_statuses"]) == {
         "raw_metadata_received_unreviewed_still_blocked",
         "raw_metadata_not_requested_policy_denied",

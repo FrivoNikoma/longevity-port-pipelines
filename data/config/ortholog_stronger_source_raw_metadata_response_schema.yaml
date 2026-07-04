@@ -100,10 +100,12 @@ allowed_planned_lookup_source_types:
 
 allowed_dry_run_statuses:
   - dry_run_raw_metadata_candidate_still_blocked
+  - real_metadata_ingestion_sandbox_after_dry_run_still_blocked
   - dry_run_skipped_policy_denied_still_blocked
 
 allowed_dry_run_provider_modes:
   - injected_fake_or_noop_provider_only
+  - uniprot_metadata_only_manual_probe_no_sequence
 
 allowed_raw_metadata_statuses:
   - raw_metadata_dry_run_noop_unreviewed
@@ -122,6 +124,7 @@ allowed_raw_metadata_review_statuses:
   - raw_metadata_requires_manual_review
 
 allowed_raw_metadata_source_types:
+  - uniprot_entry_metadata
   - reviewed_uniprot
   - ncbi_protein_or_gene_record
   - ensembl_orthology
