@@ -46,7 +46,7 @@ def test_lookup_plan_schema_disables_live_lookup_and_sequence_fetch_by_default()
     assert plan_scope["default_sequence_fetch_allowed"] is False
     assert plan_scope["ci_external_api_allowed"] is False
     assert plan_scope["allowed_output_target"] == [
-        "data/input/ortholog_stronger_source_evidence_collection.csv"
+        "data/input/ortholog_stronger_source_raw_metadata_responses.csv"
     ]
 
 
@@ -88,6 +88,7 @@ def test_lookup_plan_schema_allowed_source_types_cover_requested_sources() -> No
     schema = load_schema()
 
     assert set(schema["allowed_planned_lookup_source_types"]) == {
+        "uniprot_entry_metadata",
         "reviewed_uniprot",
         "ncbi_protein_or_gene_record",
         "ensembl_orthology",
@@ -136,3 +137,20 @@ def test_lookup_plan_schema_guardrails_block_runtime_side_effects() -> None:
     assert "lookup plan rows do not promote Gate 8" in guardrails
     assert "lookup plan rows do not promote Gate 9" in guardrails
     assert "lookup plan rows do not make biological claims" in guardrails
+
+
+def test_lookup_plan_schema_allows_raw_metadata_sandbox_next_action() -> None:
+    schema = load_schema()
+
+    assert (
+        "add_raw_metadata_response_sandbox_row_later"
+        in (schema["allowed_next_actions_after_lookup_plan"])
+    )
+
+
+def test_lookup_plan_schema_points_to_raw_metadata_response_target() -> None:
+    schema = load_schema()
+
+    assert schema["plan_scope"]["allowed_output_target"] == [
+        "data/input/ortholog_stronger_source_raw_metadata_responses.csv"
+    ]

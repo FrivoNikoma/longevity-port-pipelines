@@ -30,17 +30,17 @@ def valid_lookup_plan_row() -> dict[str, str]:
         "target_gene_symbol": "MDM2",
         "target_protein_accession": "G3SX30",
         "target_sequence_length": "492",
-        "planned_lookup_source_type": "reviewed_uniprot",
-        "planned_lookup_source_name": "UniProt reviewed entry lookup",
+        "planned_lookup_source_type": "uniprot_entry_metadata",
+        "planned_lookup_source_name": "UniProtKB entry metadata lookup",
         "planned_lookup_query_identifier": "G3SX30",
         "planned_lookup_query_taxid": "9785",
-        "planned_lookup_mode": "dry_run_plan_only",
+        "planned_lookup_mode": "explicit_live_opt_in_required",
         "live_lookup_allowed": "false",
         "sequence_fetch_allowed": "false",
-        "planned_output_target": ("data/input/ortholog_stronger_source_evidence_collection.csv"),
+        "planned_output_target": ("data/input/ortholog_stronger_source_raw_metadata_responses.csv"),
         "lookup_plan_status": "lookup_planned_still_blocked",
         "downstream_block_status_after_lookup_plan": "blocked_gate4_gate5",
-        "allowed_next_action_after_lookup_plan": "add_fixture_backed_lookup_client",
+        "allowed_next_action_after_lookup_plan": "add_raw_metadata_response_sandbox_row_later",
         "claim_policy_after_lookup_plan": "no_biological_claims_until_validation",
         "claim_status_after_lookup_plan": "repair_worklist",
         "forbidden_actions_after_lookup_plan": (
@@ -60,11 +60,13 @@ def valid_lookup_plan_rows() -> pl.DataFrame:
     return pl.DataFrame([valid_lookup_plan_row()])
 
 
-def test_lookup_plan_reader_loads_committed_header_only_table() -> None:
+def test_lookup_plan_reader_loads_committed_g3sx30_lookup_plan_row() -> None:
     rows = lookup_plan.read_stronger_source_lookup_plan_rows()
 
-    assert rows.height == 0
+    assert rows.height == 1
     assert rows.columns == list(lookup_plan.REQUIRED_COLUMNS)
+    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
 
 
 def test_default_path_points_to_committed_lookup_plan_table() -> None:
@@ -74,17 +76,18 @@ def test_default_path_points_to_committed_lookup_plan_table() -> None:
     )
 
 
-def test_default_output_target_points_to_collection_table() -> None:
+def test_default_output_target_points_to_raw_metadata_response_table() -> None:
     assert lookup_plan.DEFAULT_LOOKUP_PLAN_OUTPUT_TARGET == (
-        "data/input/ortholog_stronger_source_evidence_collection.csv"
+        "data/input/ortholog_stronger_source_raw_metadata_responses.csv"
     )
 
 
-def test_planned_lookup_helper_accepts_empty_committed_table() -> None:
+def test_planned_lookup_helper_returns_committed_g3sx30_row() -> None:
     rows = lookup_plan.read_stronger_source_lookup_plan_rows()
     planned_rows = lookup_plan.planned_lookup_rows(rows)
 
-    assert planned_rows.height == 0
+    assert planned_rows.height == 1
+    assert planned_rows.item(0, "planned_lookup_query_identifier") == "G3SX30"
 
 
 def test_constants_preserve_blocker_first_policy() -> None:
@@ -117,6 +120,24 @@ def test_validate_allowed_values_accepts_empty_committed_table() -> None:
 
 def test_validate_allowed_values_accepts_valid_future_lookup_plan_row() -> None:
     rows = valid_lookup_plan_rows()
+
+    lookup_plan.validate_allowed_values(rows)
+
+
+def test_validate_allowed_values_accepts_raw_metadata_sandbox_next_action() -> None:
+    rows = valid_lookup_plan_rows().with_columns(
+        pl.lit("add_raw_metadata_response_sandbox_row_later").alias(
+            "allowed_next_action_after_lookup_plan"
+        )
+    )
+
+    lookup_plan.validate_allowed_values(rows)
+
+
+def test_validate_allowed_values_still_accepts_reviewed_uniprot_future_source_type() -> None:
+    rows = valid_lookup_plan_rows().with_columns(
+        pl.lit("reviewed_uniprot").alias("planned_lookup_source_type")
+    )
 
     lookup_plan.validate_allowed_values(rows)
 

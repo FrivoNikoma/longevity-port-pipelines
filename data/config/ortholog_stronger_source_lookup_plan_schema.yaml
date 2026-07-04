@@ -24,7 +24,7 @@ plan_scope:
   default_sequence_fetch_allowed: false
   ci_external_api_allowed: false
   allowed_output_target:
-    - data/input/ortholog_stronger_source_evidence_collection.csv
+    - data/input/ortholog_stronger_source_raw_metadata_responses.csv
   does_not_authorize:
     - live external database lookup by default
     - sequence fetch
@@ -81,6 +81,7 @@ required_lookup_plan_fields:
   - reviewer_note
 
 allowed_planned_lookup_source_types:
+  - uniprot_entry_metadata
   - reviewed_uniprot
   - ncbi_protein_or_gene_record
   - ensembl_orthology
@@ -112,6 +113,7 @@ allowed_next_actions_after_lookup_plan:
   - add_lookup_plan_table_row
   - add_lookup_plan_validator
   - add_fixture_backed_lookup_client
+  - add_raw_metadata_response_sandbox_row_later
   - add_manual_source_evidence_row_later
   - keep_blocked
 

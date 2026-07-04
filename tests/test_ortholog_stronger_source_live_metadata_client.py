@@ -32,14 +32,14 @@ def explicit_live_plan_row() -> dict[str, str]:
         "target_gene_symbol": "MDM2",
         "target_protein_accession": "G3SX30",
         "target_sequence_length": "492",
-        "planned_lookup_source_type": "reviewed_uniprot",
-        "planned_lookup_source_name": "UniProt reviewed entry lookup",
+        "planned_lookup_source_type": "uniprot_entry_metadata",
+        "planned_lookup_source_name": "UniProtKB entry metadata lookup",
         "planned_lookup_query_identifier": "G3SX30",
         "planned_lookup_query_taxid": "9785",
         "planned_lookup_mode": "explicit_live_opt_in_required",
         "live_lookup_allowed": "false",
         "sequence_fetch_allowed": "false",
-        "planned_output_target": "data/input/ortholog_stronger_source_evidence_collection.csv",
+        "planned_output_target": "data/input/ortholog_stronger_source_raw_metadata_responses.csv",
         "lookup_plan_status": "lookup_planned_still_blocked",
         "downstream_block_status_after_lookup_plan": "blocked_gate4_gate5",
         "allowed_next_action_after_lookup_plan": "keep_blocked",
@@ -98,7 +98,7 @@ def test_request_from_policy_row_preserves_request_identity() -> None:
 
     assert request.candidate_set == "tp53_mdm2_elephant"
     assert request.candidate_id == "tp53_mdm2_elephant_seed_mdm2_chain"
-    assert request.planned_lookup_source_type == "reviewed_uniprot"
+    assert request.planned_lookup_source_type == "uniprot_entry_metadata"
     assert request.planned_lookup_query_identifier == "G3SX30"
     assert request.live_lookup_policy_decision == (live_policy.DECISION_AUTHORIZED_STILL_BLOCKED)
 

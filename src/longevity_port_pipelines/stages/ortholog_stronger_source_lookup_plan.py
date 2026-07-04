@@ -7,7 +7,7 @@ import polars as pl
 BLOCKED_GATE4_GATE5 = "blocked_gate4_gate5"
 NO_BIOLOGICAL_CLAIMS_POLICY = "no_biological_claims_until_validation"
 REPAIR_WORKLIST_CLAIM_STATUS = "repair_worklist"
-DEFAULT_LOOKUP_PLAN_OUTPUT_TARGET = "data/input/ortholog_stronger_source_evidence_collection.csv"
+DEFAULT_LOOKUP_PLAN_OUTPUT_TARGET = "data/input/ortholog_stronger_source_raw_metadata_responses.csv"
 
 DEFAULT_STRONGER_SOURCE_LOOKUP_PLAN_PATH = Path(
     "data/input/ortholog_stronger_source_lookup_plan.csv"
@@ -88,6 +88,7 @@ def validate_required_columns(rows: pl.DataFrame) -> None:
 
 
 ALLOWED_PLANNED_LOOKUP_SOURCE_TYPES = {
+    "uniprot_entry_metadata",
     "reviewed_uniprot",
     "ncbi_protein_or_gene_record",
     "ensembl_orthology",
@@ -113,6 +114,7 @@ ALLOWED_NEXT_ACTIONS_AFTER_LOOKUP_PLAN = {
     "add_lookup_plan_table_row",
     "add_lookup_plan_validator",
     "add_fixture_backed_lookup_client",
+    "add_raw_metadata_response_sandbox_row_later",
     "add_manual_source_evidence_row_later",
     "keep_blocked",
 }

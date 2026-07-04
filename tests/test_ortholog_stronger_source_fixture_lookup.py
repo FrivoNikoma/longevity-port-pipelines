@@ -37,7 +37,7 @@ def valid_fixture_plan_row() -> dict[str, str]:
         "planned_lookup_mode": "fixture_backed_only",
         "live_lookup_allowed": "false",
         "sequence_fetch_allowed": "false",
-        "planned_output_target": ("data/input/ortholog_stronger_source_evidence_collection.csv"),
+        "planned_output_target": ("data/input/ortholog_stronger_source_raw_metadata_responses.csv"),
         "lookup_plan_status": "lookup_planned_still_blocked",
         "downstream_block_status_after_lookup_plan": "blocked_gate4_gate5",
         "allowed_next_action_after_lookup_plan": "add_fixture_backed_lookup_client",

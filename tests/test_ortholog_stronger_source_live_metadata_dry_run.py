@@ -39,7 +39,7 @@ def lookup_plan_row(**overrides: object) -> dict[str, object]:
         "target_gene_symbol": "MDM2",
         "target_protein_accession": "G3SX30",
         "target_sequence_length": "491",
-        "planned_lookup_source_type": "reviewed_uniprot",
+        "planned_lookup_source_type": "uniprot_entry_metadata",
         "planned_lookup_source_name": "UniProt reviewed record",
         "planned_lookup_query_identifier": "G3SX30",
         "planned_lookup_query_taxid": "9785",
