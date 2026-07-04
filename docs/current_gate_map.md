@@ -1,4 +1,4 @@
-﻿# Current LongevityPort gate map
+# Current LongevityPort gate map
 
 This document tracks the current state of the LongevityPort gated decision
 pipeline. It is intentionally conservative. A gate can be useful even when it
@@ -364,6 +364,9 @@ Current `G3SX30` status:
 - manually collected stronger-source evidence rows: one G3SX30 metadata-only UniProtKB TrEMBL row
 - stronger-source collection decision: collection_decision=`evidence_recorded_for_later_intake_pr`
 - collected source evidence intake rows: one G3SX30 collected-source intake row ready for later reviewed-decision PR
+- ortholog evidence review decision schema status: `schema_only_no_rows`
+- ortholog evidence review decision table status: `header_only_no_rows`
+- ortholog evidence review decision validator status: `table_only_no_runtime_side_effects`
 - stronger-source lookup policy status: `policy_only_no_live_lookup`
 - stronger-source lookup plan table status: `one_row_lookup_plan_still_blocked`
 - stronger-source lookup plan rows: one G3SX30 UniProtKB entry metadata lookup plan row
@@ -388,5 +391,8 @@ Current `G3SX30` status:
 - claim status: `repair_worklist`
 
 This ladder does not accept or validate an ortholog. It records one explicit UniProtKB metadata-only manual probe and one metadata-only stronger-source collection row, but it does not create a curated ortholog candidate, does not complete source evidence intake/review, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+
+The ortholog evidence review decision scaffold is now present as a header-only, table-only layer for future reviewed-decision rows from `ortholog_evidence_intake.csv` or `ortholog_evidence_second_review_queue.csv`. It has no committed reviewed-decision rows yet. It does not automatically update Gate 4 / Gate 5 policy, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
 
 The first real metadata ingestion sandbox for G3SX30 is now represented by the committed UniProtKB metadata-only sandbox row. The first G3SX30 collected-source intake row is now recorded from the metadata-only stronger-source evidence collection row with intake_outcome=`evidence_ready_for_review_decision`. The previous raw metadata human review still preserves allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`, the collection row preserves allowed_next_action_after_collection=`prepare_later_source_evidence_intake_pr`, and the collected-source intake row preserves allowed_next_action_after_intake=`prepare_later_reviewed_decision_pr`. The next safe main-track action is a later reviewed-decision PR prepared from the collected-source intake row: review metadata only, do not fetch sequence, do not auto-create source evidence, do not create a reviewed decision, do not update Gate 4 / Gate 5, do not promote Gate 8 or Gate 9, do not generate embeddings, do not call Boltz, and do not make biological claims. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
