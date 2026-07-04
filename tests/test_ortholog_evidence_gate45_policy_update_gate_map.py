@@ -10,14 +10,26 @@ def read_gate_map() -> str:
     return GATE_MAP_PATH.read_text(encoding="utf-8")
 
 
-def test_current_gate_map_records_gate45_policy_update_scaffold() -> None:
+def test_current_gate_map_records_gate45_policy_update_row() -> None:
     text = read_gate_map()
 
     assert (
-        "ortholog evidence Gate 4 / Gate 5 policy update schema status: `schema_only_no_rows`"
+        "ortholog evidence Gate 4 / Gate 5 policy update schema status: `schema_active`"
     ) in text
     assert (
-        "ortholog evidence Gate 4 / Gate 5 policy update table status: `header_only_no_rows`"
+        "ortholog evidence Gate 4 / Gate 5 policy update table status: "
+        "`one_g3sx30_row_runtime_blocked`"
+    ) in text
+    assert (
+        "ortholog evidence Gate 4 / Gate 5 policy update rows: one G3SX30 "
+        "planning-policy update row still runtime-blocked"
+    ) in text
+    assert ("policy_update_decision=`approve_gate45_policy_update_for_planning`") in text
+    assert (
+        "downstream_block_status_after_policy=`gate45_policy_updated_still_runtime_blocked`"
+    ) in text
+    assert (
+        "allowed_next_action_after_policy=`prepare_later_gate_aware_embedding_fill_plan_pr`"
     ) in text
     assert (
         "ortholog evidence Gate 4 / Gate 5 policy update validator status: "
@@ -25,10 +37,9 @@ def test_current_gate_map_records_gate45_policy_update_scaffold() -> None:
     ) in text
 
 
-def test_current_gate_map_keeps_gate45_policy_update_scaffold_boundary() -> None:
+def test_current_gate_map_keeps_gate45_policy_update_runtime_boundary() -> None:
     text = read_gate_map()
 
-    assert "does not add a G3SX30 policy update row" in text
     assert "does not fetch sequences" in text
     assert "does not call Biohub" in text
     assert "does not generate embeddings" in text
