@@ -321,7 +321,7 @@ The current ladder includes:
 - `src/longevity_port_pipelines/stages/ortholog_stronger_source_live_lookup_policy.py`
 - `tests/test_ortholog_stronger_source_live_lookup_policy.py`
 
-The stronger-source evidence collection layer has a schema, a header-only collection table scaffold, and a table-only validator. The collection table remains header-only: no manually collected stronger-source evidence rows have been added yet.
+The stronger-source evidence collection layer has a schema, a table, and a table-only validator. The collection table now contains one G3SX30 metadata-only UniProtKB TrEMBL stronger-source collection row. This row is manual source-evidence collection only: it is not an accepted ortholog, not a reviewed decision, not a Gate 4 / Gate 5 policy update, not Gate 8 or Gate 9 promotion, and not a biological claim.
 
 The stronger-source lookup layer has an API-boundary policy, a lookup plan schema, a header-only lookup plan table scaffold, and a table-only lookup plan validator.
 
@@ -360,8 +360,8 @@ Current `G3SX30` status:
 - reviewed target UniProt after second review: `unresolved`
 - stronger-source request status: `pending_source_collection`
 - stronger-source request decision: `needs_manual_source_collection`
-- stronger-source collection table status: `header_only_scaffold`
-- manually collected stronger-source evidence rows: none
+- stronger-source collection table status: `one_g3sx30_row_still_blocked`
+- manually collected stronger-source evidence rows: one G3SX30 metadata-only UniProtKB TrEMBL row
 - stronger-source lookup policy status: `policy_only_no_live_lookup`
 - stronger-source lookup plan table status: `one_row_lookup_plan_still_blocked`
 - stronger-source lookup plan rows: one G3SX30 UniProtKB entry metadata lookup plan row
@@ -387,4 +387,4 @@ Current `G3SX30` status:
 
 This ladder does not accept or validate an ortholog. It records one explicit UniProtKB metadata-only manual probe, but it does not create a curated ortholog candidate, does not collect source evidence, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
-The first real metadata ingestion sandbox for G3SX30 is now represented by the committed UniProtKB metadata-only sandbox row. The first G3SX30 raw metadata human review row is now recorded for the UniProtKB metadata-only sandbox row with allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`. The next safe main-track action is a later source evidence intake PR prepared from the reviewed metadata row: review metadata only, do not fetch sequence, do not auto-create source evidence, do not create a reviewed decision, do not update Gate 4 / Gate 5, do not promote Gate 8 or Gate 9, do not generate embeddings, do not call Boltz, and do not make biological claims. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+The first real metadata ingestion sandbox for G3SX30 is now represented by the committed UniProtKB metadata-only sandbox row. The first G3SX30 stronger-source evidence collection row is now recorded from the reviewed metadata-only UniProtKB row with collection_decision=`evidence_recorded_for_later_intake_pr`. The previous raw metadata human review still preserves allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`, and the collection row preserves allowed_next_action_after_collection=`prepare_later_source_evidence_intake_pr`. The next safe main-track action is a later source evidence intake/review PR prepared from the collected source evidence row: review metadata only, do not fetch sequence, do not auto-create source evidence, do not create a reviewed decision, do not update Gate 4 / Gate 5, do not promote Gate 8 or Gate 9, do not generate embeddings, do not call Boltz, and do not make biological claims. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.

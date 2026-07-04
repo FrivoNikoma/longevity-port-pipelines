@@ -85,6 +85,7 @@ def validate_required_columns(rows: pl.DataFrame) -> None:
 
 
 ALLOWED_COLLECTED_SOURCE_TYPES = {
+    "uniprot_unreviewed_entry_metadata",
     "reviewed_uniprot",
     "ncbi_protein_or_gene_record",
     "ensembl_orthology",

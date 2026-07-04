@@ -86,6 +86,7 @@ def test_collection_schema_allowed_source_types_cover_requested_sources() -> Non
     schema = load_schema()
 
     assert set(schema["allowed_collected_source_types"]) == {
+        "uniprot_unreviewed_entry_metadata",
         "reviewed_uniprot",
         "ncbi_protein_or_gene_record",
         "ensembl_orthology",

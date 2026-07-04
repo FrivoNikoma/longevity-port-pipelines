@@ -30,7 +30,7 @@ def valid_collection_row() -> dict[str, str]:
         "target_gene_symbol": "MDM2",
         "target_protein_accession": "G3SX30",
         "target_sequence_length": "492",
-        "collected_source_type": "other_manual_source",
+        "collected_source_type": "uniprot_unreviewed_entry_metadata",
         "collected_source_name": "manual_source_placeholder",
         "collected_source_identifier": "manual_source_placeholder",
         "collected_source_review_status": "unreviewed_manual_source_record",
@@ -56,11 +56,15 @@ def valid_collection_rows() -> pl.DataFrame:
     return pl.DataFrame([valid_collection_row()])
 
 
-def test_collection_reader_loads_committed_header_only_table() -> None:
+def test_collection_reader_loads_committed_g3sx30_collection_row() -> None:
     rows = collection.read_stronger_source_collection_rows()
 
-    assert rows.height == 0
+    assert rows.height == 1
     assert rows.columns == list(collection.REQUIRED_COLUMNS)
+    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert rows.item(0, "collected_source_type") == "uniprot_unreviewed_entry_metadata"
+    assert rows.item(0, "collected_source_identifier") == "UniProtKB:G3SX30"
+    collection.validate_stronger_source_collection_rows(rows)
 
 
 def test_default_path_points_to_committed_collection_table() -> None:
