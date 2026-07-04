@@ -18,25 +18,36 @@ from longevity_port_pipelines.stages.reviewed_target_sequence_provenance import 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "data/config/reviewed_target_sequence_provenance_schema.yaml"
 TABLE_PATH = ROOT / "data/input/reviewed_target_sequence_provenance.csv"
+POLICY_TABLE_PATH = ROOT / "data/input/ortholog_evidence_gate45_policy_updates.csv"
 
 
 def load_schema() -> dict:
     return yaml.safe_load(SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
-def test_reviewed_target_sequence_provenance_schema_is_scaffold_only() -> None:
+def test_reviewed_target_sequence_provenance_schema_records_deferred_row_status() -> None:
     schema = load_schema()
 
     assert schema["schema_id"] == "reviewed_target_sequence_provenance_schema"
     assert schema["pipeline_gate"] == "reviewed_target_sequence_provenance"
     assert schema["claim_policy"] == "no_biological_claims_until_validation"
-    assert schema["maximum_claim_status"] == "technical_checkpoint"
-    assert schema["scaffold_scope"]["scaffold_status"] == "header_only_no_rows"
+    assert schema["maximum_claim_status"] == "repair_worklist"
+    assert schema["scaffold_scope"]["scaffold_status"] == "one_g3sx30_deferred_pending_review_row"
     assert (
         schema["scaffold_scope"]["current_g3sx30_worklist_status"]
         == "planning_policy_updated_runtime_blocked"
     )
     assert schema["scaffold_scope"]["current_g3sx30_allowed_next_action"] == "keep_blocked"
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_sequence_review_status"]
+        == "deferred_pending_review"
+    )
+    assert schema["scaffold_scope"]["current_g3sx30_sequence_length_status"] == "not_fetched"
+    assert schema["scaffold_scope"]["current_g3sx30_provenance_review_status"] == "deferred"
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_allowed_sequence_next_action"]
+        == "defer_pending_sequence_review"
+    )
 
 
 def test_reviewed_target_sequence_provenance_schema_required_columns_match_helper() -> None:
@@ -46,13 +57,94 @@ def test_reviewed_target_sequence_provenance_schema_required_columns_match_helpe
     assert list(REVIEWED_TARGET_SEQUENCE_PROVENANCE_SCHEMA) == REQUIRED_COLUMNS
 
 
-def test_reviewed_target_sequence_provenance_header_table_has_no_rows() -> None:
+def test_reviewed_target_sequence_provenance_table_has_one_deferred_g3sx30_row() -> None:
     table = pl.read_csv(TABLE_PATH)
 
     assert table.columns == REQUIRED_COLUMNS
-    assert table.height == 0
+    assert table.height == 1
     validate_reviewed_target_sequence_provenance_schema(table)
     validate_reviewed_target_sequence_provenance_rows(table)
+
+    row = table.row(0, named=True)
+    assert row["candidate_set"] == "tp53_mdm2_elephant"
+    assert row["lane_name"] == "tp53_mdm2_elephant"
+    assert row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert row["source_policy_table"] == "data/input/ortholog_evidence_gate45_policy_updates.csv"
+    assert row["source_policy_row_index"] == 1
+    assert row["target_accession"] == "G3SX30"
+    assert row["target_accession_db"] == "UniProtKB TrEMBL"
+    assert row["target_species"] == "Loxodonta africana"
+    assert row["target_taxid"] == 9785
+    assert row["gene_symbol"] == "MDM2"
+    assert row["sequence_source_type"] == "deferred_pending_review"
+    assert row["sequence_source_reference"] == "not_applicable_deferred_pending_review"
+    assert row["reviewed_sequence_sha256"] == "not_applicable_not_fetched"
+    assert row["reviewed_sequence_length"] == 0
+    assert row["sequence_length_status"] == "not_fetched"
+    assert row["sequence_review_status"] == "deferred_pending_review"
+    assert row["provenance_review_status"] == "deferred"
+    assert row["allowed_next_action_after_sequence_review"] == "defer_pending_sequence_review"
+    assert row["claim_policy"] == "no_biological_claims_until_validation"
+    assert row["claim_status"] == "repair_worklist"
+
+
+def test_g3sx30_deferred_sequence_row_matches_gate45_policy_source() -> None:
+    table = pl.read_csv(TABLE_PATH)
+    policy_table = pl.read_csv(POLICY_TABLE_PATH)
+
+    row = table.row(0, named=True)
+    source_row = policy_table.row(row["source_policy_row_index"] - 1, named=True)
+
+    assert row["source_policy_table"] == "data/input/ortholog_evidence_gate45_policy_updates.csv"
+    assert source_row["candidate_set"] == row["candidate_set"]
+    assert source_row["lane_name"] == row["lane_name"]
+    assert source_row["candidate_id"] == row["candidate_id"]
+    assert source_row["reviewed_target_uniprot"] == row["target_accession"]
+    assert source_row["reviewed_source_database"] == row["target_accession_db"]
+    assert source_row["reviewed_taxid"] == row["target_taxid"]
+    assert source_row["reviewed_sequence_length"] == 492
+    assert source_row["downstream_block_status_after_policy"] == (
+        "gate45_policy_updated_still_runtime_blocked"
+    )
+
+
+def test_g3sx30_deferred_sequence_row_does_not_record_reviewed_sequence() -> None:
+    row = pl.read_csv(TABLE_PATH).row(0, named=True)
+
+    assert row["sequence_length_status"] != "matches"
+    assert row["sequence_review_status"] != "reviewed_sequence_provenance"
+    assert row["provenance_review_status"] != "reviewed"
+    assert row["allowed_next_action_after_sequence_review"] != (
+        "consider_later_dry_run_preflight_decision_pr"
+    )
+    assert row["reviewed_sequence_length"] == 0
+    assert row["reviewed_sequence_sha256"] == "not_applicable_not_fetched"
+    assert row["claim_status"] == "repair_worklist"
+
+
+def test_g3sx30_deferred_sequence_row_forbids_runtime_side_effects() -> None:
+    row = pl.read_csv(TABLE_PATH).row(0, named=True)
+    forbidden_actions = row["forbidden_actions"]
+
+    for required in [
+        "sequence fetch",
+        "Biohub call",
+        "ESMC call",
+        "embedding generation",
+        "curated_embedding_preflight",
+        "curated_embedding_single",
+        "data/output commit",
+        ".npy artifact",
+        "Gate 8 promotion",
+        "Gate 9 promotion",
+        "Boltz call",
+        "AF3 call",
+        "Chai call",
+        "enrichment rerun",
+        "contrast rerun",
+        "biological claim",
+    ]:
+        assert required in forbidden_actions
 
 
 def test_empty_reviewed_target_sequence_provenance_table_matches_schema() -> None:

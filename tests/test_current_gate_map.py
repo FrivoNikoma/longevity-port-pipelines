@@ -658,3 +658,30 @@ def test_current_gate_map_records_reviewed_target_sequence_provenance_scaffold()
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_deferred_target_sequence_provenance_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 deferred target sequence provenance row checkpoint" in text
+    assert "data/input/reviewed_target_sequence_provenance.csv" in text
+    assert "sequence_source_type=deferred_pending_review" in text
+    assert "sequence_length_status=not_fetched" in text
+    assert "sequence_review_status=deferred_pending_review" in text
+    assert "provenance_review_status=deferred" in text
+    assert "allowed_next_action_after_sequence_review=defer_pending_sequence_review" in text
+    assert "does not record reviewed sequence provenance" in text
+    assert "does not record `sequence_length_status=matches`" in text
+    assert "does not fetch sequences" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not change the G3SX30 controlled embedding-fill worklist row" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
+    assert (
+        "reviewed target sequence provenance rows: one G3SX30 deferred pending-review row" in text
+    )
+    assert "no ready_for_preflight" in text

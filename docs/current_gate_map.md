@@ -192,6 +192,15 @@ The reviewed target sequence provenance scaffold is now recorded in `data/config
 
 This is a header-only reviewed target sequence provenance table plus table-only helper/validator. It does not add a G3SX30 sequence row, does not fetch sequences, does not call Biohub / ESMC, does not generate embeddings, does not run `curated_embedding_preflight`, does not run `curated_embedding_single`, does not create or commit `.npy` artifacts, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
+## G3SX30 deferred target sequence provenance row checkpoint
+
+The first G3SX30 target sequence provenance row is recorded in `data/input/reviewed_target_sequence_provenance.csv`.
+
+This is a deferred pending-review row only: `sequence_source_type=deferred_pending_review`, `sequence_length_status=not_fetched`, `sequence_review_status=deferred_pending_review`, `provenance_review_status=deferred`, and `allowed_next_action_after_sequence_review=defer_pending_sequence_review`.
+
+It does not record reviewed sequence provenance, does not record `sequence_length_status=matches`, does not fetch sequences, does not call Biohub / ESMC, does not generate embeddings, does not run `curated_embedding_preflight`, does not run `curated_embedding_single`, does not change the G3SX30 controlled embedding-fill worklist row, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+
 ## Controlled missing embedding blocker checkpoint
 
 The first controlled inspection for a reviewed missing embedding fill candidate is recorded in `docs/controlled_missing_embedding_blocker_checkpoint.md`.
@@ -398,6 +407,7 @@ Current `G3SX30` status:
 - controlled embedding fill worklist G3SX30 checkpoint rows: one table-only G3SX30 row in `data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv` with fill_status=`planning_policy_updated_runtime_blocked`, allowed_next_action=`keep_blocked`, dry_run_required=`false`, max_live_batch_size=`0`, sequence_length_status=`not_fetched`, embedding_path=`not_applicable_runtime_blocked`, no preflight, no single dry-run, no live call, no sequence fetch, no Biohub, no embedding generation, no Gate 8 / Gate 9 promotion, no Boltz/AF3/Chai call, and no biological claim
 - G3SX30 blocked embedding-fill exit criteria status: docs-only review protocol in `docs/g3sx30_blocked_embedding_fill_exit_criteria.md`; current row remains `planning_policy_updated_runtime_blocked`; later exit requires reviewed target sequence provenance, `sequence_length_status=matches`, explicit separate dry-run preflight decision, no live call, no Gate 8 / Gate 9 promotion, and no biological claim
 - reviewed target sequence provenance scaffold status: schema/table/helper scaffold in `data/config/reviewed_target_sequence_provenance_schema.yaml`, `data/input/reviewed_target_sequence_provenance.csv`, and `src/longevity_port_pipelines/stages/reviewed_target_sequence_provenance.py`; header-only, no G3SX30 sequence row, no sequence fetch, no Biohub / ESMC, no embeddings, no curated embedding preflight/single, no Gate 8 / Gate 9, no Boltz/AF3/Chai, and no biological claim
+- reviewed target sequence provenance rows: one G3SX30 deferred pending-review row in `data/input/reviewed_target_sequence_provenance.csv` with sequence_source_type=`deferred_pending_review`, sequence_length_status=`not_fetched`, sequence_review_status=`deferred_pending_review`, provenance_review_status=`deferred`, allowed_next_action_after_sequence_review=`defer_pending_sequence_review`, no reviewed sequence provenance, no sequence fetch, no Biohub / ESMC, no embeddings, no ready_for_preflight, no Gate 8 / Gate 9, no Boltz/AF3/Chai, and no biological claim
 - ortholog evidence Gate 4 / Gate 5 policy update validator status: `table_only_no_runtime_side_effects`
 - ortholog evidence review decision rows: one G3SX30 reviewed-for-planning provenance row still policy-blocked
 - prior G3SX30 handoff actions preserved: raw_metadata_review allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`; collection allowed_next_action_after_collection=`prepare_later_source_evidence_intake_pr`; collected-source intake allowed_next_action_after_intake=`prepare_later_reviewed_decision_pr`
