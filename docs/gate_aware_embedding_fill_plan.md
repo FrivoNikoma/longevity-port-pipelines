@@ -30,6 +30,7 @@ Use these statuses in embedding-fill review notes and future worklists:
 | Status | Meaning |
 | --- | --- |
 | `ready_for_preflight` | Candidate may enter dry-run embedding preflight. |
+| `planning_policy_updated_runtime_blocked` | Candidate has a Gate 4 / Gate 5 planning-policy update, but may not enter embedding dry-run or live fill until a later reviewed worklist/checkpoint explicitly allows it. |
 | `needs_coverage_repair` | Ortholog or local coverage evidence is incomplete. |
 | `needs_source_provenance_review` | Source sequence/protein identity must be reviewed before any embedding fill. |
 | `defer_until_gate8_ready` | Upstream Gate 8 contrast status is not ready. |
@@ -70,19 +71,56 @@ Not allowed:
 
 ### TP53/MDM2 elephant
 
-TP53/MDM2 remains a blocked calibration lane.
+TP53/MDM2 remains runtime-blocked for embedding execution.
+
+G3SX30 now has a recorded Gate 4 / Gate 5 planning-policy update in `data/input/ortholog_evidence_gate45_policy_updates.csv#1`:
+
+- `policy_update_decision=approve_gate45_policy_update_for_planning`;
+- `downstream_block_status_after_policy=gate45_policy_updated_still_runtime_blocked`;
+- `allowed_next_action_after_policy=prepare_later_gate_aware_embedding_fill_plan_pr`;
+- `claim_status_after_policy=repair_worklist`.
 
 Allowed next step:
 
-- use embedding-fill planning to identify what remains blocked;
-- connect missing embeddings to coverage repair decisions.
+- record a gate-aware embedding-fill planning checkpoint;
+- identify that G3SX30 is planning-policy-updated but still runtime-blocked;
+- prepare a later reviewed embedding-fill worklist or dry-run preflight plan if needed.
 
 Not allowed:
 
-- live embedding fill while coverage remains unresolved;
+- sequence fetch;
+- live Biohub / ESMC call;
+- embedding generation;
+- committed `.npy` embedding artifact;
 - real Gate 8 contrast attempt;
-- cofolding eligibility;
+- Gate 9 or cofolding eligibility;
+- Boltz, AF3, or Chai call;
 - biological claim.
+
+Recommended status for G3SX30 at this checkpoint:
+
+- `planning_policy_updated_runtime_blocked`.
+
+## G3SX30 checkpoint
+
+The first G3SX30 Gate 4 / Gate 5 planning-policy update is now recorded upstream of this plan.
+
+Source row:
+
+- `data/input/ortholog_evidence_gate45_policy_updates.csv#1`
+
+This checkpoint does not make G3SX30 embedding-ready. It only records that a later gate-aware embedding-fill planning layer may be prepared.
+
+Current G3SX30 embedding-fill interpretation:
+
+- `planning_policy_updated_runtime_blocked`;
+- no sequence fetch;
+- no Biohub / ESMC call;
+- no embedding generation;
+- no committed embedding artifact;
+- no Gate 8 or Gate 9 promotion;
+- no Boltz, AF3, or Chai call;
+- no biological claim.
 
 ## Biohub / ESMC policy
 

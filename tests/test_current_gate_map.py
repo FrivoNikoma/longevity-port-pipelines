@@ -555,3 +555,18 @@ def test_current_gate_map_records_ortholog_evidence_intake_checklist() -> None:
     assert "does not rerun enrichment or contrast" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_gate_aware_embedding_fill_plan_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 gate-aware embedding fill plan checkpoint status" in text
+    assert "`planning_policy_updated_runtime_blocked`" in text
+    assert "data/input/ortholog_evidence_gate45_policy_updates.csv#1" in text
+    assert "docs-only planning checkpoint" in text
+    assert "no sequence fetch" in text
+    assert "no Biohub call" in text
+    assert "no embedding generation" in text
+    assert "no committed embedding artifact" in text
+    assert "no Gate 8 / Gate 9 promotion" in text
+    assert "no biological claim" in text
