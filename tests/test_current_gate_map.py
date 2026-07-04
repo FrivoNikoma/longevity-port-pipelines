@@ -252,11 +252,14 @@ def test_current_gate_map_records_controlled_embedding_fill_worklist_schema() ->
     assert "controlled embedding fill worklist schema is now recorded" in text
     assert "data/config/controlled_embedding_fill_worklist_schema.yaml" in text
     assert "machine-readable fill statuses" in text
+    assert "`planning_policy_updated_runtime_blocked`" in text
     assert "`--yes-live` opt-in requirements" in text
     assert "sequence_length_status == matches" in text
+    assert "no sequence fetch" in text
     assert "no committed `data/output/` artifacts" in text
     assert "no Biohub calls from schema checks" in text
-    assert "no Boltz calls" in text
+    assert "no Gate 8 or Gate 9 promotion" in text
+    assert "no Boltz/AF3/Chai calls" in text
     assert "no enrichment/contrast rerun" in text
     assert "no biological claims" in text
 
@@ -268,10 +271,16 @@ def test_current_gate_map_records_controlled_embedding_fill_worklist_builder() -
     assert "src/longevity_port_pipelines/stages/controlled_embedding_fill_worklist.py" in text
     assert "table-only dry-run worklist builder" in text
     assert "data/config/controlled_embedding_fill_worklist_schema.yaml" in text
+    assert (
+        "does not infer that status from ordinary preflight rows without explicit policy context"
+        in text
+    )
+    assert "does not fetch sequences" in text
     assert "does not call Biohub" in text
     assert "does not generate embeddings" in text
     assert "does not commit `data/output/` artifacts" in text
-    assert "does not call Boltz" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
     assert "does not rerun enrichment/contrast" in text
     assert "does not make biological claims" in text
 
@@ -568,5 +577,18 @@ def test_current_gate_map_records_g3sx30_gate_aware_embedding_fill_plan_checkpoi
     assert "no Biohub call" in text
     assert "no embedding generation" in text
     assert "no committed embedding artifact" in text
+    assert "no Gate 8 / Gate 9 promotion" in text
+    assert "no biological claim" in text
+
+
+def test_current_gate_map_records_planning_policy_updated_runtime_blocked_fill_status() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "controlled embedding fill worklist vocabulary status" in text
+    assert "`planning_policy_updated_runtime_blocked` is now machine-readable and blocked" in text
+    assert "recommended next action is `keep_blocked`" in text
+    assert "no preflight" in text
+    assert "no single dry-run" in text
+    assert "no live call" in text
     assert "no Gate 8 / Gate 9 promotion" in text
     assert "no biological claim" in text

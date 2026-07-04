@@ -158,13 +158,13 @@ This is a governance checkpoint only. It formalizes the Brandt's bat `P09874` pr
 
 The controlled embedding fill worklist schema is now recorded in `data/config/controlled_embedding_fill_worklist_schema.yaml`.
 
-This is a schema checkpoint only. It defines machine-readable fill statuses, required worklist fields, single-row live-fill guardrails, `--yes-live` opt-in requirements, `sequence_length_status == matches`, no committed `data/output/` artifacts, no Biohub calls from schema checks, no Boltz calls, no enrichment/contrast rerun, and no biological claims.
+This is a schema checkpoint only. It defines machine-readable fill statuses, including `planning_policy_updated_runtime_blocked`, required worklist fields, single-row live-fill guardrails, `--yes-live` opt-in requirements, `sequence_length_status == matches`, no sequence fetch, no committed `data/output/` artifacts, no Biohub calls from schema checks, no Gate 8 or Gate 9 promotion, no Boltz/AF3/Chai calls, no enrichment/contrast rerun, and no biological claims.
 
 ## Controlled embedding fill worklist builder checkpoint
 
 The controlled embedding fill worklist builder is now recorded in `src/longevity_port_pipelines/stages/controlled_embedding_fill_worklist.py`.
 
-This is a table-only dry-run worklist builder. It consumes curated embedding preflight rows and emits controlled fill statuses under `data/config/controlled_embedding_fill_worklist_schema.yaml`. It does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not call Boltz, does not rerun enrichment/contrast, and does not make biological claims.
+This is a table-only dry-run worklist builder. It consumes curated embedding preflight rows and emits controlled fill statuses under `data/config/controlled_embedding_fill_worklist_schema.yaml`. The builder can represent `planning_policy_updated_runtime_blocked` as a safe blocked vocabulary status, but it does not infer that status from ordinary preflight rows without explicit policy context. It does not fetch sequences, does not call Biohub, does not generate embeddings, does not commit `data/output/` artifacts, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment/contrast, and does not make biological claims.
 
 ## Brandt's bat P09874 controlled fill no-op checkpoint
 
@@ -374,6 +374,7 @@ Current `G3SX30` status:
 - G3SX30 gate-aware embedding fill plan checkpoint status: `planning_policy_updated_runtime_blocked`
 - G3SX30 gate-aware embedding fill plan checkpoint source: `data/input/ortholog_evidence_gate45_policy_updates.csv#1`
 - G3SX30 gate-aware embedding fill plan checkpoint result: docs-only planning checkpoint; no sequence fetch, no Biohub call, no embedding generation, no committed embedding artifact, no Gate 8 / Gate 9 promotion, no Boltz/AF3/Chai call, and no biological claim
+- controlled embedding fill worklist vocabulary status: `planning_policy_updated_runtime_blocked` is now machine-readable and blocked; recommended next action is `keep_blocked`; no preflight, no single dry-run, no live call, no Gate 8 / Gate 9 promotion, and no biological claim
 - ortholog evidence Gate 4 / Gate 5 policy update validator status: `table_only_no_runtime_side_effects`
 - ortholog evidence review decision rows: one G3SX30 reviewed-for-planning provenance row still policy-blocked
 - prior G3SX30 handoff actions preserved: raw_metadata_review allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`; collection allowed_next_action_after_collection=`prepare_later_source_evidence_intake_pr`; collected-source intake allowed_next_action_after_intake=`prepare_later_reviewed_decision_pr`

@@ -7,6 +7,10 @@ import pytest
 import yaml
 
 from longevity_port_pipelines.stages.controlled_embedding_fill_worklist import (
+    FORBIDDEN_ACTIONS,
+    _dry_run_required,
+    _max_live_batch_size,
+    _next_action,
     build_controlled_embedding_fill_worklist,
     classify_fill_row,
     empty_controlled_embedding_fill_worklist,
@@ -73,12 +77,15 @@ def preflight_rows() -> pl.DataFrame:
     )
 
 
-def schema_required_fields() -> list[str]:
+def schema_doc() -> dict:
     schema_text = Path("data/config/controlled_embedding_fill_worklist_schema.yaml").read_text(
         encoding="utf-8"
     )
-    schema = yaml.safe_load(schema_text)
-    return list(schema["required_output_fields"])
+    return yaml.safe_load(schema_text)
+
+
+def schema_required_fields() -> list[str]:
+    return list(schema_doc()["required_output_fields"])
 
 
 def test_empty_controlled_embedding_fill_worklist_has_schema_columns() -> None:
@@ -124,8 +131,14 @@ def test_build_worklist_marks_missing_reviewed_matches_as_ready_for_preflight() 
     assert row["max_live_batch_size"] == 0
     assert row["claim_policy"] == "no_biological_claims_until_validation"
     assert row["claim_status"] == "technical_checkpoint"
+    assert "sequence fetch" in row["forbidden_actions"]
     assert "Biohub call" in row["forbidden_actions"]
+    assert "embedding generation" in row["forbidden_actions"]
+    assert "Gate 8 promotion" in row["forbidden_actions"]
+    assert "Gate 9 promotion" in row["forbidden_actions"]
     assert "Boltz call" in row["forbidden_actions"]
+    assert "AF3 call" in row["forbidden_actions"]
+    assert "Chai call" in row["forbidden_actions"]
     assert "biological claim" in row["forbidden_actions"]
 
 
@@ -252,3 +265,63 @@ def test_fill_status_counts_returns_counts_by_status() -> None:
     assert counts["ready_for_preflight"] == 1
     assert counts["do_not_fill"] == 1
     assert counts["needs_source_provenance_review"] == 1
+
+
+def test_schema_records_planning_policy_updated_runtime_blocked_status() -> None:
+    schema = schema_doc()
+    rule = schema["decision_rules"]["planning_policy_updated_runtime_blocked"]
+
+    assert "planning_policy_updated_runtime_blocked" in schema["allowed_fill_statuses"]
+    assert "planning_policy_updated_runtime_blocked" in schema["status_groups"]["blocked"]
+    assert (
+        "planning_policy_updated_runtime_blocked" not in schema["status_groups"]["preflight_ready"]
+    )
+    assert (
+        "planning_policy_updated_runtime_blocked"
+        not in schema["status_groups"]["live_review_ready"]
+    )
+    assert rule["dry_run_preflight_allowed"] is False
+    assert rule["dry_run_single_allowed"] is False
+    assert rule["live_call_allowed"] is False
+    assert rule["live_opt_in_required"] is True
+    assert rule["max_live_batch_size"] == 0
+    assert rule["recommended_next_action"] == "keep_blocked"
+
+
+def test_planning_policy_updated_runtime_blocked_helper_behavior() -> None:
+    fill_status = "planning_policy_updated_runtime_blocked"
+
+    assert _next_action(fill_status) == "keep_blocked"
+    assert _dry_run_required(fill_status) is False
+    assert _max_live_batch_size(fill_status) == 0
+
+
+def test_builder_does_not_infer_planning_policy_status_without_explicit_policy_context() -> None:
+    worklist = build_controlled_embedding_fill_worklist(
+        preflight_rows().head(1),
+        candidate_set="tp53_mdm2_elephant",
+        lane_name="TP53/MDM2 elephant",
+        source_provenance_status="reviewed",
+        coverage_repair_status="accepted_for_planning_after_review",
+        gate_dependency="manual_review",
+        gate8_ready=True,
+    )
+
+    row = worklist.row(0, named=True)
+
+    assert row["fill_status"] == "ready_for_preflight"
+    assert row["fill_status"] != "planning_policy_updated_runtime_blocked"
+    assert row["allowed_next_action"] == "run_curated_embedding_preflight"
+
+
+def test_worklist_forbidden_actions_include_planning_policy_runtime_boundaries() -> None:
+    assert "sequence fetch" in FORBIDDEN_ACTIONS
+    assert "Biohub call" in FORBIDDEN_ACTIONS
+    assert "embedding generation" in FORBIDDEN_ACTIONS
+    assert "data/output commit" in FORBIDDEN_ACTIONS
+    assert "Gate 8 promotion" in FORBIDDEN_ACTIONS
+    assert "Gate 9 promotion" in FORBIDDEN_ACTIONS
+    assert "Boltz call" in FORBIDDEN_ACTIONS
+    assert "AF3 call" in FORBIDDEN_ACTIONS
+    assert "Chai call" in FORBIDDEN_ACTIONS
+    assert "biological claim" in FORBIDDEN_ACTIONS

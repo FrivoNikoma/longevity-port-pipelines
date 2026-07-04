@@ -12,12 +12,14 @@ DEFAULT_OUTPUT = Path("data/interim/controlled_embedding_fill_worklist.csv")
 CLAIM_POLICY = "no_biological_claims_until_validation"
 CLAIM_STATUS = "technical_checkpoint"
 FORBIDDEN_ACTIONS = (
-    "Biohub call; embedding generation; data/output commit; Boltz call; "
+    "sequence fetch; Biohub call; embedding generation; data/output commit; "
+    "Gate 8 promotion; Gate 9 promotion; Boltz call; AF3 call; Chai call; "
     "enrichment rerun; contrast rerun; biological claim"
 )
 
 FillStatus = Literal[
     "ready_for_preflight",
+    "planning_policy_updated_runtime_blocked",
     "needs_coverage_repair",
     "needs_source_provenance_review",
     "defer_until_gate8_ready",
@@ -178,6 +180,8 @@ def classify_fill_row(
 def _next_action(fill_status: FillStatus) -> str:
     if fill_status == "ready_for_preflight":
         return "run_curated_embedding_preflight"
+    if fill_status == "planning_policy_updated_runtime_blocked":
+        return "keep_blocked"
     if fill_status == "needs_coverage_repair":
         return "repair_coverage_before_fill"
     if fill_status == "needs_source_provenance_review":
