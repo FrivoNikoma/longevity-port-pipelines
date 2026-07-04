@@ -366,6 +366,9 @@ Current `G3SX30` status:
 - collected source evidence intake rows: one G3SX30 collected-source intake row ready for later reviewed-decision PR
 - ortholog evidence review decision schema status: `schema_active`
 - ortholog evidence review decision table status: `one_g3sx30_row_policy_blocked`
+- ortholog evidence Gate 4 / Gate 5 policy update schema status: `schema_only_no_rows`
+- ortholog evidence Gate 4 / Gate 5 policy update table status: `header_only_no_rows`
+- ortholog evidence Gate 4 / Gate 5 policy update validator status: `table_only_no_runtime_side_effects`
 - ortholog evidence review decision rows: one G3SX30 reviewed-for-planning provenance row still policy-blocked
 - prior G3SX30 handoff actions preserved: raw_metadata_review allowed_next_action_after_review=`prepare_later_source_evidence_intake_pr`; collection allowed_next_action_after_collection=`prepare_later_source_evidence_intake_pr`; collected-source intake allowed_next_action_after_intake=`prepare_later_reviewed_decision_pr`
 - ortholog evidence review decision source: collected-source intake row from `data/input/ortholog_evidence_intake.csv#5`
@@ -396,6 +399,9 @@ Current `G3SX30` status:
 
 This ladder does not accept or validate an ortholog. It records one explicit UniProtKB metadata-only manual probe and one metadata-only stronger-source collection row, but it does not create a curated ortholog candidate, does not complete source evidence intake/review, does not create a reviewed ortholog decision, does not update Gate 4 / Gate 5 policy, does not promote Gate 8 or Gate 9, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
 
+
+
+The ortholog evidence Gate 4 / Gate 5 policy update scaffold is now present as a schema-only, header-only, table-only layer for later explicit policy update rows derived from `ortholog_evidence_review_decisions.csv`. It does not add a G3SX30 policy update row, does not automatically move G3SX30 out of Gate 4 / Gate 5, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, does not call AF3, does not call Chai, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
 
 The first G3SX30 ortholog evidence reviewed-decision row is now recorded from the collected-source intake row. It records review_decision=`accepted_for_planning_after_review` as reviewed-for-planning provenance evidence, but remains downstream_block_status_after_review=`reviewed_for_planning_still_policy_blocked` and only allows allowed_next_action_after_review=`consider_later_explicit_gate4_gate5_policy_update`. It does not automatically update Gate 4 / Gate 5 policy, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, does not call AF3, does not call Chai, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
 

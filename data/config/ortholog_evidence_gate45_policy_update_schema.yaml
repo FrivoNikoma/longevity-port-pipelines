@@ -1,0 +1,188 @@
+schema_version: 1
+schema_id: ortholog_evidence_gate45_policy_update_schema
+pipeline_gate: ortholog_evidence_gate45_policy_update
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Conservative scaffold for explicit Gate 4 / Gate 5 policy update rows
+  derived from reviewed ortholog evidence decisions.
+purpose: >
+  Defines a table-only layer for later explicit Gate 4 / Gate 5 policy
+  update rows. The scaffold creates no committed policy update rows. A future
+  row may record a planning-policy update after reviewed-for-planning
+  provenance evidence, but it must not authorize sequence fetching, Biohub,
+  embeddings, Boltz, AF3, Chai, Gate 8, Gate 9, enrichment or contrast reruns,
+  or biological claims.
+
+policy_update_scope:
+  allowed_policy_sources:
+    - ortholog_evidence_review_decisions
+  from_review_decision:
+    - accepted_for_planning_after_review
+  from_downstream_block_status:
+    - reviewed_for_planning_still_policy_blocked
+  from_allowed_next_action:
+    - consider_later_explicit_gate4_gate5_policy_update
+  scaffold_status: header_only_no_rows
+  does_not_authorize:
+    - sequence fetch
+    - Biohub calls
+    - embedding generation
+    - Boltz calls
+    - AF3 calls
+    - Chai calls
+    - enrichment rerun
+    - contrast rerun
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - biological claims
+
+required_source_fields:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - policy_source_table
+  - policy_source_row_index
+  - reviewed_target_uniprot
+  - reviewed_source_database
+  - reviewed_source_accession
+  - reviewed_taxid
+  - reviewed_sequence_length
+  - review_decision_before_policy
+  - downstream_block_status_before_policy
+  - allowed_next_action_before_policy
+  - claim_status_before_policy
+
+required_policy_fields:
+  - policy_update_decision
+  - gate4_status_after_policy
+  - gate5_status_after_policy
+  - downstream_block_status_after_policy
+  - allowed_next_action_after_policy
+  - claim_policy_after_policy
+  - claim_status_after_policy
+  - policy_update_note
+  - forbidden_actions_after_policy
+
+allowed_policy_update_decisions:
+  - approve_gate45_policy_update_for_planning
+  - reject_gate45_policy_update
+  - keep_policy_blocked_pending_review
+  - needs_additional_reviewed_evidence
+
+allowed_gate4_statuses_after_policy:
+  - gate4_policy_updated_for_planning
+  - blocked_gate4_gate5
+
+allowed_gate5_statuses_after_policy:
+  - gate5_policy_updated_for_planning
+  - blocked_gate4_gate5
+
+allowed_downstream_block_statuses_after_policy:
+  - gate45_policy_updated_still_runtime_blocked
+  - blocked_gate4_gate5
+
+allowed_next_actions_after_policy:
+  - prepare_later_gate_aware_embedding_fill_plan_pr
+  - keep_policy_blocked
+  - defer_until_additional_reviewed_evidence
+  - prepare_later_manual_policy_recheck
+
+allowed_claim_policies_after_policy:
+  - no_biological_claims_until_validation
+
+allowed_claim_statuses_after_policy:
+  - repair_worklist
+
+policy_update_decision_rules:
+  approve_gate45_policy_update_for_planning:
+    gate4_status_after_policy: gate4_policy_updated_for_planning
+    gate5_status_after_policy: gate5_policy_updated_for_planning
+    downstream_block_status_after_policy: gate45_policy_updated_still_runtime_blocked
+    allowed_next_action_after_policy: prepare_later_gate_aware_embedding_fill_plan_pr
+    claim_status_after_policy: repair_worklist
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  reject_gate45_policy_update:
+    gate4_status_after_policy: blocked_gate4_gate5
+    gate5_status_after_policy: blocked_gate4_gate5
+    downstream_block_status_after_policy: blocked_gate4_gate5
+    allowed_next_action_after_policy: keep_policy_blocked
+    claim_status_after_policy: repair_worklist
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  keep_policy_blocked_pending_review:
+    gate4_status_after_policy: blocked_gate4_gate5
+    gate5_status_after_policy: blocked_gate4_gate5
+    downstream_block_status_after_policy: blocked_gate4_gate5
+    allowed_next_action_after_policy: prepare_later_manual_policy_recheck
+    claim_status_after_policy: repair_worklist
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  needs_additional_reviewed_evidence:
+    gate4_status_after_policy: blocked_gate4_gate5
+    gate5_status_after_policy: blocked_gate4_gate5
+    downstream_block_status_after_policy: blocked_gate4_gate5
+    allowed_next_action_after_policy: defer_until_additional_reviewed_evidence
+    claim_status_after_policy: repair_worklist
+    gate8_eligible: false
+    gate9_eligible: false
+    embedding_ready: false
+    biohub_ready: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+
+required_guardrails:
+  - policy update rows do not fetch sequences
+  - policy update rows do not call Biohub
+  - policy update rows do not generate embeddings
+  - policy update rows do not call Boltz
+  - policy update rows do not call AF3
+  - policy update rows do not call Chai
+  - policy update rows do not rerun enrichment or contrast
+  - policy update rows do not promote Gate 8
+  - policy update rows do not promote Gate 9
+  - policy update rows do not make biological claims
+
+allowed_language:
+  - explicit Gate 4 / Gate 5 policy update scaffold
+  - planning-policy update only
+  - still runtime-blocked
+  - later gate-aware embedding fill plan PR
+  - no biological claims until validation
+
+disallowed_language:
+  - validated ortholog
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - embedding ready
+  - Biohub ready
+  - Boltz ready
+  - AF3 ready
+  - Chai ready
+  - safe to port
+  - proven pro-longevity variant
