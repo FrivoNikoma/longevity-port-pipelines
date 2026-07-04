@@ -74,11 +74,16 @@ def valid_review_row() -> dict[str, str]:
     }
 
 
-def test_raw_metadata_review_reader_loads_header_only_committed_table() -> None:
+def test_raw_metadata_review_reader_loads_committed_g3sx30_review_row() -> None:
     rows = review.read_raw_metadata_review_rows()
 
-    assert rows.height == 0
+    assert rows.height == 1
     assert rows.columns == list(review.REQUIRED_COLUMNS)
+    assert rows.item(0, "candidate_id") == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert rows.item(0, "raw_metadata_source_identifier") == "UniProtKB:G3SX30"
+    assert rows.item(0, "raw_metadata_human_review_decision") == (
+        "metadata_consistent_prepare_source_evidence_intake_later"
+    )
     review.validate_raw_metadata_review_rows(rows)
 
 
