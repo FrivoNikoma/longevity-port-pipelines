@@ -592,3 +592,29 @@ def test_current_gate_map_records_planning_policy_updated_runtime_blocked_fill_s
     assert "no live call" in text
     assert "no Gate 8 / Gate 9 promotion" in text
     assert "no biological claim" in text
+
+
+def test_current_gate_map_records_g3sx30_blocked_embedding_fill_worklist_checkpoint() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 blocked controlled embedding-fill worklist checkpoint" in text
+    assert "data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv" in text
+    assert "data/input/ortholog_evidence_gate45_policy_updates.csv#1" in text
+    assert "target_accession=G3SX30" in text
+    assert "target_sequence_length=492" in text
+    assert "sequence_length_status=not_fetched" in text
+    assert "embedding_path=not_applicable_runtime_blocked" in text
+    assert "fill_status: planning_policy_updated_runtime_blocked" in text
+    assert "allowed_next_action: keep_blocked" in text
+    assert "dry_run_required: false" in text
+    assert "max_live_batch_size: 0" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not fetch sequences" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not rerun enrichment or contrast" in text
+    assert "does not make biological claims" in text

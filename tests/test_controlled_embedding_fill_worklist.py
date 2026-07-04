@@ -325,3 +325,103 @@ def test_worklist_forbidden_actions_include_planning_policy_runtime_boundaries()
     assert "AF3 call" in FORBIDDEN_ACTIONS
     assert "Chai call" in FORBIDDEN_ACTIONS
     assert "biological claim" in FORBIDDEN_ACTIONS
+
+
+def test_g3sx30_blocked_embedding_fill_worklist_checkpoint_has_one_blocked_row() -> None:
+    worklist = pl.read_csv(
+        "data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv"
+    )
+
+    assert worklist.columns == schema_required_fields()
+    assert worklist.height == 1
+
+    row = worklist.row(0, named=True)
+
+    assert row["candidate_set"] == "tp53_mdm2_elephant"
+    assert row["lane_name"] == "tp53_mdm2_elephant"
+    assert row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert row["complex_id"] == "1ycr"
+    assert row["chain"] == "A"
+    assert row["source_uniprot"] == "Q00987"
+    assert row["target_species"] == "elephant"
+    assert row["target_species_taxid"] == 9785
+    assert row["target_accession"] == "G3SX30"
+    assert row["target_accession_db"] == "UniProtKB TrEMBL"
+    assert row["target_sequence_length"] == 492
+    assert row["actual_sequence_length"] == 0
+    assert row["sequence_length_status"] == "not_fetched"
+    assert row["embedding_path"] == "not_applicable_runtime_blocked"
+    assert ".npy" not in row["embedding_path"]
+    assert row["embedding_exists"] is False
+    assert row["embedding_status"] == "not_generated_runtime_blocked"
+    assert row["fill_status"] == "planning_policy_updated_runtime_blocked"
+    assert row["fill_status"] != "ready_for_preflight"
+    assert row["fill_status"] != "reviewed_for_single_live_fill"
+    assert row["allowed_next_action"] == "keep_blocked"
+    assert row["dry_run_required"] is False
+    assert row["live_opt_in_required"] is True
+    assert row["max_live_batch_size"] == 0
+    assert row["claim_policy"] == "no_biological_claims_until_validation"
+    assert row["claim_status"] == "technical_checkpoint"
+
+
+def test_g3sx30_blocked_embedding_fill_worklist_checkpoint_matches_gate45_policy_source() -> None:
+    worklist = pl.read_csv(
+        "data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv"
+    )
+    policy = pl.read_csv("data/input/ortholog_evidence_gate45_policy_updates.csv")
+
+    row = worklist.row(0, named=True)
+    policy_row = policy.row(0, named=True)
+
+    assert policy.height == 1
+    assert row["candidate_set"] == policy_row["candidate_set"]
+    assert row["lane_name"] == policy_row["lane_name"]
+    assert row["candidate_id"] == policy_row["candidate_id"]
+    assert row["target_accession"] == policy_row["reviewed_target_uniprot"]
+    assert row["target_accession"] == policy_row["reviewed_source_accession"]
+    assert row["target_accession_db"] == policy_row["reviewed_source_database"]
+    assert row["target_species_taxid"] == policy_row["reviewed_taxid"]
+    assert row["target_sequence_length"] == policy_row["reviewed_sequence_length"]
+    assert policy_row["policy_update_decision"] == "approve_gate45_policy_update_for_planning"
+    assert (
+        policy_row["downstream_block_status_after_policy"]
+        == "gate45_policy_updated_still_runtime_blocked"
+    )
+    assert row["fill_status"] == "planning_policy_updated_runtime_blocked"
+    assert row["allowed_next_action"] == "keep_blocked"
+
+
+def test_g3sx30_blocked_embedding_fill_worklist_checkpoint_forbids_runtime_side_effects() -> None:
+    worklist = pl.read_csv(
+        "data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv"
+    )
+    row = worklist.row(0, named=True)
+
+    assert "not selected for curated embedding preflight" in row["fill_reason"]
+    assert "curated_embedding_single" in row["fill_reason"]
+    assert "live fill" in row["fill_reason"]
+
+    for forbidden in [
+        "sequence fetch",
+        "Biohub call",
+        "embedding generation",
+        "data/output commit",
+        "Gate 8 promotion",
+        "Gate 9 promotion",
+        "Boltz call",
+        "AF3 call",
+        "Chai call",
+        "enrichment rerun",
+        "contrast rerun",
+        "biological claim",
+    ]:
+        assert forbidden in row["forbidden_actions"]
+
+    assert "no sequence fetch" in row["review_note"]
+    assert "no Biohub / ESMC call" in row["review_note"]
+    assert "no embedding generation" in row["review_note"]
+    assert "no committed .npy artifact" in row["review_note"]
+    assert "no Gate 8 / Gate 9 promotion" in row["review_note"]
+    assert "no Boltz/AF3/Chai call" in row["review_note"]
+    assert "no biological claim" in row["review_note"]
