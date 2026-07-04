@@ -618,3 +618,24 @@ def test_current_gate_map_records_g3sx30_blocked_embedding_fill_worklist_checkpo
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not rerun enrichment or contrast" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_blocked_embedding_fill_exit_criteria() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 blocked embedding-fill exit criteria checkpoint" in text
+    assert "docs/g3sx30_blocked_embedding_fill_exit_criteria.md" in text
+    assert "docs-only review protocol for a later possible dry-run preflight decision" in text
+    assert "does not change the G3SX30 worklist row" in text
+    assert "does not make G3SX30 preflight-ready" in text
+    assert "does not fetch sequences" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
+    assert "G3SX30 blocked embedding-fill exit criteria status" in text
+    assert "later exit requires reviewed target sequence provenance" in text
+    assert "`sequence_length_status=matches`" in text
+    assert "explicit separate dry-run preflight decision" in text
