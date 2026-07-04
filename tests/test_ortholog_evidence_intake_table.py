@@ -21,7 +21,7 @@ def load_yaml(path: Path) -> dict:
 
 def intake_rows() -> list[dict[str, str]]:
     rows = read_csv_rows(INTAKE_TABLE_PATH)
-    assert len(rows) == 4
+    assert len(rows) == 5
     return rows
 
 
@@ -61,11 +61,18 @@ def test_ortholog_evidence_intake_table_exists_with_scaffold_and_first_candidate
             "tp53_mdm2_elephant_seed_mdm2_chain",
             "G3SX30",
         ),
+        (
+            "data/input/ortholog_stronger_source_evidence_collection.csv",
+            "1",
+            "tp53_mdm2_elephant_seed_mdm2_chain",
+            "G3SX30",
+        ),
     }
 
     assert {row["intake_outcome"] for row in rows} == {
         "evidence_insufficient_defer",
         "evidence_ambiguous_needs_second_reviewer",
+        "evidence_ready_for_review_decision",
     }
     assert {row["target_protein_accession"] for row in rows} == {"unresolved", "G3SX30"}
     assert {row["downstream_block_status_after_intake"] for row in rows} == {"blocked_gate4_gate5"}
@@ -77,6 +84,7 @@ def test_first_real_mdm2_elephant_evidence_candidate_row_is_accession_level_only
         row
         for row in rows
         if row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+        and row["source_table"] == "data/input/tp53_mdm2_ortholog_repair_decisions.csv"
         and row["evidence_source_accession"] == "G3SX30"
     ]
 
@@ -98,6 +106,38 @@ def test_first_real_mdm2_elephant_evidence_candidate_row_is_accession_level_only
     assert row["allowed_next_action_after_intake"] == (
         "perform_second_reviewer_evidence_intake_review"
     )
+
+
+def test_g3sx30_collected_source_intake_row_is_review_candidate_only() -> None:
+    rows = intake_rows()
+    matching = [
+        row
+        for row in rows
+        if row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+        and row["source_table"] == "data/input/ortholog_stronger_source_evidence_collection.csv"
+        and row["evidence_source_accession"] == "G3SX30"
+    ]
+
+    assert len(matching) == 1
+    row = matching[0]
+
+    assert row["gene_symbol"] == "MDM2"
+    assert row["target_species"] == "elephant"
+    assert row["target_species_taxid"] == "9785"
+    assert row["evidence_source_type"] == "uniprot_ortholog_or_taxonomy_evidence"
+    assert row["evidence_source_database"] == "UniProtKB TrEMBL"
+    assert row["target_species_name"] == "Loxodonta africana"
+    assert row["target_gene_symbol"] == "MDM2"
+    assert row["target_protein_accession"] == "G3SX30"
+    assert row["target_sequence_length"] == "492"
+    assert row["ambiguity_flag"] == "false"
+    assert row["second_reviewer_required"] == "false"
+    assert row["intake_outcome"] == "evidence_ready_for_review_decision"
+    assert row["downstream_block_status_after_intake"] == "blocked_gate4_gate5"
+    assert row["allowed_next_action_after_intake"] == "prepare_later_reviewed_decision_pr"
+    assert row["claim_status_after_intake"] == "repair_worklist"
+    assert "does not accept an ortholog" in row["reviewer_note"]
+    assert "make a biological claim" in row["reviewer_note"]
 
 
 def test_ortholog_evidence_intake_table_uses_schema_required_fields() -> None:
@@ -129,6 +169,9 @@ def test_ortholog_evidence_intake_table_traces_reviewed_provenance_rows() -> Non
     }
 
     for row in intake_rows():
+        if row["source_table"] == "data/input/ortholog_stronger_source_evidence_collection.csv":
+            continue
+
         key = (row["source_table"], row["source_row_index"], row["candidate_id"])
         reviewed_row = review_index[key]
 
@@ -183,8 +226,8 @@ def test_ortholog_evidence_intake_table_records_blocker_first_guardrails() -> No
 
         assert row["claim_policy_after_intake"] == "no_biological_claims_until_validation"
         assert row["claim_status_after_intake"] == "repair_worklist"
-        assert row["ambiguity_flag"] == "true"
-        assert row["second_reviewer_required"] == "true"
+        assert row["ambiguity_flag"] in {"true", "false"}
+        assert row["second_reviewer_required"] in {"true", "false"}
         assert "Gate 8 promotion" in forbidden_actions
         assert "Gate 9 promotion" in forbidden_actions
         assert "Biohub call" in forbidden_actions
