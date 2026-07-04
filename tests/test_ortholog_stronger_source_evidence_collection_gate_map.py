@@ -24,3 +24,4 @@ def test_current_gate_map_records_g3sx30_stronger_source_collection_row() -> Non
     assert "no sequence fetch" in text
     assert "no reviewed decision" in text
     assert "no biological claim" in text
+    assert "does not complete source evidence intake/review" in text
