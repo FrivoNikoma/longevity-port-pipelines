@@ -1087,3 +1087,44 @@ def test_current_gate_map_records_g3sx30_dry_run_preflight_command_discovery_not
         "does not make biological claims",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_dry_run_preflight_cli_compatibility_note() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    for required in [
+        "G3SX30 dry-run preflight CLI compatibility checkpoint",
+        "docs/g3sx30_dry_run_preflight_cli_compatibility_note.md",
+        "docs-only compatibility note",
+        "docs/g3sx30_dry_run_preflight_execution_checklist.md",
+        "docs/g3sx30_dry_run_preflight_command_discovery_note.md",
+        "src/longevity_port_pipelines/stages/curated_embedding_preflight.py",
+        "src/longevity_port_pipelines/stages/curated_embedding_single.py",
+        "current CLI behavior does not match the G3SX30 dry-run preflight checklist expectations closely enough for direct execution",
+        "`curated-embedding-preflight` is dry-run-only by implementation but is not manifest-aware",
+        "no explicit `--dry-run`",
+        "no `--no-live-call`",
+        "no `--max-live-batch-size 0`",
+        "no `--no-output-artifacts`",
+        "writes `data/output/curated_ortholog_embedding_preflight.csv` by default",
+        "`curated-embedding-single` is dry-run by default but can call Biohub / ESMC if `--yes-live` is passed",
+        "not directly use the current `curated-embedding-preflight` default behavior against G3SX30",
+        "manifest mismatch and output-path issue are resolved",
+        "manifest-aware dry-run adapter/wrapper scaffold",
+        "source-level guardrail before execution",
+        "G3SX30 remains runtime-blocked",
+        "does not run `curated-embedding-preflight`",
+        "does not run `curated_embedding_preflight`",
+        "does not run `curated-embedding-single`",
+        "does not run `curated_embedding_single`",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not commit `data/output` artifacts",
+        "does not mark anything `ready_for_preflight`",
+        "does not unlock the manifest runtime path",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz, AF3, or Chai",
+        "does not rerun enrichment or contrast",
+        "does not make biological claims",
+    ]:
+        assert required in text
