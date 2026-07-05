@@ -1,0 +1,162 @@
+name: g3sx30_manifest_aware_dry_run_preflight_adapter
+description: >
+  Table-only manifest-aware adapter scaffold for the G3SX30 dry-run preflight
+  boundary. This scaffold reads the existing G3SX30 dry-run preflight manifest
+  row and records that the current CLI is not directly executable against that
+  manifest row until a manifest-aware wrapper or guardrail exists.
+status: scaffold_only_no_runtime_side_effects
+source_manifest: data/input/g3sx30_dry_run_preflight_manifest.csv#1
+source_cli_compatibility_note: docs/g3sx30_dry_run_preflight_cli_compatibility_note.md
+does_not_authorize:
+  - curated-embedding-preflight run
+  - curated_embedding_preflight run
+  - curated-embedding-single run
+  - curated_embedding_single run
+  - help run
+  - Biohub call
+  - ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - manifest runtime unlock
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - enrichment rerun
+  - contrast rerun
+  - biological claim
+columns:
+  - name: source_manifest_table
+    type: string
+    required: true
+  - name: source_manifest_row_index
+    type: integer
+    required: true
+  - name: candidate_id
+    type: string
+    required: true
+  - name: target_accession
+    type: string
+    required: true
+  - name: target_accession_db
+    type: string
+    required: true
+  - name: target_species
+    type: string
+    required: true
+  - name: target_taxid
+    type: integer
+    required: true
+  - name: gene_symbol
+    type: string
+    required: true
+  - name: reviewed_sequence_sha256
+    type: string
+    required: true
+  - name: reviewed_sequence_length
+    type: integer
+    required: true
+  - name: manifest_entry_status
+    type: string
+    required: true
+    allowed_values:
+      - manifest_scaffold_ready_runtime_blocked
+  - name: dry_run_only
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: max_live_batch_size
+    type: integer
+    required: true
+    allowed_values:
+      - 0
+  - name: ready_for_preflight_after_manifest
+    type: string
+    required: true
+    allowed_values:
+      - "false"
+  - name: sequence_fetch_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: biohub_call_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: esmc_call_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: embedding_generation_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: curated_embedding_preflight_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: curated_embedding_single_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: adapter_status
+    type: string
+    required: true
+    allowed_values:
+      - manifest_understood_runtime_blocked
+  - name: adapter_decision
+    type: string
+    required: true
+    allowed_values:
+      - do_not_execute_current_cli_directly
+  - name: current_cli_compatibility
+    type: string
+    required: true
+    allowed_values:
+      - not_directly_executable_manifest_mismatch_output_path_issue
+  - name: required_next_action
+    type: string
+    required: true
+    allowed_values:
+      - add_manifest_aware_wrapper_or_guardrail_before_execution
+  - name: curated_embedding_preflight_runtime_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: curated_embedding_single_runtime_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: output_path_policy
+    type: string
+    required: true
+    allowed_values:
+      - do_not_write_committed_data_output
+  - name: allowed_output_location
+    type: string
+    required: true
+    allowed_values:
+      - not_selected_scaffold_only
+  - name: claim_status
+    type: string
+    required: true
+    allowed_values:
+      - technical_checkpoint
+  - name: forbidden_actions
+    type: string
+    required: true
+  - name: review_note
+    type: string
+    required: true

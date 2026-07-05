@@ -1128,3 +1128,46 @@ def test_current_gate_map_records_g3sx30_dry_run_preflight_cli_compatibility_not
         "does not make biological claims",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold() -> (
+    None
+):
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 manifest-aware dry-run preflight adapter scaffold checkpoint",
+        "src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_preflight_adapter.py",
+        "helper-only manifest-aware dry-run preflight adapter scaffold",
+        "data/input/g3sx30_dry_run_preflight_manifest.csv#1",
+        "dry_run_only=true",
+        "max_live_batch_size=0",
+        "ready_for_preflight_after_manifest=false",
+        "reviewed sequence length `492`",
+        "reviewed sequence SHA256 `e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f`",
+        "claim_status=technical_checkpoint",
+        "data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1",
+        "data/config/g3sx30_manifest_aware_dry_run_preflight_adapter_schema.yaml",
+        "manifest_understood_runtime_blocked",
+        "do_not_execute_current_cli_directly",
+        "not_directly_executable_manifest_mismatch_output_path_issue",
+        "add_manifest_aware_wrapper_or_guardrail_before_execution",
+        "do_not_write_committed_data_output",
+        "does not add a `pyproject.toml` script entry point",
+        "does not run `curated-embedding-preflight`",
+        "does not run `curated_embedding_preflight`",
+        "does not run `curated-embedding-single`",
+        "does not run `curated_embedding_single`",
+        "does not run `--help`",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not commit `data/output` artifacts",
+        "does not mark anything `ready_for_preflight`",
+        "does not unlock the manifest runtime path",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz, AF3, or Chai",
+        "does not rerun enrichment or contrast",
+        "does not make biological claims",
+    ]:
+        assert required in text
