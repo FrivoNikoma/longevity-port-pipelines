@@ -808,3 +808,42 @@ def test_current_gate_map_records_g3sx30_official_sequence_source_review_prepara
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
     assert "G3SX30 official sequence source review preparation status" in text
+
+
+def test_current_gate_map_records_g3sx30_reviewed_target_sequence_provenance_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 reviewed target sequence provenance row checkpoint" in text
+    assert "data/input/reviewed_target_sequence_provenance.csv" in text
+    assert (
+        "one deferred G3SX30 provenance row plus one reviewed official UniProt sequence provenance row"
+        in text
+    )
+    assert "sequence_source_type=reviewed_external_database_record" in text
+    assert "sequence_source_reference=https://rest.uniprot.org/uniprotkb/G3SX30.fasta" in text
+    assert "reviewed_sequence_length=492" in text
+    assert (
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+        in text
+    )
+    assert "sequence_length_status=matches" in text
+    assert "sequence_review_status=reviewed_sequence_provenance" in text
+    assert "provenance_review_status=reviewed" in text
+    assert (
+        "allowed_next_action_after_sequence_review=consider_later_dry_run_preflight_decision_pr"
+        in text
+    )
+    assert "manual official-source review package stored outside the repo" in text
+    assert "does not commit the raw FASTA amino-acid sequence artifact" in text
+    assert "reviewed sequence provenance for planning only" in text
+    assert "does not mutate `data/input/target_sequence_review_decisions.csv`" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not fetch sequences inside the repository" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text

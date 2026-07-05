@@ -7,7 +7,7 @@ import polars as pl
 FORBIDDEN_ACTIONS = (
     "sequence fetch; Biohub call; ESMC call; embedding generation; "
     "curated_embedding_preflight; curated_embedding_single; data/output commit; "
-    ".npy artifact; Gate 8 promotion; Gate 9 promotion; Boltz call; AF3 call; Chai call; "
+    ".npy artifact; ready_for_preflight; Gate 8 promotion; Gate 9 promotion; Boltz call; AF3 call; Chai call; "
     "enrichment rerun; contrast rerun; biological claim"
 )
 
@@ -166,6 +166,7 @@ def validate_reviewed_target_sequence_provenance_rows(table: pl.DataFrame) -> No
             "Biohub call",
             "ESMC call",
             "embedding generation",
+            "ready_for_preflight",
             "Gate 8 promotion",
             "Gate 9 promotion",
             "Boltz call",
