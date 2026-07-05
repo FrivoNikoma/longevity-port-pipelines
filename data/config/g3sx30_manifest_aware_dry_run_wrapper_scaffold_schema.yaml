@@ -1,0 +1,293 @@
+name: g3sx30_manifest_aware_dry_run_wrapper_scaffold
+description: >
+  Non-executable helper/table scaffold representing the future G3SX30
+  manifest-aware dry-run wrapper boundary. This scaffold reads the blocked
+  adapter policy contract, adapter scaffold, and dry-run preflight manifest
+  rows, then records that execution remains blocked. It is not a Typer
+  executable wrapper and does not select a command or output path.
+status: wrapper_scaffold_runtime_blocked_table_only_no_runtime_side_effects
+sources:
+  policy_contract_row: data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1
+  adapter_scaffold_row: data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1
+  manifest_row: data/input/g3sx30_dry_run_preflight_manifest.csv#1
+layer_separation:
+  adapter_scaffold: instance-level understanding of manifest row #1
+  adapter_policy_contract: machine-readable allowed transition contract after scaffold
+  wrapper_scaffold: non-executable representation of a future wrapper boundary
+  wrapper_command_contract: future command/argument/output-path contract, not this scaffold
+  wrapper_execution: not authorized by this scaffold
+  dry_run_execution: still later, not this scaffold
+  live_embedding_fill: much later, not this scaffold
+allowed_wrapper_statuses:
+  - wrapper_scaffold_runtime_blocked
+allowed_wrapper_decisions:
+  - prepare_wrapper_plan_only
+allowed_next_actions_after_wrapper_scaffold:
+  - add_wrapper_command_contract_pr
+  - add_source_level_wrapper_guardrail_pr
+  - keep_runtime_blocked
+does_not_authorize:
+  - pyproject script entry point
+  - Typer executable wrapper
+  - manifest-aware wrapper implementation
+  - wrapper execution
+  - dry-run execution
+  - live execution
+  - curated-embedding-preflight run
+  - curated_embedding_preflight run
+  - curated-embedding-single run
+  - curated_embedding_single run
+  - help run
+  - command selection
+  - output path selection
+  - execution plan materialization
+  - Biohub call
+  - ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - manifest runtime unlock
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - enrichment rerun
+  - contrast rerun
+  - biological claim
+columns:
+  - name: source_policy_contract_table
+    type: string
+    required: true
+  - name: source_policy_contract_row_index
+    type: integer
+    required: true
+  - name: source_adapter_scaffold_table
+    type: string
+    required: true
+  - name: source_adapter_scaffold_row_index
+    type: integer
+    required: true
+  - name: source_manifest_table
+    type: string
+    required: true
+  - name: source_manifest_row_index
+    type: integer
+    required: true
+  - name: candidate_id
+    type: string
+    required: true
+  - name: target_accession
+    type: string
+    required: true
+  - name: target_accession_db
+    type: string
+    required: true
+  - name: target_species
+    type: string
+    required: true
+  - name: target_taxid
+    type: integer
+    required: true
+  - name: gene_symbol
+    type: string
+    required: true
+  - name: manifest_entry_status
+    type: string
+    required: true
+    allowed_values:
+      - manifest_scaffold_ready_runtime_blocked
+  - name: adapter_status
+    type: string
+    required: true
+    allowed_values:
+      - manifest_understood_runtime_blocked
+  - name: adapter_decision
+    type: string
+    required: true
+    allowed_values:
+      - do_not_execute_current_cli_directly
+  - name: current_cli_compatibility
+    type: string
+    required: true
+    allowed_values:
+      - not_directly_executable_manifest_mismatch_output_path_issue
+  - name: policy_contract_status
+    type: string
+    required: true
+    allowed_values:
+      - adapter_policy_runtime_blocked
+  - name: policy_contract_decision
+    type: string
+    required: true
+    allowed_values:
+      - require_manifest_aware_wrapper_before_execution
+  - name: current_cli_direct_execution_decision
+    type: string
+    required: true
+    allowed_values:
+      - reject_current_cli_direct_execution
+  - name: wrapper_scaffold_decision
+    type: string
+    required: true
+    allowed_values:
+      - allow_wrapper_scaffold_only
+  - name: wrapper_status
+    type: string
+    required: true
+    allowed_values:
+      - wrapper_scaffold_runtime_blocked
+  - name: wrapper_decision
+    type: string
+    required: true
+    allowed_values:
+      - prepare_wrapper_plan_only
+  - name: wrapper_execution_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: dry_run_execution_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: live_execution_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: ready_for_preflight_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: biohub_esmc_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: embedding_generation_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: artifact_decision
+    type: string
+    required: true
+    allowed_values:
+      - not_authorized
+  - name: pyproject_entry_point_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: typer_executable_wrapper_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: manifest_aware_wrapper_implementation_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: wrapper_execution_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: dry_run_execution_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: live_execution_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: ready_for_preflight_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: biohub_call_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: esmc_call_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: embedding_generation_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: npy_artifact_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: data_output_artifact_commit_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: gate8_promotion_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: gate9_promotion_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: biological_claim_allowed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: command_selected
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: output_path_selected
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: execution_plan_materialized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: runtime_still_blocked
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: allowed_next_action_after_wrapper_scaffold
+    type: string
+    required: true
+    allowed_values:
+      - add_wrapper_command_contract_pr
+      - add_source_level_wrapper_guardrail_pr
+      - keep_runtime_blocked
+  - name: claim_status
+    type: string
+    required: true
+    allowed_values:
+      - technical_checkpoint
+  - name: forbidden_actions
+    type: string
+    required: true
+  - name: scaffold_note
+    type: string
+    required: true
