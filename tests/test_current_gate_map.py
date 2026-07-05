@@ -747,3 +747,29 @@ def test_current_gate_map_records_target_sequence_review_decision_scaffold() -> 
     assert "target sequence review decision scaffold status" in text
     assert "no G3SX30 decision row" in text
     assert "no mutation of reviewed target sequence provenance rows" in text
+
+
+def test_current_gate_map_records_g3sx30_deferred_target_sequence_review_decision_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 deferred target sequence review decision row checkpoint" in text
+    assert "data/input/target_sequence_review_decisions.csv" in text
+    assert "sequence_review_decision=defer_pending_sequence_review" in text
+    assert "sequence_length_status_after_decision=not_fetched" in text
+    assert "provenance_review_status_after_decision=deferred" in text
+    assert "decision_status=deferred_pending_review" in text
+    assert "downstream_block_status_after_decision=sequence_review_deferred_still_blocked" in text
+    assert "allowed_next_action_after_decision=defer_pending_sequence_review" in text
+    assert "does not approve reviewed sequence provenance" in text
+    assert "does not record `sequence_length_status_after_decision=matches`" in text
+    assert "does not mutate the source sequence provenance row" in text
+    assert "does not fetch sequences" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
+    assert "target sequence review decision rows: one G3SX30 deferred decision row" in text

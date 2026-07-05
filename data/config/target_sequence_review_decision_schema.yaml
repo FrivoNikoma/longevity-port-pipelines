@@ -2,13 +2,13 @@ schema_version: 1
 schema_id: target_sequence_review_decision_schema
 pipeline_gate: target_sequence_review_decision
 claim_policy: no_biological_claims_until_validation
-maximum_claim_status: technical_checkpoint
+maximum_claim_status: repair_worklist
 description: >
   Conservative scaffold for future human target sequence review decisions.
 purpose: >
-  Defines a header-only decision table for future target sequence review decisions.
-  The scaffold does not add a G3SX30 decision row and does not mutate the existing
-  deferred target sequence provenance row. It does not fetch sequences, call Biohub
+  Defines a decision table for future target sequence review decisions.
+  The first committed G3SX30 decision row is deferred pending review and does
+  not mutate the existing deferred target sequence provenance row. It does not fetch sequences, call Biohub
   / ESMC, generate embeddings, run curated_embedding_preflight, run
   curated_embedding_single, mark anything ready_for_preflight, promote Gate 8 or
   Gate 9, call Boltz, AF3, or Chai, rerun enrichment or contrast, or make
@@ -19,12 +19,16 @@ scaffold_scope:
   source_table: data/input/reviewed_target_sequence_provenance.csv
   source_row_requirement: explicit target sequence provenance source row
   checklist_source: docs/g3sx30_target_sequence_review_checklist.md
-  scaffold_status: header_only_no_rows
+  scaffold_status: one_g3sx30_deferred_decision_row
   current_g3sx30_sequence_source_type: deferred_pending_review
   current_g3sx30_sequence_length_status: not_fetched
   current_g3sx30_sequence_review_status: deferred_pending_review
   current_g3sx30_provenance_review_status: deferred
   current_g3sx30_allowed_next_action_after_sequence_review: defer_pending_sequence_review
+  current_g3sx30_sequence_review_decision: defer_pending_sequence_review
+  current_g3sx30_decision_status: deferred_pending_review
+  current_g3sx30_downstream_block_status_after_decision: sequence_review_deferred_still_blocked
+  current_g3sx30_allowed_next_action_after_decision: defer_pending_sequence_review
   current_g3sx30_worklist_status: planning_policy_updated_runtime_blocked
   current_g3sx30_controlled_worklist_allowed_next_action: keep_blocked
   does_not_authorize:

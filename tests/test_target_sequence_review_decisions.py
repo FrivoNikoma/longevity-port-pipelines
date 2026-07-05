@@ -18,19 +18,20 @@ from longevity_port_pipelines.stages.target_sequence_review_decisions import (
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "data/config/target_sequence_review_decision_schema.yaml"
 TABLE_PATH = ROOT / "data/input/target_sequence_review_decisions.csv"
+SOURCE_PROVENANCE_PATH = ROOT / "data/input/reviewed_target_sequence_provenance.csv"
 
 
 def load_schema() -> dict:
     return yaml.safe_load(SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
-def test_target_sequence_review_decision_schema_is_header_only_scaffold() -> None:
+def test_target_sequence_review_decision_schema_records_one_deferred_g3sx30_row() -> None:
     schema = load_schema()
 
     assert schema["schema_id"] == "target_sequence_review_decision_schema"
     assert schema["pipeline_gate"] == "target_sequence_review_decision"
     assert schema["claim_policy"] == "no_biological_claims_until_validation"
-    assert schema["maximum_claim_status"] == "technical_checkpoint"
+    assert schema["maximum_claim_status"] == "repair_worklist"
     assert schema["scaffold_scope"]["source_layer"] == "reviewed_target_sequence_provenance"
     assert schema["scaffold_scope"]["source_table"] == (
         "data/input/reviewed_target_sequence_provenance.csv"
@@ -38,7 +39,20 @@ def test_target_sequence_review_decision_schema_is_header_only_scaffold() -> Non
     assert schema["scaffold_scope"]["checklist_source"] == (
         "docs/g3sx30_target_sequence_review_checklist.md"
     )
-    assert schema["scaffold_scope"]["scaffold_status"] == "header_only_no_rows"
+    assert schema["scaffold_scope"]["scaffold_status"] == "one_g3sx30_deferred_decision_row"
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_sequence_review_decision"]
+        == "defer_pending_sequence_review"
+    )
+    assert schema["scaffold_scope"]["current_g3sx30_decision_status"] == "deferred_pending_review"
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_downstream_block_status_after_decision"]
+        == "sequence_review_deferred_still_blocked"
+    )
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_allowed_next_action_after_decision"]
+        == "defer_pending_sequence_review"
+    )
     assert (
         schema["scaffold_scope"]["current_g3sx30_sequence_review_status"]
         == "deferred_pending_review"
@@ -58,13 +72,110 @@ def test_target_sequence_review_decision_schema_required_columns_match_helper() 
     assert list(TARGET_SEQUENCE_REVIEW_DECISION_SCHEMA) == REQUIRED_COLUMNS
 
 
-def test_target_sequence_review_decision_table_is_header_only() -> None:
+def test_target_sequence_review_decision_table_has_one_deferred_g3sx30_row() -> None:
     table = pl.read_csv(TABLE_PATH)
 
     assert table.columns == REQUIRED_COLUMNS
-    assert table.height == 0
+    assert table.height == 1
     validate_target_sequence_review_decision_schema(table)
     validate_target_sequence_review_decision_rows(table)
+
+    row = table.row(0, named=True)
+    assert row["candidate_set"] == "tp53_mdm2_elephant"
+    assert row["lane_name"] == "tp53_mdm2_elephant"
+    assert row["candidate_id"] == "tp53_mdm2_elephant_seed_mdm2_chain"
+    assert row["source_sequence_provenance_table"] == (
+        "data/input/reviewed_target_sequence_provenance.csv"
+    )
+    assert row["source_sequence_provenance_row_index"] == 1
+    assert row["target_accession"] == "G3SX30"
+    assert row["target_accession_db"] == "UniProtKB TrEMBL"
+    assert row["target_species"] == "Loxodonta africana"
+    assert row["target_taxid"] == 9785
+    assert row["gene_symbol"] == "MDM2"
+    assert row["sequence_review_decision"] == "defer_pending_sequence_review"
+    assert row["sequence_length_status_after_decision"] == "not_fetched"
+    assert row["provenance_review_status_after_decision"] == "deferred"
+    assert row["reviewed_sequence_sha256"] == "not_applicable_not_fetched"
+    assert row["reviewed_sequence_length"] == 0
+    assert row["decision_status"] == "deferred_pending_review"
+    assert row["downstream_block_status_after_decision"] == "sequence_review_deferred_still_blocked"
+    assert row["allowed_next_action_after_decision"] == "defer_pending_sequence_review"
+    assert row["claim_policy"] == "no_biological_claims_until_validation"
+    assert row["claim_status"] == "repair_worklist"
+    assert row["reviewer_id"] == "not_applicable_deferred"
+    assert row["review_date"] == "not_applicable_deferred"
+
+
+def test_g3sx30_deferred_decision_row_matches_source_sequence_provenance_row() -> None:
+    table = pl.read_csv(TABLE_PATH)
+    source_table = pl.read_csv(SOURCE_PROVENANCE_PATH)
+
+    row = table.row(0, named=True)
+    source_row = source_table.row(row["source_sequence_provenance_row_index"] - 1, named=True)
+
+    assert row["source_sequence_provenance_table"] == (
+        "data/input/reviewed_target_sequence_provenance.csv"
+    )
+    assert source_row["candidate_set"] == row["candidate_set"]
+    assert source_row["lane_name"] == row["lane_name"]
+    assert source_row["candidate_id"] == row["candidate_id"]
+    assert source_row["target_accession"] == row["target_accession"]
+    assert source_row["target_accession_db"] == row["target_accession_db"]
+    assert source_row["target_species"] == row["target_species"]
+    assert source_row["target_taxid"] == row["target_taxid"]
+    assert source_row["gene_symbol"] == row["gene_symbol"]
+    assert source_row["sequence_length_status"] == "not_fetched"
+    assert source_row["sequence_review_status"] == "deferred_pending_review"
+    assert source_row["provenance_review_status"] == "deferred"
+    assert (
+        source_row["allowed_next_action_after_sequence_review"] == "defer_pending_sequence_review"
+    )
+
+
+def test_g3sx30_deferred_decision_row_does_not_record_reviewed_sequence() -> None:
+    row = pl.read_csv(TABLE_PATH).row(0, named=True)
+
+    assert row["sequence_review_decision"] != "approve_reviewed_sequence_provenance_for_planning"
+    assert row["sequence_length_status_after_decision"] != "matches"
+    assert row["provenance_review_status_after_decision"] != "reviewed"
+    assert row["decision_status"] != "reviewed_for_planning_still_preflight_blocked"
+    assert row["downstream_block_status_after_decision"] != (
+        "sequence_reviewed_still_preflight_decision_blocked"
+    )
+    assert row["allowed_next_action_after_decision"] != (
+        "consider_later_dry_run_preflight_decision_pr"
+    )
+    assert row["reviewed_sequence_length"] == 0
+    assert row["reviewed_sequence_sha256"] == "not_applicable_not_fetched"
+    assert row["claim_status"] == "repair_worklist"
+
+
+def test_g3sx30_deferred_decision_row_forbids_runtime_side_effects() -> None:
+    row = pl.read_csv(TABLE_PATH).row(0, named=True)
+    forbidden_actions = row["forbidden_actions"]
+
+    for required in [
+        "sequence fetch",
+        "source provenance row mutation",
+        "Biohub call",
+        "ESMC call",
+        "embedding generation",
+        "curated_embedding_preflight",
+        "curated_embedding_single",
+        "data/output commit",
+        ".npy artifact",
+        "ready_for_preflight",
+        "Gate 8 promotion",
+        "Gate 9 promotion",
+        "Boltz call",
+        "AF3 call",
+        "Chai call",
+        "enrichment rerun",
+        "contrast rerun",
+        "biological claim",
+    ]:
+        assert required in forbidden_actions
 
 
 def test_empty_target_sequence_review_decisions_table_matches_schema() -> None:
