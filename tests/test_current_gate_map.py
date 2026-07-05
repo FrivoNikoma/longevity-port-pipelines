@@ -1055,3 +1055,35 @@ def test_current_gate_map_records_g3sx30_dry_run_preflight_execution_checklist()
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_dry_run_preflight_command_discovery_note() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    for required in [
+        "G3SX30 dry-run preflight command discovery note checkpoint",
+        "docs/g3sx30_dry_run_preflight_command_discovery_note.md",
+        "docs-only command discovery note",
+        "docs/g3sx30_dry_run_preflight_execution_checklist.md",
+        "data/input/g3sx30_dry_run_preflight_manifest.csv#1",
+        "`curated-embedding-preflight`",
+        "`curated-embedding-single`",
+        "does not execute either script",
+        "non-executed help commands",
+        "required help-output checks",
+        "required repository-search checks",
+        "no-run proof for this PR",
+        "stop conditions for any later execution PR",
+        "does not run `curated-embedding-preflight`",
+        "does not run `curated_embedding_preflight`",
+        "does not run `curated-embedding-single`",
+        "does not run `curated_embedding_single`",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not commit `data/output` artifacts",
+        "does not mark anything `ready_for_preflight`",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz, AF3, or Chai",
+        "does not make biological claims",
+    ]:
+        assert required in text
