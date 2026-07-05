@@ -885,3 +885,34 @@ def test_current_gate_map_records_g3sx30_reviewed_target_sequence_approval_decis
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_dry_run_preflight_decision_scaffold() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 dry-run preflight decision scaffold checkpoint" in text
+    assert "header-only dry-run preflight decision scaffold for G3SX30" in text
+    assert "data/input/target_sequence_review_decisions.csv#2" in text
+    assert "sequence_review_decision=approve_reviewed_sequence_provenance_for_planning" in text
+    assert "sequence_length_status_after_decision=matches" in text
+    assert "provenance_review_status_after_decision=reviewed" in text
+    assert "reviewed_sequence_length=492" in text
+    assert (
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+        in text
+    )
+    assert "decision_status=reviewed_for_planning_still_preflight_blocked" in text
+    assert "allowed_next_action_after_decision=consider_later_dry_run_preflight_decision_pr" in text
+    assert "data/config/g3sx30_dry_run_preflight_decision_schema.yaml" in text
+    assert "data/input/g3sx30_dry_run_preflight_decisions.csv" in text
+    assert "src/longevity_port_pipelines/stages/g3sx30_dry_run_preflight_decisions.py" in text
+    assert "adds no committed G3SX30 dry-run preflight decision row" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text

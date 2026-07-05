@@ -1,0 +1,204 @@
+schema_version: 1
+schema_id: g3sx30_dry_run_preflight_decision_schema
+pipeline_gate: g3sx30_dry_run_preflight_decision
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Conservative scaffold for a later explicit G3SX30 dry-run preflight decision.
+purpose: >
+  Defines a header-only decision table for a later dry-run preflight decision.
+  The source decision is the reviewed G3SX30 target sequence approval decision
+  row in data/input/target_sequence_review_decisions.csv#2. This scaffold does
+  not add a committed dry-run preflight decision row, does not run
+  curated_embedding_preflight, does not run curated_embedding_single, does not
+  call Biohub / ESMC, does not generate embeddings, does not create .npy
+  artifacts, does not mark anything ready_for_preflight, does not promote Gate 8
+  or Gate 9, does not call Boltz, AF3, or Chai, and does not make biological
+  claims.
+
+scaffold_scope:
+  source_layer: target_sequence_review_decision
+  source_table: data/input/target_sequence_review_decisions.csv
+  source_row_index: 2
+  source_row_requirement: reviewed G3SX30 target sequence approval decision row
+  scaffold_status: header_only_no_committed_g3sx30_dry_run_preflight_decision_row
+  current_g3sx30_source_sequence_review_decision: approve_reviewed_sequence_provenance_for_planning
+  current_g3sx30_source_sequence_length_status_after_decision: matches
+  current_g3sx30_source_provenance_review_status_after_decision: reviewed
+  current_g3sx30_source_decision_status: reviewed_for_planning_still_preflight_blocked
+  current_g3sx30_source_downstream_block_status_after_decision: sequence_reviewed_still_preflight_decision_blocked
+  current_g3sx30_source_allowed_next_action_after_decision: consider_later_dry_run_preflight_decision_pr
+  current_g3sx30_reviewed_sequence_length: 492
+  current_g3sx30_reviewed_sequence_sha256: "e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+  current_g3sx30_dry_run_preflight_decision_status: no_committed_decision_row_yet
+  current_g3sx30_allowed_next_action_after_scaffold: keep_blocked
+  current_g3sx30_runtime_status_after_scaffold: still_not_ready_for_preflight
+  does_not_authorize:
+    - sequence fetch
+    - Biohub calls
+    - ESMC calls
+    - embedding generation
+    - curated_embedding_preflight
+    - curated_embedding_single
+    - ready_for_preflight
+    - data/output commits
+    - .npy artifacts
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - Boltz calls
+    - AF3 calls
+    - Chai calls
+    - enrichment rerun
+    - contrast rerun
+    - biological claims
+
+required_columns:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - source_target_sequence_review_decision_table
+  - source_target_sequence_review_decision_row_index
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - source_sequence_review_decision
+  - source_sequence_length_status_after_decision
+  - source_provenance_review_status_after_decision
+  - source_decision_status
+  - source_downstream_block_status_after_decision
+  - reviewed_sequence_sha256
+  - reviewed_sequence_length
+  - dry_run_preflight_decision
+  - dry_run_preflight_status_after_decision
+  - allowed_next_action_after_decision
+  - max_live_batch_size_after_decision
+  - ready_for_preflight_after_decision
+  - claim_policy
+  - claim_status
+  - review_note
+  - reviewer_id
+  - review_date
+  - forbidden_actions
+
+allowed_source_target_sequence_review_decision_tables:
+  - data/input/target_sequence_review_decisions.csv
+
+allowed_dry_run_preflight_decisions:
+  - approve_dry_run_preflight_for_planning
+  - defer_pending_dry_run_preflight_decision
+  - keep_blocked
+
+allowed_dry_run_preflight_statuses_after_decision:
+  - dry_run_preflight_planning_approved_runtime_blocked
+  - dry_run_preflight_decision_deferred_still_blocked
+  - dry_run_preflight_still_blocked
+
+allowed_next_actions_after_decision:
+  - prepare_later_dry_run_preflight_manifest_pr
+  - defer_pending_dry_run_preflight_decision
+  - keep_blocked
+
+decision_rules:
+  approve_dry_run_preflight_for_planning:
+    required_source_sequence_review_decision: approve_reviewed_sequence_provenance_for_planning
+    required_source_sequence_length_status_after_decision: matches
+    required_source_provenance_review_status_after_decision: reviewed
+    required_source_decision_status: reviewed_for_planning_still_preflight_blocked
+    dry_run_preflight_status_after_decision: dry_run_preflight_planning_approved_runtime_blocked
+    allowed_next_action_after_decision: prepare_later_dry_run_preflight_manifest_pr
+    claim_status: technical_checkpoint
+    max_live_batch_size_after_decision: 0
+    ready_for_preflight_after_decision: "false"
+    run_curated_embedding_preflight: false
+    run_curated_embedding_single: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  defer_pending_dry_run_preflight_decision:
+    dry_run_preflight_status_after_decision: dry_run_preflight_decision_deferred_still_blocked
+    allowed_next_action_after_decision: defer_pending_dry_run_preflight_decision
+    claim_status: repair_worklist
+    max_live_batch_size_after_decision: 0
+    ready_for_preflight_after_decision: "false"
+    run_curated_embedding_preflight: false
+    run_curated_embedding_single: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  keep_blocked:
+    dry_run_preflight_status_after_decision: dry_run_preflight_still_blocked
+    allowed_next_action_after_decision: keep_blocked
+    claim_status: repair_worklist
+    max_live_batch_size_after_decision: 0
+    ready_for_preflight_after_decision: "false"
+    run_curated_embedding_preflight: false
+    run_curated_embedding_single: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+
+required_guardrails:
+  - dry-run preflight decisions do not fetch sequences
+  - dry-run preflight decisions do not call Biohub
+  - dry-run preflight decisions do not call ESMC
+  - dry-run preflight decisions do not generate embeddings
+  - dry-run preflight decisions do not run curated_embedding_preflight
+  - dry-run preflight decisions do not run curated_embedding_single
+  - dry-run preflight decisions do not mark ready_for_preflight
+  - dry-run preflight decisions do not create .npy artifacts
+  - dry-run preflight decisions do not commit data/output artifacts
+  - dry-run preflight decisions do not promote Gate 8
+  - dry-run preflight decisions do not promote Gate 9
+  - dry-run preflight decisions do not call Boltz
+  - dry-run preflight decisions do not call AF3
+  - dry-run preflight decisions do not call Chai
+  - dry-run preflight decisions do not rerun enrichment or contrast
+  - dry-run preflight decisions do not make biological claims
+
+allowed_language:
+  - dry-run preflight decision scaffold
+  - header-only dry-run preflight decision table
+  - source target sequence review decision row 2
+  - no committed dry-run preflight decision row yet
+  - still not ready_for_preflight
+  - later explicit dry-run preflight manifest PR
+
+disallowed_language:
+  - curated_embedding_preflight run
+  - curated_embedding_single run
+  - Biohub call
+  - ESMC call
+  - embedding generated
+  - .npy artifact committed
+  - ready_for_preflight
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - Boltz ready
+  - AF3 ready
+  - Chai ready
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
