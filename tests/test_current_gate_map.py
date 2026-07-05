@@ -1171,3 +1171,55 @@ def test_current_gate_map_records_g3sx30_manifest_aware_dry_run_preflight_adapte
         "does not make biological claims",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_manifest_aware_adapter_policy_contract() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 manifest-aware adapter policy contract checkpoint",
+        "src/longevity_port_pipelines/stages/g3sx30_manifest_aware_adapter_policy_contract.py",
+        "machine-readable transition policy contract",
+        "data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1",
+        "keeps the old adapter scaffold row unchanged",
+        "data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1",
+        "policy_status=adapter_policy_runtime_blocked",
+        "policy_decision=require_manifest_aware_wrapper_before_execution",
+        "current_cli_direct_execution_decision=reject_current_cli_direct_execution",
+        "wrapper_scaffold_decision=allow_wrapper_scaffold_only",
+        "wrapper_execution_decision=not_authorized",
+        "dry_run_execution_decision=not_authorized",
+        "live_execution_decision=not_authorized",
+        "ready_for_preflight_decision=not_authorized",
+        "biohub_esmc_decision=not_authorized",
+        "embedding_generation_decision=not_authorized",
+        "artifact_decision=not_authorized",
+        "allowed_next_action_after_policy=prepare_manifest_aware_wrapper_scaffold_pr",
+        "required_next_action=add_manifest_aware_wrapper_or_guardrail_before_execution",
+        "prepare_manifest_aware_wrapper_scaffold_pr",
+        "add_source_level_manifest_guardrail_before_execution",
+        "keep_runtime_blocked",
+        "does not mean the wrapper exists",
+        "does not mean wrapper execution is allowed",
+        "does not mean dry-run execution is allowed",
+        "does not add a `pyproject.toml` script entry point",
+        "does not implement a manifest-aware wrapper",
+        "does not authorize wrapper execution",
+        "does not authorize dry-run execution",
+        "does not run `curated-embedding-preflight`",
+        "does not run `curated_embedding_preflight`",
+        "does not run `curated-embedding-single`",
+        "does not run `curated_embedding_single`",
+        "does not run `--help`",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not commit `data/output` artifacts",
+        "does not mark anything `ready_for_preflight`",
+        "does not unlock the manifest runtime path",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz, AF3, or Chai",
+        "does not rerun enrichment or contrast",
+        "does not make biological claims",
+    ]:
+        assert required in text
