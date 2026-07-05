@@ -1,0 +1,255 @@
+name: g3sx30_wrapper_command_contract_scaffold
+description: >
+  Non-executable scaffold for the future G3SX30 wrapper command contract.
+  This layer can describe expected future command/argument/output-path
+  policy, but it must not claim that actual CLI help was observed or that
+  actual CLI flags were verified.
+status: future_command_contract_scaffold_only_runtime_blocked
+sources:
+  wrapper_scaffold_row: data/interim/g3sx30_manifest_aware_dry_run_wrapper_scaffold.csv#1
+  policy_contract_row: data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1
+  manifest_row: data/input/g3sx30_dry_run_preflight_manifest.csv#1
+layer_separation:
+  wrapper_scaffold: boundary represented; no command, output path, or execution plan selected
+  command_contract_scaffold: expected future command/args/output policy represented
+  help_observation: future evidence layer, not this scaffold
+  source_guardrail: future guardrail layer, not this scaffold
+  execution: not authorized by this scaffold
+allowed_language:
+  - expected_future_command_contract
+  - required_future_args
+  - forbidden_future_args
+  - unverified_until_help_or_source_guardrail
+  - future_command_contract_scaffold_only
+forbidden_language:
+  - actual_supported_args
+  - observed_help_flags
+  - verified_cli_contract
+allowed_command_contract_statuses:
+  - command_contract_scaffold_runtime_blocked
+allowed_command_contract_decisions:
+  - define_future_command_contract_only
+allowed_next_actions_after_command_contract:
+  - add_wrapper_source_guardrail_pr
+  - add_wrapper_help_observation_note_pr
+  - keep_runtime_blocked
+does_not_authorize:
+  - pyproject script entry point
+  - Typer executable wrapper
+  - wrapper execution
+  - dry-run execution
+  - live execution
+  - actual command run
+  - --help run
+  - observed-help claims
+  - actual CLI flag verification claims
+  - Biohub call
+  - ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - manifest runtime unlock
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - enrichment rerun
+  - contrast rerun
+  - biological claim
+columns:
+  - name: source_wrapper_scaffold_table
+    type: string
+    required: true
+  - name: source_wrapper_scaffold_row_index
+    type: integer
+    required: true
+  - name: source_policy_contract_table
+    type: string
+    required: true
+  - name: source_policy_contract_row_index
+    type: integer
+    required: true
+  - name: source_manifest_table
+    type: string
+    required: true
+  - name: source_manifest_row_index
+    type: integer
+    required: true
+  - name: candidate_id
+    type: string
+    required: true
+  - name: target_accession
+    type: string
+    required: true
+  - name: target_accession_db
+    type: string
+    required: true
+  - name: target_species
+    type: string
+    required: true
+  - name: target_taxid
+    type: integer
+    required: true
+  - name: gene_symbol
+    type: string
+    required: true
+  - name: source_wrapper_status
+    type: string
+    required: true
+    allowed_values:
+      - wrapper_scaffold_runtime_blocked
+  - name: source_wrapper_decision
+    type: string
+    required: true
+    allowed_values:
+      - prepare_wrapper_plan_only
+  - name: source_runtime_still_blocked
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: command_contract_status
+    type: string
+    required: true
+    allowed_values:
+      - command_contract_scaffold_runtime_blocked
+  - name: command_contract_decision
+    type: string
+    required: true
+    allowed_values:
+      - define_future_command_contract_only
+  - name: expected_command_family
+    type: string
+    required: true
+    allowed_values:
+      - curated_embedding_preflight_dry_run_wrapper
+  - name: actual_cli_help_observed
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: actual_command_verified
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: command_selected
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: output_path_selected
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: execution_plan_materialized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: execution_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: wrapper_execution_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: dry_run_execution_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: live_execution_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: ready_for_preflight_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: biohub_esmc_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: embedding_generation_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: npy_artifact_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: data_output_artifact_commit_authorized
+    type: boolean
+    required: true
+    allowed_values:
+      - false
+  - name: output_path_policy
+    type: string
+    required: true
+    allowed_values:
+      - do_not_write_committed_data_output
+  - name: allowed_output_location_policy
+    type: string
+    required: true
+    allowed_values:
+      - future_temp_or_manual_reviews_path_only
+  - name: expected_future_command_contract
+    type: string
+    required: true
+  - name: required_future_args
+    type: string
+    required: true
+  - name: forbidden_future_args
+    type: string
+    required: true
+  - name: required_future_guardrails
+    type: string
+    required: true
+  - name: forbidden_vocabulary
+    type: string
+    required: true
+  - name: unverified_until_help_or_source_guardrail
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: future_command_contract_scaffold_only
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: runtime_still_blocked
+    type: boolean
+    required: true
+    allowed_values:
+      - true
+  - name: allowed_next_action_after_command_contract
+    type: string
+    required: true
+    allowed_values:
+      - add_wrapper_source_guardrail_pr
+      - add_wrapper_help_observation_note_pr
+      - keep_runtime_blocked
+  - name: claim_status
+    type: string
+    required: true
+    allowed_values:
+      - technical_checkpoint
+  - name: forbidden_actions
+    type: string
+    required: true
+  - name: contract_note
+    type: string
+    required: true
