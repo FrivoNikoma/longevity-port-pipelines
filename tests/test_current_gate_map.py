@@ -773,3 +773,38 @@ def test_current_gate_map_records_g3sx30_deferred_target_sequence_review_decisio
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
     assert "target sequence review decision rows: one G3SX30 deferred decision row" in text
+
+
+def test_current_gate_map_records_g3sx30_official_sequence_source_review_preparation() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 official sequence source review preparation checkpoint" in text
+    assert "docs/g3sx30_official_sequence_source_review_preparation.md" in text
+    assert "later possible G3SX30 reviewed target sequence provenance PR" in text
+    assert "accession `G3SX30`" in text
+    assert "database `UniProtKB TrEMBL`" in text
+    assert "species `Loxodonta africana`" in text
+    assert "taxid `9785`" in text
+    assert "gene symbol `MDM2`" in text
+    assert "expected metadata length `492`" in text
+    assert "explicit sequence source traceability" in text
+    assert "stable `reviewed_sequence_sha256`" in text
+    assert "direct reviewed amino-acid sequence length calculation" in text
+    assert "direct length comparison" in text
+    assert "explicit mismatch handling" in text
+    assert "does not perform the review" in text
+    assert "does not fetch sequences inside the repository" in text
+    assert "does not commit a raw sequence artifact" in text
+    assert "does not mutate `data/input/reviewed_target_sequence_provenance.csv`" in text
+    assert "does not mutate `data/input/target_sequence_review_decisions.csv`" in text
+    assert "does not approve reviewed sequence provenance" in text
+    assert "does not record `sequence_length_status=matches`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
+    assert "G3SX30 official sequence source review preparation status" in text
