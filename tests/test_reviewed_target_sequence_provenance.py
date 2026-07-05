@@ -183,20 +183,54 @@ def test_g3sx30_reviewed_sequence_row_matches_gate45_policy_source() -> None:
     )
 
 
-def test_g3sx30_reviewed_sequence_row_does_not_change_target_sequence_decision_row() -> None:
+def test_g3sx30_reviewed_sequence_row_has_matching_target_sequence_decision_rows() -> None:
     decision_table = pl.read_csv(TARGET_SEQUENCE_DECISIONS_PATH)
 
-    assert decision_table.height == 1
-    row = decision_table.row(0, named=True)
-    assert row["target_accession"] == "G3SX30"
-    assert row["sequence_review_decision"] == "defer_pending_sequence_review"
-    assert row["sequence_length_status_after_decision"] == "not_fetched"
-    assert row["provenance_review_status_after_decision"] == "deferred"
-    assert row["decision_status"] == "deferred_pending_review"
-    assert row["downstream_block_status_after_decision"] == (
+    assert decision_table.height == 2
+
+    deferred = decision_table.row(0, named=True)
+    assert deferred["target_accession"] == "G3SX30"
+    assert deferred["source_sequence_provenance_row_index"] == 1
+    assert deferred["sequence_review_decision"] == "defer_pending_sequence_review"
+    assert deferred["sequence_length_status_after_decision"] == "not_fetched"
+    assert deferred["provenance_review_status_after_decision"] == "deferred"
+    assert deferred["decision_status"] == "deferred_pending_review"
+    assert deferred["downstream_block_status_after_decision"] == (
         "sequence_review_deferred_still_blocked"
     )
-    assert row["allowed_next_action_after_decision"] == "defer_pending_sequence_review"
+    assert deferred["allowed_next_action_after_decision"] == "defer_pending_sequence_review"
+
+    approval = decision_table.row(1, named=True)
+    assert approval["target_accession"] == "G3SX30"
+    assert approval["source_sequence_provenance_row_index"] == 2
+    assert approval["sequence_review_decision"] == (
+        "approve_reviewed_sequence_provenance_for_planning"
+    )
+    assert approval["sequence_length_status_after_decision"] == "matches"
+    assert approval["provenance_review_status_after_decision"] == "reviewed"
+    assert approval["reviewed_sequence_sha256"] == REVIEWED_SEQUENCE_SHA256
+    assert approval["reviewed_sequence_length"] == 492
+    assert approval["decision_status"] == "reviewed_for_planning_still_preflight_blocked"
+    assert approval["downstream_block_status_after_decision"] == (
+        "sequence_reviewed_still_preflight_decision_blocked"
+    )
+    assert approval["allowed_next_action_after_decision"] == (
+        "consider_later_dry_run_preflight_decision_pr"
+    )
+    assert approval["claim_status"] == "technical_checkpoint"
+
+    forbidden_actions = approval["forbidden_actions"]
+    for required in [
+        "source provenance row mutation",
+        "ready_for_preflight",
+        "Biohub call",
+        "ESMC call",
+        "embedding generation",
+        "Gate 8 promotion",
+        "Gate 9 promotion",
+        "biological claim",
+    ]:
+        assert required in forbidden_actions
 
 
 def test_g3sx30_deferred_sequence_row_does_not_record_reviewed_sequence() -> None:

@@ -2,14 +2,15 @@ schema_version: 1
 schema_id: target_sequence_review_decision_schema
 pipeline_gate: target_sequence_review_decision
 claim_policy: no_biological_claims_until_validation
-maximum_claim_status: repair_worklist
+maximum_claim_status: technical_checkpoint
 description: >
-  Conservative scaffold for future human target sequence review decisions.
+  Conservative schema for human target sequence review decisions.
 purpose: >
-  Defines a decision table for future target sequence review decisions.
-  The first committed G3SX30 decision row is deferred pending review and does
-  not mutate the existing deferred target sequence provenance row. It does not fetch sequences, call Biohub
-  / ESMC, generate embeddings, run curated_embedding_preflight, run
+  Defines a decision table for target sequence review decisions. The table now
+  preserves one deferred G3SX30 decision row and records one reviewed G3SX30
+  approval-for-planning decision row that references reviewed target sequence
+  provenance row 2. It does not fetch sequences, mutate source provenance rows,
+  call Biohub / ESMC, generate embeddings, run curated_embedding_preflight, run
   curated_embedding_single, mark anything ready_for_preflight, promote Gate 8 or
   Gate 9, call Boltz, AF3, or Chai, rerun enrichment or contrast, or make
   biological claims.
@@ -19,18 +20,22 @@ scaffold_scope:
   source_table: data/input/reviewed_target_sequence_provenance.csv
   source_row_requirement: explicit target sequence provenance source row
   checklist_source: docs/g3sx30_target_sequence_review_checklist.md
-  scaffold_status: one_g3sx30_deferred_decision_row
-  current_g3sx30_sequence_source_type: deferred_pending_review
-  current_g3sx30_sequence_length_status: not_fetched
-  current_g3sx30_sequence_review_status: deferred_pending_review
-  current_g3sx30_provenance_review_status: deferred
-  current_g3sx30_allowed_next_action_after_sequence_review: defer_pending_sequence_review
-  current_g3sx30_sequence_review_decision: defer_pending_sequence_review
-  current_g3sx30_decision_status: deferred_pending_review
-  current_g3sx30_downstream_block_status_after_decision: sequence_review_deferred_still_blocked
-  current_g3sx30_allowed_next_action_after_decision: defer_pending_sequence_review
+  scaffold_status: one_g3sx30_deferred_decision_row_plus_one_reviewed_approval_decision_row
+  current_g3sx30_source_sequence_provenance_row_index: 2
+  current_g3sx30_sequence_source_type: reviewed_external_database_record
+  current_g3sx30_sequence_length_status: matches
+  current_g3sx30_sequence_review_status: reviewed_sequence_provenance
+  current_g3sx30_provenance_review_status: reviewed
+  current_g3sx30_allowed_next_action_after_sequence_review: consider_later_dry_run_preflight_decision_pr
+  current_g3sx30_reviewed_sequence_length: 492
+  current_g3sx30_reviewed_sequence_sha256: "e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+  current_g3sx30_sequence_review_decision: approve_reviewed_sequence_provenance_for_planning
+  current_g3sx30_decision_status: reviewed_for_planning_still_preflight_blocked
+  current_g3sx30_downstream_block_status_after_decision: sequence_reviewed_still_preflight_decision_blocked
+  current_g3sx30_allowed_next_action_after_decision: consider_later_dry_run_preflight_decision_pr
   current_g3sx30_worklist_status: planning_policy_updated_runtime_blocked
   current_g3sx30_controlled_worklist_allowed_next_action: keep_blocked
+  current_g3sx30_runtime_status_after_decision: still_not_ready_for_preflight
   does_not_authorize:
     - sequence fetch
     - source provenance row mutation
@@ -212,17 +217,16 @@ required_guardrails:
   - target sequence review decisions do not make biological claims
 
 allowed_language:
-  - target sequence review decision scaffold
-  - header-only decision table
-  - no G3SX30 decision row
-  - future human sequence review decision
-  - still preflight-blocked
-  - separate later dry-run preflight decision
+  - target sequence review decision row
+  - reviewed G3SX30 sequence decision for planning
+  - approve reviewed sequence provenance for planning
+  - reviewed_for_planning_still_preflight_blocked
+  - separate later dry-run preflight decision PR
+  - still not ready_for_preflight
 
 disallowed_language:
-  - G3SX30 reviewed sequence decision
-  - sequence fetched
-  - sequence_length_status matches
+  - sequence fetched inside the repository
+  - source provenance row mutated
   - ready_for_preflight
   - embedding ready
   - Biohub ready

@@ -847,3 +847,41 @@ def test_current_gate_map_records_g3sx30_reviewed_target_sequence_provenance_row
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_g3sx30_reviewed_target_sequence_approval_decision_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 reviewed target sequence approval decision row checkpoint" in text
+    assert "data/input/target_sequence_review_decisions.csv" in text
+    assert (
+        "one deferred G3SX30 decision row and adds one reviewed G3SX30 target sequence approval decision row"
+        in text
+    )
+    assert "data/input/reviewed_target_sequence_provenance.csv#2" in text
+    assert "sequence_review_decision=approve_reviewed_sequence_provenance_for_planning" in text
+    assert "sequence_length_status_after_decision=matches" in text
+    assert "provenance_review_status_after_decision=reviewed" in text
+    assert "reviewed_sequence_length=492" in text
+    assert (
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+        in text
+    )
+    assert "decision_status=reviewed_for_planning_still_preflight_blocked" in text
+    assert (
+        "downstream_block_status_after_decision=sequence_reviewed_still_preflight_decision_blocked"
+        in text
+    )
+    assert "allowed_next_action_after_decision=consider_later_dry_run_preflight_decision_pr" in text
+    assert "planning-only approval decision" in text
+    assert "does not mutate `data/input/reviewed_target_sequence_provenance.csv`" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not fetch sequences inside the repository" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
