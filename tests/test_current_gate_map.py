@@ -983,3 +983,37 @@ def test_current_gate_map_records_g3sx30_dry_run_preflight_manifest_scaffold() -
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_first_g3sx30_dry_run_preflight_manifest_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "First G3SX30 dry-run preflight manifest row checkpoint" in text
+    assert "data/input/g3sx30_dry_run_preflight_manifest.csv" in text
+    assert "one G3SX30 dry-run preflight manifest row" in text
+    assert "data/input/g3sx30_dry_run_preflight_decisions.csv#1" in text
+    assert "manifest_entry_status=manifest_scaffold_ready_runtime_blocked" in text
+    assert "dry_run_only=true" in text
+    assert "max_live_batch_size=0" in text
+    assert "ready_for_preflight_after_manifest=false" in text
+    assert "sequence_fetch_allowed=false" in text
+    assert "biohub_call_allowed=false" in text
+    assert "esmc_call_allowed=false" in text
+    assert "embedding_generation_allowed=false" in text
+    assert "curated_embedding_preflight_allowed=false" in text
+    assert "curated_embedding_single_allowed=false" in text
+    assert "reviewed_sequence_length=492" in text
+    assert (
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+        in text
+    )
+    assert "planning-only dry-run preflight manifest row" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text

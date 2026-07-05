@@ -2,25 +2,25 @@ schema_version: 1
 schema_id: g3sx30_dry_run_preflight_manifest_schema
 pipeline_gate: g3sx30_dry_run_preflight_manifest
 claim_policy: no_biological_claims_until_validation
-maximum_claim_status: repair_worklist
+maximum_claim_status: technical_checkpoint
 description: >
-  Conservative header-only scaffold for a later G3SX30 dry-run preflight manifest.
+  Conservative G3SX30 dry-run preflight manifest table.
 purpose: >
-  Defines a manifest contract for a later dry-run preflight planning artifact.
-  The source row is the first G3SX30 dry-run preflight decision row in
-  data/input/g3sx30_dry_run_preflight_decisions.csv#1. This scaffold does not
-  add a committed manifest entry, does not run curated_embedding_preflight, does
-  not run curated_embedding_single, does not call Biohub / ESMC, does not
-  generate embeddings, does not create .npy artifacts, does not mark anything
-  ready_for_preflight, does not promote Gate 8 or Gate 9, does not call Boltz,
-  AF3, or Chai, and does not make biological claims.
+  Records the first G3SX30 dry-run preflight manifest row. The row references
+  the first G3SX30 dry-run preflight decision row in
+  data/input/g3sx30_dry_run_preflight_decisions.csv#1. This manifest entry is
+  dry-run-only, keeps max_live_batch_size at 0, keeps ready_for_preflight false,
+  does not run curated_embedding_preflight, does not run curated_embedding_single,
+  does not call Biohub / ESMC, does not generate embeddings, does not create .npy
+  artifacts, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or
+  Chai, and does not make biological claims.
 
 scaffold_scope:
   source_layer: g3sx30_dry_run_preflight_decision
   source_table: data/input/g3sx30_dry_run_preflight_decisions.csv
   source_row_index: 1
   source_row_requirement: first G3SX30 dry-run preflight decision row
-  scaffold_status: header_only_no_committed_g3sx30_dry_run_preflight_manifest_entry
+  scaffold_status: one_g3sx30_dry_run_preflight_manifest_row_runtime_blocked
   current_g3sx30_source_dry_run_preflight_decision: approve_dry_run_preflight_for_planning
   current_g3sx30_source_dry_run_preflight_status_after_decision: dry_run_preflight_planning_approved_runtime_blocked
   current_g3sx30_source_allowed_next_action_after_decision: prepare_later_dry_run_preflight_manifest_pr
@@ -28,11 +28,17 @@ scaffold_scope:
   current_g3sx30_source_ready_for_preflight_after_decision: "false"
   current_g3sx30_reviewed_sequence_length: 492
   current_g3sx30_reviewed_sequence_sha256: "e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
-  current_g3sx30_manifest_entry_status: no_committed_manifest_entry_yet
-  current_g3sx30_allowed_next_action_after_manifest_scaffold: keep_blocked
-  current_g3sx30_runtime_status_after_manifest_scaffold: still_not_ready_for_preflight
-  dry_run_only_requirement: true
-  max_live_batch_size_requirement: 0
+  current_g3sx30_manifest_entry_status: manifest_scaffold_ready_runtime_blocked
+  current_g3sx30_dry_run_only: true
+  current_g3sx30_max_live_batch_size: 0
+  current_g3sx30_ready_for_preflight_after_manifest: "false"
+  current_g3sx30_sequence_fetch_allowed: false
+  current_g3sx30_biohub_call_allowed: false
+  current_g3sx30_esmc_call_allowed: false
+  current_g3sx30_embedding_generation_allowed: false
+  current_g3sx30_curated_embedding_preflight_allowed: false
+  current_g3sx30_curated_embedding_single_allowed: false
+  current_g3sx30_runtime_status_after_manifest: still_not_ready_for_preflight
   does_not_authorize:
     - sequence fetch
     - Biohub calls
@@ -112,32 +118,31 @@ required_manifest_defaults:
   biological_claim_allowed: false
 
 required_guardrails:
-  - manifest scaffold does not fetch sequences
-  - manifest scaffold does not call Biohub
-  - manifest scaffold does not call ESMC
-  - manifest scaffold does not generate embeddings
-  - manifest scaffold does not run curated_embedding_preflight
-  - manifest scaffold does not run curated_embedding_single
-  - manifest scaffold does not mark ready_for_preflight
-  - manifest scaffold does not create .npy artifacts
-  - manifest scaffold does not commit data/output artifacts
-  - manifest scaffold does not promote Gate 8
-  - manifest scaffold does not promote Gate 9
-  - manifest scaffold does not call Boltz
-  - manifest scaffold does not call AF3
-  - manifest scaffold does not call Chai
-  - manifest scaffold does not rerun enrichment or contrast
-  - manifest scaffold does not make biological claims
+  - manifest row does not fetch sequences
+  - manifest row does not call Biohub
+  - manifest row does not call ESMC
+  - manifest row does not generate embeddings
+  - manifest row does not run curated_embedding_preflight
+  - manifest row does not run curated_embedding_single
+  - manifest row does not mark ready_for_preflight
+  - manifest row does not create .npy artifacts
+  - manifest row does not commit data/output artifacts
+  - manifest row does not promote Gate 8
+  - manifest row does not promote Gate 9
+  - manifest row does not call Boltz
+  - manifest row does not call AF3
+  - manifest row does not call Chai
+  - manifest row does not rerun enrichment or contrast
+  - manifest row does not make biological claims
 
 allowed_language:
-  - dry-run preflight manifest scaffold
-  - header-only dry-run preflight manifest table
+  - dry-run preflight manifest row
   - source dry-run preflight decision row 1
-  - no committed manifest entry yet
+  - manifest_scaffold_ready_runtime_blocked
   - dry_run_only=true
   - max_live_batch_size=0
   - still not ready_for_preflight
-  - later dry-run preflight manifest row PR
+  - later explicit dry-run preflight execution PR
 
 disallowed_language:
   - curated_embedding_preflight run
