@@ -27,21 +27,25 @@ def load_schema() -> dict:
     return yaml.safe_load(SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
-def test_g3sx30_dry_run_preflight_decision_schema_records_header_only_scaffold() -> None:
+def load_table() -> pl.DataFrame:
+    return pl.read_csv(TABLE_PATH)
+
+
+def g3sx30_row() -> dict[str, object]:
+    return load_table().row(0, named=True)
+
+
+def test_g3sx30_dry_run_preflight_decision_schema_records_first_row() -> None:
     schema = load_schema()
 
     assert schema["schema_id"] == "g3sx30_dry_run_preflight_decision_schema"
     assert schema["pipeline_gate"] == "g3sx30_dry_run_preflight_decision"
     assert schema["claim_policy"] == "no_biological_claims_until_validation"
-    assert schema["maximum_claim_status"] == "repair_worklist"
-    assert schema["scaffold_scope"]["source_layer"] == "target_sequence_review_decision"
-    assert schema["scaffold_scope"]["source_table"] == (
-        "data/input/target_sequence_review_decisions.csv"
-    )
+    assert schema["maximum_claim_status"] == "technical_checkpoint"
     assert schema["scaffold_scope"]["source_row_index"] == 2
     assert (
         schema["scaffold_scope"]["scaffold_status"]
-        == "header_only_no_committed_g3sx30_dry_run_preflight_decision_row"
+        == "one_g3sx30_dry_run_preflight_decision_row_runtime_blocked"
     )
     assert (
         schema["scaffold_scope"]["current_g3sx30_source_sequence_review_decision"]
@@ -51,21 +55,25 @@ def test_g3sx30_dry_run_preflight_decision_schema_records_header_only_scaffold()
         schema["scaffold_scope"]["current_g3sx30_source_sequence_length_status_after_decision"]
         == "matches"
     )
-    assert (
-        schema["scaffold_scope"]["current_g3sx30_source_decision_status"]
-        == "reviewed_for_planning_still_preflight_blocked"
-    )
     assert schema["scaffold_scope"]["current_g3sx30_reviewed_sequence_length"] == 492
     assert schema["scaffold_scope"]["current_g3sx30_reviewed_sequence_sha256"] == (
         REVIEWED_SEQUENCE_SHA256
     )
     assert (
-        schema["scaffold_scope"]["current_g3sx30_dry_run_preflight_decision_status"]
-        == "no_committed_decision_row_yet"
+        schema["scaffold_scope"]["current_g3sx30_dry_run_preflight_decision"]
+        == "approve_dry_run_preflight_for_planning"
     )
     assert (
-        schema["scaffold_scope"]["current_g3sx30_runtime_status_after_scaffold"]
-        == "still_not_ready_for_preflight"
+        schema["scaffold_scope"]["current_g3sx30_dry_run_preflight_status_after_decision"]
+        == "dry_run_preflight_planning_approved_runtime_blocked"
+    )
+    assert (
+        schema["scaffold_scope"]["current_g3sx30_allowed_next_action_after_decision"]
+        == "prepare_later_dry_run_preflight_manifest_pr"
+    )
+    assert schema["scaffold_scope"]["current_g3sx30_max_live_batch_size_after_decision"] == 0
+    assert schema["scaffold_scope"]["current_g3sx30_ready_for_preflight_after_decision"] == (
+        "false"
     )
 
 
@@ -76,35 +84,100 @@ def test_g3sx30_dry_run_preflight_decision_schema_required_columns_match_helper(
     assert list(G3SX30_DRY_RUN_PREFLIGHT_DECISION_SCHEMA) == REQUIRED_COLUMNS
 
 
-def test_g3sx30_dry_run_preflight_decision_table_is_header_only() -> None:
-    table = pl.read_csv(TABLE_PATH)
+def test_g3sx30_dry_run_preflight_decision_table_has_one_g3sx30_row() -> None:
+    table = load_table()
 
     assert table.columns == REQUIRED_COLUMNS
-    assert table.height == 0
+    assert table.height == 1
     validate_g3sx30_dry_run_preflight_decision_schema(table)
     validate_g3sx30_dry_run_preflight_decision_rows(table)
 
 
-def test_g3sx30_dry_run_preflight_source_decision_row_is_reviewed_and_still_blocked() -> None:
-    source_table = pl.read_csv(SOURCE_DECISIONS_PATH)
-    source_row = source_table.row(1, named=True)
+def test_g3sx30_dry_run_preflight_decision_row_records_planning_approval() -> None:
+    row = g3sx30_row()
 
-    assert source_row["target_accession"] == "G3SX30"
-    assert source_row["source_sequence_provenance_row_index"] == 2
-    assert source_row["sequence_review_decision"] == (
+    assert row["source_target_sequence_review_decision_table"] == (
+        "data/input/target_sequence_review_decisions.csv"
+    )
+    assert row["source_target_sequence_review_decision_row_index"] == 2
+    assert row["target_accession"] == "G3SX30"
+    assert row["source_sequence_review_decision"] == (
         "approve_reviewed_sequence_provenance_for_planning"
     )
-    assert source_row["sequence_length_status_after_decision"] == "matches"
-    assert source_row["provenance_review_status_after_decision"] == "reviewed"
-    assert source_row["reviewed_sequence_length"] == 492
-    assert source_row["reviewed_sequence_sha256"] == REVIEWED_SEQUENCE_SHA256
-    assert source_row["decision_status"] == "reviewed_for_planning_still_preflight_blocked"
-    assert source_row["downstream_block_status_after_decision"] == (
-        "sequence_reviewed_still_preflight_decision_blocked"
+    assert row["source_sequence_length_status_after_decision"] == "matches"
+    assert row["source_provenance_review_status_after_decision"] == "reviewed"
+    assert row["source_decision_status"] == "reviewed_for_planning_still_preflight_blocked"
+    assert row["reviewed_sequence_sha256"] == REVIEWED_SEQUENCE_SHA256
+    assert row["reviewed_sequence_length"] == 492
+    assert row["dry_run_preflight_decision"] == "approve_dry_run_preflight_for_planning"
+    assert row["dry_run_preflight_status_after_decision"] == (
+        "dry_run_preflight_planning_approved_runtime_blocked"
     )
-    assert source_row["allowed_next_action_after_decision"] == (
-        "consider_later_dry_run_preflight_decision_pr"
+    assert row["allowed_next_action_after_decision"] == (
+        "prepare_later_dry_run_preflight_manifest_pr"
     )
+    assert row["max_live_batch_size_after_decision"] == 0
+    assert str(row["ready_for_preflight_after_decision"]).lower() == "false"
+    assert row["claim_status"] == "technical_checkpoint"
+
+
+def test_g3sx30_dry_run_preflight_row_matches_source_decision_row() -> None:
+    row = g3sx30_row()
+    source_table = pl.read_csv(SOURCE_DECISIONS_PATH)
+    source_row = source_table.row(
+        row["source_target_sequence_review_decision_row_index"] - 1,
+        named=True,
+    )
+
+    assert source_row["candidate_set"] == row["candidate_set"]
+    assert source_row["lane_name"] == row["lane_name"]
+    assert source_row["candidate_id"] == row["candidate_id"]
+    assert source_row["target_accession"] == row["target_accession"]
+    assert source_row["sequence_review_decision"] == row["source_sequence_review_decision"]
+    assert (
+        source_row["sequence_length_status_after_decision"]
+        == (row["source_sequence_length_status_after_decision"])
+    )
+    assert (
+        source_row["provenance_review_status_after_decision"]
+        == (row["source_provenance_review_status_after_decision"])
+    )
+    assert source_row["decision_status"] == row["source_decision_status"]
+    assert (
+        source_row["downstream_block_status_after_decision"]
+        == (row["source_downstream_block_status_after_decision"])
+    )
+    assert source_row["reviewed_sequence_sha256"] == row["reviewed_sequence_sha256"]
+    assert source_row["reviewed_sequence_length"] == row["reviewed_sequence_length"]
+
+
+def test_g3sx30_dry_run_preflight_row_forbids_runtime_side_effects() -> None:
+    row = g3sx30_row()
+
+    assert row["max_live_batch_size_after_decision"] == 0
+    assert str(row["ready_for_preflight_after_decision"]).lower() == "false"
+
+    forbidden_actions = row["forbidden_actions"]
+    for required in [
+        "sequence fetch",
+        "Biohub call",
+        "ESMC call",
+        "embedding generation",
+        "curated_embedding_preflight run",
+        "curated_embedding_single run",
+        "data/output commit",
+        ".npy artifact",
+        "ready_for_preflight",
+        "Gate 8 promotion",
+        "Gate 9 promotion",
+        "Boltz call",
+        "AF3 call",
+        "Chai call",
+        "enrichment rerun",
+        "contrast rerun",
+        "biological claim",
+    ]:
+        assert required in forbidden_actions
 
 
 def synthetic_approval_row() -> dict[str, object]:

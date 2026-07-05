@@ -279,7 +279,7 @@ def validate_g3sx30_dry_run_preflight_decision_rows(table: pl.DataFrame) -> None
                     "reviewed_for_planning_still_preflight_blocked source decision"
                 )
 
-        if ready_for_preflight != "false":
+        if ready_for_preflight.lower() != "false":
             raise ValueError("dry-run preflight decisions must not mark ready_for_preflight")
 
         max_live_batch_size = int(row["max_live_batch_size_after_decision"])

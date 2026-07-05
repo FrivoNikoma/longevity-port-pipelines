@@ -916,3 +916,36 @@ def test_current_gate_map_records_g3sx30_dry_run_preflight_decision_scaffold() -
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_first_g3sx30_dry_run_preflight_decision_row() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "First G3SX30 dry-run preflight decision row checkpoint" in text
+    assert "data/input/g3sx30_dry_run_preflight_decisions.csv" in text
+    assert "one G3SX30 dry-run preflight decision row" in text
+    assert "data/input/target_sequence_review_decisions.csv#2" in text
+    assert "dry_run_preflight_decision=approve_dry_run_preflight_for_planning" in text
+    assert (
+        "dry_run_preflight_status_after_decision=dry_run_preflight_planning_approved_runtime_blocked"
+        in text
+    )
+    assert "allowed_next_action_after_decision=prepare_later_dry_run_preflight_manifest_pr" in text
+    assert "max_live_batch_size_after_decision=0" in text
+    assert "ready_for_preflight_after_decision=false" in text
+    assert "reviewed_sequence_length=492" in text
+    assert (
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+        in text
+    )
+    assert "planning-only dry-run preflight decision row" in text
+    assert "authorizes only preparation of a later dry-run preflight manifest PR" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not create or commit `.npy` artifacts" in text
+    assert "does not mark anything `ready_for_preflight`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
