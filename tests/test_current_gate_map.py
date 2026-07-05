@@ -715,3 +715,35 @@ def test_current_gate_map_records_g3sx30_target_sequence_review_checklist() -> N
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not call Boltz, AF3, or Chai" in text
     assert "does not make biological claims" in text
+
+
+def test_current_gate_map_records_target_sequence_review_decision_scaffold() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Target sequence review decision scaffold checkpoint" in text
+    assert "data/config/target_sequence_review_decision_schema.yaml" in text
+    assert "data/input/target_sequence_review_decisions.csv" in text
+    assert "src/longevity_port_pipelines/stages/target_sequence_review_decisions.py" in text
+    assert "header-only decision scaffold" in text
+    assert "adds no G3SX30 decision row" in text
+    assert "does not mutate the existing G3SX30 target sequence provenance row" in text
+    assert "approve_reviewed_sequence_provenance_for_planning" in text
+    assert "defer_pending_sequence_review" in text
+    assert "reject_sequence_provenance" in text
+    assert "keep_blocked_after_mismatch" in text
+    assert "sequence_reviewed_still_preflight_decision_blocked" in text
+    assert "separate later dry-run preflight decision PR" in text
+    assert "does not fetch sequences" in text
+    assert "does not add reviewed sequence provenance" in text
+    assert "does not record `sequence_length_status=matches`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not mark ready_for_preflight" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
+    assert "target sequence review decision scaffold status" in text
+    assert "no G3SX30 decision row" in text
+    assert "no mutation of reviewed target sequence provenance rows" in text

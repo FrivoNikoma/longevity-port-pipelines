@@ -1,0 +1,236 @@
+schema_version: 1
+schema_id: target_sequence_review_decision_schema
+pipeline_gate: target_sequence_review_decision
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_checkpoint
+description: >
+  Conservative scaffold for future human target sequence review decisions.
+purpose: >
+  Defines a header-only decision table for future target sequence review decisions.
+  The scaffold does not add a G3SX30 decision row and does not mutate the existing
+  deferred target sequence provenance row. It does not fetch sequences, call Biohub
+  / ESMC, generate embeddings, run curated_embedding_preflight, run
+  curated_embedding_single, mark anything ready_for_preflight, promote Gate 8 or
+  Gate 9, call Boltz, AF3, or Chai, rerun enrichment or contrast, or make
+  biological claims.
+
+scaffold_scope:
+  source_layer: reviewed_target_sequence_provenance
+  source_table: data/input/reviewed_target_sequence_provenance.csv
+  source_row_requirement: explicit target sequence provenance source row
+  checklist_source: docs/g3sx30_target_sequence_review_checklist.md
+  scaffold_status: header_only_no_rows
+  current_g3sx30_sequence_source_type: deferred_pending_review
+  current_g3sx30_sequence_length_status: not_fetched
+  current_g3sx30_sequence_review_status: deferred_pending_review
+  current_g3sx30_provenance_review_status: deferred
+  current_g3sx30_allowed_next_action_after_sequence_review: defer_pending_sequence_review
+  current_g3sx30_worklist_status: planning_policy_updated_runtime_blocked
+  current_g3sx30_controlled_worklist_allowed_next_action: keep_blocked
+  does_not_authorize:
+    - sequence fetch
+    - source provenance row mutation
+    - Biohub calls
+    - ESMC calls
+    - embedding generation
+    - curated_embedding_preflight
+    - curated_embedding_single
+    - ready_for_preflight
+    - data/output commits
+    - .npy artifacts
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - Boltz calls
+    - AF3 calls
+    - Chai calls
+    - enrichment rerun
+    - contrast rerun
+    - biological claims
+
+required_columns:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - source_sequence_provenance_table
+  - source_sequence_provenance_row_index
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - sequence_review_decision
+  - sequence_length_status_after_decision
+  - provenance_review_status_after_decision
+  - reviewed_sequence_sha256
+  - reviewed_sequence_length
+  - decision_status
+  - downstream_block_status_after_decision
+  - allowed_next_action_after_decision
+  - claim_policy
+  - claim_status
+  - review_note
+  - reviewer_id
+  - review_date
+  - forbidden_actions
+
+allowed_source_sequence_provenance_tables:
+  - data/input/reviewed_target_sequence_provenance.csv
+
+allowed_sequence_review_decisions:
+  - approve_reviewed_sequence_provenance_for_planning
+  - defer_pending_sequence_review
+  - reject_sequence_provenance
+  - keep_blocked_after_mismatch
+
+allowed_sequence_length_statuses_after_decision:
+  - matches
+  - mismatch
+  - not_checked
+  - not_fetched
+
+allowed_provenance_review_statuses_after_decision:
+  - reviewed
+  - rejected
+  - needs_review
+  - deferred
+
+allowed_decision_statuses:
+  - reviewed_for_planning_still_preflight_blocked
+  - deferred_pending_review
+  - rejected_sequence_provenance
+  - keep_blocked_after_mismatch
+
+allowed_downstream_block_statuses_after_decision:
+  - sequence_reviewed_still_preflight_decision_blocked
+  - sequence_review_deferred_still_blocked
+  - sequence_review_rejected_or_excluded
+  - sequence_review_mismatch_still_blocked
+
+allowed_next_actions_after_decision:
+  - consider_later_dry_run_preflight_decision_pr
+  - defer_pending_sequence_review
+  - reject_or_exclude_sequence_source
+  - keep_blocked
+
+allowed_claim_policies:
+  - no_biological_claims_until_validation
+
+allowed_claim_statuses:
+  - technical_checkpoint
+  - repair_worklist
+
+decision_rules:
+  approve_reviewed_sequence_provenance_for_planning:
+    required_sequence_length_status_after_decision: matches
+    required_provenance_review_status_after_decision: reviewed
+    decision_status: reviewed_for_planning_still_preflight_blocked
+    downstream_block_status_after_decision: sequence_reviewed_still_preflight_decision_blocked
+    allowed_next_action_after_decision: consider_later_dry_run_preflight_decision_pr
+    claim_status: technical_checkpoint
+    mutates_source_sequence_provenance_row: false
+    ready_for_preflight: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  defer_pending_sequence_review:
+    decision_status: deferred_pending_review
+    downstream_block_status_after_decision: sequence_review_deferred_still_blocked
+    allowed_next_action_after_decision: defer_pending_sequence_review
+    claim_status: repair_worklist
+    mutates_source_sequence_provenance_row: false
+    ready_for_preflight: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  reject_sequence_provenance:
+    decision_status: rejected_sequence_provenance
+    downstream_block_status_after_decision: sequence_review_rejected_or_excluded
+    allowed_next_action_after_decision: reject_or_exclude_sequence_source
+    claim_status: repair_worklist
+    mutates_source_sequence_provenance_row: false
+    ready_for_preflight: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+  keep_blocked_after_mismatch:
+    required_sequence_length_status_after_decision: mismatch
+    decision_status: keep_blocked_after_mismatch
+    downstream_block_status_after_decision: sequence_review_mismatch_still_blocked
+    allowed_next_action_after_decision: keep_blocked
+    claim_status: repair_worklist
+    mutates_source_sequence_provenance_row: false
+    ready_for_preflight: false
+    embedding_ready: false
+    biohub_ready: false
+    live_call_ready: false
+    gate8_eligible: false
+    gate9_eligible: false
+    boltz_ready: false
+    af3_ready: false
+    chai_ready: false
+    biological_claim_allowed: false
+
+required_guardrails:
+  - target sequence review decisions do not fetch sequences
+  - target sequence review decisions do not mutate source provenance rows
+  - target sequence review decisions do not call Biohub
+  - target sequence review decisions do not call ESMC
+  - target sequence review decisions do not generate embeddings
+  - target sequence review decisions do not run curated_embedding_preflight
+  - target sequence review decisions do not run curated_embedding_single
+  - target sequence review decisions do not mark ready_for_preflight
+  - target sequence review decisions do not create .npy artifacts
+  - target sequence review decisions do not commit data/output artifacts
+  - target sequence review decisions do not promote Gate 8
+  - target sequence review decisions do not promote Gate 9
+  - target sequence review decisions do not call Boltz
+  - target sequence review decisions do not call AF3
+  - target sequence review decisions do not call Chai
+  - target sequence review decisions do not rerun enrichment or contrast
+  - target sequence review decisions do not make biological claims
+
+allowed_language:
+  - target sequence review decision scaffold
+  - header-only decision table
+  - no G3SX30 decision row
+  - future human sequence review decision
+  - still preflight-blocked
+  - separate later dry-run preflight decision
+
+disallowed_language:
+  - G3SX30 reviewed sequence decision
+  - sequence fetched
+  - sequence_length_status matches
+  - ready_for_preflight
+  - embedding ready
+  - Biohub ready
+  - ESMC ready
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - Boltz ready
+  - AF3 ready
+  - Chai ready
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
