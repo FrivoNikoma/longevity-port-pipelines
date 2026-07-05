@@ -1,0 +1,160 @@
+schema_version: 1
+schema_id: g3sx30_dry_run_preflight_manifest_schema
+pipeline_gate: g3sx30_dry_run_preflight_manifest
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: repair_worklist
+description: >
+  Conservative header-only scaffold for a later G3SX30 dry-run preflight manifest.
+purpose: >
+  Defines a manifest contract for a later dry-run preflight planning artifact.
+  The source row is the first G3SX30 dry-run preflight decision row in
+  data/input/g3sx30_dry_run_preflight_decisions.csv#1. This scaffold does not
+  add a committed manifest entry, does not run curated_embedding_preflight, does
+  not run curated_embedding_single, does not call Biohub / ESMC, does not
+  generate embeddings, does not create .npy artifacts, does not mark anything
+  ready_for_preflight, does not promote Gate 8 or Gate 9, does not call Boltz,
+  AF3, or Chai, and does not make biological claims.
+
+scaffold_scope:
+  source_layer: g3sx30_dry_run_preflight_decision
+  source_table: data/input/g3sx30_dry_run_preflight_decisions.csv
+  source_row_index: 1
+  source_row_requirement: first G3SX30 dry-run preflight decision row
+  scaffold_status: header_only_no_committed_g3sx30_dry_run_preflight_manifest_entry
+  current_g3sx30_source_dry_run_preflight_decision: approve_dry_run_preflight_for_planning
+  current_g3sx30_source_dry_run_preflight_status_after_decision: dry_run_preflight_planning_approved_runtime_blocked
+  current_g3sx30_source_allowed_next_action_after_decision: prepare_later_dry_run_preflight_manifest_pr
+  current_g3sx30_source_max_live_batch_size_after_decision: 0
+  current_g3sx30_source_ready_for_preflight_after_decision: "false"
+  current_g3sx30_reviewed_sequence_length: 492
+  current_g3sx30_reviewed_sequence_sha256: "e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f"
+  current_g3sx30_manifest_entry_status: no_committed_manifest_entry_yet
+  current_g3sx30_allowed_next_action_after_manifest_scaffold: keep_blocked
+  current_g3sx30_runtime_status_after_manifest_scaffold: still_not_ready_for_preflight
+  dry_run_only_requirement: true
+  max_live_batch_size_requirement: 0
+  does_not_authorize:
+    - sequence fetch
+    - Biohub calls
+    - ESMC calls
+    - embedding generation
+    - curated_embedding_preflight
+    - curated_embedding_single
+    - ready_for_preflight
+    - data/output commits
+    - .npy artifacts
+    - Gate 8 eligibility
+    - Gate 9 eligibility
+    - Boltz calls
+    - AF3 calls
+    - Chai calls
+    - enrichment rerun
+    - contrast rerun
+    - biological claims
+
+required_columns:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - source_dry_run_preflight_decision_table
+  - source_dry_run_preflight_decision_row_index
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - source_dry_run_preflight_decision
+  - source_dry_run_preflight_status_after_decision
+  - source_allowed_next_action_after_decision
+  - source_max_live_batch_size_after_decision
+  - source_ready_for_preflight_after_decision
+  - reviewed_sequence_sha256
+  - reviewed_sequence_length
+  - manifest_entry_status
+  - dry_run_only
+  - max_live_batch_size
+  - ready_for_preflight_after_manifest
+  - sequence_fetch_allowed
+  - biohub_call_allowed
+  - esmc_call_allowed
+  - embedding_generation_allowed
+  - curated_embedding_preflight_allowed
+  - curated_embedding_single_allowed
+  - claim_policy
+  - claim_status
+  - review_note
+  - reviewer_id
+  - review_date
+  - forbidden_actions
+
+allowed_source_dry_run_preflight_decision_tables:
+  - data/input/g3sx30_dry_run_preflight_decisions.csv
+
+allowed_manifest_entry_statuses:
+  - manifest_scaffold_ready_runtime_blocked
+  - manifest_entry_deferred_still_blocked
+
+required_manifest_defaults:
+  dry_run_only: true
+  max_live_batch_size: 0
+  ready_for_preflight_after_manifest: "false"
+  sequence_fetch_allowed: false
+  biohub_call_allowed: false
+  esmc_call_allowed: false
+  embedding_generation_allowed: false
+  curated_embedding_preflight_allowed: false
+  curated_embedding_single_allowed: false
+  gate8_eligible: false
+  gate9_eligible: false
+  boltz_ready: false
+  af3_ready: false
+  chai_ready: false
+  biological_claim_allowed: false
+
+required_guardrails:
+  - manifest scaffold does not fetch sequences
+  - manifest scaffold does not call Biohub
+  - manifest scaffold does not call ESMC
+  - manifest scaffold does not generate embeddings
+  - manifest scaffold does not run curated_embedding_preflight
+  - manifest scaffold does not run curated_embedding_single
+  - manifest scaffold does not mark ready_for_preflight
+  - manifest scaffold does not create .npy artifacts
+  - manifest scaffold does not commit data/output artifacts
+  - manifest scaffold does not promote Gate 8
+  - manifest scaffold does not promote Gate 9
+  - manifest scaffold does not call Boltz
+  - manifest scaffold does not call AF3
+  - manifest scaffold does not call Chai
+  - manifest scaffold does not rerun enrichment or contrast
+  - manifest scaffold does not make biological claims
+
+allowed_language:
+  - dry-run preflight manifest scaffold
+  - header-only dry-run preflight manifest table
+  - source dry-run preflight decision row 1
+  - no committed manifest entry yet
+  - dry_run_only=true
+  - max_live_batch_size=0
+  - still not ready_for_preflight
+  - later dry-run preflight manifest row PR
+
+disallowed_language:
+  - curated_embedding_preflight run
+  - curated_embedding_single run
+  - Biohub call
+  - ESMC call
+  - embedding generated
+  - .npy artifact committed
+  - ready_for_preflight
+  - Gate 8 eligible
+  - Gate 9 eligible
+  - Boltz ready
+  - AF3 ready
+  - Chai ready
+  - validated longevity signal
+  - validated biological hit
+  - confirmed binding change
+  - confirmed functional effect
+  - safe to port
+  - proven pro-longevity variant
