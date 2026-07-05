@@ -685,3 +685,33 @@ def test_current_gate_map_records_g3sx30_deferred_target_sequence_provenance_row
         "reviewed target sequence provenance rows: one G3SX30 deferred pending-review row" in text
     )
     assert "no ready_for_preflight" in text
+
+
+def test_current_gate_map_records_g3sx30_target_sequence_review_checklist() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "G3SX30 target sequence review checklist checkpoint" in text
+    assert "docs/g3sx30_target_sequence_review_checklist.md" in text
+    assert "human-review requirements" in text
+    assert "deferred_pending_review" in text
+    assert "reviewed_sequence_provenance" in text
+    assert "data/input/ortholog_evidence_gate45_policy_updates.csv#1" in text
+    assert "accession `G3SX30`" in text
+    assert "database `UniProtKB TrEMBL`" in text
+    assert "species `Loxodonta africana`" in text
+    assert "taxid `9785`" in text
+    assert "gene symbol `MDM2`" in text
+    assert "explicit reviewed sequence artifact/hash checks" in text
+    assert "expected metadata length `492`" in text
+    assert "mismatch handling" in text
+    assert "separate later dry-run preflight decision" in text
+    assert "does not fetch sequences" in text
+    assert "does not add reviewed sequence provenance" in text
+    assert "does not record `sequence_length_status=matches`" in text
+    assert "does not call Biohub / ESMC" in text
+    assert "does not generate embeddings" in text
+    assert "does not run `curated_embedding_preflight`" in text
+    assert "does not run `curated_embedding_single`" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not call Boltz, AF3, or Chai" in text
+    assert "does not make biological claims" in text
