@@ -383,6 +383,21 @@ This note does not run `--help`, does not run any actual command, does not make 
 The natural next step after this note is the actual G3SX30 wrapper help observation PR. That future PR should still be help-only, still no execution, still no Biohub / ESMC, and still no embeddings.
 
 
+## G3SX30 wrapper help target inspection blocker checkpoint
+
+`docs/g3sx30_wrapper_help_target_inspection_blocker.md` records the source-inspection blocker after the G3SX30 wrapper help observation note. It is a docs/tests-only checkpoint that records source search results; it is not a schema/table/helper layer and it is not a help-observation evidence layer.
+
+The note records `help_target_inspection_status=inspected_target_missing`, `real_g3sx30_wrapper_help_target_found=false`, `pyproject_g3sx30_script_entry_present=false`, `pyproject_wrapper_script_entry_present=false`, `ordinary_curated_embedding_scripts_present=true`, `ordinary_scripts_valid_as_substitutes=false`, `actual_cli_help_observed=false`, `actual_command_verified=false`, `command_selected=false`, `output_path_selected=false`, `execution_plan_materialized=false`, and `runtime_still_blocked=true`.
+
+The inspection found `curated_embedding_preflight_dry_run_wrapper` only as an expected future command family in scaffold/config/docs/tests, not as a real executable script entry point or implemented wrapper command. It also found that `pyproject.toml` exposes ordinary curated embedding scripts (`curated-embedding-preflight` and `curated-embedding-single`) but no G3SX30 script entry and no wrapper script entry.
+
+This blocker records that the ordinary commands `curated-embedding-preflight`, `curated_embedding_preflight`, `curated-embedding-single`, and `curated_embedding_single` must not be observed as substitutes for the missing G3SX30 manifest-aware wrapper target. Observing their help output would not verify the wrapper interface and would create a misleading observed-help claim.
+
+This blocker does not run `--help`, does not run any actual command, does not make observed-help claims, does not make actual CLI flag verification claims, does not add a `pyproject.toml` script entry point, does not add a Typer executable wrapper, does not implement a wrapper, does not authorize wrapper execution, does not authorize dry-run execution, does not authorize live execution, does not select a command, does not select an output path, does not materialize an execution plan, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not commit `data/output` artifacts, does not mark anything `ready_for_preflight`, does not unlock the manifest runtime path, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+The natural next step is not help observation yet. The next complete safe layer should create an explicitly non-executed G3SX30 manifest-aware wrapper source/entry-point implementation plan or implementation boundary. Only after a real wrapper help target exists may a later PR perform actual help-only observation, still with no wrapper execution, no dry-run execution, no Biohub / ESMC, and no embeddings.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.
