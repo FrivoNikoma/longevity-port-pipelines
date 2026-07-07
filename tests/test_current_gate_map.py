@@ -1883,3 +1883,45 @@ def test_current_gate_map_records_g3sx30_wrapper_dry_run_execution_plan_review()
         "no Gate 8 / Gate 9",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_wrapper_dry_run_external_output_execution() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 wrapper dry-run external output execution checkpoint",
+        "src/longevity_port_pipelines/stages/g3sx30_wrapper_source_entrypoint_boundary.py",
+        "permits only the reviewed G3SX30 external-output dry-run path",
+        "uv run g3sx30-wrapper-dry-run --manifest data/input/g3sx30_dry_run_preflight_manifest.csv --manifest-row-index 1 --output-path D:/biohub_projects/_chatgpt_observations/g3sx30_wrapper_dry_run_execution_plan.json",
+        "validates `data/input/g3sx30_dry_run_preflight_manifest.csv#1`",
+        "validates the G3SX30 constants",
+        "validates the reviewed external output path",
+        "writes a small JSON observation",
+        "JSON output is external and must not be committed",
+        "dry_run_executed=true",
+        "manifest_row_index=1",
+        "target_accession=G3SX30",
+        "target_taxid=9785",
+        "reviewed_sequence_length=492",
+        "reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f",
+        "biohub_esmc_called=false",
+        "embedding_generation_performed=false",
+        "npy_artifact_created=false",
+        "data_output_artifact_created=false",
+        "ready_for_preflight_promoted=false",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "allows only the reviewed external-output dry-run",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not commit `data/output` artifacts",
+        "does not run a live path",
+        "does not promote `ready_for_preflight`",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz / AF3 / Chai",
+        "does not rerun enrichment or contrast",
+        "does not make biological claims",
+    ]:
+        assert required in text
