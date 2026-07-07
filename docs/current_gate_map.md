@@ -411,6 +411,23 @@ This boundary does not run `--help`, does not make observed-help claims, does no
 The ordinary commands `curated-embedding-preflight`, `curated_embedding_preflight`, `curated-embedding-single`, and `curated_embedding_single` remain invalid substitutes. The natural next PR is an actual G3SX30 wrapper help observation PR, still help-only, still no wrapper execution, still no dry-run execution, still no Biohub / ESMC, and still no embeddings.
 
 
+## G3SX30 wrapper actual help observation checkpoint
+
+`docs/g3sx30_wrapper_actual_help_observation.md` records a help-only observation of the runtime-blocked G3SX30 wrapper source entry-point boundary.
+
+The observed command was `uv run g3sx30-wrapper-dry-run --help`, with `HELP_EXIT_CODE=0`. The help output was captured outside the repository at `D:\biohub_projects\_chatgpt_observations\g3sx30_wrapper_help_output.txt`, and this external observation file is not a committed runtime artifact.
+
+The observation records `help_observation_status=observed_help_only`, `observed_help_target=g3sx30-wrapper-dry-run`, `observed_manifest_option=true`, `observed_manifest_row_index_option=true`, `observed_output_path_option=true`, `observed_help_option=true`, `actual_cli_help_observed=true`, `actual_command_verified_for_help=true`, `command_selected_for_execution=false`, `output_path_selected_for_execution=false`, `execution_plan_materialized=false`, `wrapper_execution_authorized=false`, `dry_run_execution_authorized=false`, `live_execution_authorized=false`, `biohub_esmc_authorized=false`, `embedding_generation_authorized=false`, and `runtime_still_blocked=true`.
+
+The observed help output included `Usage: g3sx30-wrapper-dry-run [OPTIONS]`, `--manifest`, `--manifest-row-index`, `--output-path`, and `--help`. The capture also included `uv` build/install warning output and a PowerShell `NativeCommandError` wrapper around stderr text, but this is not treated as command failure because `HELP_EXIT_CODE=0` was observed.
+
+No-runtime-artifact proof after the help observation showed `git status -sb` on `observe-g3sx30-wrapper-help` with no modified files and `git ls-files --others --exclude-standard` with no untracked files.
+
+This checkpoint does not run the wrapper without `--help`, does not execute a dry-run, does not execute a live run, does not read or execute the G3SX30 manifest, does not select a command for execution, does not select an output path for execution, does not materialize an execution plan, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not write `data/output` artifacts, does not mark anything `ready_for_preflight`, does not unlock the manifest runtime path, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+The natural next layer is not execution yet. A later PR may create a stricter source-level runtime blocker or execution-plan review gate for the G3SX30 wrapper. Runtime execution should remain blocked until a separate reviewed gate explicitly authorizes a dry-run path with non-committed output location, no Biohub / ESMC, no embedding generation, and no `ready_for_preflight` promotion.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.
