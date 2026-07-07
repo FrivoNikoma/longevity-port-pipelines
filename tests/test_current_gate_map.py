@@ -1727,3 +1727,46 @@ def test_current_gate_map_records_g3sx30_wrapper_execution_plan_review_gate() ->
         "all live/embedding permissions false",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_wrapper_source_runtime_fail_closed_tests() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 wrapper source runtime fail-closed tests checkpoint",
+        "tests/test_g3sx30_wrapper_source_entrypoint_boundary.py",
+        "actual `g3sx30-wrapper-dry-run` Typer entrypoint",
+        "non-help invocation",
+        "exits blocked with exit code 2",
+        "runtime-blocked boundary message",
+        "does not authorize wrapper execution",
+        "dry-run execution",
+        "live execution",
+        "Biohub / ESMC calls",
+        "embedding generation",
+        "--manifest",
+        "--manifest-row-index",
+        "--output-path",
+        "interface-documentation-only",
+        "manifest is not read or created",
+        "output path is not written",
+        "no output directory is created",
+        "no command is selected for execution",
+        "no output path is selected for execution",
+        "no execution plan is materialized",
+        "all runtime authorization flags remain false",
+        "`runtime_still_blocked` remains true",
+        "does not run a dry-run",
+        "does not run a live path",
+        "does not execute the G3SX30 manifest",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not create `.npy` artifacts",
+        "does not write `data/output` artifacts",
+        "does not mark anything `ready_for_preflight`",
+        "does not promote Gate 8 or Gate 9",
+        "does not make biological claims",
+        "next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`",
+        "not another blocker layer",
+    ]:
+        assert required in text

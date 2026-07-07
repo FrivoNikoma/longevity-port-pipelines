@@ -441,6 +441,19 @@ This checkpoint does not run `g3sx30-wrapper-dry-run`, does not run the wrapper 
 The natural next layer is still not dry-run execution. A later PR may add a source-level runtime blocker or a non-executable execution-plan object scaffold. Runtime execution should remain blocked until a separate reviewed gate explicitly authorizes a dry-run path with a non-committed output location and all live/embedding permissions false.
 
 
+## G3SX30 wrapper source runtime fail-closed tests checkpoint
+
+`tests/test_g3sx30_wrapper_source_entrypoint_boundary.py` now exercises the actual `g3sx30-wrapper-dry-run` Typer entrypoint for non-help invocation.
+
+The source-level tests prove that invoking the entrypoint without `--help` exits blocked with exit code 2, prints the runtime-blocked boundary message, and does not authorize wrapper execution, dry-run execution, live execution, Biohub / ESMC calls, or embedding generation.
+
+The tests also pass future-looking `--manifest`, `--manifest-row-index`, and `--output-path` arguments to the actual entrypoint and prove that those arguments remain interface-documentation-only: the manifest is not read or created, the output path is not written, no output directory is created, no command is selected for execution, no output path is selected for execution, no execution plan is materialized, all runtime authorization flags remain false, and `runtime_still_blocked` remains true.
+
+This checkpoint does not run a dry-run, does not run a live path, does not execute the G3SX30 manifest, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not write `data/output` artifacts, does not mark anything `ready_for_preflight`, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.

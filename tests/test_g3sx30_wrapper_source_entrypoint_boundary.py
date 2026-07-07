@@ -99,3 +99,121 @@ def test_g3sx30_wrapper_source_entrypoint_boundary_blocked_runtime_message() -> 
         "do not generate embeddings",
     ]:
         assert required in message
+
+
+def test_g3sx30_wrapper_source_entrypoint_boundary_cli_non_help_exits_blocked() -> None:
+    from typer.testing import CliRunner
+
+    runner = CliRunner()
+    result = runner.invoke(boundary.app, [])
+
+    assert result.exit_code == 2
+    assert "g3sx30-wrapper-dry-run" in result.output
+    assert "runtime-blocked source entry-point boundary" in result.output
+    assert "Only future help observation is allowed" in result.output
+    assert "Do not execute the wrapper" in result.output
+    assert "do not run a dry-run" in result.output
+    assert "do not call Biohub / ESMC" in result.output
+    assert "do not generate embeddings" in result.output
+
+
+def test_g3sx30_wrapper_source_entrypoint_boundary_manifest_args_do_not_execute_or_write(
+    tmp_path: Path,
+) -> None:
+    from typer.testing import CliRunner
+
+    manifest = tmp_path / "missing_manifest.csv"
+    output_path = tmp_path / "future_outputs" / "would_be_execution_plan.json"
+
+    runner = CliRunner()
+    result = runner.invoke(
+        boundary.app,
+        [
+            "--manifest",
+            str(manifest),
+            "--manifest-row-index",
+            "1",
+            "--output-path",
+            str(output_path),
+        ],
+    )
+
+    assert result.exit_code == 2
+    assert "runtime-blocked source entry-point boundary" in result.output
+    assert "Only future help observation is allowed" in result.output
+
+    assert not manifest.exists()
+    assert not output_path.exists()
+    assert not output_path.parent.exists()
+
+
+def test_g3sx30_wrapper_source_entrypoint_boundary_cli_does_not_mutate_runtime_status(
+    tmp_path: Path,
+) -> None:
+    from typer.testing import CliRunner
+
+    status_before = boundary.build_boundary_status()
+
+    runner = CliRunner()
+    result = runner.invoke(
+        boundary.app,
+        [
+            "--manifest",
+            str(tmp_path / "manifest.csv"),
+            "--manifest-row-index",
+            "1",
+            "--output-path",
+            str(tmp_path / "plan.json"),
+        ],
+    )
+
+    assert result.exit_code == 2
+    assert boundary.build_boundary_status() == status_before
+
+    status_after = boundary.build_boundary_status()
+    for key in [
+        "command_selected_for_execution",
+        "output_path_selected_for_execution",
+        "execution_plan_materialized",
+        "wrapper_execution_authorized",
+        "dry_run_execution_authorized",
+        "live_execution_authorized",
+        "ready_for_preflight_authorized",
+        "biohub_esmc_authorized",
+        "embedding_generation_authorized",
+        "npy_artifact_authorized",
+        "data_output_artifact_commit_authorized",
+        "gate8_promotion_authorized",
+        "gate9_promotion_authorized",
+        "biological_claim_authorized",
+    ]:
+        assert status_after[key] is False
+
+    assert status_after["runtime_still_blocked"] is True
+
+
+def test_g3sx30_wrapper_source_entrypoint_boundary_has_no_runtime_client_imports() -> None:
+    import ast
+
+    module_path = Path(boundary.__file__)
+    tree = ast.parse(module_path.read_text(encoding="utf-8"))
+
+    imported_roots: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported_roots.update(alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported_roots.add(node.module.split(".")[0])
+
+    forbidden_runtime_imports = {
+        "biohub",
+        "esmc",
+        "esm",
+        "torch",
+        "numpy",
+        "requests",
+        "httpx",
+        "urllib",
+    }
+
+    assert imported_roots.isdisjoint(forbidden_runtime_imports)
