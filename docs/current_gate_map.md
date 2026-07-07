@@ -428,6 +428,19 @@ This checkpoint does not run the wrapper without `--help`, does not execute a dr
 The natural next layer is not execution yet. A later PR may create a stricter source-level runtime blocker or execution-plan review gate for the G3SX30 wrapper. Runtime execution should remain blocked until a separate reviewed gate explicitly authorizes a dry-run path with non-committed output location, no Biohub / ESMC, no embedding generation, and no `ready_for_preflight` promotion.
 
 
+## G3SX30 wrapper execution-plan review gate checkpoint
+
+`data/interim/g3sx30_wrapper_execution_plan_review_gate.csv#1` records a runtime-blocked execution-plan review gate after actual G3SX30 wrapper help observation.
+
+The row records `execution_plan_review_status=execution_plan_review_gate_runtime_blocked`, `execution_plan_review_decision=require_separate_review_before_any_execution`, `help_observation_status=observed_help_only`, `help_exit_code=0`, `observed_help_target=g3sx30-wrapper-dry-run`, `observed_manifest_option=true`, `observed_manifest_row_index_option=true`, `observed_output_path_option=true`, `observed_help_option=true`, `dry_run_plan_review_required_before_execution=true`, `non_committed_output_path_review_required=true`, `output_path_selected_for_execution=false`, `command_selected_for_execution=false`, `execution_plan_materialized=false`, `wrapper_execution_authorized=false`, `dry_run_execution_authorized=false`, `live_execution_authorized=false`, `ready_for_preflight_authorized=false`, `biohub_esmc_authorized=false`, `embedding_generation_authorized=false`, `npy_artifact_authorized=false`, `data_output_artifact_commit_authorized=false`, `gate8_promotion_authorized=false`, `gate9_promotion_authorized=false`, `biological_claim_authorized=false`, `runtime_still_blocked=true`, `allowed_next_action_after_review_gate=add_g3sx30_wrapper_execution_plan_runtime_blocker`, and `claim_status=technical_checkpoint`.
+
+This checkpoint means help observation is not execution authorization. A later execution plan must still be separately reviewed before any future dry-run can be considered, and it must require an explicit non-committed output path, reject committed `data/output` artifacts, reject Biohub / ESMC, reject embedding generation, reject `.npy` artifacts, keep `ready_for_preflight` false, keep Gate 8 and Gate 9 blocked, and make no biological claim.
+
+This checkpoint does not run `g3sx30-wrapper-dry-run`, does not run the wrapper without `--help`, does not execute a dry-run, does not execute a live run, does not read or execute the G3SX30 manifest, does not select a command for execution, does not select an output path for execution, does not materialize an execution plan, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not write `data/output` artifacts, does not mark anything `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+The natural next layer is still not dry-run execution. A later PR may add a source-level runtime blocker or a non-executable execution-plan object scaffold. Runtime execution should remain blocked until a separate reviewed gate explicitly authorizes a dry-run path with a non-committed output location and all live/embedding permissions false.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.

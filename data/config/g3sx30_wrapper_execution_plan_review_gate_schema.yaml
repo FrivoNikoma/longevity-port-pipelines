@@ -1,0 +1,110 @@
+version: 1
+name: g3sx30_wrapper_execution_plan_review_gate
+description: >
+  Runtime-blocked execution-plan review gate for the G3SX30 wrapper after actual
+  help-only observation. This schema records that help has been observed but no
+  command or output path is selected for execution, no execution plan is
+  materialized, and all runtime authorizations remain false.
+primary_key:
+  - candidate_id
+  - target_accession
+  - source_manifest_row_index
+  - execution_plan_review_status
+fields:
+  - name: source_actual_help_observation_doc
+  - name: source_entrypoint_boundary_module
+  - name: source_command_contract_table
+  - name: source_source_guardrail_table
+  - name: source_manifest_table
+  - name: source_manifest_row_index
+  - name: candidate_id
+  - name: target_accession
+  - name: target_accession_db
+  - name: target_species
+  - name: target_taxid
+  - name: gene_symbol
+  - name: reviewed_sequence_length
+  - name: reviewed_sequence_sha256
+  - name: help_observation_status
+  - name: help_exit_code
+  - name: observed_help_target
+  - name: observed_manifest_option
+  - name: observed_manifest_row_index_option
+  - name: observed_output_path_option
+  - name: observed_help_option
+  - name: execution_plan_review_status
+  - name: execution_plan_review_decision
+  - name: dry_run_plan_review_required_before_execution
+  - name: non_committed_output_path_review_required
+  - name: output_path_selected_for_execution
+  - name: output_path_policy
+  - name: committed_data_output_rejected
+  - name: command_selected_for_execution
+  - name: execution_plan_materialized
+  - name: wrapper_execution_authorized
+  - name: dry_run_execution_authorized
+  - name: live_execution_authorized
+  - name: ready_for_preflight_authorized
+  - name: biohub_esmc_authorized
+  - name: embedding_generation_authorized
+  - name: npy_artifact_authorized
+  - name: data_output_artifact_commit_authorized
+  - name: gate8_promotion_authorized
+  - name: gate9_promotion_authorized
+  - name: biological_claim_authorized
+  - name: runtime_still_blocked
+  - name: allowed_next_action_after_review_gate
+  - name: claim_status
+  - name: forbidden_next_actions
+  - name: review_gate_note
+blocked_status_values:
+  execution_plan_review_status:
+    - execution_plan_review_gate_runtime_blocked
+  execution_plan_review_decision:
+    - require_separate_review_before_any_execution
+  output_path_policy:
+    - non_committed_output_path_required_before_future_dry_run
+  allowed_next_action_after_review_gate:
+    - add_g3sx30_wrapper_execution_plan_runtime_blocker
+  claim_status:
+    - technical_checkpoint
+required_false_flags:
+  - output_path_selected_for_execution
+  - command_selected_for_execution
+  - execution_plan_materialized
+  - wrapper_execution_authorized
+  - dry_run_execution_authorized
+  - live_execution_authorized
+  - ready_for_preflight_authorized
+  - biohub_esmc_authorized
+  - embedding_generation_authorized
+  - npy_artifact_authorized
+  - data_output_artifact_commit_authorized
+  - gate8_promotion_authorized
+  - gate9_promotion_authorized
+  - biological_claim_authorized
+required_true_flags:
+  - observed_manifest_option
+  - observed_manifest_row_index_option
+  - observed_output_path_option
+  - observed_help_option
+  - dry_run_plan_review_required_before_execution
+  - non_committed_output_path_review_required
+  - committed_data_output_rejected
+  - runtime_still_blocked
+forbidden_side_effects:
+  - wrapper execution
+  - dry-run execution
+  - live execution
+  - manifest execution
+  - command selection for execution
+  - output path selection for execution
+  - execution plan materialization
+  - Biohub / ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - biological claim
