@@ -1347,3 +1347,52 @@ def test_current_gate_map_records_g3sx30_wrapper_command_contract_scaffold() -> 
         "does not make biological claims",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_wrapper_source_guardrail_scaffold() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    for required in [
+        "G3SX30 wrapper source guardrail scaffold checkpoint",
+        "src/longevity_port_pipelines/stages/g3sx30_wrapper_source_guardrail_scaffold.py",
+        "non-executable helper/table scaffold",
+        "data/interim/g3sx30_wrapper_command_contract_scaffold.csv#1",
+        "data/interim/g3sx30_manifest_aware_dry_run_wrapper_scaffold.csv#1",
+        "data/input/g3sx30_dry_run_preflight_manifest.csv#1",
+        "data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1",
+        "data/interim/g3sx30_wrapper_source_guardrail_scaffold.csv#1",
+        "source_guardrail_status=source_guardrail_scaffold_runtime_blocked",
+        "source_guardrail_decision=define_source_level_guardrails_only",
+        "guardrail_scope=future_wrapper_source_checks_only",
+        "guardrail_runtime_effect=no_runtime_effect",
+        "source_actual_cli_help_observed=false",
+        "source_actual_command_verified=false",
+        "source_command_selected=false",
+        "source_output_path_selected=false",
+        "source_execution_plan_materialized=false",
+        "reviewed_sequence_length=492",
+        "max_live_batch_size_zero_required=true",
+        "all_runtime_permissions_false_required=true",
+        "wrapper_implementation_authorized=false",
+        "wrapper_execution_authorized=false",
+        "dry_run_execution_authorized=false",
+        "live_execution_authorized=false",
+        "ready_for_preflight_authorized=false",
+        "biohub_esmc_authorized=false",
+        "embedding_generation_authorized=false",
+        "gate8_promotion_authorized=false",
+        "gate9_promotion_authorized=false",
+        "biological_claim_authorized=false",
+        "allowed_next_action_after_source_guardrail=add_wrapper_help_observation_note_pr",
+        "claim_status=technical_checkpoint",
+        "runtime_still_blocked=true",
+        "future wrapper source checks only",
+        "has no runtime effect",
+        "does not implement a source guardrail",
+        "does not run any actual command",
+        "does not run `--help`",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not promote Gate 8 or Gate 9",
+        "does not make biological claims",
+    ]:
+        assert required in text

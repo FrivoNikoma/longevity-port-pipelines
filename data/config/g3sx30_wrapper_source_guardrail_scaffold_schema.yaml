@@ -1,0 +1,114 @@
+name: g3sx30_wrapper_source_guardrail_scaffold
+description: >
+  Non-executable source-level guardrail scaffold for the future G3SX30 wrapper.
+  This defines future wrapper source checks only and has no runtime effect.
+status: source_guardrail_scaffold_runtime_blocked
+sources:
+  command_contract_row: data/interim/g3sx30_wrapper_command_contract_scaffold.csv#1
+  wrapper_scaffold_row: data/interim/g3sx30_manifest_aware_dry_run_wrapper_scaffold.csv#1
+  manifest_row: data/input/g3sx30_dry_run_preflight_manifest.csv#1
+  policy_contract_row: data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1
+allowed_language:
+  - source_guardrail_scaffold_runtime_blocked
+  - define_source_level_guardrails_only
+  - future_wrapper_source_checks_only
+  - no_runtime_effect
+  - technical_checkpoint
+allowed_next_actions_after_source_guardrail:
+  - add_wrapper_help_observation_note_pr
+  - add_wrapper_guardrail_implementation_plan_pr
+  - keep_runtime_blocked
+forbidden_next_actions:
+  - run_preflight
+  - execute_wrapper
+  - ready_for_preflight
+does_not_authorize:
+  - pyproject script entry point
+  - Typer executable wrapper
+  - wrapper implementation
+  - wrapper execution
+  - dry-run execution
+  - live execution
+  - actual command run
+  - --help run
+  - observed-help claims
+  - actual CLI flag verification claims
+  - Biohub call
+  - ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - manifest runtime unlock
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - enrichment rerun
+  - contrast rerun
+  - biological claim
+columns:
+  - source_command_contract_table
+  - source_command_contract_row_index
+  - source_wrapper_scaffold_table
+  - source_wrapper_scaffold_row_index
+  - source_manifest_table
+  - source_manifest_row_index
+  - source_policy_contract_table
+  - source_policy_contract_row_index
+  - candidate_id
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - reviewed_sequence_length
+  - reviewed_sequence_sha256
+  - source_command_contract_status
+  - source_command_contract_decision
+  - source_expected_command_family
+  - source_actual_cli_help_observed
+  - source_actual_command_verified
+  - source_command_selected
+  - source_output_path_selected
+  - source_execution_plan_materialized
+  - source_runtime_still_blocked
+  - source_guardrail_status
+  - source_guardrail_decision
+  - guardrail_scope
+  - guardrail_runtime_effect
+  - manifest_row_required
+  - manifest_row_index_required
+  - accession_guardrail_required
+  - species_guardrail_required
+  - taxid_guardrail_required
+  - gene_symbol_guardrail_required
+  - reviewed_length_guardrail_required
+  - reviewed_sha256_guardrail_required
+  - max_live_batch_size_zero_required
+  - all_runtime_permissions_false_required
+  - non_committed_output_path_required_before_future_dry_run
+  - committed_data_output_rejected
+  - source_guardrail_verification_observed
+  - source_guardrail_implemented
+  - actual_source_code_modified
+  - actual_cli_help_observed
+  - actual_command_verified
+  - wrapper_implementation_authorized
+  - wrapper_execution_authorized
+  - dry_run_execution_authorized
+  - live_execution_authorized
+  - ready_for_preflight_authorized
+  - biohub_esmc_authorized
+  - embedding_generation_authorized
+  - npy_artifact_authorized
+  - data_output_artifact_commit_authorized
+  - gate8_promotion_authorized
+  - gate9_promotion_authorized
+  - biological_claim_authorized
+  - allowed_next_action_after_source_guardrail
+  - claim_status
+  - runtime_still_blocked
+  - forbidden_next_actions
+  - guardrail_note
