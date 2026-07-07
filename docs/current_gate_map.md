@@ -398,6 +398,19 @@ This blocker does not run `--help`, does not run any actual command, does not ma
 The natural next step is not help observation yet. The next complete safe layer should create an explicitly non-executed G3SX30 manifest-aware wrapper source/entry-point implementation plan or implementation boundary. Only after a real wrapper help target exists may a later PR perform actual help-only observation, still with no wrapper execution, no dry-run execution, no Biohub / ESMC, and no embeddings.
 
 
+## G3SX30 wrapper source entry-point boundary checkpoint
+
+`src/longevity_port_pipelines/stages/g3sx30_wrapper_source_entrypoint_boundary.py` adds a runtime-blocked G3SX30 wrapper source entry-point boundary, and `pyproject.toml` exposes it as `g3sx30-wrapper-dry-run`.
+
+The boundary records `entrypoint_boundary_status=source_entrypoint_boundary_runtime_blocked`, `script_entry_point=g3sx30-wrapper-dry-run`, `expected_command_family=curated_embedding_preflight_dry_run_wrapper`, `actual_cli_help_observed=false`, `actual_command_verified=false`, `command_selected_for_execution=false`, `output_path_selected_for_execution=false`, `execution_plan_materialized=false`, `wrapper_execution_authorized=false`, `dry_run_execution_authorized=false`, `live_execution_authorized=false`, `ready_for_preflight_authorized=false`, `biohub_esmc_authorized=false`, `embedding_generation_authorized=false`, and `runtime_still_blocked=true`.
+
+This closes the blocker found in `docs/g3sx30_wrapper_help_target_inspection_blocker.md`: a real wrapper help target now exists for a later help-only observation PR. The future help-only target is `uv run g3sx30-wrapper-dry-run --help`.
+
+This boundary does not run `--help`, does not make observed-help claims, does not make actual CLI flag verification claims, does not execute the wrapper, does not execute a dry-run, does not execute a live run, does not select a command for execution, does not select an output path for execution, does not materialize an execution plan, does not read or execute the G3SX30 manifest, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not commit `data/output` artifacts, does not mark anything `ready_for_preflight`, does not unlock the manifest runtime path, does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+The ordinary commands `curated-embedding-preflight`, `curated_embedding_preflight`, `curated-embedding-single`, and `curated_embedding_single` remain invalid substitutes. The natural next PR is an actual G3SX30 wrapper help observation PR, still help-only, still no wrapper execution, still no dry-run execution, still no Biohub / ESMC, and still no embeddings.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.
