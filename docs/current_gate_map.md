@@ -454,6 +454,19 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 wrapper dry-run execution plan scaffold checkpoint
+
+`src/longevity_port_pipelines/stages/g3sx30_wrapper_dry_run_execution_plan_scaffold.py` adds a non-executable dry-run execution plan scaffold for the TP53/MDM2 elephant / G3SX30 lane.
+
+The concrete scaffold row is `data/interim/g3sx30_wrapper_dry_run_execution_plan_scaffold.csv#1`. It records `execution_plan_scaffold_status=dry_run_execution_plan_scaffold_non_executable`, `execution_plan_scaffold_decision=select_future_command_form_and_external_output_path_only`, `script_entry_point=g3sx30-wrapper-dry-run`, `future_command_form_selected=true`, `future_non_committed_output_path_selected=true`, `future_output_path=D:/biohub_projects/_chatgpt_observations/g3sx30_wrapper_dry_run_execution_plan.json`, `output_path_policy=external_non_committed_observation_path_only`, `committed_data_output_rejected=true`, `output_file_created=false`, `output_directory_created=false`, `command_selected_for_execution=false`, `output_path_selected_for_execution=false`, `execution_plan_materialized=false`, `wrapper_execution_authorized=false`, `dry_run_execution_authorized=false`, `live_execution_authorized=false`, `manifest_execution_authorized=false`, `ready_for_preflight_authorized=false`, `biohub_esmc_authorized=false`, `embedding_generation_authorized=false`, `npy_artifact_authorized=false`, `data_output_artifact_commit_authorized=false`, `gate8_promotion_authorized=false`, `gate9_promotion_authorized=false`, `biological_claim_authorized=false`, `runtime_still_blocked=true`, `dry_run_execution_plan_scaffold_only=true`, and `claim_status=technical_checkpoint`.
+
+The selected future command form is `uv run g3sx30-wrapper-dry-run --manifest data/input/g3sx30_dry_run_preflight_manifest.csv --manifest-row-index 1 --output-path D:/biohub_projects/_chatgpt_observations/g3sx30_wrapper_dry_run_execution_plan.json`. This is a future command form for review only, not a command selected for execution.
+
+This checkpoint does not run `g3sx30-wrapper-dry-run`, does not run a dry-run, does not run a live path, does not execute the G3SX30 manifest, does not create the future output file, does not create the future output directory, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not write `data/output` artifacts, does not mark anything `ready_for_preflight`, does not promote Gate 8 or Gate 9, and does not make biological claims.
+
+The natural next step is review of this scaffold before any execution is considered.
+
+
 ## G3SX30 manifest-aware dry-run wrapper scaffold checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_manifest_aware_dry_run_wrapper_scaffold.py` adds a non-executable helper/table scaffold representing the future G3SX30 manifest-aware dry-run wrapper boundary. The scaffold sources `data/input/g3sx30_manifest_aware_adapter_policy_contract.csv#1`, `data/interim/g3sx30_manifest_aware_dry_run_preflight_adapter_scaffold.csv#1`, and `data/input/g3sx30_dry_run_preflight_manifest.csv#1`.

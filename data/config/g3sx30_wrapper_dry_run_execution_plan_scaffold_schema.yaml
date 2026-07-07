@@ -1,0 +1,104 @@
+name: g3sx30_wrapper_dry_run_execution_plan_scaffold
+description: >
+  Non-executable G3SX30 wrapper dry-run execution plan scaffold. Selects a
+  future command form and future non-committed output path, but does not
+  execute the wrapper, does not read the manifest, does not write outputs, and
+  keeps all runtime authorizations false.
+primary_key:
+  - candidate_id
+  - target_accession
+  - source_manifest_row_index
+required_columns:
+  - source_entrypoint_boundary_module
+  - source_execution_plan_review_gate_table
+  - source_execution_plan_review_gate_row_index
+  - source_manifest_table
+  - source_manifest_row_index
+  - candidate_id
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - reviewed_sequence_length
+  - reviewed_sequence_sha256
+  - execution_plan_scaffold_status
+  - execution_plan_scaffold_decision
+  - script_entry_point
+  - future_command_form_selected
+  - future_command_form
+  - future_manifest_path
+  - future_manifest_row_index
+  - future_non_committed_output_path_selected
+  - future_output_path
+  - output_path_policy
+  - allowed_output_location_policy
+  - committed_data_output_rejected
+  - output_file_created
+  - output_directory_created
+  - command_selected_for_execution
+  - output_path_selected_for_execution
+  - execution_plan_materialized
+  - wrapper_execution_authorized
+  - dry_run_execution_authorized
+  - live_execution_authorized
+  - manifest_execution_authorized
+  - ready_for_preflight_authorized
+  - biohub_esmc_authorized
+  - embedding_generation_authorized
+  - npy_artifact_authorized
+  - data_output_artifact_commit_authorized
+  - gate8_promotion_authorized
+  - gate9_promotion_authorized
+  - biological_claim_authorized
+  - runtime_still_blocked
+  - dry_run_execution_plan_scaffold_only
+  - claim_status
+  - allowed_next_action_after_execution_plan_scaffold
+  - forbidden_next_actions
+  - scaffold_note
+controlled_values:
+  execution_plan_scaffold_status:
+    - dry_run_execution_plan_scaffold_non_executable
+  execution_plan_scaffold_decision:
+    - select_future_command_form_and_external_output_path_only
+  output_path_policy:
+    - external_non_committed_observation_path_only
+  claim_status:
+    - technical_checkpoint
+required_false_columns:
+  - output_file_created
+  - output_directory_created
+  - command_selected_for_execution
+  - output_path_selected_for_execution
+  - execution_plan_materialized
+  - wrapper_execution_authorized
+  - dry_run_execution_authorized
+  - live_execution_authorized
+  - manifest_execution_authorized
+  - ready_for_preflight_authorized
+  - biohub_esmc_authorized
+  - embedding_generation_authorized
+  - npy_artifact_authorized
+  - data_output_artifact_commit_authorized
+  - gate8_promotion_authorized
+  - gate9_promotion_authorized
+  - biological_claim_authorized
+required_true_columns:
+  - future_command_form_selected
+  - future_non_committed_output_path_selected
+  - committed_data_output_rejected
+  - runtime_still_blocked
+  - dry_run_execution_plan_scaffold_only
+forbidden:
+  - dry-run execution
+  - live execution
+  - manifest execution
+  - Biohub / ESMC call
+  - embedding generation
+  - .npy artifact
+  - data/output artifact commit
+  - ready_for_preflight
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - biological claim
