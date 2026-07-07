@@ -454,6 +454,19 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 wrapper dry-run observation checkpoint
+
+`docs/g3sx30_wrapper_dry_run_observation_checkpoint.md` records the already-executed G3SX30 wrapper dry-run external observation.
+
+The external observation path is `D:/biohub_projects/_chatgpt_observations/g3sx30_wrapper_dry_run_execution_plan.json`. The external JSON observation is outside the repository and is not committed.
+
+The observed external JSON recorded `dry_run_executed=true`, `manifest_row_index=1`, `target_accession=G3SX30`, `target_taxid=9785`, `reviewed_sequence_length=492`, `reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f`, `manifest_row_read=true`, `manifest_row_validated=true`, `biohub_esmc_called=false`, `embedding_generation_performed=false`, `npy_artifact_created=false`, `data_output_artifact_created=false`, `ready_for_preflight_promoted=false`, `gate8_promoted=false`, `gate9_promoted=false`, `biological_claim_made=false`, `sequence_fetch_performed=false`, `live_execution_performed=false`, `manifest_execution_performed=false`, `curated_embedding_preflight_run=false`, `curated_embedding_single_run=false`, `boltz_called=false`, `af3_called=false`, `chai_called=false`, `enrichment_rerun=false`, `contrast_rerun=false`, and `claim_status=technical_checkpoint`.
+
+This checkpoint does not rerun `g3sx30-wrapper-dry-run`, does not commit the external JSON observation, does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not create or commit `data/output` artifacts, does not run a live path, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+After this checkpoint, do not add another generic checkpoint, review, scaffold, or blocker layer. The next practical step should be `Review G3SX30 dry-run observation and decide the next data-producing step`: either prepare a one-row live embedding decision or repair a concrete blocker found in the dry-run observation.
+
+
 ## G3SX30 wrapper dry-run external output execution checkpoint
 
 `src/longevity_port_pipelines/stages/g3sx30_wrapper_source_entrypoint_boundary.py` now permits only the reviewed G3SX30 external-output dry-run path.
