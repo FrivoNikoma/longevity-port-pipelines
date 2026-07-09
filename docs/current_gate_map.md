@@ -454,6 +454,25 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row local embedding preflight check result
+
+`data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv` records the externally executed local preflight check result for the already-generated local runtime G3SX30 / elephant MDM2 ESMC embedding artifact.
+
+The result sources `data/input/g3sx30_one_row_non_committed_preflight_input_bindings.csv#1`, which records `non_committed_preflight_input_reference_created=true` for `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `target_accession=G3SX30`, `target_accession_db=UniProtKB TrEMBL`, `target_species=Loxodonta africana`, `target_taxid=9785`, `gene_symbol=MDM2`, and `sequence_length=492`.
+
+The external local preflight observation is `D:/biohub_projects/_chatgpt_observations/g3sx30_one_row_local_embedding_preflight_check.json`. The external JSON is not committed.
+
+The recorded result is `check_name=g3sx30_one_row_local_embedding_preflight_check`, `check_status=local_preflight_pass`, `local_embedding_path=data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`, `artifact_location=local_runtime_data_output_ignored_by_git`, `local_runtime_embedding_exists=true`, `local_runtime_embedding_tracked=false`, `local_runtime_embedding_committed=false`, `git_ignore_rule_status=data_output_ignored`, `embedding_shape=492x960`, `embedding_dtype=float32`, `embedding_finite=true`, `sequence_length=492`, and `sequence_length_matches=true`.
+
+The no-side-effect result records `biohub_esmc_called_by_check=false`, `live_embedding_rerun_by_check=false`, `embedding_generation_performed_by_check=false`, `npy_artifact_created_by_check=false`, `data_output_artifact_committed=false`, `external_validation_json_committed=false`, `ready_for_preflight_promoted=false`, `gate8_promoted=false`, `gate9_promoted=false`, `boltz_called=false`, `af3_called=false`, `chai_called=false`, `enrichment_rerun=false`, `contrast_rerun=false`, `biological_claim_made=false`, and `downstream_gate_unlocked=false`.
+
+This is a concrete local artifact preflight pass. It does not mean `ready_for_preflight=true`, does not promote Gate 8 or Gate 9, and does not make a biological claim.
+
+The next practical decision is `approve_one_row_readiness_preflight_transition_path_or_repair_concrete_blocker`. Because this result is `local_preflight_pass`, the pass decision path is `approve_one_row_readiness_preflight_transition_path`; if a future equivalent check fails, the fail decision path is `repair_concrete_local_preflight_blocker`. After this PR, do not add another generic checkpoint, review, scaffold, or binding layer; the next practical PR should make the concrete one-row readiness/preflight transition decision from this passed local preflight result.
+
+This result record does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not commit the external local preflight JSON, does not copy external validation JSON into the repo, does not make a new Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+
 ## G3SX30 one-row non-committed preflight input binding
 
 `data/input/g3sx30_one_row_non_committed_preflight_input_bindings.csv` records a machine-readable one-row binding for the already-generated local runtime G3SX30 / elephant MDM2 ESMC embedding artifact.
