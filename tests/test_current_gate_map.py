@@ -2453,3 +2453,53 @@ def test_current_gate_map_records_g3sx30_readiness_preflight_transition_result()
         "not another transition approval",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_one_row_controlled_downstream_use_path() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 one-row controlled downstream use path",
+        "data/input/g3sx30_one_row_controlled_downstream_use_paths.csv",
+        "first controlled downstream use path",
+        "This is not another decision layer.",
+        "data/input/g3sx30_one_row_readiness_preflight_transition_results.csv#1",
+        "source_transition_status=one_row_readiness_preflight_transition_passed",
+        "source_ready_for_preflight=true",
+        "source_allowed_downstream_use_path=first_controlled_downstream_use_path_for_one_row_ready_artifact",
+        "controlled_downstream_use_path=first_controlled_downstream_use_path_for_one_row_ready_artifact",
+        "controlled_handle_id=g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle",
+        "controlled_input_status=one_row_ready_artifact_available_for_controlled_downstream_use",
+        "one_row_only=true",
+        "candidate_id=tp53_mdm2_elephant_seed_mdm2_chain",
+        "target_accession=G3SX30",
+        "target_species=Loxodonta africana",
+        "target_taxid=9785",
+        "gene_symbol=MDM2",
+        "ready_scope=one_row_g3sx30_elephant_mdm2_only",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "does not make a Biohub / ESMC call",
+        "does not rerun live embedding",
+        "does not generate a new embedding",
+        "does not commit the generated `.npy` artifact",
+        "does not commit any `data/output` artifact",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz / AF3 / Chai",
+        "does not rerun enrichment or contrast",
+        "does not make a biological claim",
+        "run_controlled_downstream_read_check_for_one_row_ready_g3sx30_artifact",
+    ]:
+        assert required in text
+
+
+def test_current_gate_map_records_g3sx30_downstream_use_path_anti_loop() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "next_pr_must_be_actual_controlled_downstream_read_check=true",
+        "no_additional_downstream_approval_before_read_check=true",
+        "Do not add another approval, review, scaffold, or binding layer before that read/check.",
+    ]:
+        assert required in text

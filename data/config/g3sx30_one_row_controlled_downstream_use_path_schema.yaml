@@ -1,0 +1,55 @@
+name: g3sx30_one_row_controlled_downstream_use_path
+description: >
+  First controlled downstream use path for the one-row ready G3SX30 elephant
+  MDM2 artifact. This consumes the one-row readiness/preflight transition
+  result and creates a controlled downstream handle.
+version: 1
+
+source_transition_result_table: data/input/g3sx30_one_row_readiness_preflight_transition_results.csv
+source_transition_result_row_index: 1
+downstream_use_path_table: data/input/g3sx30_one_row_controlled_downstream_use_paths.csv
+
+required_values:
+  source_transition_result_table: data/input/g3sx30_one_row_readiness_preflight_transition_results.csv
+  source_transition_result_row_index: "1"
+  source_transition_status: one_row_readiness_preflight_transition_passed
+  source_ready_for_preflight: "true"
+  source_allowed_downstream_use_path: first_controlled_downstream_use_path_for_one_row_ready_artifact
+  controlled_downstream_use_path: first_controlled_downstream_use_path_for_one_row_ready_artifact
+  controlled_handle_id: g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle
+  controlled_input_status: one_row_ready_artifact_available_for_controlled_downstream_use
+  one_row_only: "true"
+  ready_scope: one_row_g3sx30_elephant_mdm2_only
+  ready_artifact_location: local_runtime_data_output_ignored_by_git
+  controlled_read_check_next_action: run_controlled_downstream_read_check_for_one_row_ready_g3sx30_artifact
+  next_pr_must_be_actual_controlled_downstream_read_check: "true"
+  no_additional_downstream_approval_before_read_check: "true"
+  gate8_promoted: "false"
+  gate9_promoted: "false"
+  biological_claim_made: "false"
+  data_output_artifact_committed: "false"
+  biohub_esmc_called_by_path_creation: "false"
+  live_embedding_rerun_by_path_creation: "false"
+  embedding_generation_performed_by_path_creation: "false"
+  npy_artifact_created_by_path_creation: "false"
+  boltz_called: "false"
+  af3_called: "false"
+  chai_called: "false"
+  enrichment_rerun: "false"
+  contrast_rerun: "false"
+  next_step: run_controlled_downstream_read_check_for_one_row_ready_g3sx30_artifact
+
+boundary:
+  - no Biohub / ESMC call
+  - no live rerun
+  - no new embedding generation
+  - no .npy commit
+  - no data/output commit
+  - no Gate 8 / Gate 9 promotion
+  - no Boltz / AF3 / Chai
+  - no enrichment / contrast rerun
+  - no biological claim
+
+anti_loop:
+  - next PR must be actual controlled downstream read/check
+  - no additional downstream approval before read/check

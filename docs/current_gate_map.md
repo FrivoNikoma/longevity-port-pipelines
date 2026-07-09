@@ -454,6 +454,23 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row controlled downstream use path
+
+`data/input/g3sx30_one_row_controlled_downstream_use_paths.csv` records the first controlled downstream use path for the one-row ready G3SX30 elephant MDM2 artifact. This is not another decision layer.
+
+The downstream-use path sources `data/input/g3sx30_one_row_readiness_preflight_transition_results.csv#1`, with `source_transition_status=one_row_readiness_preflight_transition_passed`, `source_ready_for_preflight=true`, and `source_allowed_downstream_use_path=first_controlled_downstream_use_path_for_one_row_ready_artifact`.
+
+The controlled downstream handle is `controlled_downstream_use_path=first_controlled_downstream_use_path_for_one_row_ready_artifact`, `controlled_handle_id=g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle`, `controlled_input_status=one_row_ready_artifact_available_for_controlled_downstream_use`, `one_row_only=true`, `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `target_accession=G3SX30`, `target_accession_db=UniProtKB TrEMBL`, `target_species=Loxodonta africana`, `target_taxid=9785`, `gene_symbol=MDM2`, and `ready_scope=one_row_g3sx30_elephant_mdm2_only`.
+
+This downstream-use path keeps `gate8_promoted=false`, `gate9_promoted=false`, and `biological_claim_made=false`. It does not make a Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+The anti-loop fields are `next_pr_must_be_actual_controlled_downstream_read_check=true` and `no_additional_downstream_approval_before_read_check=true`.
+
+After this PR, the next PR must run an actual controlled downstream read/check for the one-row ready G3SX30 artifact. Do not add another approval, review, scaffold, or binding layer before that read/check.
+
+The actual read/check next action is: `run_controlled_downstream_read_check_for_one_row_ready_g3sx30_artifact`.
+
+
 ## G3SX30 one-row readiness/preflight transition result
 
 `data/input/g3sx30_one_row_readiness_preflight_transition_results.csv` records the actual one-row G3SX30 readiness/preflight transition/check result. This is not another approval, review, scaffold, or binding layer.
