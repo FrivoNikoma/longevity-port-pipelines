@@ -2558,3 +2558,55 @@ def test_current_gate_map_records_g3sx30_one_row_controlled_downstream_read_chec
         "Do not add another read/check approval, review, scaffold, handle, or decision layer before that output-oriented step.",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_first_minimal_controlled_downstream_output() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 one-row first minimal controlled downstream output",
+        "data/input/g3sx30_one_row_first_minimal_controlled_downstream_outputs.csv",
+        "creates the first minimal controlled downstream output",
+        "actual output record, not another non-result layer",
+        "data/input/g3sx30_one_row_controlled_downstream_read_check_results.csv#1",
+        "source_read_check_status=controlled_downstream_read_check_passed",
+        "source_controlled_handle_id=g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle",
+        "source_controlled_input_status=one_row_ready_artifact_available_for_controlled_downstream_use",
+        "source_ready_artifact_reference=data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy",
+        "output_action=add_first_minimal_controlled_downstream_output_for_one_row_ready_g3sx30_artifact",
+        "output_status=first_minimal_controlled_downstream_output_created",
+        "output_type=one_row_artifact_identity_and_embedding_health_summary",
+        "output_scope=identity_and_embedding_health_only_no_biological_claim",
+        "candidate_id=tp53_mdm2_elephant_seed_mdm2_chain",
+        "target_accession=G3SX30",
+        "target_species=Loxodonta africana",
+        "target_taxid=9785",
+        "gene_symbol=MDM2",
+        "one_row_only=true",
+        "ready_scope=one_row_g3sx30_elephant_mdm2_only",
+        "candidate_identity_confirmed=true",
+        "artifact_reference_confirmed=true",
+        "embedding_health_confirmed=true",
+        "source_embedding_shape=492x960",
+        "source_embedding_dtype=float32",
+        "source_embedding_finite=true",
+        "source_sequence_length=492",
+        "source_sequence_length_matches=true",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "does not make a Biohub / ESMC call",
+        "does not rerun live embedding",
+        "does not generate a new embedding",
+        "does not commit the generated `.npy` artifact",
+        "does not commit any `data/output` artifact",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz / AF3 / Chai",
+        "does not rerun enrichment or contrast",
+        "does not make a biological claim",
+        "move_toward_first_analysis_adjacent_controlled_output_or_next_concrete_biological_data_bearing_step_for_one_row_ready_g3sx30_artifact",
+        "next_pr_should_be_concrete_analysis_adjacent_or_biological_data_bearing_step=true",
+        "no_additional_non_result_layer_before_next_concrete_step=true",
+        "Do not insert another non-result layer before that concrete step.",
+    ]:
+        assert required in text
