@@ -454,6 +454,23 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+
+## G3SX30 one-row controlled downstream read/check result
+
+`data/input/g3sx30_one_row_controlled_downstream_read_check_results.csv` records the actual controlled downstream read/check result for the one-row ready G3SX30 elephant MDM2 artifact. This is not another approval layer, scaffold, handle, or decision layer.
+
+The read/check result sources `data/input/g3sx30_one_row_controlled_downstream_use_paths.csv#1`, with `source_controlled_downstream_use_path=first_controlled_downstream_use_path_for_one_row_ready_artifact`, `source_controlled_handle_id=g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle`, `source_controlled_input_status=one_row_ready_artifact_available_for_controlled_downstream_use`, `source_ready_artifact_reference=data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`, `source_next_pr_must_be_actual_controlled_downstream_read_check=true`, and `source_no_additional_downstream_approval_before_read_check=true`.
+
+The controlled read/check result is `read_check_action=run_controlled_downstream_read_check_for_one_row_ready_g3sx30_artifact`, `read_check_status=controlled_downstream_read_check_passed`, `controlled_handle_id=g3sx30_elephant_mdm2_one_row_ready_artifact_controlled_downstream_handle`, `controlled_input_status=one_row_ready_artifact_available_for_controlled_downstream_use`, `one_row_only=true`, `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `target_accession=G3SX30`, `target_accession_db=UniProtKB TrEMBL`, `target_species=Loxodonta africana`, `target_taxid=9785`, `gene_symbol=MDM2`, and `ready_scope=one_row_g3sx30_elephant_mdm2_only`.
+
+The local artifact read/check recorded `local_runtime_embedding_exists=true`, `local_runtime_embedding_tracked=false`, `local_runtime_embedding_committed=false`, `git_ignore_rule_status=data_output_ignored`, `embedding_shape=492x960`, `embedding_dtype=float32`, `embedding_finite=true`, `sequence_length=492`, and `sequence_length_matches=true`.
+
+This read/check keeps `gate8_promoted=false`, `gate9_promoted=false`, and `biological_claim_made=false`. It does not make a Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+After this PR, the next step should move toward the first minimal controlled downstream output: `move_toward_first_minimal_controlled_downstream_output_for_one_row_ready_g3sx30_artifact`.
+
+The next-step guard fields are `next_pr_should_move_toward_first_minimal_controlled_downstream_output=true` and `no_additional_read_check_approval_before_output=true`. Do not add another read/check approval, review, scaffold, handle, or decision layer before that output-oriented step.
+
 ## G3SX30 one-row controlled downstream use path
 
 `data/input/g3sx30_one_row_controlled_downstream_use_paths.csv` records the first controlled downstream use path for the one-row ready G3SX30 elephant MDM2 artifact. This is not another decision layer.
