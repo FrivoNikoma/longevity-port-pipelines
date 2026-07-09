@@ -2198,3 +2198,48 @@ def test_current_gate_map_records_g3sx30_post_live_local_artifact_status() -> No
         "Approve G3SX30 local embedding artifact for one-row readiness/preflight input",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_local_embedding_readiness_input_decision() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 one-row local embedding readiness/preflight input decision",
+        "data/input/g3sx30_one_row_local_embedding_readiness_input_decisions.csv",
+        "docs/g3sx30_one_row_live_embedding_runtime_observation.md",
+        "docs/g3sx30_post_live_local_artifact_status.md",
+        "local_embedding_path=data/output/embeddings/esmc-300m-2024-12/"
+        "tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy",
+        "external_validation_json=D:/biohub_projects/_chatgpt_observations/"
+        "g3sx30_live_embedding_one_row_validation.json",
+        "local_runtime_embedding_exists=true",
+        "local_runtime_embedding_tracked=false",
+        "local_runtime_embedding_committed=false",
+        "artifact_location=local_runtime_data_output_ignored_by_git",
+        "embedding_shape=492x960",
+        "embedding_dtype=float32",
+        "embedding_finite=true",
+        "sequence_length_matches=true",
+        "validation_ready_for_preflight_promoted=false",
+        "validation_gate8_promoted=false",
+        "validation_gate9_promoted=false",
+        "validation_biological_claim_made=false",
+        "approved_for_one_row_readiness_preflight_input=true",
+        "ready_for_preflight=false",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "approving the local artifact path as a one-row readiness/preflight input reference",
+        "does not make a new Biohub / ESMC call",
+        "does not rerun live embedding",
+        "does not generate a new embedding",
+        "does not commit the generated `.npy` artifact",
+        "does not commit any `data/output` artifact",
+        "does not promote `ready_for_preflight`",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz / AF3 / Chai",
+        "does not rerun enrichment or contrast",
+        "does not make a biological claim",
+        "prepare_one_row_non_committed_preflight_input_consumer_or_manifest_binding_pr",
+    ]:
+        assert required in text

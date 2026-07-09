@@ -454,6 +454,25 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row local embedding readiness/preflight input decision
+
+`data/input/g3sx30_one_row_local_embedding_readiness_input_decisions.csv` records a one-row bounded use decision for the already-generated local runtime G3SX30 embedding artifact.
+
+The source runtime observation is `docs/g3sx30_one_row_live_embedding_runtime_observation.md`, and the source post-live artifact audit is `docs/g3sx30_post_live_local_artifact_status.md`.
+
+The decision records `local_embedding_path=data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`, `external_validation_json=D:/biohub_projects/_chatgpt_observations/g3sx30_live_embedding_one_row_validation.json`, `local_runtime_embedding_exists=true`, `local_runtime_embedding_tracked=false`, `local_runtime_embedding_committed=false`, and `artifact_location=local_runtime_data_output_ignored_by_git`.
+
+The reviewed validation summary records `embedding_shape=492x960`, `embedding_dtype=float32`, `embedding_finite=true`, `sequence_length_matches=true`, `validation_ready_for_preflight_promoted=false`, `validation_gate8_promoted=false`, `validation_gate9_promoted=false`, and `validation_biological_claim_made=false`.
+
+The decision is `approved_for_one_row_readiness_preflight_input=true` and `readiness_preflight_input_record_status=approved_local_runtime_artifact_as_one_row_readiness_preflight_input`, while keeping `ready_for_preflight=false`, `gate8_promoted=false`, `gate9_promoted=false`, and `biological_claim_made=false`.
+
+This distinction is intentional: approving the local artifact path as a one-row readiness/preflight input reference is allowed here, but promoting `ready_for_preflight`, Gate 8, Gate 9, or any biological claim is not allowed.
+
+This decision does not make a new Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not commit the external FASTA artifact, does not commit the external live log, does not commit the external validation JSON, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+The next actionable step is `prepare_one_row_non_committed_preflight_input_consumer_or_manifest_binding_pr`, which must consume or bind this one-row decision record without committing the local `.npy`, without using committed `data/output`, without promoting `ready_for_preflight`, without Gate 8 / Gate 9 promotion, and without biological claims.
+
+
 ## G3SX30 post-live local artifact status checkpoint
 
 `docs/g3sx30_post_live_local_artifact_status.md` records the local runtime artifact status after the already-merged guarded one-row G3SX30 live embedding.
