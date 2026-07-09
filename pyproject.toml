@@ -44,6 +44,7 @@ cofolding-candidate-baseline = "longevity_port_pipelines.stages.cofolding_candid
 curated-embedding-preflight = "longevity_port_pipelines.stages.curated_embedding_preflight:app"
 curated-embedding-single = "longevity_port_pipelines.stages.curated_embedding_single:app"
 g3sx30-wrapper-dry-run = "longevity_port_pipelines.stages.g3sx30_wrapper_source_entrypoint_boundary:app"
+g3sx30-live-embedding-one-row = "longevity_port_pipelines.stages.g3sx30_live_embedding_one_row:app"
 controlled-embedding-fill-worklist = "longevity_port_pipelines.stages.controlled_embedding_fill_worklist:app"
 generic-repair-queue-summary = "longevity_port_pipelines.stages.generic_repair_queue_summary:app"
 curated-analysis-preflight = "longevity_port_pipelines.stages.curated_analysis_preflight:app"

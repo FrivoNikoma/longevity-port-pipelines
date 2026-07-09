@@ -454,6 +454,40 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row live embedding runtime observation checkpoint
+
+`docs/g3sx30_one_row_live_embedding_runtime_observation.md` records the guarded one-row G3SX30 live embedding runtime observation.
+
+The live command was `uv run g3sx30-live-embedding-one-row --yes-live --max-live-batch-size 1`. The command output was captured outside the repository at `D:/biohub_projects/_chatgpt_observations/g3sx30_live_embedding_one_row_output.txt`. The local validation JSON was written outside the repository at `D:/biohub_projects/_chatgpt_observations/g3sx30_live_embedding_one_row_validation.json`. These external observation artifacts are not committed.
+
+The command validated `manifest_path=data/input/g3sx30_dry_run_preflight_manifest.csv`, `manifest_row_index=1`, `reviewed_sequence_fasta=D:/biohub_projects/_chatgpt_observations/g3sx30_reviewed_sequence.fasta`, `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `chain=mdm2`, `target_accession=G3SX30`, `target_taxid=9785`, `gene_symbol=MDM2`, `model_name=esmc-300m-2024-12`, `sequence_length=492`, and `sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f`.
+
+The live result recorded `mode=live`, `status=live_completed`, `embedding_shape=492x960`, `live_exit_code=0`, and `embedding_exists=true`.
+
+The generated local runtime artifact is `data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`. The local artifact validation recorded `shape=492x960`, `dtype=float32`, `finite=true`, `sequence_length_matches=true`, `biohub_esmc_called=true`, `embedding_generation_performed=true`, `npy_artifact_created=true`, `data_output_artifact_committed=false`, `ready_for_preflight_promoted=false`, `gate8_promoted=false`, `gate9_promoted=false`, `biological_claim_made=false`, and `artifact_location=local_runtime_data_output_ignored_by_git`.
+
+This runtime observation does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not commit the external FASTA artifact, does not commit the external live log, does not commit the external validation JSON, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+This closes the first guarded G3SX30 one-row live embedding runtime observation as a technical runtime checkpoint only. It does not unlock downstream gates by itself.
+
+
+## G3SX30 one-row live embedding strict guardrail wrapper checkpoint
+
+`src/longevity_port_pipelines/stages/g3sx30_live_embedding_one_row.py` adds the source-level executable guardrail wrapper for `Execute one-row G3SX30 live embedding with strict guardrails`.
+
+The command entry point is `g3sx30-live-embedding-one-row = longevity_port_pipelines.stages.g3sx30_live_embedding_one_row:app`. The default command is dry-run-only: `uv run g3sx30-live-embedding-one-row`. The live command must be explicit: `uv run g3sx30-live-embedding-one-row --yes-live --max-live-batch-size 1`.
+
+The wrapper reads `data/input/g3sx30_dry_run_preflight_manifest.csv#1`, validates `docs/current_gate_map.md` contains the prior approval for `execute_one_row_g3sx30_live_embedding_with_strict_guardrails`, and validates the external non-committed reviewed sequence artifact `D:/biohub_projects/_chatgpt_observations/g3sx30_reviewed_sequence.fasta`.
+
+The wrapper requires `manifest_row_index=1`, `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `chain=mdm2`, `target_accession=G3SX30`, `target_taxid=9785`, `gene_symbol=MDM2`, `reviewed_sequence_length=492`, `reviewed_sequence_sha256=e288c6985ffcebe527716261c213e00a44f5f9acf0280eaa433154f6e19eab4f`, `max_live_batch_size=1`, and explicit `--yes-live` before any Biohub / ESMC call.
+
+The expected local runtime embedding path is `data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`.
+
+This checkpoint adds the wrapper and tests. It does not call Biohub / ESMC, does not generate embeddings, does not create `.npy` artifacts, does not commit `data/output`, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make biological claims.
+
+After this checkpoint, the same PR may run the guarded command with explicit `--yes-live --max-live-batch-size 1` and then record the live runtime observation without committing the generated `.npy`.
+
+
 ## G3SX30 dry-run observation next data-step review checkpoint
 
 `docs/g3sx30_dry_run_observation_next_data_step_review.md` reviews the already-observed G3SX30 wrapper dry-run external observation and directly decides the next data-producing step.
