@@ -1,0 +1,51 @@
+name: g3sx30_one_row_readiness_preflight_transition_result
+description: >
+  Actual one-row G3SX30 readiness/preflight transition/check result.
+  Consumes the final transition decision row and marks only one G3SX30 elephant
+  MDM2 row ready_for_preflight=true.
+version: 1
+
+source_decision_table: data/input/g3sx30_one_row_readiness_preflight_transition_decisions.csv
+source_decision_row_index: 1
+transition_result_table: data/input/g3sx30_one_row_readiness_preflight_transition_results.csv
+
+required_values:
+  source_decision: approve_one_row_readiness_preflight_transition_path
+  source_approved_for_next_transition_step: "true"
+  source_allowed_next_action: run_one_row_g3sx30_readiness_preflight_transition
+  source_next_pr_must_be_actual_transition_check: "true"
+  source_no_additional_decision_before_transition: "true"
+  transition_action: run_one_row_g3sx30_readiness_preflight_transition
+  transition_status: one_row_readiness_preflight_transition_passed
+  one_row_only: "true"
+  ready_for_preflight: "true"
+  ready_scope: one_row_g3sx30_elephant_mdm2_only
+  gate8_promoted: "false"
+  gate9_promoted: "false"
+  biological_claim_made: "false"
+  data_output_artifact_committed: "false"
+  local_runtime_embedding_tracked: "false"
+  local_runtime_embedding_committed: "false"
+  biohub_esmc_called_by_transition: "false"
+  live_embedding_rerun_by_transition: "false"
+  embedding_generation_performed_by_transition: "false"
+  npy_artifact_created_by_transition: "false"
+  boltz_called: "false"
+  af3_called: "false"
+  chai_called: "false"
+  enrichment_rerun: "false"
+  contrast_rerun: "false"
+  allowed_downstream_use_path: first_controlled_downstream_use_path_for_one_row_ready_artifact
+  next_step: add_first_controlled_downstream_use_path_for_one_row_ready_artifact
+
+boundary:
+  - no Biohub / ESMC call
+  - no live rerun
+  - no new embedding generation
+  - no .npy commit
+  - no data/output commit
+  - no Gate 8 / Gate 9
+  - no Boltz / AF3 / Chai
+  - no enrichment / contrast rerun
+  - no biological claim
+  - no additional transition approval before downstream use

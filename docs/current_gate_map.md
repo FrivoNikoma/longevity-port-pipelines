@@ -454,6 +454,20 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row readiness/preflight transition result
+
+`data/input/g3sx30_one_row_readiness_preflight_transition_results.csv` records the actual one-row G3SX30 readiness/preflight transition/check result. This is not another approval, review, scaffold, or binding layer.
+
+The transition result sources `data/input/g3sx30_one_row_readiness_preflight_transition_decisions.csv#1`, with `source_decision=approve_one_row_readiness_preflight_transition_path`, `source_approved_for_next_transition_step=true`, `source_allowed_next_action=run_one_row_g3sx30_readiness_preflight_transition`, `source_next_pr_must_be_actual_transition_check=true`, and `source_no_additional_decision_before_transition=true`.
+
+The transition result is `transition_action=run_one_row_g3sx30_readiness_preflight_transition`, `transition_status=one_row_readiness_preflight_transition_passed`, `one_row_only=true`, `candidate_id=tp53_mdm2_elephant_seed_mdm2_chain`, `target_accession=G3SX30`, `target_accession_db=UniProtKB TrEMBL`, `target_species=Loxodonta africana`, `target_taxid=9785`, `gene_symbol=MDM2`, `ready_for_preflight=true`, and `ready_scope=one_row_g3sx30_elephant_mdm2_only`.
+
+The `ready_for_preflight=true` status applies only to this one row. This transition/check result keeps `gate8_promoted=false`, `gate9_promoted=false`, and `biological_claim_made=false`.
+
+This transition/check result does not make a Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+After this PR, the next step should be `add_first_controlled_downstream_use_path_for_one_row_ready_artifact`, the first controlled downstream use path for the one-row ready artifact, not another transition approval.
+
 ## G3SX30 one-row readiness/preflight transition path decision
 
 `data/input/g3sx30_one_row_readiness_preflight_transition_decisions.csv` records the final decision before the actual one-row G3SX30 readiness/preflight transition/check.
