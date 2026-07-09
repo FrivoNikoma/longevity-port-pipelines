@@ -2243,3 +2243,56 @@ def test_current_gate_map_records_g3sx30_local_embedding_readiness_input_decisio
         "prepare_one_row_non_committed_preflight_input_consumer_or_manifest_binding_pr",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_non_committed_preflight_input_binding() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 one-row non-committed preflight input binding",
+        "data/input/g3sx30_one_row_non_committed_preflight_input_bindings.csv",
+        "machine-readable one-row binding",
+        "G3SX30 / elephant MDM2 ESMC embedding artifact",
+        "data/input/g3sx30_one_row_local_embedding_readiness_input_decisions.csv#1",
+        "approved_for_one_row_readiness_preflight_input=true",
+        "candidate_id=tp53_mdm2_elephant_seed_mdm2_chain",
+        "target_accession=G3SX30",
+        "target_accession_db=UniProtKB TrEMBL",
+        "target_species=Loxodonta africana",
+        "target_taxid=9785",
+        "gene_symbol=MDM2",
+        "sequence_length=492",
+        "local_embedding_path=data/output/embeddings/esmc-300m-2024-12/"
+        "tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy",
+        "artifact_location=local_runtime_data_output_ignored_by_git",
+        "local_runtime_embedding_tracked=false",
+        "local_runtime_embedding_committed=false",
+        "embedding_shape=492x960",
+        "embedding_dtype=float32",
+        "embedding_finite=true",
+        "sequence_length_matches=true",
+        "non_committed_preflight_input_reference_created=true",
+        "ready_for_preflight=false",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "run_record_g3sx30_one_row_local_embedding_preflight_check",
+        "next_check_scope=local_artifact_shape_dtype_finiteness_sequence_length_path_policy_only",
+        "next_check_input=data/input/g3sx30_one_row_non_committed_preflight_input_bindings.csv#1",
+        "next_check_output_policy=external_non_committed_observation_only",
+        "D:/biohub_projects/_chatgpt_observations/"
+        "g3sx30_one_row_local_embedding_preflight_check.json",
+        "do not add another review, scaffold, or binding layer",
+        "does not make a new Biohub / ESMC call",
+        "does not rerun live embedding",
+        "does not generate a new embedding",
+        "does not commit the generated `.npy` artifact",
+        "does not commit any `data/output` artifact",
+        "does not copy external validation JSON into the repo",
+        "does not promote `ready_for_preflight`",
+        "does not promote Gate 8 or Gate 9",
+        "does not call Boltz / AF3 / Chai",
+        "does not rerun enrichment or contrast",
+        "does not make a biological claim",
+    ]:
+        assert required in text
