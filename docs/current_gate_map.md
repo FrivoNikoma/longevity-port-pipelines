@@ -454,6 +454,19 @@ This checkpoint does not run a dry-run, does not run a live path, does not execu
 Because the actual source entrypoint now has source-level fail-closed tests, the next practical layer should be `Add G3SX30 wrapper dry-run execution plan scaffold`, not another blocker layer.
 
 
+## G3SX30 one-row readiness/preflight transition path decision
+
+`data/input/g3sx30_one_row_readiness_preflight_transition_decisions.csv` records the final decision before the actual one-row G3SX30 readiness/preflight transition/check.
+
+The decision sources `data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv#1`, with `source_check_name=g3sx30_one_row_local_embedding_preflight_check`, `source_check_status=local_preflight_pass`, `source_embedding_shape=492x960`, `source_embedding_dtype=float32`, `source_embedding_finite=true`, `source_sequence_length_matches=true`, `source_local_runtime_embedding_tracked=false`, and `source_local_runtime_embedding_committed=false`.
+
+The decision is `decision=approve_one_row_readiness_preflight_transition_path`, with `approved_for_next_transition_step=true`, `ready_for_preflight=false`, `gate8_promoted=false`, `gate9_promoted=false`, `biological_claim_made=false`, and `allowed_next_action=run_one_row_g3sx30_readiness_preflight_transition`.
+
+This is the final decision PR before the actual transition/check. The anti-loop fields are `next_pr_must_be_actual_transition_check=true` and `no_additional_decision_before_transition=true`, with `next_required_pr_title=Run one-row G3SX30 readiness/preflight transition`. After this PR, the next PR must run the one-row G3SX30 readiness/preflight transition. Do not add another decision, review, scaffold, or binding layer before that.
+
+This decision does not make a Biohub / ESMC call, does not rerun live embedding, does not generate a new embedding, does not commit the generated `.npy` artifact, does not commit any `data/output` artifact, does not commit external FASTA, live log, validation JSON, or local preflight JSON artifacts, does not promote `ready_for_preflight`, does not promote Gate 8 or Gate 9, does not call Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not make a biological claim.
+
+
 ## G3SX30 one-row local embedding preflight check result
 
 `data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv` records the externally executed local preflight check result for the already-generated local runtime G3SX30 / elephant MDM2 ESMC embedding artifact.

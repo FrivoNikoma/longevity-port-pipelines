@@ -1,0 +1,104 @@
+name: g3sx30_one_row_readiness_preflight_transition_decision
+description: >
+  Machine-readable final decision record approving the one-row G3SX30
+  readiness/preflight transition path from the passed local embedding preflight
+  result. This is the final decision PR before the actual transition/check.
+version: 1
+
+source_result_table: data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv
+source_result_row_index: 1
+decision_table: data/input/g3sx30_one_row_readiness_preflight_transition_decisions.csv
+
+required_columns:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - target_accession
+  - target_accession_db
+  - target_species
+  - target_taxid
+  - gene_symbol
+  - source_result_table
+  - source_result_row_index
+  - source_check_name
+  - source_check_status
+  - source_preflight_artifact_status
+  - source_embedding_shape
+  - source_embedding_dtype
+  - source_embedding_finite
+  - source_sequence_length_matches
+  - source_local_runtime_embedding_tracked
+  - source_local_runtime_embedding_committed
+  - decision
+  - approved_for_next_transition_step
+  - ready_for_preflight
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made
+  - allowed_next_action
+  - next_pr_must_be_actual_transition_check
+  - no_additional_decision_before_transition
+  - next_required_pr_title
+  - forbidden_actions
+  - reviewer_id
+  - decision_date
+  - decision_note
+
+required_values:
+  source_result_table: data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv
+  source_result_row_index: "1"
+  source_check_name: g3sx30_one_row_local_embedding_preflight_check
+  source_check_status: local_preflight_pass
+  source_preflight_artifact_status: local_artifact_preflight_passed
+  source_embedding_shape: 492x960
+  source_embedding_dtype: float32
+  source_embedding_finite: "true"
+  source_sequence_length_matches: "true"
+  source_local_runtime_embedding_tracked: "false"
+  source_local_runtime_embedding_committed: "false"
+  decision: approve_one_row_readiness_preflight_transition_path
+  approved_for_next_transition_step: "true"
+  ready_for_preflight: "false"
+  gate8_promoted: "false"
+  gate9_promoted: "false"
+  biological_claim_made: "false"
+  allowed_next_action: run_one_row_g3sx30_readiness_preflight_transition
+  next_pr_must_be_actual_transition_check: "true"
+  no_additional_decision_before_transition: "true"
+  next_required_pr_title: Run one-row G3SX30 readiness/preflight transition
+
+allowed_true_flags:
+  - source_embedding_finite
+  - source_sequence_length_matches
+  - approved_for_next_transition_step
+  - next_pr_must_be_actual_transition_check
+  - no_additional_decision_before_transition
+
+required_false_flags:
+  - source_local_runtime_embedding_tracked
+  - source_local_runtime_embedding_committed
+  - ready_for_preflight
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made
+
+forbidden_actions:
+  - Biohub call
+  - ESMC call
+  - live embedding rerun
+  - embedding generation
+  - .npy commit
+  - data/output commit
+  - external FASTA commit
+  - external live log commit
+  - external validation JSON commit
+  - ready_for_preflight promotion
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - enrichment rerun
+  - contrast rerun
+  - biological claim
+  - additional decision/review/scaffold/binding layer before transition
