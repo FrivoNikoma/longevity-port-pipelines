@@ -972,3 +972,54 @@ The first G3SX30 ortholog evidence Gate 4 / Gate 5 policy update row is now reco
 The first G3SX30 ortholog evidence reviewed-decision row is now recorded from the collected-source intake row. It records review_decision=`accepted_for_planning_after_review` as reviewed-for-planning provenance evidence, but remains downstream_block_status_after_review=`reviewed_for_planning_still_policy_blocked` and only allows allowed_next_action_after_review=`consider_later_explicit_gate4_gate5_policy_update`. It does not automatically update Gate 4 / Gate 5 policy, does not fetch sequences, does not call Biohub, does not generate embeddings, does not call Boltz, does not call AF3, does not call Chai, does not rerun enrichment or contrast, does not promote Gate 8 or Gate 9, and does not make biological claims.
 
 The first real metadata ingestion sandbox for G3SX30 is now represented by the committed UniProtKB metadata-only sandbox row. The first G3SX30 collected-source intake row is now recorded from the metadata-only stronger-source evidence collection row with intake_outcome=`evidence_ready_for_review_decision`. The first G3SX30 ortholog evidence reviewed-decision row is now recorded from that collected-source intake row with review_decision=`accepted_for_planning_after_review` and downstream_block_status_after_review=`reviewed_for_planning_still_policy_blocked`. The first G3SX30 Gate 4 / Gate 5 policy update row is now recorded as a planning-policy update, still runtime-blocked. The G3SX30 gate-aware embedding fill plan checkpoint is now recorded as docs-only planning context. The first G3SX30 blocked controlled embedding-fill worklist row is now recorded in `data/interim/controlled_embedding_fill_worklist_g3sx30_blocked_checkpoint.csv` with fill_status=`planning_policy_updated_runtime_blocked` and allowed_next_action=`keep_blocked`. The next safe main-track action is a later explicit reviewed dry-run preflight decision or worklist update, not embedding execution: do not fetch sequence, do not call Biohub, do not generate embeddings, do not call Boltz, do not promote Gate 8 or Gate 9, and do not make biological claims. Any later live client must remain blocker-first and must not collect source evidence automatically, accept orthologs, create reviewed decisions, update Gate 4 / Gate 5 policy, promote Gate 8 or Gate 9, fetch sequences by default, call Biohub, generate embeddings, call Boltz, AF3, or Chai, or make biological claims.
+
+## G3SX30 one-row first analysis-adjacent controlled embedding summary
+
+`data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv#1`
+creates the first numerical analysis-adjacent result for the one-row ready
+G3SX30 elephant MDM2 artifact.
+
+It consumes
+`data/input/g3sx30_one_row_first_minimal_controlled_downstream_outputs.csv#1`
+with `source_output_status=first_minimal_controlled_downstream_output_created`
+and `source_output_type=one_row_artifact_identity_and_embedding_health_summary`.
+
+It reads the ignored local runtime artifact at
+`data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy`
+and records scalar statistics only:
+`token_count=492`,
+`embedding_dim=960`,
+`total_values=472320`,
+`finite_value_count=472320`,
+`finite_fraction=1.0000000000`,
+`embedding_value_mean=0.0005752576`,
+`embedding_value_std=0.0426076710`,
+`embedding_value_min=-0.9414062500`,
+`embedding_value_max=0.9062500000`,
+`embedding_value_l2_norm=29.2850211813`,
+`token_l2_norm_mean=1.3182273717`, and
+`token_l2_norm_std=0.0734259083`.
+
+The result records
+`summary_status=first_analysis_adjacent_controlled_embedding_summary_created`,
+`summary_type=one_row_embedding_scalar_summary_statistics`, and
+`summary_scope=scalar_embedding_statistics_only_no_biological_claim`.
+
+This is a pipeline integration / analysis-adjacent result. It is not a biological comparison, interface result, binding result, or longevity evidence.
+It keeps `gate8_promoted=false`, `gate9_promoted=false`,
+`biological_claim_made=false`, `data_output_artifact_committed=false`,
+`biohub_esmc_called_by_summary=false`, `live_embedding_rerun_by_summary=false`,
+`embedding_generation_performed_by_summary=false`,
+`npy_artifact_created_by_summary=false`,
+`raw_embedding_values_committed=false`, `boltz_called=false`,
+`af3_called=false`, `chai_called=false`, `enrichment_rerun=false`, and
+`contrast_rerun=false`.
+
+The next result-bearing action is
+`next_step=add_first_controlled_comparator_or_pairwise_embedding_summary`.
+The row records
+`next_pr_should_add_controlled_comparator_or_pairwise_embedding_summary=true`,
+`no_additional_scalar_summary_approval_before_comparator=true`, and
+`no_additional_non_result_layer_before_next_concrete_step=true`.
+Do not insert another scalar-summary approval, review, preparation, scaffold,
+handle, or decision layer before the comparator or pairwise result.
