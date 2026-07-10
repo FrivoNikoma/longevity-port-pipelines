@@ -1,0 +1,63 @@
+name: g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summary
+description: >
+  First numerical analysis-adjacent output for the one-row ready G3SX30
+  elephant MDM2 artifact. It consumes the first minimal controlled downstream
+  output, reads the ignored local runtime .npy artifact, and commits scalar
+  embedding statistics only.
+version: 1
+
+source:
+  table: data/input/g3sx30_one_row_first_minimal_controlled_downstream_outputs.csv
+  row_index: 1
+  required_output_status: first_minimal_controlled_downstream_output_created
+  required_output_type: one_row_artifact_identity_and_embedding_health_summary
+
+output:
+  table: data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv
+  required_summary_status: first_analysis_adjacent_controlled_embedding_summary_created
+  required_summary_type: one_row_embedding_scalar_summary_statistics
+  required_summary_scope: scalar_embedding_statistics_only_no_biological_claim
+  one_row_only: true
+
+scalar_fields:
+  - token_count
+  - embedding_dim
+  - total_values
+  - finite_value_count
+  - finite_fraction
+  - embedding_value_mean
+  - embedding_value_std
+  - embedding_value_min
+  - embedding_value_max
+  - embedding_value_l2_norm
+  - token_l2_norm_mean
+  - token_l2_norm_std
+
+claim_policy:
+  pipeline_integration_result: true
+  biological_comparison: false
+  interface_result: false
+  binding_result: false
+  longevity_evidence: false
+
+next_step:
+  action: add_first_controlled_comparator_or_pairwise_embedding_summary
+  next_pr_should_add_controlled_comparator_or_pairwise_embedding_summary: true
+  no_additional_scalar_summary_approval_before_comparator: true
+  no_additional_non_result_layer_before_next_concrete_step: true
+
+boundary:
+  biohub_esmc_call: false
+  live_embedding_rerun: false
+  embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_values_commit: false
+  data_output_artifact_commit: false
+  gate8_promotion: false
+  gate9_promotion: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  biological_claim: false

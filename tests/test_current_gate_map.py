@@ -2610,3 +2610,47 @@ def test_current_gate_map_records_g3sx30_first_minimal_controlled_downstream_out
         "Do not insert another non-result layer before that concrete step.",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_first_analysis_adjacent_embedding_summary() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "G3SX30 one-row first analysis-adjacent controlled embedding summary",
+        "data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv#1",
+        "first numerical analysis-adjacent result",
+        "data/input/g3sx30_one_row_first_minimal_controlled_downstream_outputs.csv#1",
+        "source_output_status=first_minimal_controlled_downstream_output_created",
+        "source_output_type=one_row_artifact_identity_and_embedding_health_summary",
+        "summary_status=first_analysis_adjacent_controlled_embedding_summary_created",
+        "summary_type=one_row_embedding_scalar_summary_statistics",
+        "summary_scope=scalar_embedding_statistics_only_no_biological_claim",
+        "token_count=492",
+        "embedding_dim=960",
+        "total_values=472320",
+        "finite_value_count=472320",
+        "finite_fraction=1.0000000000",
+        "pipeline integration / analysis-adjacent result",
+        "not a biological comparison",
+        "not a biological comparison, interface result, binding result, or longevity evidence",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_claim_made=false",
+        "data_output_artifact_committed=false",
+        "biohub_esmc_called_by_summary=false",
+        "live_embedding_rerun_by_summary=false",
+        "embedding_generation_performed_by_summary=false",
+        "npy_artifact_created_by_summary=false",
+        "raw_embedding_values_committed=false",
+        "boltz_called=false",
+        "af3_called=false",
+        "chai_called=false",
+        "enrichment_rerun=false",
+        "contrast_rerun=false",
+        "next_step=add_first_controlled_comparator_or_pairwise_embedding_summary",
+        "next_pr_should_add_controlled_comparator_or_pairwise_embedding_summary=true",
+        "no_additional_scalar_summary_approval_before_comparator=true",
+        "no_additional_non_result_layer_before_next_concrete_step=true",
+        "Do not insert another scalar-summary approval",
+    ]:
+        assert required in text
