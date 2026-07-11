@@ -2654,3 +2654,29 @@ def test_current_gate_map_records_g3sx30_first_analysis_adjacent_embedding_summa
         "Do not insert another scalar-summary approval",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_g3sx30_source_backed_human_mdm2_comparator_path() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    for required in [
+        "G3SX30 source-backed human MDM2 comparator path checkpoint",
+        "g3sx30_source_backed_human_mdm2_comparator_paths.csv#1",
+        "tp53_mdm2_pilot_manifest.csv#2",
+        "tp53_mdm2_ortholog_repair_decisions.csv#2",
+        "ortholog_evidence_review_decisions.csv#1",
+        "g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv#1",
+        "Q00987",
+        "1ycr",
+        "human_reference_source_backed=true",
+        "human_embedding_available=false",
+        "elephant_embedding_available=true",
+        "pairwise_summary_created=false",
+        "source_backed_human_mdm2_embedding_not_available",
+        "does not call Biohub / ESMC",
+        "does not generate embeddings",
+        "does not promote Gate 8 or Gate 9",
+        "does not make biological claims",
+        "generate_source_backed_human_mdm2_embedding_and_create_first_pairwise_summary",
+        "no additional comparator approval",
+    ]:
+        assert required in text

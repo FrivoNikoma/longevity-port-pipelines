@@ -1023,3 +1023,38 @@ The row records
 `no_additional_non_result_layer_before_next_concrete_step=true`.
 Do not insert another scalar-summary approval, review, preparation, scaffold,
 handle, or decision layer before the comparator or pairwise result.
+
+## G3SX30 source-backed human MDM2 comparator path checkpoint
+
+`data/input/g3sx30_source_backed_human_mdm2_comparator_paths.csv#1`
+records the first concrete comparator/blocker result for the future G3SX30
+elephant MDM2 versus human MDM2 pairwise embedding path.
+
+The row sources `data/input/tp53_mdm2_pilot_manifest.csv#2`,
+`data/input/tp53_mdm2_ortholog_repair_decisions.csv#2`,
+`data/input/ortholog_evidence_review_decisions.csv#1`, and
+`data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv#1`.
+It records the committed human MDM2 pilot reference identity as accession
+`Q00987`, PDB `1ycr`, chain `A`, partner `P04637`, while preserving the
+historical repair-row `target_uniprot=unresolved` state and using the later
+reviewed-for-planning G3SX30 and elephant embedding result rows as current
+comparator sources.
+
+The concrete inspection result is `human_reference_source_backed=true`,
+`human_embedding_available=false`, `elephant_embedding_available=true`,
+`pairwise_summary_created=false`, and
+`pairwise_blocker=source_backed_human_mdm2_embedding_not_available`.
+Exact local runtime filename inspection found no `.npy` with `Q00987` or `1ycr`;
+unrelated taxid-only `9606` embedding filenames are not treated as human MDM2
+embeddings.
+
+This checkpoint does not call Biohub / ESMC, does not rerun live embedding,
+does not generate embeddings, does not create or commit `.npy` or raw embedding
+values, does not commit `data/output`, does not promote Gate 8 or Gate 9, does
+not call Boltz, AF3, or Chai, does not rerun enrichment or contrast, and does not make biological claims. It is not an orthology, functional-equivalence,
+interface, protein-binding, beneficial-breakage, or longevity result.
+
+The next result-bearing step is
+`generate_source_backed_human_mdm2_embedding_and_create_first_pairwise_summary`.
+Runtime scope must be encoded inside that result-bearing step; no additional comparator approval, review, preparation, scaffold, or non-result layer may be
+inserted before it.

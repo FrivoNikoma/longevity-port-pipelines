@@ -1,0 +1,77 @@
+name: g3sx30_source_backed_human_mdm2_comparator_path
+description: >
+  First concrete comparator/blocker result for the G3SX30 elephant MDM2
+  pairwise embedding path. It binds the committed human MDM2 reference
+  identity Q00987 / PDB 1ycr chain A to the current G3SX30 elephant
+  embedding result and records that the human embedding is not available.
+version: 1
+
+sources:
+  human_reference:
+    table: data/input/tp53_mdm2_pilot_manifest.csv
+    row_index: 2
+    required_accession: Q00987
+    required_pdb_id: 1ycr
+    required_chain: A
+  historical_candidate_provenance:
+    table: data/input/tp53_mdm2_ortholog_repair_decisions.csv
+    row_index: 2
+    required_historical_target_uniprot: unresolved
+  elephant_reviewed_planning_evidence:
+    table: data/input/ortholog_evidence_review_decisions.csv
+    row_index: 1
+    required_review_decision: accepted_for_planning_after_review
+    required_reviewed_target_uniprot: G3SX30
+  elephant_scalar_summary:
+    table: data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv
+    row_index: 1
+    required_summary_status: first_analysis_adjacent_controlled_embedding_summary_created
+
+output:
+  table: data/input/g3sx30_source_backed_human_mdm2_comparator_paths.csv
+  required_comparator_status: source_backed_human_mdm2_comparator_path_created
+  required_comparator_type: human_elephant_mdm2_reference_identity_comparator_for_pairwise_embedding
+  required_comparator_scope: reference_identity_and_embedding_availability_only_no_biological_claim
+  one_row_only: true
+
+inspection_result:
+  human_reference_source_backed: true
+  human_embedding_available: false
+  elephant_embedding_available: true
+  pairwise_summary_created: false
+  pairwise_blocker: source_backed_human_mdm2_embedding_not_available
+
+claim_policy:
+  reference_identity_result: true
+  embedding_availability_result: true
+  orthology_claim: false
+  functional_equivalence_claim: false
+  biological_comparison: false
+  interface_result: false
+  binding_result: false
+  beneficial_breakage_result: false
+  longevity_evidence: false
+
+next_step:
+  action: generate_source_backed_human_mdm2_embedding_and_create_first_pairwise_summary
+  explicit_runtime_scope_required_for_next_step: true
+  runtime_scope_must_be_encoded_in_result_bearing_step: true
+  no_additional_comparator_approval_before_pairwise_result: true
+  no_additional_comparator_review_before_pairwise_result: true
+  no_additional_non_result_layer_before_next_concrete_step: true
+
+boundary:
+  biohub_esmc_call: false
+  live_embedding_rerun: false
+  embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_values_commit: false
+  data_output_artifact_commit: false
+  gate8_promotion: false
+  gate9_promotion: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  biological_claim: false
