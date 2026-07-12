@@ -2680,3 +2680,17 @@ def test_current_gate_map_records_g3sx30_source_backed_human_mdm2_comparator_pat
         "no additional comparator approval",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_human_elephant_mdm2_pairwise_summary() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "First human-elephant MDM2 mean-pooled pairwise embedding summary checkpoint" in text
+    assert "g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv#1" in text
+    assert "mean_pooled_cosine_similarity=0.9973314302339468" in text
+    assert "mean_pooled_cosine_distance=0.0026685697660532" in text
+    assert "mean_pooled_euclidean_distance=0.0609504211067301" in text
+    assert "numerical embedding-space comparison only" in text
+    assert "not residue alignment" in text
+    assert "does not promote Gate 8 or Gate 9" in text
+    assert "does not make a biological claim" in text

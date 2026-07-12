@@ -1,0 +1,98 @@
+name: g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summary
+description: >
+  First numerical embedding-space comparison between the source-backed human
+  MDM2 reference Q00987 and the reviewed-for-planning elephant MDM2 target
+  G3SX30. The result uses independently mean-pooled per-residue ESMC vectors
+  and does not perform residue alignment or make a biological claim.
+version: 1
+
+sources:
+  comparator_path:
+    table: data/input/g3sx30_source_backed_human_mdm2_comparator_paths.csv
+    row_index: 1
+    required_comparator_status: source_backed_human_mdm2_comparator_path_created
+    required_pairwise_blocker: source_backed_human_mdm2_embedding_not_available
+  elephant_scalar_summary:
+    table: data/input/g3sx30_one_row_first_analysis_adjacent_controlled_embedding_summaries.csv
+    row_index: 1
+    required_summary_status: first_analysis_adjacent_controlled_embedding_summary_created
+  external_human_runtime_input:
+    role: human MDM2 Q00987 reference self-embedding runtime input
+    storage_scope: external_non_committed_runtime_csv_outside_repo
+    required_csv_sha256: d86bf792c538a066d6085e69d3d0f0a1744e7dc5de2a7f179c3198d2e828b8fd
+    required_sequence_length: 491
+    required_sequence_sha256: 77ed25650e717b3f610e42ef8e5c1c88d50e7485725032f8535448a0ca8b61b1
+    required_fasta_file_sha256: 75573e90db2ef66e0acb952bd29883e8f04c98d5828405fc4fe8368420fd0496
+
+local_runtime_artifacts:
+  human_embedding:
+    path: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9606.npy
+    required_shape: 491x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+  elephant_embedding:
+    path: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy
+    required_shape: 492x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+
+runtime_result:
+  live_execution_status: live_completed
+  biohub_esmc_live_execution_count: 1
+  live_scope_accession_count: 1
+  additional_accessions_embedded: false
+  batch_run_performed: false
+  sequence_fetch_performed_by_live_step: false
+
+calculation:
+  pooling: independent_mean_pooling_over_residue_axis
+  residue_alignment_performed: false
+  source_embedding_dtype: float32
+  metric_calculation_dtype: float64
+  output_decimal_places: 16
+  metrics:
+    - human_mean_vector_l2_norm
+    - elephant_mean_vector_l2_norm
+    - mean_pooled_cosine_similarity
+    - mean_pooled_cosine_distance
+    - mean_pooled_euclidean_distance
+
+output:
+  table: data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv
+  required_status: first_human_elephant_mdm2_mean_pooled_embedding_summary_created
+  required_type: human_elephant_mdm2_mean_pooled_embedding_space_comparison
+  required_scope: numerical_embedding_space_comparison_only_no_biological_claim
+  one_row_only: true
+
+claim_policy:
+  numerical_embedding_space_comparison: true
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  raw_sequence_commit: false
+  fasta_commit: false
+  runtime_csv_commit: false
+  npy_artifact_commit: false
+  raw_embedding_values_commit: false
+  data_output_artifact_commit: false
+  gate8_promotion: false
+  gate9_promotion: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+
+next_step:
+  action: add_first_controlled_pairwise_embedding_robustness_check_before_interpretation
+  no_biological_interpretation_before_control: true
+  no_additional_runtime_approval_layer: true
+  no_additional_embedding_generation_only_layer: true

@@ -1058,3 +1058,38 @@ The next result-bearing step is
 `generate_source_backed_human_mdm2_embedding_and_create_first_pairwise_summary`.
 Runtime scope must be encoded inside that result-bearing step; no additional comparator approval, review, preparation, scaffold, or non-result layer may be
 inserted before it.
+
+## First human-elephant MDM2 mean-pooled pairwise embedding summary checkpoint
+
+The first numerical embedding-space comparison between source-backed human MDM2
+`Q00987` and reviewed-for-planning elephant MDM2 `G3SX30` is recorded in
+`data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv#1`.
+
+Exactly one guarded live embedding execution was performed for the external,
+non-committed Human MDM2 Q00987 reference self-embedding runtime input. The
+human embedding was generated locally with shape `491x960`, dtype `float32`,
+and finite values; the existing ignored elephant embedding was reused with
+shape `492x960`, dtype `float32`, and finite values.
+
+The matrices were independently mean-pooled over the residue axis. The result
+records `mean_pooled_cosine_similarity=0.9973314302339468`,
+`mean_pooled_cosine_distance=0.0026685697660532`, and
+`mean_pooled_euclidean_distance=0.0609504211067301`. This is a numerical
+embedding-space comparison only: not residue alignment, not interface analysis,
+not a binding result, not orthology proof, not functional-equivalence evidence,
+and not longevity evidence.
+
+The public UniProt FASTA and runtime CSV remain external and uncommitted. Both
+`.npy` files remain ignored, untracked, and uncommitted. No raw sequence, FASTA,
+runtime CSV, raw embedding vector, or `data/output` artifact is committed. This
+checkpoint does not promote Gate 8 or Gate 9, does not call Boltz, AF3, or Chai,
+does not rerun enrichment or contrast, and does not make a biological claim.
+
+The next result-bearing step is
+`add_first_controlled_pairwise_embedding_robustness_check_before_interpretation`.
+No separate runtime-approval or embedding-generation-only layer should be
+inserted before that concrete control result.
+
+The committed pairwise row is a **numerical embedding-space comparison only**.
+It is not residue alignment, interface analysis, a binding result, orthology proof,
+functional-equivalence evidence, longevity evidence, or a biological claim.
