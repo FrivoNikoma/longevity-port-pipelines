@@ -2747,3 +2747,29 @@ def test_current_gate_map_records_first_independent_pairwise_embedding_control()
         "No inventory-only, control-plan-only",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_matched_elephant_mdm2_control() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First matched elephant MDM2 independent control result checkpoint",
+        "g3sx30_first_matched_elephant_mdm2_independent_control_results.csv#1",
+        "does not perform a new inventory",
+        "comparator_reselected=false",
+        "comparator_remained_frozen=true",
+        "G3SX30",
+        "EPQ16369.1",
+        "taxid `109478`",
+        "human_mdm2_to_frozen_comparator_cosine_similarity=0.8316190559481323",
+        "elephant_mdm2_to_frozen_comparator_cosine_similarity=0.8409825967886765",
+        "baseline_minus_elephant_control_delta=0.1563488334452703",
+        "human_control_minus_elephant_control_delta=-0.0093635408405441",
+        "absolute_human_elephant_control_similarity_difference=0.0093635408405441",
+        "not a validated biological negative control",
+        "does not call Biohub / ESMC",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_additional_source_backed_independent_comparator_result_with_selection_frozen_in_same_step",
+        "No inventory-only, control-plan-only",
+    ]:
+        assert required in text

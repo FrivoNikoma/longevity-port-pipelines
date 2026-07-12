@@ -1,0 +1,107 @@
+name: g3sx30_first_matched_elephant_mdm2_independent_control_result
+description: >
+  First matched numerical embedding-space control using elephant MDM2 G3SX30
+  as the anchor and the exact previously frozen Brandt's bat P09874 candidate
+  EPQ16369.1 as the comparator. No comparator reselection or new inventory is
+  performed. This result does not make a biological claim.
+version: 1
+
+source:
+  table: data/input/g3sx30_first_independent_pairwise_embedding_control_results.csv
+  row_index: 1
+  required_status: first_independent_pairwise_embedding_control_result_created
+  required_next_step: add_first_matched_elephant_mdm2_independent_control_result_before_interpretation
+  required_selection_rule_frozen_before_similarity: true
+  required_inventory_similarity_computed: false
+  required_comparator_must_remain_frozen: true
+  required_baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+  required_human_mdm2_to_frozen_comparator_cosine_similarity: 0.8316190559481323
+
+matched_control:
+  status: first_matched_elephant_mdm2_independent_control_result_created
+  scope: numerical_embedding_space_matched_comparator_control_only_no_biological_claim
+  comparator_reselected: false
+  comparator_remained_frozen: true
+  model: esmc-300m-2024-12
+  pooling: independent_mean_pooling_over_residue_axis
+  residue_alignment_performed: false
+  metric: cosine_similarity
+  metric_calculation_dtype: float64
+  metric_decimal_places: 16
+
+local_runtime_artifacts:
+  elephant_anchor:
+    accession: G3SX30
+    gene_symbol: MDM2
+    species: Loxodonta africana
+    taxid: 9785
+    path: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy
+    required_shape: 492x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+  frozen_comparator:
+    source_accession: P09874
+    target_accession: EPQ16369.1
+    target_accession_db: NCBI Protein
+    species: brandts_bat
+    taxid: 109478
+    complex_id: 4xhu__A1_P09874--4xhu__B1_Q9UNS1
+    chain: receptor
+    path: data/output/embeddings/esmc-300m-2024-12/4xhu__A1_P09874--4xhu__B1_Q9UNS1_receptor_109478.npy
+    required_shape: 1024x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+
+output:
+  table: data/input/g3sx30_first_matched_elephant_mdm2_independent_control_results.csv
+  one_row_only: true
+  external_result:
+    storage_scope: external_non_committed_json_outside_repo
+    required_sha256: 4fe3e2ec90e83eb82a4e6ac792845259fec47c03f151e0f979cd2b4d71d73301
+  metrics:
+    baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+    human_mdm2_to_frozen_comparator_cosine_similarity: 0.8316190559481323
+    elephant_mdm2_to_frozen_comparator_cosine_similarity: 0.8409825967886765
+    baseline_minus_elephant_control_delta: 0.1563488334452703
+    baseline_greater_than_elephant_control: true
+    human_control_minus_elephant_control_delta: -0.0093635408405441
+    absolute_human_elephant_control_similarity_difference: 0.0093635408405441
+    elephant_anchor_mean_vector_l2_norm: 0.8347860929210978
+    frozen_comparator_mean_vector_l2_norm: 0.7998408962311685
+  matched_control_result_created: true
+
+claim_policy:
+  numerical_embedding_space_matched_control: true
+  biological_negative_control_claim: false
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  new_inventory: false
+  comparator_reselection: false
+  biohub_esmc_call: false
+  new_embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_vectors_commit: false
+  data_output_artifact_commit: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  gate8_promotion: false
+  gate9_promotion: false
+
+next_step:
+  action: add_first_additional_source_backed_independent_comparator_result_with_selection_frozen_in_same_step
+  no_biological_interpretation_from_single_comparator: true
+  no_inventory_only_layer_before_next_result: true
+  no_control_plan_only_layer_before_next_result: true
+  no_additional_non_result_layer_before_next_concrete_step: true

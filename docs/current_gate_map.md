@@ -1179,3 +1179,41 @@ That step must reuse the same frozen Brandt's bat `P09874` comparator with
 elephant MDM2 `G3SX30` as the anchor. No inventory-only, control-plan-only,
 approval, review, runtime-preparation, scaffold, or other non-result PR should
 be inserted before that concrete numerical result.
+
+## First matched elephant MDM2 independent control result checkpoint
+
+The matched-anchor numerical result is recorded in
+`data/input/g3sx30_first_matched_elephant_mdm2_independent_control_results.csv#1`.
+
+This step reuses the exact comparator frozen before similarity inspection in
+the preceding independent-control result. It does not perform a new inventory
+and records `comparator_reselected=false` and
+`comparator_remained_frozen=true`.
+
+The anchor is elephant MDM2 `G3SX30`, species `Loxodonta africana`, taxid
+`9785`. The comparator remains the source-backed Brandt's bat `P09874`
+candidate `EPQ16369.1`, taxid `109478`.
+
+The matched measurements are
+`baseline_human_elephant_mdm2_cosine_similarity=0.9973314302339468`,
+`human_mdm2_to_frozen_comparator_cosine_similarity=0.8316190559481323`,
+`elephant_mdm2_to_frozen_comparator_cosine_similarity=0.8409825967886765`,
+`baseline_minus_elephant_control_delta=0.1563488334452703`,
+`baseline_greater_than_elephant_control=true`,
+`human_control_minus_elephant_control_delta=-0.0093635408405441`, and
+`absolute_human_elephant_control_similarity_difference=0.0093635408405441`.
+
+This is a numerical embedding-space matched control only. It is
+not a biological negative control, not residue alignment, not interface
+analysis, not a binding result, not orthology proof, not functional-equivalence
+evidence, not longevity evidence, and not a biological claim.
+
+This step does not call Biohub / ESMC, does not generate an embedding, does not
+commit `.npy` or `data/output` artifacts, does not call Boltz / AF3 / Chai,
+does not rerun enrichment or contrast, and does not promote Gate 8 or Gate 9.
+
+The next concrete result-bearing step is
+`add_first_additional_source_backed_independent_comparator_result_with_selection_frozen_in_same_step`.
+Any additional comparator selection must be frozen and encoded in that same
+result-bearing step. No inventory-only, control-plan-only, approval, review,
+runtime-preparation, scaffold, or other non-result PR should be inserted first.
