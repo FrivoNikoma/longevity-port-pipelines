@@ -2694,3 +2694,30 @@ def test_current_gate_map_records_first_human_elephant_mdm2_pairwise_summary() -
     assert "not residue alignment" in text
     assert "does not promote Gate 8 or Gate 9" in text
     assert "does not make a biological claim" in text
+
+
+def test_current_gate_map_records_first_controlled_human_elephant_mdm2_robustness_check() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First controlled human-elephant MDM2 pairwise embedding robustness checkpoint",
+        "g3sx30_first_controlled_human_elephant_mdm2_pairwise_embedding_robustness_checks.csv#1",
+        "baseline_cosine_similarity=0.9973314302339468",
+        "deterministic_residue_block_jackknife_mean_pooling",
+        "block_count=10",
+        "control_comparison_count=20",
+        "min_control_cosine_similarity=0.9896092392687877",
+        "max_control_cosine_similarity=0.9974979683829747",
+        "mean_control_cosine_similarity=0.9949019040387004",
+        "std_control_cosine_similarity=0.0023610146368762",
+        "max_abs_delta_from_baseline=0.0077221909651590",
+        "baseline_within_control_range=true",
+        "first_controlled_pairwise_embedding_robustness_check_created",
+        "control_result_created=true",
+        "numerical embedding-space control only",
+        "not residue alignment",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_independent_pairwise_embedding_control_result_before_interpretation",
+        "No control-plan-only",
+    ]:
+        assert required in text

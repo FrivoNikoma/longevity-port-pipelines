@@ -1,0 +1,93 @@
+name: g3sx30_first_controlled_human_elephant_mdm2_pairwise_embedding_robustness_check
+description: >
+  First deterministic numerical robustness control for the source-backed
+  human MDM2 Q00987 versus elephant MDM2 G3SX30 mean-pooled embedding
+  comparison. Each species is independently divided into ten contiguous
+  residue-axis blocks, and one block from one species is deleted at a
+  time before re-mean-pooling. The control does not align residues or
+  make a biological claim.
+version: 1
+
+sources:
+  pairwise_summary:
+    table: data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv
+    row_index: 1
+    required_status: first_human_elephant_mdm2_mean_pooled_embedding_summary_created
+    required_type: human_elephant_mdm2_mean_pooled_embedding_space_comparison
+    required_scope: numerical_embedding_space_comparison_only_no_biological_claim
+    required_baseline_cosine_similarity: 0.9973314302339468
+  external_robustness_result:
+    storage_scope: external_non_committed_json_outside_repo
+    required_sha256: 1ca19556000320bf4cb1842c5cd3723f7c2c107d889c496a3826ae59bc335399
+
+local_runtime_artifacts:
+  human_embedding:
+    path: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9606.npy
+    required_shape: 491x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+  elephant_embedding:
+    path: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy
+    required_shape: 492x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+
+control_design:
+  type: deterministic_residue_block_jackknife_mean_pooling
+  block_count_per_species: 10
+  control_comparison_count: 20
+  partition_method: independent_contiguous_numpy_array_split_over_residue_axis
+  deletion_design: one_species_one_block_deleted_at_a_time
+  paired_cross_species_block_deletion_performed: false
+  residue_alignment_performed: false
+  mean_pooling: independent_mean_pooling_over_remaining_residue_axis
+  metric: cosine_similarity
+  metric_calculation_dtype: float64
+  output_decimal_places: 16
+
+output:
+  table: data/input/g3sx30_first_controlled_human_elephant_mdm2_pairwise_embedding_robustness_checks.csv
+  required_status: first_controlled_pairwise_embedding_robustness_check_created
+  required_scope: numerical_embedding_space_control_only_no_biological_claim
+  control_result_created: true
+  one_row_only: true
+  metrics:
+    baseline_cosine_similarity: 0.9973314302339468
+    min_control_cosine_similarity: 0.9896092392687877
+    max_control_cosine_similarity: 0.9974979683829747
+    mean_control_cosine_similarity: 0.9949019040387004
+    std_control_cosine_similarity: 0.0023610146368762
+    max_abs_delta_from_baseline: 0.0077221909651590
+    baseline_within_control_range: true
+
+claim_policy:
+  numerical_embedding_space_control: true
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  biohub_esmc_call: false
+  new_embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_vectors_commit: false
+  data_output_artifact_commit: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  gate8_promotion: false
+  gate9_promotion: false
+
+next_step:
+  action: add_first_independent_pairwise_embedding_control_result_before_interpretation
+  no_biological_interpretation_from_single_control: true
+  no_additional_control_plan_only_layer: true
+  no_additional_non_result_layer_before_next_concrete_step: true

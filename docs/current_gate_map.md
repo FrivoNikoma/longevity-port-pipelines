@@ -1093,3 +1093,48 @@ inserted before that concrete control result.
 The committed pairwise row is a **numerical embedding-space comparison only**.
 It is not residue alignment, interface analysis, a binding result, orthology proof,
 functional-equivalence evidence, longevity evidence, or a biological claim.
+
+## First controlled human-elephant MDM2 pairwise embedding robustness checkpoint
+
+The first numerical sensitivity control for the source-backed human MDM2
+`Q00987` versus elephant MDM2 `G3SX30` mean-pooled embedding comparison is
+recorded in
+`data/input/g3sx30_first_controlled_human_elephant_mdm2_pairwise_embedding_robustness_checks.csv#1`.
+
+The source baseline is
+`data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv#1`
+with `baseline_cosine_similarity=0.9973314302339468`.
+
+The robustness check uses
+`deterministic_residue_block_jackknife_mean_pooling`. Each species is
+independently divided into ten contiguous residue-axis blocks. Ten controls
+delete one human block at a time while keeping the full elephant embedding,
+and ten controls delete one elephant block at a time while keeping the full
+human embedding. Therefore `block_count=10` and
+`control_comparison_count=20`. No paired cross-species block deletion and no
+residue alignment are performed.
+
+The committed control result records
+`min_control_cosine_similarity=0.9896092392687877`,
+`max_control_cosine_similarity=0.9974979683829747`,
+`mean_control_cosine_similarity=0.9949019040387004`,
+`std_control_cosine_similarity=0.0023610146368762`,
+`max_abs_delta_from_baseline=0.0077221909651590`, and
+`baseline_within_control_range=true`. The status is
+`first_controlled_pairwise_embedding_robustness_check_created`, and
+`control_result_created=true`.
+
+This is a numerical embedding-space control only: not residue alignment,
+not interface analysis, not a binding result, not orthology proof, not
+functional-equivalence evidence, not longevity evidence, and not a
+biological claim.
+
+The check makes no Biohub / ESMC call, generates no new embedding, commits
+no `.npy`, raw vector, external JSON, or `data/output` artifact, calls no
+Boltz, AF3, or Chai, reruns no enrichment or contrast, and does not promote
+Gate 8 or Gate 9.
+
+The next concrete result-bearing step is
+`add_first_independent_pairwise_embedding_control_result_before_interpretation`.
+No control-plan-only, approval, review, runtime-preparation, scaffold, or
+other non-result layer should be inserted before that control result.
