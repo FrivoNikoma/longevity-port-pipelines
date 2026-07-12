@@ -2721,3 +2721,29 @@ def test_current_gate_map_records_first_controlled_human_elephant_mdm2_robustnes
         "No control-plan-only",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_independent_pairwise_embedding_control() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First independent pairwise embedding control result checkpoint",
+        "g3sx30_first_independent_pairwise_embedding_control_results.csv#1",
+        "selection rule was frozen before similarity inspection",
+        "inspected 216 existing ESMC `.npy` artifacts",
+        "P09874",
+        "EPQ16369.1",
+        "taxid `109478`",
+        "curated status: primary_candidate",
+        "baseline_mdm2_cosine_similarity=0.9973314302339468",
+        "independent_control_cosine_similarity=0.8316190559481323",
+        "baseline_minus_control_delta=0.1657123742858144",
+        "baseline_greater_than_independent_control=true",
+        "not a validated biological negative control",
+        "does not call Biohub / ESMC",
+        "does not generate an embedding",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_matched_elephant_mdm2_independent_control_result_before_interpretation",
+        "No inventory-only, control-plan-only",
+    ]:
+        assert required in text

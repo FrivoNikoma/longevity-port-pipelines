@@ -1138,3 +1138,44 @@ The next concrete result-bearing step is
 `add_first_independent_pairwise_embedding_control_result_before_interpretation`.
 No control-plan-only, approval, review, runtime-preparation, scaffold, or
 other non-result layer should be inserted before that control result.
+## First independent pairwise embedding control result checkpoint
+
+The first independent numerical embedding-space comparator for the human MDM2
+`Q00987` versus elephant MDM2 `G3SX30` pairwise lane is recorded in
+`data/input/g3sx30_first_independent_pairwise_embedding_control_results.csv#1`.
+
+The comparator selection rule was frozen before similarity inspection. A local
+inventory inspected 216 existing ESMC `.npy` artifacts without computing any
+pairwise metric and found one technically eligible non-MDM2/non-TP53 artifact
+with exact committed references:
+`data/output/embeddings/esmc-300m-2024-12/4xhu__A1_P09874--4xhu__B1_Q9UNS1_receptor_109478.npy`.
+
+Committed provenance identifies this artifact as the curated Brandt's bat
+`P09874` candidate `EPQ16369.1`, taxid `109478`, chain `receptor`, with
+`curated status: primary_candidate`, a unique coverage mapping, successful live
+generation, shape `1024x960`, dtype `float32`, and finite values.
+
+The numerical result records
+`baseline_mdm2_cosine_similarity=0.9973314302339468`,
+`independent_control_cosine_similarity=0.8316190559481323`,
+`baseline_minus_control_delta=0.1657123742858144`, and
+`baseline_greater_than_independent_control=true`.
+
+This is a numerical embedding-space independent comparator only. It is
+not a validated biological negative control, not residue alignment, not interface
+analysis, not a binding result, not orthology proof, not
+functional-equivalence evidence, not longevity evidence, and not a biological
+claim.
+
+This checkpoint does not call Biohub / ESMC, does not generate an embedding,
+does not commit either `.npy` matrix or raw embedding vectors, does not commit a
+`data/output` artifact or any external inventory/result JSON, does not call
+Boltz / AF3 / Chai, does not rerun enrichment or contrast, and does not promote
+Gate 8 or Gate 9.
+
+The next result-bearing step is
+`add_first_matched_elephant_mdm2_independent_control_result_before_interpretation`.
+That step must reuse the same frozen Brandt's bat `P09874` comparator with
+elephant MDM2 `G3SX30` as the anchor. No inventory-only, control-plan-only,
+approval, review, runtime-preparation, scaffold, or other non-result PR should
+be inserted before that concrete numerical result.
