@@ -1325,3 +1325,36 @@ The next result-bearing step is
 No inventory-only, control-plan-only, approval, review, runtime-preparation,
 scaffold, or other non-result layer should be inserted before that concrete
 result.
+## First third source-backed independent comparator result checkpoint
+
+The third independently selected whole-protein embedding-space comparator result
+is recorded in
+`data/input/g3sx30_first_third_source_backed_independent_comparator_results.csv`
+and documented in
+`docs/g3sx30_first_third_source_backed_independent_comparator_result.md`.
+
+The frozen selector recalculated the same `216`-file ESMC inventory and
+found `94` eligible candidates after excluding both earlier comparator contexts.
+It selected the ignored, untracked, unstaged human `7s68` PARP1 ligand artifact.
+The committed row records human and elephant MDM2 similarities of
+`0.7472839682873271` and `0.7516055327169140`.
+
+The checkpoint distinguishes mechanical selection evidence from post-selection
+provenance review. It records `26` exact tracked complex references and confirms
+the `7s68` PARP1/PARP1 role/accession/taxid context, while explicitly recording that
+exact artifact-path, exact embedding-byte, and exact sequence-hash provenance are not confirmed.
+
+This is a numerical whole-protein embedding-space result only. It is
+not a validated biological negative-control panel. It does not establish biological specificity.
+It does not perform residue alignment or interface analysis.
+It does not establish binding, orthology, functional equivalence, longevity evidence, or a biological claim.
+It does not call Biohub/ESMC or generate or commit embeddings.
+It does not commit `data/output` artifacts or the external JSON files.
+It does not call Boltz/AF3/Chai or rerun enrichment or contrast.
+It does not promote Gate 8 or Gate 9.
+
+The next result-bearing action is
+`add_first_three_comparator_pairwise_embedding_control_summary_before_interface_manifest`.
+No inventory-only, control-plan-only, approval-only, review-only,
+runtime-preparation-only, scaffold-only, or other non-result PR should precede
+that summary.

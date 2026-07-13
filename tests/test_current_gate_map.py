@@ -2848,3 +2848,30 @@ def test_current_gate_map_records_first_two_comparator_embedding_control_summary
         "No inventory-only",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_third_source_backed_comparator_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First third source-backed independent comparator result checkpoint",
+        "data/input/g3sx30_first_third_source_backed_independent_comparator_results.csv",
+        "docs/g3sx30_first_third_source_backed_independent_comparator_result.md",
+        "same `216`-file ESMC inventory",
+        "found `94` eligible candidates",
+        "ignored, untracked, unstaged human `7s68` PARP1 ligand artifact",
+        "`0.7472839682873271`",
+        "`0.7516055327169140`",
+        "`26` exact tracked complex references",
+        "exact artifact-path, exact embedding-byte, and exact sequence-hash provenance are not confirmed",
+        "not a validated biological negative-control panel",
+        "does not establish biological specificity",
+        "does not perform residue alignment or interface analysis",
+        "does not establish binding, orthology, functional equivalence, longevity evidence, or a biological claim",
+        "does not call Biohub/ESMC",
+        "does not call Boltz/AF3/Chai",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_three_comparator_pairwise_embedding_control_summary_before_interface_manifest",
+        "No inventory-only, control-plan-only, approval-only, review-only,",
+    ]:
+        assert required in text

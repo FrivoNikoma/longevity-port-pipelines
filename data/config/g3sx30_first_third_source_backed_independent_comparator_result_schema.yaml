@@ -1,0 +1,163 @@
+name: g3sx30_first_third_source_backed_independent_comparator_result
+description: >
+  First third source-backed numerical whole-protein embedding-space comparator
+  result for human MDM2 Q00987 and elephant MDM2 G3SX30. The deterministic
+  selection rule was frozen and physically recorded before similarity
+  calculation. The selected 7s68/PARP1 context has committed complex-level
+  provenance, but exact embedding-byte and exact sequence-hash provenance are
+  not confirmed. This result does not make a biological claim.
+version: 1
+
+source:
+  table: data/input/g3sx30_first_two_comparator_pairwise_embedding_control_summaries.csv
+  row_index: 1
+  required_status: first_two_comparator_pairwise_embedding_control_summary_created
+  required_next_step: add_first_third_source_backed_independent_comparator_result_with_selection_frozen_in_same_step
+  required_baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+  required_first_human_control_cosine_similarity: 0.8316190559481323
+  required_first_elephant_control_cosine_similarity: 0.8409825967886765
+  required_second_human_control_cosine_similarity: 0.8095126148075514
+  required_second_elephant_control_cosine_similarity: 0.8203721870665286
+  required_gate8_promoted: false
+  required_gate9_promoted: false
+  required_biological_claim_made: false
+
+selection:
+  execution_helper_sha256: 9c5ec6bab1b4b8681925e86d58a3790b60892ab403ce3c297a2330163cdec614
+  freeze_json_sha256: d6b3ccb2f621dbac7d5723eef9fa126ac141815fea2ddb49f741869f06b36a8e
+  rule_sha256: aab50c4dcbd198f2ccd7525f29616071cd93b0ba2cbc6c735104e30990e59042
+  frozen_before_similarity: true
+  similarity_used_for_selection: false
+  selection_and_result_in_same_step: true
+  historical_inventory_file_count: 216
+  current_inventory_file_count: 216
+  inventory_file_count_delta: 0
+  inventory_universe_sha256: 30ddb570feda2438c7c1864d466f43521ce8ab03ce1561f91f75f3cab78a8022
+  added_inventory_path_count: 0
+  removed_inventory_path_count: 0
+  source_backed_eligible_candidate_count: 94
+  selected_rank: 1
+  previous_comparators_and_complex_contexts_excluded: true
+
+selected_comparator:
+  artifact_reference: data/output/embeddings/esmc-300m-2024-12/7s68__D1_P09874--7s68__C1_P09874_ligand_9606.npy
+  required_shape: 211x960
+  required_dtype: float32
+  required_finite: true
+  ignored: true
+  tracked: false
+  staged: false
+  committed: false
+  pdb_token: 7s68
+  source_accession: P09874
+  partner_accession: P09874
+  taxid: 9606
+  reference_tier: 3
+  mechanical_reference_files:
+    - data/config/g3sx30_first_independent_pairwise_embedding_control_result_schema.yaml
+    - data/input/curated_ortholog_candidates.csv
+    - data/input/g3sx30_first_independent_pairwise_embedding_control_results.csv
+  reuses_previous_comparator: false
+  reuses_previous_complex_context: false
+
+provenance_boundary:
+  exact_complex_match_count: 26
+  exact_artifact_path_reference_found: false
+  exact_artifact_basename_reference_found: false
+  complex_role_accession_taxid_context_confirmed: true
+  exact_embedding_byte_provenance_confirmed: false
+  exact_sequence_hash_provenance_confirmed: false
+  supplemental_files:
+    - docs/sirt6_mini_pilot_v2_candidate_selection.md
+    - docs/parp1_negatome_evidence_notes.md
+  supplemental_context_status: v1_selected_parp1_homodimer_context
+  supplemental_intermolecular_contacts: 50
+  supplemental_used_for_selection_ranking: false
+  interpretation: >
+    Repository-visible evidence confirms the 7s68 PARP1/PARP1 complex context,
+    ligand role, P09874 source accession, and human taxid context. It does not
+    reconstruct the exact sequence-to-embedding byte chain.
+
+anchors:
+  human_mdm2:
+    accession: Q00987
+    species: Homo sapiens
+    taxid: 9606
+    artifact_reference: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9606.npy
+    required_shape: 491x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+  elephant_mdm2:
+    accession: G3SX30
+    species: Loxodonta africana
+    taxid: 9785
+    artifact_reference: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy
+    required_shape: 492x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+
+calculation:
+  model: esmc-300m-2024-12
+  pooling: independent_mean_pooling_over_residue_axis
+  residue_alignment_performed: false
+  metric: cosine_similarity
+  metric_calculation_dtype: float64
+  metric_decimal_places: 16
+
+output:
+  table: data/input/g3sx30_first_third_source_backed_independent_comparator_results.csv
+  one_row_only: true
+  external_result:
+    storage_scope: external_non_committed_json_outside_repo
+    required_sha256: 82fc8b408d815816dc5834e3d2e79de0d3f83699bb481d0b4a061b754873c043
+  metrics:
+    baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+    human_mdm2_to_third_comparator_cosine_similarity: 0.7472839682873271
+    elephant_mdm2_to_third_comparator_cosine_similarity: 0.7516055327169140
+    baseline_minus_human_third_control_delta: 0.2500474619466196
+    baseline_minus_elephant_third_control_delta: 0.2457258975170328
+    human_third_control_minus_elephant_third_control_delta: -0.0043215644295869
+    absolute_human_elephant_third_control_difference: 0.0043215644295869
+  result_created: true
+
+claim_policy:
+  numerical_whole_protein_embedding_space_comparator: true
+  biological_negative_control_claim: false
+  biological_specificity_claim: false
+  exact_embedding_byte_provenance_claim: false
+  exact_sequence_hash_provenance_claim: false
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  biohub_esmc_call: false
+  new_embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_vectors_commit: false
+  data_output_artifact_commit: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  gate8_promotion: false
+  gate9_promotion: false
+
+next_step:
+  action: add_first_three_comparator_pairwise_embedding_control_summary_before_interface_manifest
+  purpose: >
+    Aggregate the baseline and three comparator pairs, quantify the lower third
+    comparator values and ordering consistency, and close whole-protein
+    comparator calibration before moving to the TP53/MDM2 interface-ready
+    manifest.
+  no_biological_interpretation_from_three_comparators: true
+  no_inventory_only_layer_before_next_result: true
+  no_control_plan_only_layer_before_next_result: true
+  no_additional_non_result_layer_before_next_concrete_step: true
