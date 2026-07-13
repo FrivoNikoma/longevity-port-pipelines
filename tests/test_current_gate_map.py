@@ -2773,3 +2773,40 @@ def test_current_gate_map_records_first_matched_elephant_mdm2_control() -> None:
         "No inventory-only, control-plan-only",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_additional_source_backed_comparator_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First additional source-backed independent comparator result checkpoint",
+        "data/input/g3sx30_first_additional_source_backed_independent_comparator_results.csv#1",
+        "selection_rule_frozen_before_similarity=true",
+        "similarity_used_for_selection=false",
+        "selection_and_result_in_same_step=true",
+        "inventory_file_count=216",
+        "source_backed_eligible_candidate_count=101",
+        "selected_rank=1",
+        "8bot__U1_P13010--8bot__T1_P12956_receptor_9606.npy",
+        "tests/test_analyze_saved_embeddings_mapped.py",
+        "docs/sirt6_mini_pilot_v2_candidate_selection.md",
+        "v1_selected",
+        "732",
+        "supplemental provenance was not used for selection ranking",
+        "0.8095126148075514",
+        "0.8203721870665286",
+        "0.0108595722589772",
+        "not a validated biological negative control",
+        "not residue alignment",
+        "not interface analysis",
+        "not a binding result",
+        "not orthology proof",
+        "not functional-equivalence evidence",
+        "not longevity evidence",
+        "not a biological claim",
+        "does not call Biohub / ESMC",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_two_comparator_pairwise_embedding_control_summary_before_interpretation",
+        "No inventory-only",
+    ]:
+        assert required in text

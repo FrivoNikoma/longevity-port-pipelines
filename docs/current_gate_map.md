@@ -1217,3 +1217,60 @@ The next concrete result-bearing step is
 Any additional comparator selection must be frozen and encoded in that same
 result-bearing step. No inventory-only, control-plan-only, approval, review,
 runtime-preparation, scaffold, or other non-result PR should be inserted first.
+
+## First additional source-backed independent comparator result checkpoint
+
+The first additional comparator result is recorded in
+`data/input/g3sx30_first_additional_source_backed_independent_comparator_results.csv#1`.
+
+Comparator selection and numerical calculation occurred in the same external
+step. The deterministic rule was frozen before similarity inspection:
+
+```text
+selection_rule_frozen_before_similarity=true
+similarity_used_for_selection=false
+selection_and_result_in_same_step=true
+inventory_file_count=216
+source_backed_eligible_candidate_count=101
+selected_rank=1
+```
+
+The selected local ignored artifact is:
+
+```text
+data/output/embeddings/esmc-300m-2024-12/8bot__U1_P13010--8bot__T1_P12956_receptor_9606.npy
+```
+
+It is a `642x960`, `float32`, finite array. The exact selector reference is
+`tests/test_analyze_saved_embeddings_mapped.py`. Supplemental committed
+provenance in `docs/sirt6_mini_pilot_v2_candidate_selection.md` records `8bot`
+as a `v1_selected` `P13010 / P12956` context with `732` intermolecular
+contacts. The supplemental provenance was not used for selection ranking.
+
+The committed numerical values are:
+
+```text
+baseline_human_elephant_mdm2_cosine_similarity=0.9973314302339468
+human_mdm2_to_additional_comparator_cosine_similarity=0.8095126148075514
+elephant_mdm2_to_additional_comparator_cosine_similarity=0.8203721870665286
+baseline_minus_human_additional_control_delta=0.1878188154263953
+baseline_minus_elephant_additional_control_delta=0.1769592431674182
+absolute_human_elephant_additional_control_difference=0.0108595722589772
+```
+
+This is a numerical embedding-space additional comparator result only. It is
+not a validated biological negative control, not residue alignment, not
+interface analysis, not a binding result, not orthology proof, not
+functional-equivalence evidence, not longevity evidence, and not a biological
+claim.
+
+This checkpoint does not call Biohub / ESMC, generate embeddings, create or
+commit `.npy` artifacts, commit `data/output` artifacts, call Boltz, AF3, or
+Chai, rerun enrichment or contrast, promote Gate 8 or Gate 9, or make
+biological claims.
+
+The next result-bearing step is
+`add_first_two_comparator_pairwise_embedding_control_summary_before_interpretation`.
+No inventory-only, control-plan-only, approval, review, runtime-preparation,
+scaffold, or other non-result layer should be inserted before that concrete
+summary.

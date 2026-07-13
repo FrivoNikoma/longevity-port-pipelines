@@ -1,0 +1,134 @@
+name: g3sx30_first_additional_source_backed_independent_comparator_result
+description: >
+  First additional source-backed numerical embedding-space comparator result
+  for human MDM2 Q00987 and elephant MDM2 G3SX30. Comparator selection and
+  metric calculation occur in the same external step, with the deterministic
+  selection rule frozen before any similarity is calculated. This result does
+  not make a biological claim.
+version: 1
+
+source:
+  table: data/input/g3sx30_first_matched_elephant_mdm2_independent_control_results.csv
+  row_index: 1
+  required_status: first_matched_elephant_mdm2_independent_control_result_created
+  required_next_step: add_first_additional_source_backed_independent_comparator_result_with_selection_frozen_in_same_step
+  required_baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+  required_previous_human_control_cosine_similarity: 0.8316190559481323
+  required_previous_elephant_control_cosine_similarity: 0.8409825967886765
+  required_gate8_promoted: false
+  required_gate9_promoted: false
+  required_biological_claim_made: false
+
+selection:
+  rule_sha256: 73199752734c03778885d063556804e2c3bcdef1f55f31b6aed52e8604d1c3a4
+  frozen_before_similarity: true
+  similarity_used_for_selection: false
+  selection_and_result_in_same_step: true
+  inventory_file_count: 216
+  source_backed_eligible_candidate_count: 101
+  selected_rank: 1
+  selected_reference_tier: 2
+  selected_reference_files:
+    - tests/test_analyze_saved_embeddings_mapped.py
+  preferred_taxid: 9606
+  previous_comparator_excluded: true
+
+selected_comparator:
+  artifact_reference: data/output/embeddings/esmc-300m-2024-12/8bot__U1_P13010--8bot__T1_P12956_receptor_9606.npy
+  required_shape: 642x960
+  required_dtype: float32
+  required_finite: true
+  committed: false
+  pdb_token: 8bot
+  source_accession: P13010
+  partner_accession: P12956
+  taxid: 9606
+  reuses_previous_comparator: false
+  supplemental_provenance:
+    file: docs/sirt6_mini_pilot_v2_candidate_selection.md
+    context_status: v1_selected
+    intermolecular_contacts: 732
+    note: supplemental_committed_provenance_not_used_for_selection_ranking
+
+anchors:
+  human_mdm2:
+    accession: Q00987
+    species: Homo sapiens
+    taxid: 9606
+    artifact_reference: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9606.npy
+    required_shape: 491x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+  elephant_mdm2:
+    accession: G3SX30
+    species: Loxodonta africana
+    taxid: 9785
+    artifact_reference: data/output/embeddings/esmc-300m-2024-12/tp53_mdm2_elephant_seed_mdm2_chain_mdm2_9785.npy
+    required_shape: 492x960
+    required_dtype: float32
+    required_finite: true
+    committed: false
+
+calculation:
+  model: esmc-300m-2024-12
+  pooling: independent_mean_pooling_over_residue_axis
+  residue_alignment_performed: false
+  metric: cosine_similarity
+  metric_calculation_dtype: float64
+  metric_decimal_places: 16
+
+output:
+  table: data/input/g3sx30_first_additional_source_backed_independent_comparator_results.csv
+  one_row_only: true
+  external_result:
+    storage_scope: external_non_committed_json_outside_repo
+    required_sha256: 0180102edc74a4cee7f82a54d337bc30079e8d9f414bfb78589620a056d62a6b
+  metrics:
+    baseline_human_elephant_mdm2_cosine_similarity: 0.9973314302339468
+    previous_human_mdm2_to_comparator_cosine_similarity: 0.8316190559481323
+    previous_elephant_mdm2_to_comparator_cosine_similarity: 0.8409825967886765
+    human_mdm2_mean_vector_l2_norm: 0.8317611517806081
+    elephant_mdm2_mean_vector_l2_norm: 0.8347860929210978
+    additional_comparator_mean_vector_l2_norm: 0.9081312113564025
+    human_mdm2_to_additional_comparator_cosine_similarity: 0.8095126148075514
+    elephant_mdm2_to_additional_comparator_cosine_similarity: 0.8203721870665286
+    baseline_minus_human_additional_control_delta: 0.1878188154263953
+    baseline_minus_elephant_additional_control_delta: 0.1769592431674182
+    baseline_greater_than_human_additional_control: true
+    baseline_greater_than_elephant_additional_control: true
+    human_additional_control_minus_elephant_additional_control_delta: -0.0108595722589772
+    absolute_human_elephant_additional_control_difference: 0.0108595722589772
+  result_created: true
+
+claim_policy:
+  numerical_embedding_space_additional_comparator: true
+  biological_negative_control_claim: false
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  biohub_esmc_call: false
+  new_embedding_generation: false
+  npy_artifact_commit: false
+  raw_embedding_vectors_commit: false
+  data_output_artifact_commit: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  gate8_promotion: false
+  gate9_promotion: false
+
+next_step:
+  action: add_first_two_comparator_pairwise_embedding_control_summary_before_interpretation
+  no_biological_interpretation_from_two_comparators: true
+  no_inventory_only_layer_before_next_result: true
+  no_control_plan_only_layer_before_next_result: true
+  no_additional_non_result_layer_before_next_concrete_step: true
