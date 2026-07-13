@@ -1,0 +1,101 @@
+name: g3sx30_first_two_comparator_pairwise_embedding_control_summary
+description: >
+  First numerical aggregation of the committed human-elephant MDM2 baseline
+  and two committed independent comparator result pairs. The aggregation reads
+  committed CSV rows only, does not load embedding arrays, and does not make a
+  biological claim.
+version: 1
+
+sources:
+  baseline:
+    table: data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv
+    row_index: 1
+    required_status: first_human_elephant_mdm2_mean_pooled_embedding_summary_created
+    required_cosine_similarity: 0.9973314302339468
+  first_comparator:
+    table: data/input/g3sx30_first_matched_elephant_mdm2_independent_control_results.csv
+    row_index: 1
+    required_status: first_matched_elephant_mdm2_independent_control_result_created
+    human_control_cosine_similarity: 0.8316190559481323
+    elephant_control_cosine_similarity: 0.8409825967886765
+    absolute_anchor_difference: 0.0093635408405441
+  second_comparator:
+    table: data/input/g3sx30_first_additional_source_backed_independent_comparator_results.csv
+    row_index: 1
+    required_status: first_additional_source_backed_independent_comparator_result_created
+    required_next_step: add_first_two_comparator_pairwise_embedding_control_summary_before_interpretation
+    human_control_cosine_similarity: 0.8095126148075514
+    elephant_control_cosine_similarity: 0.8203721870665286
+    absolute_anchor_difference: 0.0108595722589772
+
+aggregation:
+  status: first_two_comparator_pairwise_embedding_control_summary_created
+  scope: numerical_embedding_space_two_comparator_aggregation_only_no_biological_claim
+  comparator_count: 2
+  control_similarity_count: 4
+  source_rows_validated: true
+  aggregation_recomputed_from_committed_rows: true
+  aggregation_method: math_fsum_divided_by_count
+  metric_calculation_dtype: float64
+  metric_decimal_places: 16
+  new_similarity_computed: false
+  source_embedding_arrays_loaded: false
+  new_inventory_performed: false
+  comparator_selection_performed: false
+  metrics:
+    human_control_mean_cosine_similarity: 0.8205658353778419
+    elephant_control_mean_cosine_similarity: 0.8306773919276025
+    all_control_mean_cosine_similarity: 0.8256216136527222
+    minimum_control_cosine_similarity: 0.8095126148075514
+    maximum_control_cosine_similarity: 0.8409825967886765
+    control_cosine_similarity_range: 0.0314699819811251
+    minimum_baseline_minus_control_delta: 0.1563488334452703
+    maximum_baseline_minus_control_delta: 0.1878188154263953
+    baseline_greater_than_all_four_controls: true
+    first_comparator_baseline_greater_than_both_anchors: true
+    second_comparator_baseline_greater_than_both_anchors: true
+    human_control_mean_minus_elephant_control_mean_delta: -0.0101115565497606
+    absolute_human_elephant_control_mean_difference: 0.0101115565497606
+    mean_absolute_human_elephant_control_difference: 0.0101115565497607
+    maximum_absolute_human_elephant_control_difference: 0.0108595722589772
+    anchor_ordering_consistent_across_comparators: true
+
+output:
+  table: data/input/g3sx30_first_two_comparator_pairwise_embedding_control_summaries.csv
+  one_row_only: true
+  result_created: true
+
+claim_policy:
+  numerical_embedding_space_aggregation: true
+  validated_biological_negative_control_panel: false
+  biological_specificity_claim: false
+  residue_alignment_result: false
+  interface_result: false
+  binding_result: false
+  orthology_proof: false
+  functional_equivalence_claim: false
+  longevity_evidence: false
+  biological_claim: false
+
+boundary:
+  biohub_esmc_call: false
+  new_embedding_generation: false
+  npy_artifact_read: false
+  npy_artifact_commit: false
+  raw_embedding_vectors_commit: false
+  data_output_artifact_commit: false
+  external_result_json_created: false
+  boltz_call: false
+  af3_call: false
+  chai_call: false
+  enrichment_rerun: false
+  contrast_rerun: false
+  gate8_promotion: false
+  gate9_promotion: false
+
+next_step:
+  action: add_first_third_source_backed_independent_comparator_result_with_selection_frozen_in_same_step
+  no_biological_interpretation_from_two_comparators: true
+  no_inventory_only_layer_before_next_result: true
+  no_control_plan_only_layer_before_next_result: true
+  no_additional_non_result_layer_before_next_concrete_step: true

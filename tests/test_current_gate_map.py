@@ -2810,3 +2810,41 @@ def test_current_gate_map_records_first_additional_source_backed_comparator_resu
         "No inventory-only",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_two_comparator_embedding_control_summary() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First two-comparator pairwise embedding-control summary checkpoint",
+        "data/input/g3sx30_first_two_comparator_pairwise_embedding_control_summaries.csv#1",
+        "g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv#1",
+        "g3sx30_first_matched_elephant_mdm2_independent_control_results.csv#1",
+        "g3sx30_first_additional_source_backed_independent_comparator_results.csv#1",
+        "math_fsum_divided_by_count",
+        "does not load embedding arrays or compute a new similarity",
+        "0.8205658353778419",
+        "0.8306773919276025",
+        "0.8256216136527222",
+        "0.0314699819811251",
+        "0.1563488334452703",
+        "0.1878188154263953",
+        "0.0101115565497607",
+        "0.0108595722589772",
+        "baseline_greater_than_all_four_controls=true",
+        "anchor_ordering_consistent_across_comparators=true",
+        "not a validated biological negative-control panel",
+        "not evidence of biological specificity",
+        "not residue alignment",
+        "not interface analysis",
+        "not a binding result",
+        "not orthology proof",
+        "not functional-equivalence evidence",
+        "not longevity evidence",
+        "not a biological claim",
+        "does not perform a new inventory",
+        "does not promote Gate 8 or Gate 9",
+        "add_first_third_source_backed_independent_comparator_result_with_selection_frozen_in_same_step",
+        "No inventory-only",
+    ]:
+        assert required in text

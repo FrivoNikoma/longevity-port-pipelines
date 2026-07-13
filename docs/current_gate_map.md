@@ -1274,3 +1274,54 @@ The next result-bearing step is
 No inventory-only, control-plan-only, approval, review, runtime-preparation,
 scaffold, or other non-result layer should be inserted before that concrete
 summary.
+
+## First two-comparator pairwise embedding-control summary checkpoint
+
+The first committed aggregation of the human–elephant MDM2 baseline and two
+committed comparator result pairs is recorded in
+`data/input/g3sx30_first_two_comparator_pairwise_embedding_control_summaries.csv#1`.
+
+The source rows are:
+
+```text
+data/input/g3sx30_first_human_elephant_mdm2_mean_pooled_pairwise_summaries.csv#1
+data/input/g3sx30_first_matched_elephant_mdm2_independent_control_results.csv#1
+data/input/g3sx30_first_additional_source_backed_independent_comparator_results.csv#1
+```
+
+The aggregation reads committed CSV rows only and uses
+`math_fsum_divided_by_count`. It does not load embedding arrays or compute a new similarity.
+
+Committed values include:
+
+```text
+baseline_human_elephant_mdm2_cosine_similarity=0.9973314302339468
+human_control_mean_cosine_similarity=0.8205658353778419
+elephant_control_mean_cosine_similarity=0.8306773919276025
+all_control_mean_cosine_similarity=0.8256216136527222
+minimum_control_cosine_similarity=0.8095126148075514
+maximum_control_cosine_similarity=0.8409825967886765
+control_cosine_similarity_range=0.0314699819811251
+minimum_baseline_minus_control_delta=0.1563488334452703
+maximum_baseline_minus_control_delta=0.1878188154263953
+mean_absolute_human_elephant_control_difference=0.0101115565497607
+maximum_absolute_human_elephant_control_difference=0.0108595722589772
+baseline_greater_than_all_four_controls=true
+anchor_ordering_consistent_across_comparators=true
+```
+
+This is a numerical embedding-space aggregation only.
+
+It is not a validated biological negative-control panel. It is not evidence of biological specificity. It is not residue alignment. It is not interface analysis. It is not a binding result. It is not orthology proof. It is not functional-equivalence evidence. It is not longevity evidence. It is not a biological claim.
+
+This checkpoint does not perform a new inventory, select a comparator, load
+`.npy` arrays, call Biohub / ESMC, generate embeddings, commit `.npy` or
+`data/output` artifacts, create an external result JSON, call Boltz, AF3, or
+Chai, rerun enrichment or contrast, promote Gate 8 or Gate 9, or make
+biological claims. It does not promote Gate 8 or Gate 9.
+
+The next result-bearing step is
+`add_first_third_source_backed_independent_comparator_result_with_selection_frozen_in_same_step`.
+No inventory-only, control-plan-only, approval, review, runtime-preparation,
+scaffold, or other non-result layer should be inserted before that concrete
+result.
