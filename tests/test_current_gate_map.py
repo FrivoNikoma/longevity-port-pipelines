@@ -2908,3 +2908,26 @@ def test_current_gate_map_records_first_three_comparator_summary() -> None:
         "No inventory-only, control-plan-only, approval-only, review-only,",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_tp53_mdm2_interface_ready_manifest_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "First TP53/MDM2 interface-ready manifest result checkpoint" in text
+    assert "data/input/tp53_mdm2_first_interface_ready_manifest_results.csv#1" in text
+    assert "RCSB PDB `1YCR`" in text
+    assert "human MDM2" in text
+    assert "`Q00987` on chain `A`" in text
+    assert "human TP53 `P04637` on chain `B`" in text
+    assert "interface.py::extract_interface_residues" in text
+    assert "`8.0` angstrom inter-chain heavy-atom distance cutoff" in text
+    assert "Elephant MDM2 mapping is fixed" in text
+    assert "`G3SX30`" in text
+    assert "Elephant TP53 remains" in text
+    assert "`unresolved`" in text
+    assert "comparative elephant interface scoring remains blocked" in text
+    assert "does not invent an elephant TP53 accession" in text
+    assert "no Gate 8 or Gate 9 promotion" in text
+    assert "no biological claim" in text
+    assert "add_first_tp53_mdm2_human_reference_interface_residue_extraction_result" in text
+    assert "No preflight-only, inventory-only, plan-only" in text

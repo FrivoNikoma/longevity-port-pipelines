@@ -1389,3 +1389,45 @@ That result must identify exact TP53 and MDM2 chains, interface-residue source, 
 No inventory-only, control-plan-only, approval-only, review-only,
 runtime-preparation-only, scaffold-only, or other non-result PR should precede
 that manifest result.
+
+## First TP53/MDM2 interface-ready manifest result checkpoint
+
+The first result-bearing TP53/MDM2 interface-ready manifest is recorded in
+`data/input/tp53_mdm2_first_interface_ready_manifest_results.csv#1` and
+documented in
+`docs/tp53_mdm2_first_interface_ready_manifest_result.md`.
+
+The exact human reference is fixed as RCSB PDB `1YCR`, with human MDM2
+`Q00987` on chain `A` and human TP53 `P04637` on chain `B`. The partner
+context is human MDM2 chain A bound to human TP53 chain B in `1YCR`.
+
+The interface-residue source is fixed as
+`src/longevity_port_pipelines/stages/interface.py::extract_interface_residues`
+using model 1, an `8.0` angstrom inter-chain heavy-atom distance cutoff, and
+zero-based chain-local residue indices. This PR does not extract the residue
+lists and does not compute an interface score.
+
+Elephant MDM2 mapping is fixed to reviewed UniProtKB TrEMBL accession
+`G3SX30`, taxid `9785`, length `492`, from
+`data/input/reviewed_target_sequence_provenance.csv#2`. Elephant TP53 remains
+explicitly `unresolved` and `blocked_pending_source_ortholog_provenance` from
+`data/input/tp53_mdm2_ortholog_repair_decisions.csv#1`.
+
+Therefore the human-reference interface extraction manifest is ready for the
+next result, while comparative elephant interface scoring remains blocked.
+The manifest does not invent an elephant TP53 accession.
+
+The structure-confidence policy uses the committed experimental `1YCR`
+coordinate reference for the human side only, uses no predicted-structure
+confidence metrics, and keeps ortholog-mapping confidence as separate
+provenance.
+
+This checkpoint performs no structure call, no interface extraction, no
+interface scoring, no `.npy` or `data/output/` operation, no Biohub/ESMC call,
+no Boltz/AF3/Chai call, no Gate 8 or Gate 9 promotion, and no biological claim.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_human_reference_interface_residue_extraction_result`.
+No preflight-only, inventory-only, plan-only, approval-only, review-only,
+runtime-preparation-only, scaffold-only, generic-validator-refactor, or other
+non-result PR should precede that extraction result.
