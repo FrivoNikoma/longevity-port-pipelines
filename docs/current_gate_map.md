@@ -1358,3 +1358,34 @@ The next result-bearing action is
 No inventory-only, control-plan-only, approval-only, review-only,
 runtime-preparation-only, scaffold-only, or other non-result PR should precede
 that summary.
+
+## First three-comparator pairwise embedding-control summary checkpoint
+
+The committed three-comparator aggregation is recorded in
+`data/input/g3sx30_first_three_comparator_pairwise_embedding_control_summaries.csv`
+and documented in
+`docs/g3sx30_first_three_comparator_pairwise_embedding_control_summary.md`.
+
+The checkpoint validates the committed human–elephant MDM2 baseline and all three committed comparator rows through their existing validators.
+It reads committed CSV rows only, does not load any `.npy` embedding array, and does not compute a new cosine similarity.
+
+The three-comparator means are `0.7961385463476702` for the human anchor, `0.8043201055240398` for the elephant anchor, and `0.8002293259358551` across all six comparator similarities.
+The observed comparator range is `0.0936986285013494`.
+
+The baseline is greater than all six comparator similarities.
+The minimum baseline-minus-control delta is `0.1563488334452703`, and the maximum is `0.2500474619466196`.
+Elephant-anchor similarity is above human-anchor similarity for `3` of `3` comparator pairs, while all three comparator artifact references remain distinct.
+
+This remains numerical whole-protein embedding-space bookkeeping only. It is not a validated biological negative-control panel.
+It does not establish biological specificity or perform residue alignment or interface analysis.
+It does not establish binding, orthology, functional equivalence, longevity evidence, or a biological claim.
+The whole-protein comparators do not replace shuffled interface controls or a curated NEGATOME control.
+It does not call Biohub/ESMC, generate embeddings, read or commit `.npy` artifacts, or commit `data/output` artifacts.
+It does not call Boltz/AF3/Chai, rerun enrichment or contrast, or promote Gate 8 or Gate 9.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_interface_ready_manifest_result`.
+That result must identify exact TP53 and MDM2 chains, interface-residue source, partner context, human reference, elephant ortholog mapping, and structure-confidence policy before interface scoring.
+No inventory-only, control-plan-only, approval-only, review-only,
+runtime-preparation-only, scaffold-only, or other non-result PR should precede
+that manifest result.

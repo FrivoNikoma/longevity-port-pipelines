@@ -2875,3 +2875,36 @@ def test_current_gate_map_records_first_third_source_backed_comparator_result() 
         "No inventory-only, control-plan-only, approval-only, review-only,",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_first_three_comparator_summary() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "First three-comparator pairwise embedding-control summary checkpoint",
+        "data/input/g3sx30_first_three_comparator_pairwise_embedding_control_summaries.csv",
+        "docs/g3sx30_first_three_comparator_pairwise_embedding_control_summary.md",
+        "all three committed comparator rows",
+        "does not load any `.npy` embedding array",
+        "does not compute a new cosine similarity",
+        "`0.7961385463476702`",
+        "`0.8043201055240398`",
+        "`0.8002293259358551`",
+        "`0.0936986285013494`",
+        "greater than all six comparator similarities",
+        "`0.1563488334452703`",
+        "`0.2500474619466196`",
+        "`3` of `3` comparator pairs",
+        "all three comparator artifact references remain distinct",
+        "not a validated biological negative-control panel",
+        "does not establish biological specificity or perform residue alignment or interface analysis",
+        "does not establish binding, orthology, functional equivalence, longevity evidence, or a biological claim",
+        "do not replace shuffled interface controls or a curated NEGATOME control",
+        "does not call Biohub/ESMC",
+        "does not call Boltz/AF3/Chai",
+        "promote Gate 8 or Gate 9",
+        "add_first_tp53_mdm2_interface_ready_manifest_result",
+        "exact TP53 and MDM2 chains",
+        "No inventory-only, control-plan-only, approval-only, review-only,",
+    ]:
+        assert required in text
