@@ -2931,3 +2931,32 @@ def test_current_gate_map_records_first_tp53_mdm2_interface_ready_manifest_resul
     assert "no biological claim" in text
     assert "add_first_tp53_mdm2_human_reference_interface_residue_extraction_result" in text
     assert "No preflight-only, inventory-only, plan-only" in text
+
+
+def test_current_gate_map_records_first_tp53_mdm2_human_interface_extraction_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "First TP53/MDM2 human-reference interface-residue extraction result checkpoint",
+        "tp53_mdm2_first_human_reference_interface_residue_extraction_results.csv#1",
+        "tp53_mdm2_first_human_reference_interface_residue_records.csv",
+        "RCSB PDB `1YCR`",
+        "human MDM2",
+        "`Q00987` on chain `A`",
+        "human TP53 `P04637` on chain `B`",
+        "`95202` bytes",
+        "`7b4e503dea1fe3a6966b9676a1b98caf511c735cde01029cd0998e2319e75493`",
+        "MDM2 chain `A`: `47` interface residues from `85`",
+        "TP53 chain `B`: `13` interface residues from `13`",
+        "`60` committed per-residue records",
+        "not binding-hotspot annotations",
+        "within-chain TP53 shuffle is degenerate",
+        "restricted to MDM2 chain `A`",
+        "no shuffled interface control",
+        "no curated NEGATOME control",
+        "no Gate 8 or Gate 9 promotion",
+        "no biological claim",
+        "add_first_tp53_mdm2_mdm2_side_shuffled_interface_control_result",
+        "No preflight-only, inventory-only, plan-only",
+    ):
+        assert required in text

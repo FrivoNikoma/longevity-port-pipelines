@@ -1431,3 +1431,51 @@ The next result-bearing action is
 No preflight-only, inventory-only, plan-only, approval-only, review-only,
 runtime-preparation-only, scaffold-only, generic-validator-refactor, or other
 non-result PR should precede that extraction result.
+
+## First TP53/MDM2 human-reference interface-residue extraction result checkpoint
+
+The first committed human-reference interface-residue extraction result is
+recorded in
+`data/input/tp53_mdm2_first_human_reference_interface_residue_extraction_results.csv#1`,
+with one row per extracted residue in
+`data/input/tp53_mdm2_first_human_reference_interface_residue_records.csv`.
+
+The result uses experimental RCSB PDB `1YCR`, model 1, with human MDM2
+`Q00987` on chain `A` and human TP53 `P04637` on chain `B`. The downloaded PDB
+has size `95202` bytes and SHA256 `7b4e503dea1fe3a6966b9676a1b98caf511c735cde01029cd0998e2319e75493`. The PDB itself and the
+external runtime observation are not committed.
+
+Using
+`src/longevity_port_pipelines/stages/interface.py::extract_interface_residues`
+with the committed `8.0` angstrom inter-chain coordinate-atom cutoff and
+zero-based chain-local indexing produced:
+
+- MDM2 chain `A`: `47` interface residues from `85`, leaving `38`
+  non-interface residues, interface fraction `0.5529411764705883`;
+- TP53 chain `B`: `13` interface residues from `13`, leaving `0`
+  non-interface residues, interface fraction `1.0000000000000000`;
+- `60` committed per-residue records in total.
+
+The committed lists are geometric contact masks, not binding-hotspot
+annotations and not per-residue interface scores.
+
+Because all `13` observed TP53 chain-B residues are inside the mask, a
+size-preserving within-chain TP53 shuffle is degenerate. The first shuffled
+interface control must therefore be restricted to MDM2 chain `A` until a
+separate non-degenerate TP53 background is explicitly defined.
+
+This checkpoint records one completed RCSB PDB download and geometric
+interface extraction. It performs no interface score, no shuffled interface
+control, no curated NEGATOME control, no elephant comparison, no `.npy` or
+`data/output/` commit, no Biohub/ESMC or predicted-structure call, no Gate 8 or
+Gate 9 promotion, and no biological claim.
+
+The committed contact-defined residues are not binding-hotspot annotations. They record geometric proximity under the fixed 8.0-angstrom rule and do not establish binding energetics, biological specificity, or functional importance.
+
+This extraction result performs no shuffled interface control, no curated NEGATOME control, no Gate 8 or Gate 9 promotion, and no biological claim.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_mdm2_side_shuffled_interface_control_result`.
+No preflight-only, inventory-only, plan-only, approval-only, review-only,
+runtime-preparation-only, scaffold-only, generic-validator-refactor, or other
+non-result PR should precede that MDM2-side shuffled-interface control result.
