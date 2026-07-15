@@ -15,8 +15,8 @@ defer worklist.
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 records a first control-package closure result and now a first Gate 6 blocker-disposition result selecting `require_embedding_based_control`; generic repair remains `pending`, generic readiness remains `blocked_pending_control_repair`, and Gate 6 remains blocked. Fully generic control outputs across all lanes are still pending. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the first control-package closure and blocker disposition record Gate 6 blocked and Gate 7 entry disallowed. The disposition does not open Gate 7. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now also records a checked embedding-based NEGATOME blocker result: the runtime and both MDM2 embeddings are available, but verified chain-local-to-full-length mapping and the exact NEGATOME lookup row are missing. Generic readiness remains `blocked_pending_control_repair`. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the control closure, disposition, and checked embedding-based NEGATOME blocker result keep Gate 6 blocked and Gate 7 entry disallowed. The blocker result does not open Gate 7. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1703,3 +1703,45 @@ The next result-bearing action is
 No inventory-only, plan-only, scaffold-only, vocabulary-only,
 runtime-preparation-only, generic-refactor-only, or other non-result PR should
 precede that concrete result.
+
+## First TP53/MDM2 embedding-based NEGATOME control result checkpoint
+
+The first TP53/MDM2 embedding-based NEGATOME control attempt is recorded in
+`data/input/tp53_mdm2_first_embedding_based_negatome_control_results.csv#1`
+and documented in
+`docs/tp53_mdm2_first_embedding_based_negatome_control_result.md`.
+
+This is a result-bearing checked blocker row. The local read-only audit
+confirmed that the existing runtime is available. The ignored human `Q00987`
+embedding and elephant `G3SX30` embedding are available with shapes `491x960`
+and `492x960`.
+
+Two concrete blockers remain:
+
+```text
+primary_missing_input_kind=chain_local_to_full_length_interface_mapping_not_verified
+primary_expected_path=data/interim/pdb/1ycr.pdb
+secondary_missing_input_kind=exact_negatome_pair_lookup_key_missing
+secondary_expected_path=data/interim/negatome_control_pairs.csv
+```
+
+The exact expected lookup key is
+`tp53_mdm2_elephant_seed_mdm2_chain|mdm2|elephant`.
+
+```text
+embedding_based_negatome_control_computed=false
+negatome_control_ratio=not_computed
+gate6_control_readiness_status_after=blocked_pending_control_repair
+gate7_entry_allowed_after=false
+biological_approval_granted=false
+```
+
+The audit read ignored `.npy` artifacts for validation. This PR writes or commits no `.npy` artifact and commits no `data/output` artifact. It performs
+no automatic Biohub / ESMC call, no new embedding generation, no interface
+scoring, no elephant interface scoring, no Boltz / AF3 / Chai call, no Gate 7
+entry, no Gate 8 or Gate 9 promotion, and no biological claim.
+
+The next result-bearing action is
+`repair_local_mapping_and_exact_pair_then_add_first_tp53_mdm2_embedding_based_negatome_control_result`.
+The repair must not become a separate inventory-only, plan-only,
+scaffold-only, runtime-preparation-only, or generic-refactor-only PR.

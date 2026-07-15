@@ -3135,3 +3135,34 @@ def test_current_gate_map_records_first_tp53_mdm2_gate6_blocker_disposition_resu
         "No inventory-only, plan-only, scaffold-only, vocabulary-only",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_first_tp53_mdm2_embedding_based_negatome_control_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    for required in (
+        "First TP53/MDM2 embedding-based NEGATOME control result checkpoint",
+        "tp53_mdm2_first_embedding_based_negatome_control_results.csv#1",
+        "result-bearing checked blocker row",
+        "human `Q00987`",
+        "elephant `G3SX30`",
+        "chain_local_to_full_length_interface_mapping_not_verified",
+        "data/interim/pdb/1ycr.pdb",
+        "exact_negatome_pair_lookup_key_missing",
+        "data/interim/negatome_control_pairs.csv",
+        "tp53_mdm2_elephant_seed_mdm2_chain|mdm2|elephant",
+        "embedding_based_negatome_control_computed=false",
+        "negatome_control_ratio=not_computed",
+        "blocked_pending_control_repair",
+        "gate7_entry_allowed_after=false",
+        "biological_approval_granted=false",
+        "writes or commits no `.npy` artifact",
+        "no automatic Biohub / ESMC call",
+        "no interface scoring",
+        "no elephant interface scoring",
+        "no Gate 7 entry",
+        "no Gate 8 or Gate 9 promotion",
+        "no biological claim",
+        "repair_local_mapping_and_exact_pair_then_add_first_",
+        "must not become a separate inventory-only",
+    ):
+        assert required in text

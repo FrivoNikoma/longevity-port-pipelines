@@ -1,0 +1,166 @@
+name: tp53_mdm2_first_embedding_based_negatome_control_result
+description: >
+  First result-bearing TP53/MDM2 embedding-based NEGATOME control attempt.
+  The committed row records two checked local input blockers and no ratio.
+version: 1
+
+required_fields:
+  - candidate_set
+  - lane_name
+  - result_id
+  - result_status
+  - result_scope
+  - source_disposition_table
+  - source_disposition_row_index
+  - source_disposition_status
+  - source_disposition_action
+  - source_disposition_required_next_step
+  - source_disposition_metadata_sha256
+  - audit_helper_name
+  - audit_helper_sha256
+  - audit_status
+  - audit_outcome
+  - audit_read_only
+  - audit_working_tree_unchanged
+  - audit_staging_unchanged
+  - existing_negatome_runtime_available
+  - existing_negatome_runtime_status
+  - human_reference_accession
+  - human_reference_taxid
+  - human_sequence_length
+  - human_sequence_sha256
+  - human_sequence_available
+  - human_sequence_artifact_scope
+  - human_embedding_path
+  - human_embedding_exists
+  - human_embedding_shape
+  - human_embedding_dtype
+  - human_embedding_finite
+  - human_embedding_sha256
+  - human_embedding_tracked
+  - human_embedding_ignored
+  - human_embedding_staged
+  - elephant_target_accession
+  - elephant_target_taxid
+  - elephant_sequence_length
+  - elephant_sequence_sha256
+  - elephant_sequence_available
+  - elephant_sequence_source_reference
+  - elephant_sequence_artifact_scope
+  - elephant_embedding_path
+  - elephant_embedding_exists
+  - elephant_embedding_shape
+  - elephant_embedding_dtype
+  - elephant_embedding_finite
+  - elephant_embedding_sha256
+  - elephant_embedding_tracked
+  - elephant_embedding_ignored
+  - elephant_embedding_staged
+  - interface_mask_source_table
+  - interface_mask_source_row_index
+  - interface_residue_indexing_policy
+  - mdm2_chain_residue_count
+  - mdm2_interface_residue_count
+  - mdm2_interface_index_min
+  - mdm2_interface_index_max
+  - interface_mask_direct_full_length_compatible
+  - interface_mask_requires_canonical_sequence_mapping
+  - local_1ycr_pdb_candidate_count
+  - interface_mask_canonical_mapping_verified
+  - interface_mapping_blocker_present
+  - interface_mapping_missing_input_kind
+  - interface_mapping_expected_path
+  - negatome_pair_input_path
+  - negatome_pair_input_exists
+  - negatome_pair_input_total_row_count
+  - negatome_pair_input_tracked
+  - negatome_pair_input_ignored
+  - negatome_pair_input_staged
+  - expected_negatome_lookup_key
+  - negatome_pair_related_row_count
+  - negatome_pair_exact_lookup_row_count
+  - exact_negatome_pair_lookup_available
+  - exact_pair_lookup_blocker_present
+  - exact_pair_missing_input_kind
+  - exact_pair_expected_path
+  - negative_partner_identifier_resolved
+  - negative_partner_sequence_available
+  - negative_partner_embedding_check_status
+  - negative_partner_embedding_available
+  - negative_partner_embedding_expected_path
+  - checked_blocker_count
+  - primary_missing_input_kind
+  - primary_expected_path
+  - secondary_missing_input_kind
+  - secondary_expected_path
+  - embedding_based_negatome_control_computed
+  - negatome_control_ratio_available
+  - negatome_control_ratio
+  - control_ratio_runtime_executed
+  - runtime_input_repair_required
+  - automatic_live_call_authorized
+  - new_embeddings_generated
+  - biohub_esmc_called
+  - npy_artifact_read_during_local_audit
+  - npy_artifact_written
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - evidence_recomputed
+  - interface_scoring_performed
+  - comparative_elephant_interface_scoring_performed
+  - boltz_called
+  - af3_called
+  - chai_called
+  - gate6_control_readiness_status_after
+  - gate6_control_readiness_resolved_after
+  - gate6_control_closure_blocked_after
+  - gate7_entry_allowed_after
+  - gate7_strict_panel_promoted
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - biological_approval_granted
+  - binding_claim_made
+  - non_binding_claim_made
+  - binding_strength_claim_made
+  - functional_significance_claim_made
+  - biological_specificity_claim_made
+  - adaptation_claim_made
+  - elephant_compatibility_claim_made
+  - beneficial_breakage_claim_made
+  - longevity_evidence_claim_made
+  - biological_claim_made
+  - result_metadata_canonical
+  - result_metadata_sha256
+  - result_created
+  - next_step
+  - result_date
+  - claim_note
+
+allowed_result_statuses:
+  - embedding_based_negatome_control_blocked_by_checked_missing_inputs
+
+checked_blockers:
+  - missing_input_kind: chain_local_to_full_length_interface_mapping_not_verified
+    expected_path: data/interim/pdb/1ycr.pdb
+  - missing_input_kind: exact_negatome_pair_lookup_key_missing
+    expected_path: data/interim/negatome_control_pairs.csv
+
+committed_outcome:
+  embedding_based_negatome_control_computed: false
+  negatome_control_ratio_available: false
+  gate6_control_readiness_status_after: blocked_pending_control_repair
+  gate7_entry_allowed_after: false
+
+runtime_boundary:
+  automatic_live_call_authorized: false
+  new_embeddings_generated: false
+  biohub_esmc_called: false
+  npy_artifact_read_during_local_audit: true
+  npy_artifact_written: false
+  npy_artifact_committed: false
+  data_output_artifact_committed: false
+  interface_scoring_performed: false
+  comparative_elephant_interface_scoring_performed: false
+  gate8_or_gate9_promotion_allowed: false
+  biological_claim_allowed: false
