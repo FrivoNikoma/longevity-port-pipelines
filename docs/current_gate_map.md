@@ -15,8 +15,8 @@ defer worklist.
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now records a first control-package closure result, with Gate 6 explicitly remaining blocked by the no-computable curated NEGATOME interface control. Fully generic control outputs across all lanes are still pending. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the first control-package closure records Gate 6 blocked and Gate 7 entry disallowed. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 records a first control-package closure result and now a first Gate 6 blocker-disposition result selecting `require_embedding_based_control`; generic repair remains `pending`, generic readiness remains `blocked_pending_control_repair`, and Gate 6 remains blocked. Fully generic control outputs across all lanes are still pending. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the first control-package closure and blocker disposition record Gate 6 blocked and Gate 7 entry disallowed. The disposition does not open Gate 7. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1670,3 +1670,36 @@ The next result-bearing action is
 No inventory-only, plan-only, scaffold-only, approval-only, review-only,
 runtime-preparation-only, generic-refactor-only, or other non-result PR should
 precede that concrete blocker-disposition result.
+
+## First TP53/MDM2 Gate 6 blocker-disposition result checkpoint
+
+The first committed TP53/MDM2 Gate 6 blocker-disposition result is recorded in
+`data/input/tp53_mdm2_first_gate6_blocker_disposition_results.csv#1` and
+documented in
+`docs/tp53_mdm2_first_gate6_blocker_disposition_result.md`.
+
+The source control closure is
+`data/input/tp53_mdm2_first_control_closure_results.csv#1`, with
+`control_closure_status=closed_with_curated_negatome_interface_control_blocked`,
+`control_package_aggregation_complete=true`,
+`control_package_closed_with_blocker=true`,
+`gate6_control_readiness_status=blocked`, and `gate7_entry_allowed=false`.
+
+The committed disposition is:
+
+```text
+disposition_class=repair
+disposition_action=require_embedding_based_control
+generic_control_repair_status=pending
+generic_control_readiness_status=blocked_pending_control_repair
+```
+
+This records what happens to the unresolved information blocker. It does not recompute evidence and does not run the embedding-based NEGATOME path. Gate 6 remains blocked, `gate7_entry_allowed_after_disposition=false`, and `biological_approval_granted=false`.
+
+The checkpoint performs no evidence recomputation, no interface scoring, no elephant interface scoring, no new embeddings, no `.npy` read or write, no `data/output` artifact commit, no Biohub / ESMC call, no Boltz / AF3 / Chai call, no Gate 7 entry, no Gate 8 or Gate 9 promotion, and no biological claim.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_embedding_based_negatome_control_result`.
+No inventory-only, plan-only, scaffold-only, vocabulary-only,
+runtime-preparation-only, generic-refactor-only, or other non-result PR should
+precede that concrete result.

@@ -3100,3 +3100,38 @@ def test_current_gate_map_records_first_tp53_mdm2_control_closure_result() -> No
         "No inventory-only, plan-only, scaffold-only",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_first_tp53_mdm2_gate6_blocker_disposition_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "First TP53/MDM2 Gate 6 blocker-disposition result checkpoint",
+        "tp53_mdm2_first_gate6_blocker_disposition_results.csv#1",
+        "tp53_mdm2_first_gate6_blocker_disposition_result.md",
+        "closed_with_curated_negatome_interface_control_blocked",
+        "control_package_aggregation_complete=true",
+        "control_package_closed_with_blocker=true",
+        "disposition_class=repair",
+        "disposition_action=require_embedding_based_control",
+        "generic_control_repair_status=pending",
+        "generic_control_readiness_status=blocked_pending_control_repair",
+        "does not recompute evidence",
+        "Gate 6",
+        "remains blocked",
+        "gate7_entry_allowed_after_disposition=false",
+        "biological_approval_granted=false",
+        "no interface scoring",
+        "no elephant interface scoring",
+        "no new embeddings",
+        "no `.npy` read or write",
+        "no `data/output` artifact",
+        "no Biohub / ESMC call",
+        "no Boltz / AF3 / Chai",
+        "no Gate 7 entry",
+        "no Gate 8 or Gate 9 promotion",
+        "no biological claim",
+        "add_first_tp53_mdm2_embedding_based_negatome_control_result",
+        "No inventory-only, plan-only, scaffold-only, vocabulary-only",
+    ):
+        assert required in text
