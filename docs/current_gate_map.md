@@ -1479,3 +1479,43 @@ The next result-bearing action is
 No preflight-only, inventory-only, plan-only, approval-only, review-only,
 runtime-preparation-only, scaffold-only, generic-validator-refactor, or other
 non-result PR should precede that MDM2-side shuffled-interface control result.
+
+## First TP53/MDM2 MDM2-side shuffled-interface control result checkpoint
+
+The first committed MDM2-side shuffled-interface control result is recorded
+in
+`data/input/tp53_mdm2_first_mdm2_side_shuffled_interface_control_results.csv#1`
+and documented in
+`docs/tp53_mdm2_first_mdm2_side_shuffled_interface_control_result.md`.
+
+The result keeps the control restricted to human `1YCR` MDM2 chain `A`.
+TP53 chain `B` remains excluded from within-chain shuffling because its
+geometric mask covers all `13` parsed residues and is therefore degenerate.
+
+The committed deterministic null uses `numpy.random.default_rng`, seed `42`,
+and `1000` uniformly sampled masks. Every mask contains `47` distinct
+chain-local positions sampled without replacement from the same observed
+`85`-residue MDM2 chain. The control-mask stream SHA256 is
+`6ebc3aea77388a9929d945acdb1962fe8eed148feecac7326fcbeceefbe2015c`.
+
+The true mask has `38` adjacent residue pairs, compared with shuffled mean
+`25.4239999999999995`; `0 / 1000` controls reached or exceeded the true value. It has `9` contiguous runs, compared with shuffled
+mean `21.5760000000000005`; `0 / 1000` controls had as few or fewer runs. Its longest run is `16`, compared with shuffled mean
+`6.6260000000000003`; `1 / 1000` controls reached or exceeded that length.
+
+This result records that the real geometric mask is more sequence-contiguous than the deterministic same-size mask null under the
+committed compact metrics. It does not establish binding, binding
+energetics, binding hotspots, functional significance, orthology, elephant
+compatibility, beneficial breakage, longevity evidence, or a biological
+claim.
+
+This checkpoint performs no curated NEGATOME control, no Biohub / ESMC call,
+no embedding generation, no `.npy` read or commit, no `data/output` commit,
+no Boltz / AF3 / Chai call, no Gate 8 or Gate 9 promotion, and no comparative
+elephant interface scoring. It adds no generic shuffle framework.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_curated_negatome_interface_control_result`.
+No inventory-only, preflight-only, plan-only, approval-only, review-only,
+runtime-preparation-only, scaffold-only, generic-shuffle-framework-only, or
+other non-result PR should precede that curated NEGATOME control result.

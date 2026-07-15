@@ -2960,3 +2960,38 @@ def test_current_gate_map_records_first_tp53_mdm2_human_interface_extraction_res
         "No preflight-only, inventory-only, plan-only",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_first_tp53_mdm2_mdm2_side_shuffled_control() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "First TP53/MDM2 MDM2-side shuffled-interface control result checkpoint",
+        "tp53_mdm2_first_mdm2_side_shuffled_interface_control_results.csv#1",
+        "TP53 chain `B` remains excluded",
+        "`numpy.random.default_rng`",
+        "seed `42`",
+        "`1000` uniformly sampled masks",
+        "`47` distinct",
+        "`85`-residue MDM2 chain",
+        "6ebc3aea77388a9929d945acdb1962fe8eed148feecac7326fcbeceefbe2015c",
+        "`38` adjacent residue pairs",
+        "`25.4239999999999995`",
+        "`0 / 1000` controls reached or exceeded",
+        "`9` contiguous runs",
+        "`21.5760000000000005`",
+        "`0 / 1000` controls had as few or fewer runs",
+        "longest run is `16`",
+        "`6.6260000000000003`",
+        "`1 / 1000` controls reached or exceeded",
+        "more sequence-contiguous",
+        "does not establish binding",
+        "no curated NEGATOME control",
+        "no Biohub / ESMC call",
+        "no `.npy` read or commit",
+        "no Gate 8 or Gate 9 promotion",
+        "adds no generic shuffle framework",
+        "add_first_tp53_mdm2_curated_negatome_interface_control_result",
+        "No inventory-only, preflight-only, plan-only",
+    ):
+        assert required in text
