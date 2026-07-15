@@ -1,0 +1,202 @@
+name: tp53_mdm2_first_curated_negatome_interface_control_result
+description: First result-bearing no-embedding curated NEGATOME-style interface-control review for the
+  human 1YCR MDM2 chain-A geometric mask. One peer-reviewed negative co-immunoprecipitation context is
+  reviewed. The record is concrete, but no MDM2-side residue-level negative context exists, so no interface-control
+  metric is computed and no surrogate metric is invented.
+version: 1
+required_fields:
+- candidate_set
+- lane_name
+- result_id
+- result_status
+- result_scope
+- source_shuffled_control_table
+- source_shuffled_control_row_index
+- source_shuffled_control_status
+- source_shuffled_control_required_next_step
+- structure_id
+- structure_model
+- mdm2_uniprot
+- mdm2_chain_id
+- mdm2_chain_residue_count
+- true_interface_residue_count
+- curated_negative_record_found
+- curated_negative_record_class
+- curated_negative_record_id
+- curated_negative_source
+- curated_negative_source_type
+- curated_negative_source_version
+- curated_negative_source_doi
+- curated_negative_source_figure
+- curated_negative_source_publication_date
+- curated_negative_provenance_reviewed
+- curated_negative_review_date
+- curated_negative_record_metadata_canonical
+- curated_negative_record_metadata_sha256
+- negative_context_evidence_type
+- negative_context_definition
+- negative_context_source_protein
+- negative_context_source_uniprot
+- negative_partner_name
+- negative_partner_identifier
+- negative_partner_identifier_database
+- negative_partner_species
+- negative_partner_species_taxid
+- assay_system
+- assay_method
+- assay_positive_internal_control
+- assay_negative_observation
+- reported_partner_side_anchor_residues
+- reported_partner_side_anchor_substitution
+- partner_side_sequence_context_reported
+- mdm2_side_negative_residue_mask_available
+- residue_level_context_available
+- deterministic_sequence_context_available
+- interface_control_metric_computed
+- deterministic_metric_definition
+- real_interface_metric
+- negative_context_metric
+- real_minus_negative
+- real_over_negative
+- empirical_tail_count
+- empirical_p_add_one
+- empirical_null_available
+- no_computable_control_reason
+- no_computable_control_reason_detail
+- prohibited_surrogate_metrics_used
+- existing_repo_curated_negative_mapping_for_q00987_present
+- existing_repo_curated_negative_mapping_status
+- existing_runtime_negatome_path_reused
+- existing_runtime_negatome_path_not_reused_reason
+- existing_runtime_negatome_path_status
+- embedding_control_ratio_computed
+- new_embeddings_generated
+- biohub_esmc_called
+- npy_artifact_read
+- npy_artifact_written
+- data_output_artifact_committed
+- boltz_called
+- af3_called
+- chai_called
+- gate8_promoted
+- gate9_promoted
+- binding_claim_made
+- non_binding_claim_made
+- binding_strength_claim_made
+- functional_significance_claim_made
+- biological_specificity_claim_made
+- adaptation_claim_made
+- elephant_compatibility_claim_made
+- beneficial_breakage_claim_made
+- longevity_evidence_claim_made
+- biological_claim_made
+- curated_negatome_control_computed
+- curated_negatome_control_closed
+- result_created
+- next_step
+- result_date
+- claim_note
+allowed_result_statuses:
+- curated_negatome_interface_control_computed
+- curated_negatome_record_reviewed_no_computable_interface_control
+source:
+  shuffled_control_table: data/input/tp53_mdm2_first_mdm2_side_shuffled_interface_control_results.csv
+  shuffled_control_row_index: 1
+  required_status: first_tp53_mdm2_mdm2_side_shuffled_interface_control_result_created
+  required_next_step: add_first_tp53_mdm2_curated_negatome_interface_control_result
+  structure_id: 1YCR
+  structure_model: 1
+  mdm2_uniprot: Q00987
+  mdm2_chain_id: A
+  mdm2_chain_residue_count: 85
+  true_interface_residue_count: 47
+existing_embedding_runtime_layer:
+  status: valid_for_embedding_based_negatome_control_ratio
+  reused_in_this_result: false
+  not_reused_reason: requires_embed_sequence_npy_and_per_residue_embeddings
+  requires:
+  - ref_per_residue_embeddings
+  - ortholog_per_residue_embeddings
+  - negative_partner_per_residue_embeddings
+  - .npy_runtime_artifacts
+current_no_embedding_result_layer:
+  result_specific: true
+  biohub_esmc_allowed: false
+  new_embeddings_allowed: false
+  npy_read_allowed: false
+  npy_write_allowed: false
+  data_output_artifact_allowed: false
+  embedding_control_ratio_allowed: false
+  generic_runtime_refactor_in_scope: false
+curated_record:
+  record_class: manual_literature_curated_negatome_style_noninteraction_observation
+  record_id: doi:10.7554/eLife.11994#figure-10E
+  source: Sulak_et_al_eLife_2016
+  source_type: peer_reviewed_primary_research_manual_curated_negatome_style
+  source_version: eLife_2016_5_e11994_published_2016-09-19
+  doi: 10.7554/eLife.11994
+  figure: Figure_10E
+  source_protein:
+    name: MDM2
+    uniprot: Q00987
+    species: Homo_sapiens
+    taxid: 9606
+  negative_partner:
+    name: TP53RTG12
+    identifier: ENSLAFG00000028299
+    identifier_database: Ensembl_gene_identifier_reported_in_article_Table_1
+    species: Loxodonta_africana
+    taxid: 9785
+  evidence_type: negative_co_immunoprecipitation_observation_with_positive_internal_control
+  assay_system: HEK_293_cells_transient_TP53RTG12_myc_His_expression
+  assay_method: anti_MDM2_immunoprecipitation_followed_by_Western_blot
+  positive_internal_control: endogenous_human_TP53_co_immunoprecipitated
+  negative_observation: Myc_tagged_TP53RTG12_not_co_immunoprecipitated
+  reported_partner_side_anchor_residues:
+  - F19
+  - W23
+  - L26
+  reported_partner_side_anchor_substitution: W23G
+  metadata_sha256: 5c9b77284294997ad5067be4a6991a54892bf883f9d91c0e334004d9068089c0
+no_computable_outcome:
+  status: curated_negatome_record_reviewed_no_computable_interface_control
+  curated_negative_record_found: true
+  curated_negative_provenance_reviewed: true
+  partner_side_sequence_context_reported: true
+  mdm2_side_negative_residue_mask_available: false
+  residue_level_context_available_scope: MDM2-side negative-interface residue context sufficient to compare
+    against the existing 47-of-85 MDM2 geometric mask
+  residue_level_context_available: false
+  deterministic_sequence_context_available_scope: deterministic no-embedding context sufficient to compute
+    the requested MDM2-side interface-control metric
+  deterministic_sequence_context_available: false
+  interface_control_metric_computed: false
+  reason: curated_record_does_not_define_residue_level_or_deterministic_sequence_context
+  reason_detail: record_reports_partner_side_W23G_and_negative_coIP_but_no_negative_complex_structure_or_MDM2_side_residue_mask_for_the_existing_47_of_85_geometric_mask
+  computed_metric_fields_value: not_computed
+prohibited_surrogates:
+- conditional_interface_strength
+- random_overlap
+- protein_length
+- arbitrary_sequence_similarity
+interpretation_boundary:
+  binding: false
+  non_binding: false
+  binding_strength: false
+  functional_significance: false
+  biological_specificity: false
+  adaptation: false
+  elephant_compatibility: false
+  beneficial_breakage: false
+  longevity_evidence: false
+  biological_claim: false
+  gate8_promotion: false
+  gate9_promotion: false
+  boltz_af3_chai_call: false
+next_step:
+  action: add_first_tp53_mdm2_control_closure_result
+  expected_outcome_can_be_blocked: true
+  no_inventory_only_pr: true
+  no_plan_only_pr: true
+  no_scaffold_only_pr: true
+  no_generic_refactor_before_result: true

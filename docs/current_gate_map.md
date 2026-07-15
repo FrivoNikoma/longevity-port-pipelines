@@ -1519,3 +1519,72 @@ The next result-bearing action is
 No inventory-only, preflight-only, plan-only, approval-only, review-only,
 runtime-preparation-only, scaffold-only, generic-shuffle-framework-only, or
 other non-result PR should precede that curated NEGATOME control result.
+## First TP53/MDM2 curated NEGATOME interface-control result checkpoint
+
+The first committed no-embedding curated NEGATOME-style interface-control
+result is recorded in
+`data/input/tp53_mdm2_first_curated_negatome_interface_control_results.csv#1`
+and documented in
+`docs/tp53_mdm2_first_curated_negatome_interface_control_result.md`.
+
+The concrete result status is
+`curated_negatome_record_reviewed_no_computable_interface_control`.
+This is not an inventory, plan, scaffold, or generic refactor. One real
+peer-reviewed manual negative context was reviewed and committed with exact
+provenance.
+
+The reviewed record is Sulak et al., eLife 2016, DOI `10.7554/eLife.11994`, Figure `10E`. It describes anti-MDM2
+immunoprecipitation in HEK-293 cells after transient expression of
+African-elephant TP53RTG12 (`ENSLAFG00000028299`). Endogenous human TP53 was
+detected as an internal positive co-immunoprecipitation control, whereas
+Myc-tagged TP53RTG12 was not detected in the MDM2 immunoprecipitate. The
+record also reports the partner-side anchor context `F19|W23|L26` and the
+TP53RTG12 substitution `W23G`.
+
+The canonical record-metadata SHA256 is
+`5c9b77284294997ad5067be4a6991a54892bf883f9d91c0e334004d9068089c0`.
+
+The record does not provide a negative-complex structure, a negative-context
+MDM2 chain, or an MDM2-side negative residue mask that can be compared with
+the existing human `1YCR` MDM2 chain-`A` `47 / 85` geometric mask. The
+committed result therefore records:
+
+```text
+residue_level_context_available=false
+deterministic_sequence_context_available=false
+interface_control_metric_computed=false
+no_computable_control_reason=curated_record_does_not_define_residue_level_or_deterministic_sequence_context
+```
+
+Those availability fields are scoped to the MDM2-side negative-interface
+context required by this result. The separately recorded partner-side `W23G`
+observation does not create an MDM2-side mask.
+
+No conditional interface strength, random overlap, protein length, or
+arbitrary sequence similarity is substituted for the missing control metric.
+No empirical null or add-one empirical p-value is claimed.
+
+The existing NEGATOME path remains valid for an embedding-based NEGATOME control ratio. It is not reused here because it
+`requires_embed_sequence_npy_and_per_residue_embeddings`. This checkpoint
+records
+`existing_runtime_negatome_path_reused=false`,
+`existing_runtime_negatome_path_status=valid_for_embedding_based_negatome_control_ratio`,
+and `embedding_control_ratio_computed=false`.
+
+This checkpoint performs no Biohub / ESMC call, creates no new embeddings,
+reads or writes no `.npy` artifact, commits no `data/output` artifact, calls
+no Boltz / AF3 / Chai service, and promotes neither Gate 8 nor Gate 9.
+
+The reviewed observation does not establish binding, non-binding, binding strength, functional significance, biological specificity, adaptation,
+elephant compatibility, beneficial breakage, longevity evidence, or a
+biological claim. The curated NEGATOME control remains computationally open:
+`curated_negatome_control_computed=false` and
+`curated_negatome_control_closed=false`.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_control_closure_result`.
+That result must combine the completed shuffled control with this concrete
+reviewed-no-computable NEGATOME outcome and explicitly record whether Gate 6
+control closure remains blocked. No inventory-only, plan-only, scaffold-only,
+approval-only, review-only, runtime-preparation-only, generic-refactor-only,
+or other non-result PR should precede that control-closure result.
