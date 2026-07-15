@@ -15,8 +15,8 @@ defer worklist.
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper now exist, and the candidate contrast gate records generic control-helper traces. Fully generic control outputs across all lanes are still pending. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace, the generic strict panel runtime builder exists, and TP53/MDM2 preflight now emits a generic strict panel summary while remaining blocked by coverage. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now records a first control-package closure result, with Gate 6 explicitly remaining blocked by the no-computable curated NEGATOME interface control. Fully generic control outputs across all lanes are still pending. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the first control-package closure records Gate 6 blocked and Gate 7 entry disallowed. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1588,3 +1588,85 @@ reviewed-no-computable NEGATOME outcome and explicitly record whether Gate 6
 control closure remains blocked. No inventory-only, plan-only, scaffold-only,
 approval-only, review-only, runtime-preparation-only, generic-refactor-only,
 or other non-result PR should precede that control-closure result.
+
+## First TP53/MDM2 control-closure result checkpoint
+
+The first committed TP53/MDM2 control-package closure is recorded in
+`data/input/tp53_mdm2_first_control_closure_results.csv#1` and documented in
+`docs/tp53_mdm2_first_control_closure_result.md`.
+
+The closure aggregates four already committed results:
+
+- `first_tp53_mdm2_interface_ready_manifest_result_created`;
+- `first_tp53_mdm2_human_reference_interface_residue_extraction_result_created`;
+- `first_tp53_mdm2_mdm2_side_shuffled_interface_control_result_created`;
+- `curated_negatome_record_reviewed_no_computable_interface_control`.
+
+The committed status is
+`control_closure_status=closed_with_curated_negatome_interface_control_blocked`.
+The aggregation package is complete and explicitly closed with a blocker:
+`control_package_aggregation_complete=true` and
+`control_package_closed_with_blocker=true`.
+
+The closure preserves the committed human `1YCR` context, the MDM2 chain-`A`
+`47 / 85` geometric mask, the TP53 chain-`B` `13 / 13` geometric mask, and the
+MDM2 shuffled-control summaries. The deterministic shuffled control contains
+`1000` same-size masks; the true mask has `38` adjacent pairs, `9` contiguous
+runs, and longest run `16`.
+
+The curated record remains
+`doi:10.7554/eLife.11994#figure-10E`, with metadata SHA256
+`5c9b77284294997ad5067be4a6991a54892bf883f9d91c0e334004d9068089c0`.
+It provides a reviewed negative co-immunoprecipitation context and partner-side
+`W23G`, but no MDM2-side negative residue mask or deterministic no-embedding
+MDM2 context comparable to the existing `47 / 85` geometric mask.
+
+The blocker is informational, not a runtime failure:
+
+```text
+curated_negatome_blocker_information_not_technical=true
+control_blocker_class=information_missing_not_runtime_failure
+mdm2_side_negative_residue_mask_available=false
+deterministic_no_embedding_mdm2_context_available=false
+curated_negatome_interface_control_metric_computed=false
+curated_negatome_control_computed=false
+curated_negatome_control_closed=false
+```
+
+No conditional interface strength, random overlap, protein length, arbitrary
+sequence similarity, pseudo-p-value, or other surrogate is invented.
+
+The word closure refers to the completed aggregation and explicit blocker
+disposition. It does not mean biological approval or a biologically passed
+gate. The committed gate state is:
+
+```text
+gate6_control_readiness_status=blocked
+gate6_control_readiness_resolved=false
+gate6_control_closure_blocked=true
+gate7_entry_allowed=false
+gate7_strict_panel_promoted=false
+gate8_entry_allowed=false
+gate8_promoted=false
+gate9_promoted=false
+biological_approval_granted=false
+```
+
+The existing embedding-based NEGATOME runtime remains valid and is not reused.
+This checkpoint performs no new embeddings, no embedding-control ratio, no
+Biohub / ESMC call, no `.npy` read or write, no `data/output` artifact, no
+Boltz / AF3 / Chai call, no elephant interface scoring, and no Gate 8 or Gate 9
+promotion.
+
+The result does not establish binding, non-binding, binding strength,
+functional significance, biological specificity, adaptation, elephant
+compatibility, beneficial breakage, longevity evidence, or a biological claim.
+
+The deterministic closure-evidence SHA256 is
+`57587b740da5df9685b5c5eace1428f675e961e1323a31a50cb04bd5a6d60ed7`.
+
+The next result-bearing action is
+`add_first_tp53_mdm2_gate6_blocker_disposition_result`.
+No inventory-only, plan-only, scaffold-only, approval-only, review-only,
+runtime-preparation-only, generic-refactor-only, or other non-result PR should
+precede that concrete blocker-disposition result.

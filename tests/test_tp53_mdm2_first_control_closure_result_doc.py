@@ -1,0 +1,61 @@
+from pathlib import Path
+
+DOC_PATH = Path("docs/tp53_mdm2_first_control_closure_result.md")
+
+
+def test_control_closure_doc_records_exact_blocked_outcome() -> None:
+    text = DOC_PATH.read_text(encoding="utf-8")
+
+    for required in (
+        "First TP53/MDM2 control-closure result",
+        "aggregates four already committed checkpoints",
+        "closed_with_curated_negatome_interface_control_blocked",
+        "control_package_aggregation_complete=true",
+        "control_package_closed_with_blocker=true",
+        "does not mean that biological approval was granted",
+        "first_tp53_mdm2_interface_ready_manifest_result_created",
+        "first_tp53_mdm2_human_reference_interface_residue_extraction_result_created",
+        "first_tp53_mdm2_mdm2_side_shuffled_interface_control_result_created",
+        "curated_negatome_record_reviewed_no_computable_interface_control",
+        "`47 / 85`",
+        "`13 / 13`",
+        "`1000` same-size masks",
+        "`38` adjacent pairs",
+        "`9` contiguous runs",
+        "longest run `16`",
+        "doi:10.7554/eLife.11994#figure-10E",
+        "5c9b77284294997ad5067be4a6991a54892bf883f9d91c0e334004d9068089c0",
+        "curated_negatome_blocker_information_not_technical=true",
+        "information_missing_not_runtime_failure",
+        "mdm2_side_negative_residue_mask_available=false",
+        "deterministic_no_embedding_mdm2_context_available=false",
+        "curated_negatome_interface_control_metric_computed=false",
+        "curated_negatome_control_computed=false",
+        "curated_negatome_control_closed=false",
+        "conditional interface strength",
+        "random overlap",
+        "protein length",
+        "arbitrary sequence similarity",
+        "gate6_control_readiness_status=blocked",
+        "gate6_control_readiness_resolved=false",
+        "gate6_control_closure_blocked=true",
+        "gate7_entry_allowed=false",
+        "gate7_strict_panel_promoted=false",
+        "gate8_entry_allowed=false",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "biological_approval_granted=false",
+        "not a statement that Gate 7 biologically passed",
+        "existing embedding-based NEGATOME runtime remains valid",
+        "no new embeddings",
+        "no Biohub / ESMC call",
+        "no `.npy` read or write",
+        "no `data/output` artifact",
+        "no Boltz / AF3 / Chai call",
+        "no elephant interface scoring",
+        "not a biological claim",
+        "57587b740da5df9685b5c5eace1428f675e961e1323a31a50cb04bd5a6d60ed7",
+        "add_first_tp53_mdm2_gate6_blocker_disposition_result",
+        "No inventory-only, plan-only, scaffold-only",
+    ):
+        assert required in text
