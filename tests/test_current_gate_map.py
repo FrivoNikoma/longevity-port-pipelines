@@ -3225,3 +3225,30 @@ def test_current_gate_map_records_tp53_mdm2_actual_embedding_based_negatome_cont
         "makes no biological claim",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_tp53_mdm2_gate6_negatome_integration() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "TP53/MDM2 Gate 6 NEGATOME integration checkpoint",
+        "data/input/tp53_mdm2_gate6_negatome_integration_results.csv#1",
+        "docs/tp53_mdm2_gate6_negatome_integration_result.md",
+        "actual_negatome_result_integrated_gate6_readiness_resolved",
+        "negatome_control_ratio=1.2482765910897506",
+        "generic_control_repair_status_after=completed",
+        "generic_control_readiness_status_after=ready",
+        "gate6_control_readiness_resolved_after=true",
+        "gate6_control_closure_blocked_after=false",
+        "metric_families_directly_comparable=false",
+        "numerical_controlled_pass_fail_evaluated=false",
+        "controlled_pass=false",
+        "controlled_fail=false",
+        "gate7_entry_allowed_after=false",
+        "explicit_gate7_strict_panel_entry_decision_required_after_gate6_readiness",
+        "add_first_tp53_mdm2_gate7_strict_panel_entry_decision_result",
+        "does not recompute evidence",
+        "read or write `.npy` artifacts",
+        "make a biological claim",
+    ):
+        assert required in text
