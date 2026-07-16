@@ -300,6 +300,12 @@ def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
+def canonical_text_sha256(path: Path) -> str:
+    text = path.read_text(encoding="utf-8-sig")
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    return sha256_text(normalized)
+
+
 def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -337,7 +343,7 @@ def validate_mapping_table(root: Path) -> list[dict[str, str]]:
         raise ValueError(f"Unexpected mapping columns: {columns}")
     if len(rows) != 47:
         raise ValueError(f"Expected 47 mapping rows, got {len(rows)}")
-    if sha256_file(path) != EXPECTED_MAPPING_SHA256:
+    if canonical_text_sha256(path) != EXPECTED_MAPPING_SHA256:
         raise ValueError("Mapping table SHA256 mismatch")
 
     local_indices = [int(row["chain_local_zero_based_index"]) for row in rows]
@@ -385,7 +391,7 @@ def validate_pair_table(root: Path) -> dict[str, str]:
         raise ValueError(f"Unexpected pair columns: {columns}")
     if len(rows) != 1:
         raise ValueError(f"Expected one repaired pair row, got {len(rows)}")
-    if sha256_file(path) != EXPECTED_PAIR_SHA256:
+    if canonical_text_sha256(path) != EXPECTED_PAIR_SHA256:
         raise ValueError("Pair table SHA256 mismatch")
 
     row = rows[0]

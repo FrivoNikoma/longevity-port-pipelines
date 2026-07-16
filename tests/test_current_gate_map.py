@@ -3201,3 +3201,27 @@ def test_current_gate_map_records_tp53_mdm2_negatome_input_repair_retry() -> Non
         "not a preflight-only, audit-only, scaffold-only",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_tp53_mdm2_actual_embedding_based_negatome_control_ratio() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "TP53/MDM2 actual embedding-based NEGATOME control ratio checkpoint",
+        "data/input/tp53_mdm2_embedding_based_negatome_control_results.csv#1",
+        "docs/tp53_mdm2_embedding_based_negatome_control_result.md",
+        "actual_negatome_control_ratio_computed",
+        "negatome_control_ratio=1.2482765910897506",
+        "runtime_blocker=none",
+        "checked_blocker_count=0",
+        "364x960",
+        "float32",
+        "blocked_pending_control_result_integration",
+        "gate7_entry_allowed_after=false",
+        "gate8_promoted=false",
+        "gate9_promoted=false",
+        "commits no `.npy` or `data/output` artifact",
+        "calls no Boltz, AF3, or Chai service",
+        "makes no biological claim",
+    ):
+        assert required in text

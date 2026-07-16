@@ -15,8 +15,8 @@ defer worklist.
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now records a repair/retry result: official 1YCR-to-Q00987 mapping and exact G3UAZ0 pair provenance are resolved, while the reviewed G3UAZ0 negative-partner embedding is absent. Generic readiness remains `blocked_pending_control_repair`. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the embedding-based NEGATOME repair/retry result remains blocked by the missing G3UAZ0 embedding. Gate 7 entry remains disallowed. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now has an actual embedding-based NEGATOME control ratio of `1.2482765910897506`. The runtime blocker is resolved, but Gate 6 remains `blocked_pending_control_result_integration` until the result is integrated into the existing control-closure package. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 now has an actual G3UAZ0 embedding-based NEGATOME control ratio, but it has not yet been integrated into the Gate 6 control-closure package. Gate 7 entry remains disallowed. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1786,3 +1786,46 @@ embedding, wrote or committed no `.npy` or `data/output` artifact, made no Boltz
 This is not a preflight-only, audit-only, scaffold-only, vocabulary-only, or
 generic-refactor-only PR. It repairs the two previously checked inputs and
 records the next concrete runtime blocker.
+
+
+## TP53/MDM2 actual embedding-based NEGATOME control ratio checkpoint
+
+TP53/MDM2 preflight now emits a generic strict panel summary, while the actual G3UAZ0 control ratio remains pending Gate 6 result integration.
+
+
+
+The result is recorded in
+`data/input/tp53_mdm2_embedding_based_negatome_control_results.csv#1`
+and documented in
+`docs/tp53_mdm2_embedding_based_negatome_control_result.md`.
+
+One explicitly authorized Biohub / ESMC call generated the reviewed local
+G3UAZ0 embedding. The artifact passed the `364x960`, `float32`, and finiteness
+contracts and remained ignored, untracked, unstaged, and uncommitted.
+
+```text
+result_status=actual_negatome_control_ratio_computed
+negatome_control_ratio=1.2482765910897506
+runtime_blocker=none
+checked_blocker_count=0
+```
+
+The ratio is a technical interface-to-non-interface enrichment of absolute
+cross-species changes in embedding coupling to the G3UAZ0 partner pool. It
+does not establish binding, non-binding, binding strength, functional
+significance, beneficial breakage, adaptation, elephant compatibility,
+longevity evidence, or any other biological claim.
+
+```text
+gate6_control_readiness_status_after=blocked_pending_control_result_integration
+gate6_control_readiness_resolved_after=false
+gate6_control_closure_blocked_after=true
+gate7_entry_allowed_after=false
+gate8_promoted=false
+gate9_promoted=false
+```
+
+The next result-bearing action is to integrate the actual ratio into the
+existing TP53/MDM2 control-closure evidence and explicitly decide Gate 6.
+
+This checkpoint commits no `.npy` or `data/output` artifact, calls no Boltz, AF3, or Chai service, and makes no biological claim.
