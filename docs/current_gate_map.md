@@ -15,8 +15,8 @@ defer worklist.
 | Gate 3 - manifest | Explicit candidate rows exist for a lane. | Done for SIRT6; started for TP53/MDM2; pending for HAS2/CD44, IGF/RHEB/mTOR, and AMPK in the new architecture. |
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
-| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now also records a checked embedding-based NEGATOME blocker result: the runtime and both MDM2 embeddings are available, but verified chain-local-to-full-length mapping and the exact NEGATOME lookup row are missing. Generic readiness remains `blocked_pending_control_repair`. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the control closure, disposition, and checked embedding-based NEGATOME blocker result keep Gate 6 blocked and Gate 7 entry disallowed. The blocker result does not open Gate 7. |
+| Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 now records a repair/retry result: official 1YCR-to-Q00987 mapping and exact G3UAZ0 pair provenance are resolved, while the reviewed G3UAZ0 negative-partner embedding is absent. Generic readiness remains `blocked_pending_control_repair`. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 preflight now emits a generic strict panel summary, while the embedding-based NEGATOME repair/retry result remains blocked by the missing G3UAZ0 embedding. Gate 7 entry remains disallowed. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1745,3 +1745,44 @@ The next result-bearing action is
 `repair_local_mapping_and_exact_pair_then_add_first_tp53_mdm2_embedding_based_negatome_control_result`.
 The repair must not become a separate inventory-only, plan-only,
 scaffold-only, runtime-preparation-only, or generic-refactor-only PR.
+
+## TP53/MDM2 embedding-based NEGATOME input repair and retry checkpoint
+
+`data/input/tp53_mdm2_embedding_based_negatome_control_repair_results.csv#1`
+records a result-bearing repair/retry of the first checked-blocker attempt.
+
+Official RCSB and UniProt evidence resolves the 1YCR chain A to full-length
+Q00987 mapping. The committed `47` interface positions satisfy
+`mapping_unique=true`, `mapped_interface_count=47`,
+`mapped_indices_unique=true`, `mapped_indices_in_bounds=true`, and
+`residue_identity_consistent=true`. The tracked mapping evidence is
+`data/input/tp53_mdm2_1ycr_q00987_interface_mapping.csv`.
+
+TP53RTG12 is resolved from Ensembl gene `ENSLAFG00000028299` through
+transcript `ENSLAFT00000037003` and protein translation
+`ENSLAFP00000024998` to UniProtKB `G3UAZ0`. Ensembl and UniProt provide
+one exact `364`-aa sequence with SHA256
+`29fff7f2b98f31a8b3efc8aed0f9498206086e556950c818d1004ad41231bff7`,
+and the reported `W23G` anchor is alignment-consistent.
+
+The exact runtime-schema pair is committed in
+`data/input/tp53_mdm2_repaired_negatome_control_pairs.csv` for key
+`tp53_mdm2_elephant_seed_mdm2_chain|mdm2|elephant`, with
+`source_uniprot=Q00987`, `negative_partner_uniprot=G3UAZ0`,
+`exact_pair_schema_valid=true`, and `repaired_pair_runtime_loadable=true`.
+
+The reviewed local path
+`data/interim/negatome_embeddings/esmc-300m-2024-12/G3UAZ0.npy` was absent.
+The new concrete blocker is `negative_partner_embedding_missing_or_invalid`;
+`control_ratio_runtime_executed=false`,
+`embedding_based_negatome_control_computed=false`, and
+`negatome_control_ratio=not_computed`.
+
+Gate 6 remains `blocked_pending_control_repair`,
+`gate7_entry_allowed_after=false`, and there is no Gate 8 or Gate 9
+promotion. This repair/retry made no Biohub / ESMC call, generated no new
+embedding, wrote or committed no `.npy` or `data/output` artifact, made no Boltz / AF3 / Chai runtime call, and made no biological claim.
+
+This is not a preflight-only, audit-only, scaffold-only, vocabulary-only, or
+generic-refactor-only PR. It repairs the two previously checked inputs and
+records the next concrete runtime blocker.

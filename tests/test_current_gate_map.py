@@ -3166,3 +3166,38 @@ def test_current_gate_map_records_first_tp53_mdm2_embedding_based_negatome_contr
         "must not become a separate inventory-only",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_tp53_mdm2_negatome_input_repair_retry() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "TP53/MDM2 embedding-based NEGATOME input repair and retry checkpoint",
+        "tp53_mdm2_embedding_based_negatome_control_repair_results.csv#1",
+        "result-bearing repair/retry",
+        "tp53_mdm2_1ycr_q00987_interface_mapping.csv",
+        "mapping_unique=true",
+        "mapped_interface_count=47",
+        "mapped_indices_unique=true",
+        "mapped_indices_in_bounds=true",
+        "residue_identity_consistent=true",
+        "ENSLAFG00000028299",
+        "ENSLAFT00000037003",
+        "ENSLAFP00000024998",
+        "G3UAZ0",
+        "exact_pair_schema_valid=true",
+        "repaired_pair_runtime_loadable=true",
+        "negative_partner_embedding_missing_or_invalid",
+        "control_ratio_runtime_executed=false",
+        "negatome_control_ratio=not_computed",
+        "blocked_pending_control_repair",
+        "gate7_entry_allowed_after=false",
+        "no Gate 8 or Gate 9 promotion",
+        "no Biohub / ESMC call",
+        "no new embedding",
+        "no `.npy` or `data/output` artifact",
+        "no Boltz / AF3 / Chai runtime",
+        "no biological claim",
+        "not a preflight-only, audit-only, scaffold-only",
+    ):
+        assert required in text
