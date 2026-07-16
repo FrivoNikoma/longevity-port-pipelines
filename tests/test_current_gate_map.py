@@ -3252,3 +3252,16 @@ def test_current_gate_map_records_tp53_mdm2_gate6_negatome_integration() -> None
         "make a biological claim",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_tp53_mdm2_gate7_entry_decision() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "decision-bearing Gate 7 result" in text
+    assert "`gate7_entry_allowed=false`" in text
+    assert "`strict_panel_status=blocked_species_coverage_repair`" in text
+    assert "zero strict-panel-ready species" in text
+    assert "`resolve_coverage_repair_decisions`" in text
+    assert "Gate 8 and Gate 9 remain closed" in text
+    assert "does not commit the ignored" in text
+    assert "make a biological claim" in text

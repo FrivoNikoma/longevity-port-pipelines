@@ -16,7 +16,7 @@ defer worklist.
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 has integrated the actual embedding-based NEGATOME control ratio `1.2482765910897506`; the required repair is `completed`, generic control readiness is `ready`, and Gate 6 control readiness is resolved. No numerical controlled pass/fail is claimed because the geometric shuffled control and embedding NEGATOME ratio are different metric families. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 Gate 6 control readiness is now resolved, but Gate 7 entry remains disallowed pending an explicit TP53/MDM2 strict-panel entry decision. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 now has a decision-bearing Gate 7 result: entry is disallowed with `strict_panel_status=blocked_species_coverage_repair` because both candidate rows have zero strict-panel-ready species and remain blocked pending coverage repair review. Gate 8 and Gate 9 remain closed. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -45,6 +45,7 @@ Current calibration lanes:
   - useful because `biological_mode = beneficial_breakage`
   - generic coverage-helper trace is recorded in the coverage preflight layer
   - generic strict panel builder emits a blocked Gate 7 summary
+  - first decision-bearing Gate 7 result records `gate7_entry_allowed=false` with `blocked_species_coverage_repair`
   - not yet at SIRT6-level gate maturity
   - emits a generic Gate 8 blocked summary while coverage remains unresolved
   - emits a generic Gate 9 blocked context while coverage remains unresolved
@@ -1892,3 +1893,20 @@ or make a biological claim.
 
 The next result-bearing action is
 `add_first_tp53_mdm2_gate7_strict_panel_entry_decision_result`.
+
+## TP53/MDM2 Gate 7 strict-panel entry decision checkpoint
+
+The first TP53/MDM2 Gate 7 decision result is recorded in
+`data/input/tp53_mdm2_gate7_strict_panel_entry_decision_results.csv`.
+
+This is a terminal blocked decision rather than a pending-only checkpoint.
+Gate 6 control readiness remains `ready` and resolved, but both TP53/MDM2
+candidate rows have zero strict-panel-ready species and are classified as
+`blocked_species_coverage_repair`. Therefore `gate7_entry_allowed=false`, the
+recommended next action is `resolve_coverage_repair_decisions`, and Gate 8 and
+Gate 9 remain closed.
+
+The result rebuilds the generic strict-panel summary deterministically from
+committed manifest and repair-decision inputs. It does not commit the ignored
+interim summary, call Biohub / ESMC, generate embeddings, commit `.npy` or
+`data/output` artifacts, call Boltz / AF3 / Chai, or make a biological claim.
