@@ -16,7 +16,7 @@ defer worklist.
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 has integrated the actual embedding-based NEGATOME control ratio `1.2482765910897506`; the required repair is `completed`, generic control readiness is `ready`, and Gate 6 control readiness is resolved. No numerical controlled pass/fail is claimed because the geometric shuffled control and embedding NEGATOME ratio are different metric families. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 now has a decision-bearing Gate 7 result: entry is disallowed with `strict_panel_status=blocked_species_coverage_repair` because both candidate rows have zero strict-panel-ready species and remain blocked pending coverage repair review. Gate 8 and Gate 9 remain closed. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 now has concrete Gate 7 coverage-repair outcomes: the MDM2 row is `coverage_repaired_and_ready` with reviewed accession `G3SX30`, while the TP53 row is `deferred_pending_source` because no accepted accession-level elephant TP53 ortholog evidence exists. Aggregate Gate 7 entry remains disallowed; Gate 8 and Gate 9 remain closed. |
 | Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
@@ -1910,3 +1910,26 @@ The result rebuilds the generic strict-panel summary deterministically from
 committed manifest and repair-decision inputs. It does not commit the ignored
 interim summary, call Biohub / ESMC, generate embeddings, commit `.npy` or
 `data/output` artifacts, call Boltz / AF3 / Chai, or make a biological claim.
+
+Historical TP53/MDM2 checkpoint: the decision-bearing Gate 7 result recorded `gate7_entry_allowed=false` with `strict_panel_status=blocked_species_coverage_repair`. At that checkpoint, both candidate rows had zero strict-panel-ready species and the recorded next action was `resolve_coverage_repair_decisions`. Gate 8 and Gate 9 remain closed. The checkpoint does not commit the ignored interim summary and does not make a biological claim.
+
+## TP53/MDM2 Gate 7 coverage-repair resolution checkpoint
+
+The TP53 row is no longer represented as `blocked_pending_repair_review`; it is now classified as `deferred_pending_source` with a concrete source blocker.
+
+The two TP53/MDM2 coverage-repair rows now have concrete source-linked
+classifications in
+`data/input/tp53_mdm2_gate7_coverage_repair_resolutions.csv`.
+
+The MDM2 chain is `coverage_repaired_and_ready` for technical planning because
+reviewed accession `G3SX30` has an explicit Gate 4/Gate 5 planning-policy
+update. Its next strict-panel blocker is the absence of a ready short-lived
+control species.
+
+The TP53 chain is `deferred_pending_source` with concrete blocker
+`no_accepted_accession_level_elephant_tp53_ortholog_evidence`. It is no longer
+represented as `blocked_pending_repair_review`.
+
+Aggregate `gate7_entry_allowed=false`; Gate 8 and Gate 9 remain closed. No live
+calls, embeddings, committed runtime artifacts, biological approval, or
+biological claims are introduced.

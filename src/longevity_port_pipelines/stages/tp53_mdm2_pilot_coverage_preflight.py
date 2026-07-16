@@ -12,6 +12,11 @@ from longevity_port_pipelines.stages.coverage_preflight import (
     CONSERVATIVE_CLAIM_POLICY,
     coverage_preflight_for_statuses,
 )
+from longevity_port_pipelines.stages.tp53_mdm2_gate7_coverage_repair_resolutions import (
+    DEFAULT_RESOLUTIONS_PATH,
+    read_resolutions,
+    resolution_lookup,
+)
 from longevity_port_pipelines.stages.tp53_mdm2_ortholog_repair_decisions import (
     DEFAULT_REPAIR_DECISIONS_PATH,
     read_repair_decisions,
@@ -57,6 +62,11 @@ COVERAGE_PREFLIGHT_SCHEMA = {
     "repair_priority": pl.Utf8,
     "repair_claim_policy": pl.Utf8,
     "repair_note": pl.Utf8,
+    "resolution_status": pl.Utf8,
+    "coverage_repair_outcome": pl.Utf8,
+    "resolution_blocker_code": pl.Utf8,
+    "resolution_source_table": pl.Utf8,
+    "resolution_source_row_index": pl.Utf8,
     "claim_policy": pl.Utf8,
     "coverage_preflight_note": pl.Utf8,
     "generic_coverage_status": pl.Utf8,
@@ -213,33 +223,61 @@ def build_tp53_mdm2_pilot_coverage_preflight(
     manifest: pl.DataFrame,
     *,
     repair_decisions: pl.DataFrame | None = None,
+    repair_resolutions: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
-    """Build a conservative TP53/MDM2 coverage preflight table from manifest rows."""
+    """Build conservative TP53/MDM2 coverage preflight rows."""
 
     validate_tp53_mdm2_pilot_manifest(manifest)
     repair_by_key = _repair_lookup(repair_decisions)
+    resolution_by_key = (
+        resolution_lookup(repair_resolutions) if repair_resolutions is not None else {}
+    )
 
     rows: list[dict[str, Any]] = []
     for row in manifest.iter_rows(named=True):
         gate_status = _as_str(row, "strict_contrast_gate_status")
-        coverage_status = coverage_preflight_status(gate_status)
-        repair = repair_by_key.get(_repair_key(row), {})
+        key = _repair_key(row)
+        repair = repair_by_key.get(key, {})
+        resolution = resolution_by_key.get(key, {})
 
+        legacy_status = coverage_preflight_status(gate_status)
+        legacy_action = recommended_next_action(legacy_status)
         source_ortholog_status = "not_checked"
         local_candidate_row_status = "not_checked"
         repair_decision = repair.get("repair_decision", "")
         repair_priority = repair.get("repair_priority", "")
         repair_claim_policy = repair.get("repair_claim_policy", "")
         repair_note = repair.get("repair_note", "")
+        resolution_status = ""
+        coverage_repair_outcome = ""
+        resolution_blocker_code = ""
+        resolution_source_table = ""
+        resolution_source_row_index = ""
 
-        generic_coverage_status = generic_coverage_status_for_gate(gate_status)
-        generic_provenance_status = generic_provenance_status_for_source_ortholog_status(
-            source_ortholog_status
-        )
-        generic_repair_status = generic_repair_status_for_decision(
-            repair_decision=repair_decision,
-            generic_coverage_status=generic_coverage_status,
-        )
+        if resolution:
+            source_ortholog_status = resolution["source_ortholog_status_after_resolution"]
+            local_candidate_row_status = resolution["local_candidate_row_status_after_resolution"]
+            repair_decision = resolution["repair_decision_after_resolution"]
+            legacy_status = resolution["coverage_preflight_status_after_resolution"]
+            legacy_action = resolution["recommended_next_action_after_resolution"]
+            resolution_status = resolution["resolution_status"]
+            coverage_repair_outcome = resolution["coverage_repair_outcome"]
+            resolution_blocker_code = resolution["concrete_source_blocker"]
+            resolution_source_table = resolution["source_evidence_table"]
+            resolution_source_row_index = resolution["source_evidence_row_index"]
+            generic_coverage_status = resolution["coverage_status_after_resolution"]
+            generic_provenance_status = resolution["provenance_status_after_resolution"]
+            generic_repair_status = resolution["repair_status_after_resolution"]
+        else:
+            generic_coverage_status = generic_coverage_status_for_gate(gate_status)
+            generic_provenance_status = generic_provenance_status_for_source_ortholog_status(
+                source_ortholog_status
+            )
+            generic_repair_status = generic_repair_status_for_decision(
+                repair_decision=repair_decision,
+                generic_coverage_status=generic_coverage_status,
+            )
+
         generic_preflight = coverage_preflight_for_statuses(
             coverage_status=generic_coverage_status,
             provenance_status=generic_provenance_status,
@@ -257,27 +295,33 @@ def build_tp53_mdm2_pilot_coverage_preflight(
                 "partner_uniprot": _as_str(row, "partner_uniprot"),
                 "target_species": _as_str(row, "target_species"),
                 "strict_contrast_gate_status": gate_status,
-                "coverage_preflight_status": coverage_status,
+                "coverage_preflight_status": legacy_status,
                 "source_ortholog_status": source_ortholog_status,
                 "local_candidate_row_status": local_candidate_row_status,
-                "recommended_next_action": recommended_next_action(coverage_status),
+                "recommended_next_action": legacy_action,
                 "repair_decision": repair_decision,
                 "repair_priority": repair_priority,
                 "repair_claim_policy": repair_claim_policy,
                 "repair_note": repair_note,
+                "resolution_status": resolution_status,
+                "coverage_repair_outcome": coverage_repair_outcome,
+                "resolution_blocker_code": resolution_blocker_code,
+                "resolution_source_table": resolution_source_table,
+                "resolution_source_row_index": resolution_source_row_index,
                 "claim_policy": _as_str(row, "claim_policy"),
                 "coverage_preflight_note": (
-                    "Coverage preflight uses committed manifest fields and optional "
-                    "repair-decision rows only; no Biohub, Boltz, embeddings, "
-                    "cofolding jobs, or biological claims are introduced."
+                    "Coverage preflight uses committed manifest fields, "
+                    "repair-decision rows, and optional decision-bearing coverage "
+                    "resolutions only; no Biohub, Boltz, embeddings, cofolding "
+                    "jobs, or biological claims are introduced."
                 ),
                 "generic_coverage_status": generic_coverage_status,
                 "generic_provenance_status": generic_provenance_status,
                 "generic_repair_status": generic_repair_status,
                 "generic_coverage_preflight_status": (generic_preflight.coverage_preflight_status),
-                "generic_recommended_next_action": generic_preflight.recommended_next_action,
+                "generic_recommended_next_action": (generic_preflight.recommended_next_action),
                 "strict_panel_allowed": generic_preflight.strict_panel_allowed,
-                "contrast_dry_run_allowed": generic_preflight.contrast_dry_run_allowed,
+                "contrast_dry_run_allowed": (generic_preflight.contrast_dry_run_allowed),
                 "generic_claim_policy": generic_preflight.claim_policy,
                 "generic_claim_status": generic_preflight.claim_status,
                 "generic_coverage_preflight_note": generic_preflight.notes,
@@ -324,7 +368,12 @@ def build_tp53_mdm2_generic_strict_panel_input(preflight: pl.DataFrame) -> pl.Da
                     row,
                     "generic_coverage_preflight_status",
                 ),
-                "control_readiness_status": TP53_MDM2_CONTROL_READINESS_STATUS,
+                "control_readiness_status": (
+                    "controls_ready"
+                    if _as_str(row, "generic_coverage_preflight_status")
+                    == "coverage_preflight_ready"
+                    else TP53_MDM2_CONTROL_READINESS_STATUS
+                ),
                 "contrast_readiness_status": _as_str(row, "strict_contrast_gate_status"),
                 "claim_policy": (_as_str(row, "generic_claim_policy") or CONSERVATIVE_CLAIM_POLICY),
             }
@@ -388,6 +437,13 @@ def main(
             help="TP53/MDM2 ortholog repair decision CSV to apply.",
         ),
     ] = DEFAULT_REPAIR_DECISIONS_PATH,
+    repair_resolutions_path: Annotated[
+        Path,
+        typer.Option(
+            "--repair-resolutions",
+            help="Decision-bearing TP53/MDM2 coverage-repair resolution CSV.",
+        ),
+    ] = DEFAULT_RESOLUTIONS_PATH,
     output: Annotated[
         Path,
         typer.Option(
@@ -407,9 +463,11 @@ def main(
 
     manifest = pl.read_csv(input_path)
     repair_decisions = read_repair_decisions(repair_decisions_path)
+    repair_resolutions = read_resolutions(repair_resolutions_path)
     preflight = build_tp53_mdm2_pilot_coverage_preflight(
         manifest,
         repair_decisions=repair_decisions,
+        repair_resolutions=repair_resolutions,
     )
 
     strict_panel_summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
@@ -431,6 +489,7 @@ def main(
     ):
         typer.echo(f"strict panel {status}: {count}")
     typer.echo(f"Applied TP53/MDM2 repair decisions from -> {repair_decisions_path}")
+    typer.echo(f"Applied TP53/MDM2 coverage-repair resolutions from -> {repair_resolutions_path}")
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
     typer.echo("No orthologs were fetched.")
@@ -442,6 +501,7 @@ def main(
     return {
         "input": str(input_path),
         "repair_decisions": str(repair_decisions_path),
+        "repair_resolutions": str(repair_resolutions_path),
         "output": str(output),
         "strict_panel_output": str(strict_panel_output),
         "rows": preflight.height,

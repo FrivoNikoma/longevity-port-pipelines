@@ -3265,3 +3265,17 @@ def test_current_gate_map_records_tp53_mdm2_gate7_entry_decision() -> None:
     assert "Gate 8 and Gate 9 remain closed" in text
     assert "does not commit the ignored" in text
     assert "make a biological claim" in text
+
+
+def test_current_gate_map_records_tp53_mdm2_gate7_coverage_repair_resolutions() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "concrete Gate 7 coverage-repair outcomes" in text
+    assert "`coverage_repaired_and_ready`" in text
+    assert "reviewed accession `G3SX30`" in text
+    assert "`deferred_pending_source`" in text
+    assert "no accepted accession-level elephant TP53 ortholog evidence" in text
+    assert "no longer represented as `blocked_pending_repair_review`" in text
+    assert "Aggregate `gate7_entry_allowed=false`" in text
+    assert "Gate 8 and Gate 9 remain closed" in text
+    assert "biological claims" in text

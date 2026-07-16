@@ -4,6 +4,9 @@ import polars as pl
 import pytest
 
 from longevity_port_pipelines.stages import strict_contrast_panel as strict_panel
+from longevity_port_pipelines.stages import (
+    tp53_mdm2_gate7_coverage_repair_resolutions as resolutions,
+)
 from longevity_port_pipelines.stages import tp53_mdm2_ortholog_repair_decisions as repair
 from longevity_port_pipelines.stages.tp53_mdm2_pilot_coverage_preflight import (
     build_tp53_mdm2_generic_strict_panel_input,
@@ -23,6 +26,10 @@ def load_manifest() -> pl.DataFrame:
 
 def load_repair_decisions() -> pl.DataFrame:
     return repair.read_repair_decisions()
+
+
+def load_repair_resolutions() -> pl.DataFrame:
+    return resolutions.read_resolutions()
 
 
 def test_build_tp53_mdm2_pilot_coverage_preflight_uses_committed_manifest() -> None:
@@ -301,3 +308,75 @@ def test_build_tp53_mdm2_generic_strict_panel_summary_does_not_make_claims() -> 
         observed_values.update(str(value) for value in summary.get_column(column).to_list())
 
     assert observed_values.isdisjoint(forbidden_values)
+
+
+def test_tp53_mdm2_coverage_resolutions_change_both_row_states() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+        repair_resolutions=load_repair_resolutions(),
+    )
+    by_candidate = {row["candidate_id"]: row for row in preflight.iter_rows(named=True)}
+
+    mdm2 = by_candidate["tp53_mdm2_elephant_seed_mdm2_chain"]
+    assert mdm2["coverage_repair_outcome"] == "coverage_repaired_and_ready"
+    assert mdm2["coverage_preflight_status"] == "coverage_repaired_and_ready"
+    assert mdm2["source_ortholog_status"] == "present_source_ortholog"
+    assert mdm2["generic_repair_status"] == "accepted_for_planning_after_review"
+    assert mdm2["generic_coverage_preflight_status"] == "coverage_preflight_ready"
+    assert mdm2["strict_panel_allowed"] is True
+
+    tp53 = by_candidate["tp53_mdm2_elephant_seed_tp53_chain"]
+    assert tp53["coverage_repair_outcome"] == "deferred_pending_source"
+    assert tp53["coverage_preflight_status"] == "deferred_pending_source"
+    assert tp53["source_ortholog_status"] == "missing_source_ortholog"
+    assert tp53["generic_repair_status"] == "deferred_pending_source"
+    assert tp53["generic_coverage_preflight_status"] == ("blocked_deferred_pending_source")
+    assert tp53["strict_panel_allowed"] is False
+    assert tp53["resolution_blocker_code"] == (
+        "no_accepted_accession_level_elephant_tp53_ortholog_evidence"
+    )
+
+
+def test_tp53_mdm2_coverage_resolutions_remove_pending_review_status() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+        repair_resolutions=load_repair_resolutions(),
+    )
+
+    assert "blocked_pending_repair_review" not in set(
+        preflight.get_column("generic_coverage_preflight_status").to_list()
+    )
+    assert "pending" not in set(preflight.get_column("generic_repair_status").to_list())
+
+
+def test_tp53_mdm2_resolved_strict_panel_records_downstream_states() -> None:
+    preflight = build_tp53_mdm2_pilot_coverage_preflight(
+        load_manifest(),
+        repair_decisions=load_repair_decisions(),
+        repair_resolutions=load_repair_resolutions(),
+    )
+    strict_input = build_tp53_mdm2_generic_strict_panel_input(preflight)
+    input_by_candidate = {row["candidate_id"]: row for row in strict_input.iter_rows(named=True)}
+    assert (
+        input_by_candidate["tp53_mdm2_elephant_seed_mdm2_chain"]["control_readiness_status"]
+        == "controls_ready"
+    )
+    assert (
+        input_by_candidate["tp53_mdm2_elephant_seed_tp53_chain"]["control_readiness_status"]
+        == "controls_not_evaluated_coverage_blocked"
+    )
+
+    summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
+    by_candidate = {row["candidate_id"]: row for row in summary.iter_rows(named=True)}
+    mdm2 = by_candidate["tp53_mdm2_elephant_seed_mdm2_chain"]
+    assert mdm2["strict_panel_status"] == ("insufficient_strict_short_lived_species")
+    assert mdm2["n_strict_long_lived_ready"] == 1
+    assert mdm2["n_strict_short_lived_ready"] == 0
+    assert mdm2["contrast_dry_run_allowed"] is False
+
+    tp53 = by_candidate["tp53_mdm2_elephant_seed_tp53_chain"]
+    assert tp53["strict_panel_status"] == "deferred_pending_source"
+    assert tp53["contrast_dry_run_allowed"] is False
+    assert set(summary.get_column("controlled_claim_allowed").to_list()) == {False}
