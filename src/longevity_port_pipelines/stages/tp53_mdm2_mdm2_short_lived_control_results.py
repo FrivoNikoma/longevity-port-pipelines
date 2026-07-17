@@ -119,10 +119,8 @@ def validate_results(
 ) -> None:
     if list(rows.columns) != REQUIRED_COLUMNS:
         raise ValueError(f"Unexpected result columns: {rows.columns}")
-    if rows.height != 1:
-        raise ValueError(f"Expected one result row, got {rows.height}")
-
-    row = _single_row(rows, "short-lived control result")
+    if rows.height != 3:
+        raise ValueError(f"Expected three result rows, got {rows.height}")
 
     for source_path, expected_hash in EXPECTED_SOURCE_HASHES.items():
         if canonical_text_sha256(root / source_path) != expected_hash:
@@ -137,15 +135,15 @@ def validate_results(
             DEFAULT_COVERAGE_RESOLUTIONS_PATH
         ],
     }
-    for column, expected_hash in expected_hash_columns.items():
-        if str(row[column]) != expected_hash:
-            raise ValueError(f"Unexpected source hash in {column}")
-
     policy_text = (root / DEFAULT_SPECIES_GROUPS_PATH).read_text(encoding="utf-8-sig")
     for fragment in (
         "short_lived_controls:",
         "  mouse:",
         "      - Mus musculus",
+        "  rat:",
+        "      - Rattus norvegicus",
+        "  hamster:",
+        "      - Mesocricetus auratus",
         "    group: short_lived_control",
     ):
         if fragment not in policy_text:
@@ -179,52 +177,137 @@ def validate_results(
     if not (strict_panel_allowed is True or str(strict_panel_allowed).strip().lower() == "true"):
         raise ValueError("MDM2 strict-panel planning is no longer allowed")
 
-    expected_result = {
-        "candidate_id": "tp53_mdm2_elephant_seed_mdm2_chain",
-        "pdb_id": "1ycr",
-        "chain": "A",
-        "source_uniprot": "Q00987",
-        "partner_uniprot": "P04637",
-        "gene_symbol": "MDM2",
-        "selected_control_species": "mouse",
-        "selected_control_species_name": "Mus musculus",
-        "selected_control_species_taxid": "10090",
-        "species_group": "short_lived_control",
-        "target_protein_accession": "P23804",
-        "evidence_source_database": "UniProtKB Swiss-Prot",
-        "evidence_source_accession": "P23804",
-        "evidence_source_review_status": "reviewed",
-        "sequence_status": "complete",
-        "sequence_length": "489",
-        "protein_existence_status": "evidence_at_protein_level",
-        "review_decision": ("accept_reviewed_swissprot_for_gate7_technical_planning"),
-        "selection_outcome": "ready_for_gate7_strict_panel_planning",
-        "coverage_preflight_status_after_selection": ("coverage_preflight_ready"),
-        "control_readiness_status_after_selection": "controls_ready",
-        "contrast_readiness_status_after_selection": ("eligible_for_contrast_dry_run"),
-        "claim_policy": "no_biological_claims_until_validation",
-        "claim_status": "strict_panel_readiness",
-        "strict_panel_row_allowed": "true",
-        "gate7_mdm2_strict_panel_status_after_selection": ("strict_panel_ready"),
-        "gate7_mdm2_contrast_dry_run_allowed_after_selection": "true",
-        "aggregate_gate7_blocker_code": "tp53_deferred_pending_source",
-        "exact_local_embedding_status": ("not_evaluated_not_required_for_gate7_source_selection"),
-    }
-    for column, expected_value in expected_result.items():
-        if str(row[column]) != expected_value:
-            raise ValueError(f"Unexpected result {column}")
+    rows_by_species: dict[str, dict[str, Any]] = {}
+    for result_row in rows.iter_rows(named=True):
+        species = str(result_row["selected_control_species"])
+        if species in rows_by_species:
+            raise ValueError(f"Duplicate short-lived control species: {species}")
+        rows_by_species[species] = result_row
 
-    for field in FALSE_BOUNDARY_FIELDS:
-        if str(row[field]) != "false":
-            raise ValueError(f"Forbidden boundary opened: {field}")
+    expected_rows = {
+        "mouse": {
+            "selected_control_species_name": "Mus musculus",
+            "selected_control_species_taxid": "10090",
+            "target_protein_accession": "P23804",
+            "evidence_source_database": "UniProtKB Swiss-Prot",
+            "evidence_source_accession": "P23804",
+            "evidence_source_review_status": "reviewed",
+            "sequence_status": "complete",
+            "sequence_length": "489",
+            "protein_existence_status": "evidence_at_protein_level",
+            "review_decision": ("accept_reviewed_swissprot_for_gate7_technical_planning"),
+            "selection_outcome": ("ready_for_gate7_strict_panel_planning"),
+            "coverage_preflight_status_after_selection": ("coverage_preflight_ready"),
+            "control_readiness_status_after_selection": ("controls_ready"),
+            "contrast_readiness_status_after_selection": ("eligible_for_contrast_dry_run"),
+            "claim_status": "strict_panel_readiness",
+            "strict_panel_row_allowed": "true",
+            "exact_local_embedding_status": (
+                "not_evaluated_not_required_for_gate7_source_selection"
+            ),
+        },
+        "rat": {
+            "selected_control_species_name": "Rattus norvegicus",
+            "selected_control_species_taxid": "10116",
+            "target_protein_accession": "NP_001426446.1",
+            "evidence_source_database": (
+                "NCBI Gene and RefSeq with UniProtKB TrEMBL cross-references"
+            ),
+            "evidence_source_accession": ("GeneID:314856|NP_001426446.1|A0A0G2JVC1|A6IGT1|D3ZVH5"),
+            "evidence_source_review_status": (
+                "validated_refseq_with_multiple_unreviewed_uniprot_candidates"
+            ),
+            "sequence_status": ("validated_refseq_product_not_sequence_reassessed"),
+            "sequence_length": "not_recorded",
+            "protein_existence_status": "validated_refseq_product",
+            "review_decision": ("needs_manual_review_choose_canonical_uniprot_accession"),
+            "selection_outcome": "needs_manual_review",
+            "coverage_preflight_status_after_selection": (
+                "blocked_pending_accession_disambiguation"
+            ),
+            "control_readiness_status_after_selection": ("controls_not_ready_manual_review"),
+            "contrast_readiness_status_after_selection": ("blocked_pending_control_review"),
+            "claim_status": "source_review_only",
+            "strict_panel_row_allowed": "false",
+            "exact_local_embedding_status": ("not_evaluated_not_required_for_source_review"),
+        },
+        "hamster": {
+            "selected_control_species_name": "Mesocricetus auratus",
+            "selected_control_species_taxid": "10036",
+            "target_protein_accession": "Q60524",
+            "evidence_source_database": "UniProtKB Swiss-Prot",
+            "evidence_source_accession": "Q60524",
+            "evidence_source_review_status": "reviewed",
+            "sequence_status": "fragment",
+            "sequence_length": "466",
+            "protein_existence_status": ("evidence_at_transcript_level"),
+            "review_decision": ("defer_reviewed_swissprot_fragment_pending_complete_sequence"),
+            "selection_outcome": "deferred_pending_source",
+            "coverage_preflight_status_after_selection": (
+                "blocked_pending_complete_sequence_source"
+            ),
+            "control_readiness_status_after_selection": ("controls_not_ready_incomplete_sequence"),
+            "contrast_readiness_status_after_selection": ("blocked_pending_control_source"),
+            "claim_status": "source_review_only",
+            "strict_panel_row_allowed": "false",
+            "exact_local_embedding_status": ("not_evaluated_not_required_for_source_review"),
+        },
+    }
+
+    if set(rows_by_species) != set(expected_rows):
+        raise ValueError(f"Unexpected short-lived control species: {sorted(rows_by_species)}")
+
+    for species, species_expected in expected_rows.items():
+        result_row = rows_by_species[species]
+
+        for column, expected_hash in expected_hash_columns.items():
+            if str(result_row[column]) != expected_hash:
+                raise ValueError(f"Unexpected source hash in {species}:{column}")
+
+        expected_common = {
+            "candidate_id": ("tp53_mdm2_elephant_seed_mdm2_chain"),
+            "pdb_id": "1ycr",
+            "chain": "A",
+            "source_uniprot": "Q00987",
+            "partner_uniprot": "P04637",
+            "gene_symbol": "MDM2",
+            "species_group": "short_lived_control",
+            "claim_policy": ("no_biological_claims_until_validation"),
+            "gate7_mdm2_strict_panel_status_after_selection": ("strict_panel_ready"),
+            "gate7_mdm2_contrast_dry_run_allowed_after_selection": ("true"),
+            "aggregate_gate7_blocker_code": ("tp53_deferred_pending_source"),
+        }
+        for column, expected_value in {
+            **expected_common,
+            **species_expected,
+        }.items():
+            if str(result_row[column]) != expected_value:
+                raise ValueError(f"Unexpected result {species}:{column}")
+
+        for field in FALSE_BOUNDARY_FIELDS:
+            if str(result_row[field]).strip().lower() != "false":
+                raise ValueError(f"Forbidden boundary opened: {species}:{field}")
+
+    ready_species = [
+        species
+        for species, result_row in rows_by_species.items()
+        if str(result_row["strict_panel_row_allowed"]).strip().lower() == "true"
+    ]
+    if ready_species != ["mouse"]:
+        raise ValueError(
+            f"Only mouse may enter the strict panel after this evaluation; found {ready_species}"
+        )
 
 
 def strict_panel_rows(results: pl.DataFrame) -> pl.DataFrame:
     validate_results(results)
-    row = _single_row(results, "short-lived control result")
 
-    return pl.DataFrame(
-        [
+    strict_rows: list[dict[str, Any]] = []
+    for row in results.iter_rows(named=True):
+        if str(row["strict_panel_row_allowed"]).strip().lower() != "true":
+            continue
+
+        strict_rows.append(
             {
                 "candidate_set": str(row["candidate_set"]),
                 "lane_name": str(row["lane_name"]),
@@ -241,5 +324,6 @@ def strict_panel_rows(results: pl.DataFrame) -> pl.DataFrame:
                 "contrast_readiness_status": str(row["contrast_readiness_status_after_selection"]),
                 "claim_policy": str(row["claim_policy"]),
             }
-        ]
-    )
+        )
+
+    return pl.DataFrame(strict_rows)

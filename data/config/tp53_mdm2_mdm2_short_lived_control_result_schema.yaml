@@ -1,9 +1,9 @@
 name: tp53_mdm2_mdm2_short_lived_control_result
 description: >-
-  Decision-bearing selection and Gate 7 technical-planning integration of one
-  project-policy short-lived MDM2 control species.
+  Decision-bearing accession-level evaluation and Gate 7 technical-planning
+  integration of all three project-policy short-lived MDM2 control species.
 table: data/input/tp53_mdm2_mdm2_short_lived_control_results.csv
-row_count: 1
+row_count: 3
 
 required_columns:
   - candidate_set
@@ -62,16 +62,29 @@ required_columns:
 allowed_values:
   selected_control_species:
     - mouse
+    - rat
+    - hamster
   selected_control_species_taxid:
     - "10090"
+    - "10116"
+    - "10036"
   species_group:
     - short_lived_control
   target_protein_accession:
     - P23804
+    - NP_001426446.1
+    - Q60524
   review_decision:
     - accept_reviewed_swissprot_for_gate7_technical_planning
+    - needs_manual_review_choose_canonical_uniprot_accession
+    - defer_reviewed_swissprot_fragment_pending_complete_sequence
   selection_outcome:
     - ready_for_gate7_strict_panel_planning
+    - needs_manual_review
+    - deferred_pending_source
+  strict_panel_row_allowed:
+    - "true"
+    - "false"
   gate7_mdm2_strict_panel_status_after_selection:
     - strict_panel_ready
   aggregate_gate7_entry_allowed:
@@ -84,10 +97,12 @@ allowed_values:
     - "false"
 
 boundaries:
+  - absence of an earlier committed row is not absence of an ortholog
+  - only ready rows enter the strict panel
   - no sequence fetch
   - no Biohub or ESMC call
   - no embedding generation
   - no .npy or data/output commit
   - no Boltz, AF3, or Chai call
-  - no automatic Gate 8 or Gate 9 opening
+  - no automatic aggregate Gate 7, Gate 8, or Gate 9 opening
   - no biological claim

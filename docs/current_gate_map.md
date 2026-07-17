@@ -1953,3 +1953,29 @@ No exact local P23804 embedding is asserted or required by this Gate 7
 source-selection result. No sequence fetch, Biohub/ESMC call, embedding
 generation, `.npy` or `data/output` commit, Boltz/AF3/Chai call, biological
 approval, or biological claim is introduced.
+## TP53/MDM2 remaining MDM2 short-lived-control evaluation
+
+The remaining project-policy MDM2 short-lived controls, rat and hamster, now
+have decision-bearing accession-level outcomes in
+`data/input/tp53_mdm2_mdm2_short_lived_control_results.csv`.
+
+Rat (`Rattus norvegicus`, taxid `10116`) has validated RefSeq protein
+`NP_001426446.1`, but that product links to three UniProtKB TrEMBL accessions:
+`A0A0G2JVC1`, `A6IGT1`, and `D3ZVH5`. Its outcome is
+`needs_manual_review`; no canonical UniProt accession is accepted and
+`strict_panel_row_allowed=false`.
+
+Hamster (`Mesocricetus auratus`, taxid `10036`) has reviewed UniProtKB
+Swiss-Prot `Q60524`, but the entry marks its 466-amino-acid sequence as
+`Fragment`. Its outcome is `deferred_pending_source` and
+`strict_panel_row_allowed=false`.
+
+Neither result treats absence of an earlier committed row as absence of an
+ortholog. Only mouse remains admitted to the strict panel, so MDM2 retains one
+ready short-lived species, `strict_panel_status=strict_panel_ready`, and a
+single-species short-lived baseline.
+
+The TP53 chain remains `deferred_pending_source`; aggregate
+`gate7_entry_allowed=false`, and Gate 8 and Gate 9 remain closed. No sequence
+fetch, Biohub/ESMC call, embedding generation, `.npy` or `data/output` commit,
+Boltz/AF3/Chai call, biological approval, or biological claim is introduced.

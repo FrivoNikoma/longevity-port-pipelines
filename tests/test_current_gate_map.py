@@ -3295,3 +3295,21 @@ def test_current_gate_map_records_tp53_mdm2_mdm2_mouse_control_result() -> None:
     assert "Gate 8 and Gate 9\nremain closed" in text
     assert "No exact local P23804 embedding is asserted" in text
     assert "biological claim is introduced" in text
+
+
+def test_current_gate_map_records_remaining_mdm2_control_evaluations() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "remaining MDM2 short-lived-control evaluation" in text
+    assert "validated RefSeq protein\n`NP_001426446.1`" in text
+    assert "`A0A0G2JVC1`, `A6IGT1`, and `D3ZVH5`" in text
+    assert "`needs_manual_review`" in text
+    assert "reviewed UniProtKB\nSwiss-Prot `Q60524`" in text
+    assert "sequence as\n`Fragment`" in text
+    assert "`deferred_pending_source`" in text
+    assert "absence of an earlier committed row as absence of an\northolog" in text
+    assert "Only mouse remains admitted to the strict panel" in text
+    assert "single-species short-lived baseline" in text
+    assert "aggregate\n`gate7_entry_allowed=false`" in text
+    assert "Gate 8 and Gate 9 remain closed" in text
+    assert "biological claim is introduced" in text
