@@ -8,6 +8,9 @@ import typer
 
 from longevity_port_pipelines.config import SPECIES_REGISTRY
 from longevity_port_pipelines.stages import strict_contrast_panel as strict_panel
+from longevity_port_pipelines.stages import (
+    tp53_mdm2_mdm2_short_lived_control_results as short_lived_controls,
+)
 from longevity_port_pipelines.stages.coverage_preflight import (
     CONSERVATIVE_CLAIM_POLICY,
     coverage_preflight_for_statuses,
@@ -331,7 +334,11 @@ def build_tp53_mdm2_pilot_coverage_preflight(
     return _preflight_from_rows(rows).sort(["coverage_preflight_status", "candidate_id", "chain"])
 
 
-def build_tp53_mdm2_generic_strict_panel_input(preflight: pl.DataFrame) -> pl.DataFrame:
+def build_tp53_mdm2_generic_strict_panel_input(
+    preflight: pl.DataFrame,
+    *,
+    short_lived_control_results: pl.DataFrame | None = None,
+) -> pl.DataFrame:
     """Map TP53/MDM2 coverage preflight rows into the generic Gate 7 input schema."""
 
     _validate_preflight_columns(
@@ -379,6 +386,9 @@ def build_tp53_mdm2_generic_strict_panel_input(preflight: pl.DataFrame) -> pl.Da
             }
         )
 
+    if short_lived_control_results is not None:
+        rows.extend(short_lived_controls.strict_panel_rows(short_lived_control_results).to_dicts())
+
     if not rows:
         return pl.DataFrame(schema={column: pl.Utf8 for column in strict_panel.REQUIRED_COLUMNS})
 
@@ -402,11 +412,18 @@ def build_tp53_mdm2_generic_strict_panel_input(preflight: pl.DataFrame) -> pl.Da
     )
 
 
-def build_tp53_mdm2_generic_strict_panel_summary(preflight: pl.DataFrame) -> pl.DataFrame:
+def build_tp53_mdm2_generic_strict_panel_summary(
+    preflight: pl.DataFrame,
+    *,
+    short_lived_control_results: pl.DataFrame | None = None,
+) -> pl.DataFrame:
     """Build the TP53/MDM2 generic strict panel summary from coverage preflight rows."""
 
     return strict_panel.build_generic_strict_panel_summary(
-        build_tp53_mdm2_generic_strict_panel_input(preflight)
+        build_tp53_mdm2_generic_strict_panel_input(
+            preflight,
+            short_lived_control_results=short_lived_control_results,
+        )
     )
 
 
@@ -444,6 +461,13 @@ def main(
             help="Decision-bearing TP53/MDM2 coverage-repair resolution CSV.",
         ),
     ] = DEFAULT_RESOLUTIONS_PATH,
+    short_lived_control_results_path: Annotated[
+        Path,
+        typer.Option(
+            "--short-lived-controls",
+            help=("Decision-bearing MDM2 short-lived control result CSV."),
+        ),
+    ] = short_lived_controls.DEFAULT_RESULTS_PATH,
     output: Annotated[
         Path,
         typer.Option(
@@ -464,13 +488,19 @@ def main(
     manifest = pl.read_csv(input_path)
     repair_decisions = read_repair_decisions(repair_decisions_path)
     repair_resolutions = read_resolutions(repair_resolutions_path)
+    short_lived_control_results = short_lived_controls.read_results(
+        short_lived_control_results_path
+    )
     preflight = build_tp53_mdm2_pilot_coverage_preflight(
         manifest,
         repair_decisions=repair_decisions,
         repair_resolutions=repair_resolutions,
     )
 
-    strict_panel_summary = build_tp53_mdm2_generic_strict_panel_summary(preflight)
+    strict_panel_summary = build_tp53_mdm2_generic_strict_panel_summary(
+        preflight,
+        short_lived_control_results=short_lived_control_results,
+    )
 
     output.parent.mkdir(parents=True, exist_ok=True)
     preflight.write_csv(output)
@@ -490,6 +520,10 @@ def main(
         typer.echo(f"strict panel {status}: {count}")
     typer.echo(f"Applied TP53/MDM2 repair decisions from -> {repair_decisions_path}")
     typer.echo(f"Applied TP53/MDM2 coverage-repair resolutions from -> {repair_resolutions_path}")
+    typer.echo(
+        "Applied TP53/MDM2 MDM2-side short-lived controls from -> "
+        f"{short_lived_control_results_path}"
+    )
     typer.echo("No Biohub API calls were made.")
     typer.echo("No Boltz API calls were made.")
     typer.echo("No orthologs were fetched.")
@@ -502,6 +536,7 @@ def main(
         "input": str(input_path),
         "repair_decisions": str(repair_decisions_path),
         "repair_resolutions": str(repair_resolutions_path),
+        "short_lived_controls": str(short_lived_control_results_path),
         "output": str(output),
         "strict_panel_output": str(strict_panel_output),
         "rows": preflight.height,

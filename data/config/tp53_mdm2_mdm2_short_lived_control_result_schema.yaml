@@ -1,0 +1,93 @@
+name: tp53_mdm2_mdm2_short_lived_control_result
+description: >-
+  Decision-bearing selection and Gate 7 technical-planning integration of one
+  project-policy short-lived MDM2 control species.
+table: data/input/tp53_mdm2_mdm2_short_lived_control_results.csv
+row_count: 1
+
+required_columns:
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - pdb_id
+  - chain
+  - source_uniprot
+  - partner_uniprot
+  - priority
+  - gene_symbol
+  - selected_control_species
+  - selected_control_species_name
+  - selected_control_species_taxid
+  - species_group
+  - target_protein_accession
+  - evidence_source_database
+  - evidence_source_accession
+  - evidence_source_review_status
+  - sequence_status
+  - sequence_length
+  - protein_existence_status
+  - evidence_reference
+  - evidence_checked_date
+  - species_policy_table_canonical_sha256
+  - manifest_source_table_canonical_sha256
+  - coverage_resolution_source_table_canonical_sha256
+  - review_decision
+  - selection_outcome
+  - coverage_preflight_status_after_selection
+  - control_readiness_status_after_selection
+  - contrast_readiness_status_after_selection
+  - claim_policy
+  - claim_status
+  - strict_panel_row_allowed
+  - gate7_mdm2_strict_panel_status_after_selection
+  - gate7_mdm2_contrast_dry_run_allowed_after_selection
+  - aggregate_gate7_entry_allowed
+  - aggregate_gate7_blocker_code
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - exact_local_embedding_status
+  - embedding_generation_allowed
+  - live_calls_performed
+  - biohub_called
+  - embeddings_generated
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - boltz_called
+  - af3_called
+  - chai_called
+  - biological_claim_made
+  - result_note
+
+allowed_values:
+  selected_control_species:
+    - mouse
+  selected_control_species_taxid:
+    - "10090"
+  species_group:
+    - short_lived_control
+  target_protein_accession:
+    - P23804
+  review_decision:
+    - accept_reviewed_swissprot_for_gate7_technical_planning
+  selection_outcome:
+    - ready_for_gate7_strict_panel_planning
+  gate7_mdm2_strict_panel_status_after_selection:
+    - strict_panel_ready
+  aggregate_gate7_entry_allowed:
+    - "false"
+  gate8_entry_allowed:
+    - "false"
+  gate9_promoted:
+    - "false"
+  biological_claim_made:
+    - "false"
+
+boundaries:
+  - no sequence fetch
+  - no Biohub or ESMC call
+  - no embedding generation
+  - no .npy or data/output commit
+  - no Boltz, AF3, or Chai call
+  - no automatic Gate 8 or Gate 9 opening
+  - no biological claim

@@ -3279,3 +3279,19 @@ def test_current_gate_map_records_tp53_mdm2_gate7_coverage_repair_resolutions() 
     assert "Aggregate `gate7_entry_allowed=false`" in text
     assert "Gate 8 and Gate 9 remain closed" in text
     assert "biological claims" in text
+
+
+def test_current_gate_map_records_tp53_mdm2_mdm2_mouse_control_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "MDM2-side mouse short-lived control result" in text
+    assert "reviewed UniProtKB Swiss-Prot accession `P23804`" in text
+    assert "`accept_reviewed_swissprot_for_gate7_technical_planning`" in text
+    assert "`ready_for_gate7_strict_panel_planning`" in text
+    assert "one ready short-lived species (`mouse`)" in text
+    assert "recomputed\nstatus is `strict_panel_ready`" in text
+    assert "Aggregate `gate7_entry_allowed=false`" in text
+    assert "TP53 chain remains `deferred_pending_source`" in text
+    assert "Gate 8 and Gate 9\nremain closed" in text
+    assert "No exact local P23804 embedding is asserted" in text
+    assert "biological claim is introduced" in text

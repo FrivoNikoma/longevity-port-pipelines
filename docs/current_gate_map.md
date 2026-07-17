@@ -1933,3 +1933,23 @@ represented as `blocked_pending_repair_review`.
 Aggregate `gate7_entry_allowed=false`; Gate 8 and Gate 9 remain closed. No live
 calls, embeddings, committed runtime artifacts, biological approval, or
 biological claims are introduced.
+
+## TP53/MDM2 MDM2-side mouse short-lived control result
+
+The first MDM2-side project-policy short-lived control result is recorded
+in `data/input/tp53_mdm2_mdm2_short_lived_control_results.csv`.
+
+Mouse (`Mus musculus`, taxid `10090`) is selected with reviewed UniProtKB Swiss-Prot accession `P23804`. The committed review decision is
+`accept_reviewed_swissprot_for_gate7_technical_planning`, and the control
+row is `ready_for_gate7_strict_panel_planning`.
+
+After integration, the MDM2 chain has one ready long-lived species
+(`elephant`) and one ready short-lived species (`mouse`), so its recomputed
+status is `strict_panel_ready`. Aggregate `gate7_entry_allowed=false`
+because the TP53 chain remains `deferred_pending_source`. Gate 8 and Gate 9
+remain closed.
+
+No exact local P23804 embedding is asserted or required by this Gate 7
+source-selection result. No sequence fetch, Biohub/ESMC call, embedding
+generation, `.npy` or `data/output` commit, Boltz/AF3/Chai call, biological
+approval, or biological claim is introduced.
