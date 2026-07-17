@@ -237,24 +237,33 @@ def validate_results(
         "hamster": {
             "selected_control_species_name": "Mesocricetus auratus",
             "selected_control_species_taxid": "10036",
-            "target_protein_accession": "Q60524",
-            "evidence_source_database": "UniProtKB Swiss-Prot",
-            "evidence_source_accession": "Q60524",
-            "evidence_source_review_status": "reviewed",
-            "sequence_status": "fragment",
-            "sequence_length": "466",
-            "protein_existence_status": ("evidence_at_transcript_level"),
-            "review_decision": ("defer_reviewed_swissprot_fragment_pending_complete_sequence"),
-            "selection_outcome": "deferred_pending_source",
-            "blocker_code": ("reviewed_swissprot_fragment_pending_complete_sequence"),
-            "coverage_preflight_status_after_selection": (
-                "blocked_pending_complete_sequence_source"
+            "target_protein_accession": "A0ABM2YB85",
+            "evidence_source_database": ("UniProtKB TrEMBL and NCBI RefSeq"),
+            "evidence_source_accession": (
+                "GeneID:101833011|A0ABM2YB85|XP_040610761.1|Q60524|AAC52425.1"
             ),
-            "control_readiness_status_after_selection": ("controls_not_ready_incomplete_sequence"),
-            "contrast_readiness_status_after_selection": ("blocked_pending_control_source"),
-            "claim_status": "source_review_only",
-            "strict_panel_row_allowed": "false",
-            "exact_local_embedding_status": ("not_evaluated_not_required_for_source_review"),
+            "evidence_source_review_status": (
+                "active_unreviewed_uniprot_corroborated_by_active_model_refseq"
+            ),
+            "sequence_status": (
+                "complete_genome_derived_sequence_group_distinct_from_reviewed_fragment"
+            ),
+            "sequence_length": "510",
+            "protein_existence_status": ("inferred_from_homology_with_model_refseq_corroboration"),
+            "review_decision": (
+                "accept_complete_hamster_mdm2_uniprot_refseq_"
+                "sequence_group_for_gate7_technical_planning"
+            ),
+            "selection_outcome": ("ready_for_gate7_strict_panel_planning"),
+            "blocker_code": "none",
+            "coverage_preflight_status_after_selection": ("coverage_preflight_ready"),
+            "control_readiness_status_after_selection": ("controls_ready"),
+            "contrast_readiness_status_after_selection": ("eligible_for_contrast_dry_run"),
+            "claim_status": "strict_panel_readiness",
+            "strict_panel_row_allowed": "true",
+            "exact_local_embedding_status": (
+                "not_evaluated_not_required_for_gate7_source_selection"
+            ),
         },
     }
 
@@ -297,9 +306,10 @@ def validate_results(
         for species, result_row in rows_by_species.items()
         if str(result_row["strict_panel_row_allowed"]).strip().lower() == "true"
     ]
-    if ready_species != ["mouse"]:
+    if ready_species != ["mouse", "hamster"]:
         raise ValueError(
-            f"Only mouse may enter the strict panel after this evaluation; found {ready_species}"
+            "Mouse and hamster must enter the strict panel after "
+            f"this evaluation; found {ready_species}"
         )
 
 

@@ -2007,3 +2007,39 @@ No raw sequence is committed. No sequence fetch occurs inside repository
 runtime. No contrast, Biohub/ESMC call, embedding generation, `.npy` or
 `data/output` commit, Boltz/AF3/Chai call, biological approval, or biological
 claim is introduced.
+
+## Hamster MDM2 complete-sequence source resolution checkpoint
+
+The bounded source review is recorded in
+`data/input/tp53_mdm2_hamster_mdm2_complete_sequence_review_results.csv`
+and documented in
+`docs/tp53_mdm2_hamster_mdm2_complete_sequence_review_result.md`.
+
+The review resolves one complete identity-valid sequence group for the main
+hamster `Mdm2` locus `GeneID:101833011`. UniProtKB TrEMBL `A0ABM2YB85` and
+model RefSeq `XP_040610761.1` have an identical 510-amino-acid sequence with
+SHA-256 `77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5`. `A0ABM2YB85` is accepted as the project accession
+for Gate 7 technical planning and `XP_040610761.1` is retained as a
+corroborating RefSeq accession.
+
+Reviewed Swiss-Prot `Q60524` and GenBank `AAC52425.1` remain a distinct
+466-amino-acid legacy fragment group. The accepted complete sequence is not an
+exact match to `Q60524` and does not contain `Q60524` as an exact subsequence.
+No canonical biological isoform is claimed.
+
+The decision is
+`accept_complete_hamster_mdm2_uniprot_refseq_sequence_group_for_gate7_technical_planning`,
+with `selection_outcome=ready_for_gate7_strict_panel_planning`,
+`blocker_code=none`, and `strict_panel_row_allowed=true`.
+
+The MDM2 short-lived baseline expands from one ready species to two:
+`strict_short_lived_species=hamster,mouse` and
+`n_strict_short_lived_ready=2`. The MDM2 technical strict panel remains
+`strict_panel_ready` and `contrast_dry_run_allowed=true`, while
+`controlled_claim_allowed=false`.
+
+No contrast is run in this checkpoint. TP53 remains
+`deferred_pending_source`, aggregate Gate 7 remains closed, and Gate 8 and
+Gate 9 remain closed. No raw sequence, Biohub/ESMC call, embedding, `.npy` or
+`data/output` artifact, Boltz/AF3/Chai call, canonical-isoform claim, gate
+promotion, or biological claim is introduced.

@@ -10,7 +10,7 @@ import polars as pl
 
 DEFAULT_RESULTS_PATH = Path("data/input/tp53_mdm2_rat_mdm2_accession_review_results.csv")
 DEFAULT_CONTROL_RESULTS_PATH = Path("data/input/tp53_mdm2_mdm2_short_lived_control_results.csv")
-EXPECTED_CONTROL_SHA256 = "769d0006f72a86d55f61eaa810c517d437750e39478c6fbacfa9fb3dc923be12"
+REVIEW_SOURCE_CONTROL_SHA256 = "769d0006f72a86d55f61eaa810c517d437750e39478c6fbacfa9fb3dc923be12"
 EXPECTED_BLOCKER = "no_unambiguous_canonical_rat_mdm2_sequence"
 
 REQUIRED_COLUMNS = [
@@ -89,6 +89,32 @@ def _false(value: Any) -> bool:
     return str(value).strip().lower() == "false"
 
 
+def _validate_current_rat_control_row(root: Path) -> None:
+    controls = pl.read_csv(
+        root / DEFAULT_CONTROL_RESULTS_PATH,
+        infer_schema_length=0,
+    )
+    rat_rows = controls.filter(pl.col("selected_control_species") == "rat")
+    if rat_rows.height != 1:
+        raise ValueError(f"Expected one current rat control row, got {rat_rows.height}")
+
+    rat = rat_rows.row(0, named=True)
+    expected = {
+        "selected_control_species_name": "Rattus norvegicus",
+        "selected_control_species_taxid": "10116",
+        "target_protein_accession": "NP_001426446.1",
+        "evidence_source_accession": ("GeneID:314856|NP_001426446.1|A0A0G2JVC1|A6IGT1|D3ZVH5"),
+        "review_decision": ("defer_rat_pending_unambiguous_canonical_sequence_source"),
+        "selection_outcome": "deferred_pending_source",
+        "blocker_code": EXPECTED_BLOCKER,
+        "claim_status": "terminal_source_blocker",
+        "strict_panel_row_allowed": "false",
+    }
+    for column, expected_value in expected.items():
+        if str(rat[column]) != expected_value:
+            raise ValueError(f"Current rat control row changed: {column}")
+
+
 def validate_results(
     rows: pl.DataFrame,
     *,
@@ -98,8 +124,7 @@ def validate_results(
         raise ValueError(f"Unexpected review columns: {rows.columns}")
     if rows.height != 4:
         raise ValueError(f"Expected four accession rows, got {rows.height}")
-    if canonical_text_sha256(root / DEFAULT_CONTROL_RESULTS_PATH) != EXPECTED_CONTROL_SHA256:
-        raise ValueError("Control result source hash changed")
+    _validate_current_rat_control_row(root)
 
     expected = {
         "NP_001426446.1": (
@@ -143,7 +168,7 @@ def validate_results(
             "exact_match_to_reference": exact,
             "candidate_disposition": disposition,
             "blocker_code": EXPECTED_BLOCKER,
-            "short_lived_control_results_canonical_sha256": (EXPECTED_CONTROL_SHA256),
+            "short_lived_control_results_canonical_sha256": (REVIEW_SOURCE_CONTROL_SHA256),
         }
         for column, value in checks.items():
             if str(row[column]) != value:

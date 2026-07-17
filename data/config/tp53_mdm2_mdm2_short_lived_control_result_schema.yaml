@@ -67,13 +67,14 @@ allowed_values:
     - accept_reviewed_swissprot_for_gate7_technical_planning
     - defer_rat_pending_unambiguous_canonical_sequence_source
     - defer_reviewed_swissprot_fragment_pending_complete_sequence
+    - accept_complete_hamster_mdm2_uniprot_refseq_sequence_group_for_gate7_technical_planning
   blocker_code:
     - none
     - no_unambiguous_canonical_rat_mdm2_sequence
     - reviewed_swissprot_fragment_pending_complete_sequence
   strict_panel_row_allowed: ["true", "false"]
 boundaries:
-  - only mouse enters the strict panel
+  - mouse and hamster enter the strict panel; rat remains deferred
   - no raw sequence commit
   - no sequence fetch inside repository runtime
   - no contrast execution

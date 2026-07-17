@@ -43,29 +43,47 @@ def test_short_lived_control_results_validate() -> None:
     assert rows.height == 3
 
 
-def test_mouse_remains_only_ready_control() -> None:
-    row = row_for_species(short_lived.read_results(), "mouse")
+def test_mouse_remains_ready_control() -> None:
+    row = row_for_species(
+        short_lived.read_results(),
+        "mouse",
+    )
     assert row["selection_outcome"] == ("ready_for_gate7_strict_panel_planning")
     assert row["blocker_code"] == "none"
     assert row["strict_panel_row_allowed"] == "true"
 
 
 def test_rat_records_terminal_source_deferral() -> None:
-    row = row_for_species(short_lived.read_results(), "rat")
-    assert row["target_protein_accession"] == "NP_001426446.1"
+    row = row_for_species(
+        short_lived.read_results(),
+        "rat",
+    )
+    assert row["target_protein_accession"] == ("NP_001426446.1")
     assert row["sequence_length"] == "434"
     assert row["review_decision"] == ("defer_rat_pending_unambiguous_canonical_sequence_source")
-    assert row["selection_outcome"] == "deferred_pending_source"
+    assert row["selection_outcome"] == ("deferred_pending_source")
     assert row["blocker_code"] == ("no_unambiguous_canonical_rat_mdm2_sequence")
-    assert row["claim_status"] == "terminal_source_blocker"
+    assert row["claim_status"] == ("terminal_source_blocker")
     assert row["strict_panel_row_allowed"] == "false"
 
 
-def test_hamster_remains_deferred() -> None:
-    row = row_for_species(short_lived.read_results(), "hamster")
-    assert row["selection_outcome"] == "deferred_pending_source"
-    assert row["blocker_code"] == ("reviewed_swissprot_fragment_pending_complete_sequence")
-    assert row["strict_panel_row_allowed"] == "false"
+def test_hamster_records_complete_sequence_group() -> None:
+    row = row_for_species(
+        short_lived.read_results(),
+        "hamster",
+    )
+    assert row["target_protein_accession"] == ("A0ABM2YB85")
+    assert row["evidence_source_accession"] == (
+        "GeneID:101833011|A0ABM2YB85|XP_040610761.1|Q60524|AAC52425.1"
+    )
+    assert row["sequence_length"] == "510"
+    assert row["review_decision"] == (
+        "accept_complete_hamster_mdm2_uniprot_refseq_sequence_group_for_gate7_technical_planning"
+    )
+    assert row["selection_outcome"] == ("ready_for_gate7_strict_panel_planning")
+    assert row["blocker_code"] == "none"
+    assert row["claim_status"] == ("strict_panel_readiness")
+    assert row["strict_panel_row_allowed"] == "true"
 
 
 def test_boundaries_remain_closed() -> None:
@@ -74,28 +92,28 @@ def test_boundaries_remain_closed() -> None:
             assert row[field] == "false"
 
 
-def test_only_mouse_enters_strict_panel() -> None:
+def test_mouse_and_hamster_enter_strict_panel() -> None:
     strict_input = build_tp53_mdm2_generic_strict_panel_input(
         load_preflight(),
-        short_lived_control_results=short_lived.read_results(),
+        short_lived_control_results=(short_lived.read_results()),
     )
     controls = strict_input.filter(pl.col("species_group") == "short_lived_control")
-    assert controls.height == 1
-    assert controls.row(0, named=True)["target_species"] == "mouse"
+    assert controls.height == 2
+    assert set(controls["target_species"].to_list()) == {"mouse", "hamster"}
 
 
-def test_rat_resolution_does_not_change_panel_counts() -> None:
+def test_hamster_resolution_expands_panel_counts() -> None:
     summary = build_tp53_mdm2_generic_strict_panel_summary(
         load_preflight(),
-        short_lived_control_results=short_lived.read_results(),
+        short_lived_control_results=(short_lived.read_results()),
     )
     by_candidate = {row["candidate_id"]: row for row in summary.iter_rows(named=True)}
     mdm2 = by_candidate["tp53_mdm2_elephant_seed_mdm2_chain"]
     assert mdm2["n_strict_long_lived_ready"] == 1
-    assert mdm2["n_strict_short_lived_ready"] == 1
-    assert mdm2["strict_long_lived_species"] == "elephant"
-    assert mdm2["strict_short_lived_species"] == "mouse"
-    assert mdm2["strict_panel_status"] == "strict_panel_ready"
+    assert mdm2["n_strict_short_lived_ready"] == 2
+    assert mdm2["strict_long_lived_species"] == ("elephant")
+    assert mdm2["strict_short_lived_species"] == ("hamster,mouse")
+    assert mdm2["strict_panel_status"] == ("strict_panel_ready")
     assert mdm2["contrast_dry_run_allowed"] is True
     assert mdm2["controlled_claim_allowed"] is False
 

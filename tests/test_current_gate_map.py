@@ -3331,3 +3331,29 @@ def test_current_gate_map_records_rat_mdm2_accession_resolution() -> None:
     assert "no contrast is run in this\ncheckpoint" in text
     assert "Gate 8 and Gate 9 remain closed" in text
     assert "biological\nclaim is introduced" in text
+
+
+def test_current_gate_map_records_hamster_mdm2_complete_sequence_resolution() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in (
+        "Hamster MDM2 complete-sequence source resolution checkpoint",
+        "tp53_mdm2_hamster_mdm2_complete_sequence_review_results.csv",
+        "`GeneID:101833011`",
+        "`A0ABM2YB85`",
+        "`XP_040610761.1`",
+        "identical 510-amino-acid sequence",
+        "Reviewed Swiss-Prot `Q60524`",
+        "distinct\n466-amino-acid legacy fragment group",
+        "No canonical biological isoform is claimed",
+        "`selection_outcome=ready_for_gate7_strict_panel_planning`",
+        "`strict_panel_row_allowed=true`",
+        "`strict_short_lived_species=hamster,mouse`",
+        "`n_strict_short_lived_ready=2`",
+        "`controlled_claim_allowed=false`",
+        "No contrast is run in this checkpoint",
+        "aggregate Gate 7 remains closed",
+        "Gate 8 and\nGate 9 remain closed",
+        "biological claim is introduced",
+    ):
+        assert required in text

@@ -1,0 +1,76 @@
+name: tp53_mdm2_hamster_mdm2_complete_sequence_review_result
+description: >-
+  Bounded read-only accession-level source review for Mesocricetus auratus
+  MDM2. The table records one accepted complete sequence group for Gate 7
+  technical planning, preserves the reviewed Q60524 fragment as a separate
+  evidence anchor, and records explicit exclusions.
+table: data/input/tp53_mdm2_hamster_mdm2_complete_sequence_review_results.csv
+row_count: 20
+required_columns:
+  - review_id
+  - candidate_accession
+  - source_database
+  - source_record_status
+  - organism
+  - taxid
+  - gene_symbol
+  - source_gene_id
+  - protein_name
+  - sequence_length
+  - sequence_sha256
+  - sequence_status
+  - protein_existence
+  - cross_references
+  - exact_match_to_q60524
+  - length_delta_vs_q60524
+  - q60524_exact_subsequence_of_candidate
+  - candidate_exact_subsequence_of_q60524
+  - identity_status
+  - identity_problem
+  - sequence_group_id
+  - candidate_disposition
+  - project_accession_accepted
+  - sequence_group_accepted
+  - canonical_biological_isoform_claimed
+  - strict_panel_row_allowed_after_decision
+  - evidence_checked_date
+  - raw_sequence_committed
+  - contrast_run
+  - biohub_called
+  - esmc_called
+  - embeddings_generated
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - boltz_called
+  - af3_called
+  - chai_called
+  - gate8_entry_allowed
+  - gate9_promoted
+  - biological_claim_made
+  - source_reference
+  - review_note
+decision:
+  primary_project_accession: A0ABM2YB85
+  corroborating_refseq_accession: XP_040610761.1
+  source_gene_id: "101833011"
+  selected_sequence_length: 510
+  selected_sequence_sha256: 77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5
+  legacy_fragment_accession: Q60524
+  legacy_fragment_length: 466
+  legacy_fragment_sha256: f5e0b35c24cf9ce7c11d9290214930b3787da380112024a37b9ce41909ba5d35
+  review_decision: >-
+    accept_complete_hamster_mdm2_uniprot_refseq_sequence_group_for_gate7_technical_planning
+  selection_outcome: ready_for_gate7_strict_panel_planning
+  blocker_code: none
+  strict_panel_row_allowed: "true"
+boundaries:
+  - raw amino-acid sequences are not committed
+  - canonical biological isoform is not claimed
+  - no contrast execution
+  - no Biohub or ESMC call
+  - no embedding generation
+  - no .npy or data/output commit
+  - no Boltz, AF3, or Chai call
+  - aggregate Gate 7 remains blocked by TP53
+  - no Gate 8 or Gate 9 promotion
+  - no biological claim
