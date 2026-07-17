@@ -3313,3 +3313,21 @@ def test_current_gate_map_records_remaining_mdm2_control_evaluations() -> None:
     assert "aggregate\n`gate7_entry_allowed=false`" in text
     assert "Gate 8 and Gate 9 remain closed" in text
     assert "biological claim is introduced" in text
+
+
+def test_current_gate_map_records_rat_mdm2_accession_resolution() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    assert "Rat MDM2 canonical-accession resolution checkpoint" in text
+    assert "validated RefSeq `NP_001426446.1`" in text
+    assert "`A6IGT1` is `excluded_inactive_accession`" in text
+    assert "`A0A0G2JVC1` is 49 amino acids longer" in text
+    assert "contains the RefSeq sequence as an\nexact subsequence" in text
+    assert "`D3ZVH5` is a distinct 458-amino-acid sequence" in text
+    assert "not\naccepted as a canonical project accession or isoform" in text
+    assert "`selection_outcome=deferred_pending_source`" in text
+    assert "`blocker_code=no_unambiguous_canonical_rat_mdm2_sequence`" in text
+    assert "Mouse remains the only ready short-lived MDM2 control" in text
+    assert "no contrast is run in this\ncheckpoint" in text
+    assert "Gate 8 and Gate 9 remain closed" in text
+    assert "biological\nclaim is introduced" in text

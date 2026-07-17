@@ -1,73 +1,57 @@
 # TP53/MDM2 MDM2-side short-lived control evaluation
 
-## Policy panel
+## Mouse
 
-The project-policy MDM2 short-lived-control panel contains mouse, rat, and
-hamster. The committed result table now contains one decision-bearing row for
-each species. Absence of an earlier committed row is not treated as absence of
-an ortholog.
-
-## Mouse: ready
-
-Reviewed UniProtKB Swiss-Prot `P23804` remains accepted for mouse Gate 7
-technical planning:
+Mouse `P23804` remains the only ready short-lived MDM2 control:
 
 - `selection_outcome=ready_for_gate7_strict_panel_planning`
+- `blocker_code=none`
 - `strict_panel_row_allowed=true`
 
-Mouse remains the only ready short-lived MDM2 control.
+## Rat
 
-## Rat: manual review required
+The committed comparison table
+`data/input/tp53_mdm2_rat_mdm2_accession_review_results.csv` records:
 
-NCBI Gene `314856` records rat `Mdm2` with validated RefSeq protein
-`NP_001426446.1`. The maintained RefSeq product links to three UniProtKB
-TrEMBL accessions: `A0A0G2JVC1`, `A6IGT1`, and `D3ZVH5`.
+- `A6IGT1` as `excluded_inactive_accession`;
+- active TrEMBL `A0A0G2JVC1` as 49 amino acids longer than
+  `NP_001426446.1`, containing it as an exact subsequence, but not an exact
+  accession-level match;
+- active TrEMBL `D3ZVH5` as a distinct 458-amino-acid non-match;
+- validated RefSeq `NP_001426446.1` as the evidence anchor, not an accepted
+  canonical project accession or isoform.
 
-This confirms accession-level source evidence but does not provide one
-unambiguous project-selected canonical UniProt accession:
+The decision-bearing result is:
 
-- `review_decision=needs_manual_review_choose_canonical_uniprot_accession`
-- `selection_outcome=needs_manual_review`
-- `strict_panel_row_allowed=false`
-
-The result does not claim that rat lacks an MDM2 ortholog.
-
-## Hamster: deferred pending a complete source
-
-Reviewed UniProtKB Swiss-Prot `Q60524` records hamster MDM2, taxid `10036`,
-length 466 amino acids, and evidence at transcript level. UniProt marks the
-sequence as `Fragment`.
-
-The committed outcome is:
-
-- `review_decision=defer_reviewed_swissprot_fragment_pending_complete_sequence`
+- `review_decision=defer_rat_pending_unambiguous_canonical_sequence_source`
 - `selection_outcome=deferred_pending_source`
+- `blocker_code=no_unambiguous_canonical_rat_mdm2_sequence`
 - `strict_panel_row_allowed=false`
 
-A reviewed entry is not automatically accepted when its sequence is
-explicitly incomplete.
+This is a completed review decision for the current source set, not a claim
+that rat lacks an MDM2 ortholog.
 
-## Gate 7 and robustness state
+## Hamster
 
-Only rows with `strict_panel_row_allowed=true` are passed into the generic
-strict-panel builder. Rat and hamster are excluded from panel counts at this
-checkpoint.
+Hamster `Q60524` remains `deferred_pending_source` because the reviewed
+sequence is marked as a fragment.
 
-The MDM2 chain remains:
+## Panel effect
+
+Only mouse enters the strict panel. MDM2 therefore remains:
 
 - `n_strict_long_lived_ready=1`
 - `n_strict_short_lived_ready=1`
 - `strict_long_lived_species=elephant`
 - `strict_short_lived_species=mouse`
 - `strict_panel_status=strict_panel_ready`
-- `contrast_dry_run_allowed=true`
 
-The short-lived baseline is still single-species and remains subject to
-single-baseline robustness review. TP53 remains `deferred_pending_source`;
-aggregate Gate 7 remains false, and Gate 8 and Gate 9 remain closed.
+No contrast is run. TP53 remains `deferred_pending_source`; aggregate Gate 7
+remains false, and Gate 8 and Gate 9 remain closed.
 
 ## Boundaries
 
-No sequence fetch, Biohub/ESMC call, embedding generation, `.npy` or
-`data/output` commit, Boltz/AF3/Chai call, automatic gate promotion,
-biological approval, or biological claim is introduced.
+No raw sequence is committed. No sequence fetch occurs inside repository
+runtime. No contrast, Biohub/ESMC call, embedding generation, `.npy` or
+`data/output` commit, Boltz/AF3/Chai call, gate promotion, biological
+approval, or biological claim is introduced.

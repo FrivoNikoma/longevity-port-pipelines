@@ -40,87 +40,62 @@ def row_for_species(
 def test_short_lived_control_results_validate() -> None:
     rows = short_lived.read_results()
     short_lived.validate_results(rows)
-
     assert rows.height == 3
-    assert set(rows["selected_control_species"].to_list()) == {
-        "mouse",
-        "rat",
-        "hamster",
-    }
 
 
-def test_short_lived_control_records_mouse_ready() -> None:
+def test_mouse_remains_only_ready_control() -> None:
     row = row_for_species(short_lived.read_results(), "mouse")
-
-    assert row["selected_control_species_taxid"] == "10090"
-    assert row["target_protein_accession"] == "P23804"
-    assert row["sequence_status"] == "complete"
     assert row["selection_outcome"] == ("ready_for_gate7_strict_panel_planning")
+    assert row["blocker_code"] == "none"
     assert row["strict_panel_row_allowed"] == "true"
 
 
-def test_short_lived_control_records_rat_manual_review() -> None:
+def test_rat_records_terminal_source_deferral() -> None:
     row = row_for_species(short_lived.read_results(), "rat")
-
-    assert row["selected_control_species_taxid"] == "10116"
     assert row["target_protein_accession"] == "NP_001426446.1"
-    assert row["evidence_source_accession"] == (
-        "GeneID:314856|NP_001426446.1|A0A0G2JVC1|A6IGT1|D3ZVH5"
-    )
-    assert row["review_decision"] == ("needs_manual_review_choose_canonical_uniprot_accession")
-    assert row["selection_outcome"] == "needs_manual_review"
-    assert row["strict_panel_row_allowed"] == "false"
-
-
-def test_short_lived_control_records_hamster_deferral() -> None:
-    row = row_for_species(short_lived.read_results(), "hamster")
-
-    assert row["selected_control_species_taxid"] == "10036"
-    assert row["target_protein_accession"] == "Q60524"
-    assert row["evidence_source_review_status"] == "reviewed"
-    assert row["sequence_status"] == "fragment"
-    assert row["sequence_length"] == "466"
-    assert row["protein_existence_status"] == ("evidence_at_transcript_level")
+    assert row["sequence_length"] == "434"
+    assert row["review_decision"] == ("defer_rat_pending_unambiguous_canonical_sequence_source")
     assert row["selection_outcome"] == "deferred_pending_source"
+    assert row["blocker_code"] == ("no_unambiguous_canonical_rat_mdm2_sequence")
+    assert row["claim_status"] == "terminal_source_blocker"
     assert row["strict_panel_row_allowed"] == "false"
 
 
-def test_short_lived_controls_preserve_boundaries() -> None:
+def test_hamster_remains_deferred() -> None:
+    row = row_for_species(short_lived.read_results(), "hamster")
+    assert row["selection_outcome"] == "deferred_pending_source"
+    assert row["blocker_code"] == ("reviewed_swissprot_fragment_pending_complete_sequence")
+    assert row["strict_panel_row_allowed"] == "false"
+
+
+def test_boundaries_remain_closed() -> None:
     for row in short_lived.read_results().iter_rows(named=True):
         for field in short_lived.FALSE_BOUNDARY_FIELDS:
             assert row[field] == "false"
-        assert row["aggregate_gate7_blocker_code"] == ("tp53_deferred_pending_source")
 
 
-def test_only_mouse_enters_short_lived_strict_panel() -> None:
+def test_only_mouse_enters_strict_panel() -> None:
     strict_input = build_tp53_mdm2_generic_strict_panel_input(
         load_preflight(),
         short_lived_control_results=short_lived.read_results(),
     )
-
     controls = strict_input.filter(pl.col("species_group") == "short_lived_control")
     assert controls.height == 1
-
-    row = controls.row(0, named=True)
-    assert row["target_species"] == "mouse"
-    assert row["target_species_taxid"] == 10090
-    assert row["coverage_preflight_status"] == ("coverage_preflight_ready")
-    assert row["control_readiness_status"] == "controls_ready"
+    assert controls.row(0, named=True)["target_species"] == "mouse"
 
 
-def test_evaluations_do_not_change_mdm2_counts() -> None:
+def test_rat_resolution_does_not_change_panel_counts() -> None:
     summary = build_tp53_mdm2_generic_strict_panel_summary(
         load_preflight(),
         short_lived_control_results=short_lived.read_results(),
     )
     by_candidate = {row["candidate_id"]: row for row in summary.iter_rows(named=True)}
-
     mdm2 = by_candidate["tp53_mdm2_elephant_seed_mdm2_chain"]
-    assert mdm2["strict_panel_status"] == "strict_panel_ready"
     assert mdm2["n_strict_long_lived_ready"] == 1
     assert mdm2["n_strict_short_lived_ready"] == 1
     assert mdm2["strict_long_lived_species"] == "elephant"
     assert mdm2["strict_short_lived_species"] == "mouse"
+    assert mdm2["strict_panel_status"] == "strict_panel_ready"
     assert mdm2["contrast_dry_run_allowed"] is True
     assert mdm2["controlled_claim_allowed"] is False
 

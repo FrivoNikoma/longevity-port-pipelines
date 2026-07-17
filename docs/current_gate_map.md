@@ -1979,3 +1979,31 @@ The TP53 chain remains `deferred_pending_source`; aggregate
 `gate7_entry_allowed=false`, and Gate 8 and Gate 9 remain closed. No sequence
 fetch, Biohub/ESMC call, embedding generation, `.npy` or `data/output` commit,
 Boltz/AF3/Chai call, biological approval, or biological claim is introduced.
+## Rat MDM2 canonical-accession resolution checkpoint
+
+`data/input/tp53_mdm2_rat_mdm2_accession_review_results.csv` records the
+decision-bearing comparison of validated RefSeq `NP_001426446.1` with
+`A0A0G2JVC1`, `A6IGT1`, and `D3ZVH5`.
+
+`A6IGT1` is `excluded_inactive_accession`. Active unreviewed TrEMBL
+`A0A0G2JVC1` is 49 amino acids longer and contains the RefSeq sequence as an
+exact subsequence, but is not an exact accession-level match. Active
+unreviewed TrEMBL `D3ZVH5` is a distinct 458-amino-acid sequence and is not an
+exact match. The validated RefSeq remains an evidence anchor but is not
+accepted as a canonical project accession or isoform.
+
+Rat is changed from `needs_manual_review` to
+`selection_outcome=deferred_pending_source`, with
+`review_decision=defer_rat_pending_unambiguous_canonical_sequence_source`,
+`blocker_code=no_unambiguous_canonical_rat_mdm2_sequence`, and
+`strict_panel_row_allowed=false`.
+
+Mouse remains the only ready short-lived MDM2 control. MDM2 retains
+`strict_panel_status=strict_panel_ready`, but no contrast is run in this
+checkpoint. TP53 remains `deferred_pending_source`, aggregate
+`gate7_entry_allowed=false`, and Gate 8 and Gate 9 remain closed.
+
+No raw sequence is committed. No sequence fetch occurs inside repository
+runtime. No contrast, Biohub/ESMC call, embedding generation, `.npy` or
+`data/output` commit, Boltz/AF3/Chai call, biological approval, or biological
+claim is introduced.

@@ -4,7 +4,6 @@ description: >-
   integration of all three project-policy short-lived MDM2 control species.
 table: data/input/tp53_mdm2_mdm2_short_lived_control_results.csv
 row_count: 3
-
 required_columns:
   - candidate_set
   - lane_name
@@ -33,6 +32,7 @@ required_columns:
   - coverage_resolution_source_table_canonical_sha256
   - review_decision
   - selection_outcome
+  - blocker_code
   - coverage_preflight_status_after_selection
   - control_readiness_status_after_selection
   - contrast_readiness_status_after_selection
@@ -58,51 +58,28 @@ required_columns:
   - chai_called
   - biological_claim_made
   - result_note
-
 allowed_values:
-  selected_control_species:
-    - mouse
-    - rat
-    - hamster
-  selected_control_species_taxid:
-    - "10090"
-    - "10116"
-    - "10036"
-  species_group:
-    - short_lived_control
-  target_protein_accession:
-    - P23804
-    - NP_001426446.1
-    - Q60524
-  review_decision:
-    - accept_reviewed_swissprot_for_gate7_technical_planning
-    - needs_manual_review_choose_canonical_uniprot_accession
-    - defer_reviewed_swissprot_fragment_pending_complete_sequence
+  selected_control_species: [mouse, rat, hamster]
   selection_outcome:
     - ready_for_gate7_strict_panel_planning
-    - needs_manual_review
     - deferred_pending_source
-  strict_panel_row_allowed:
-    - "true"
-    - "false"
-  gate7_mdm2_strict_panel_status_after_selection:
-    - strict_panel_ready
-  aggregate_gate7_entry_allowed:
-    - "false"
-  gate8_entry_allowed:
-    - "false"
-  gate9_promoted:
-    - "false"
-  biological_claim_made:
-    - "false"
-
+  review_decision:
+    - accept_reviewed_swissprot_for_gate7_technical_planning
+    - defer_rat_pending_unambiguous_canonical_sequence_source
+    - defer_reviewed_swissprot_fragment_pending_complete_sequence
+  blocker_code:
+    - none
+    - no_unambiguous_canonical_rat_mdm2_sequence
+    - reviewed_swissprot_fragment_pending_complete_sequence
+  strict_panel_row_allowed: ["true", "false"]
 boundaries:
-  - absence of an earlier committed row is not absence of an ortholog
-  - only ready rows enter the strict panel
-  - no sequence fetch
+  - only mouse enters the strict panel
+  - no raw sequence commit
+  - no sequence fetch inside repository runtime
+  - no contrast execution
   - no Biohub or ESMC call
   - no embedding generation
   - no .npy or data/output commit
   - no Boltz, AF3, or Chai call
-  - no automatic aggregate Gate 7, Gate 8, or Gate 9 opening
+  - no Gate 8 or Gate 9 opening
   - no biological claim

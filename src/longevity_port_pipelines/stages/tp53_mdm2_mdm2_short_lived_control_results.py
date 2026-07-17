@@ -49,6 +49,7 @@ REQUIRED_COLUMNS = [
     "coverage_resolution_source_table_canonical_sha256",
     "review_decision",
     "selection_outcome",
+    "blocker_code",
     "coverage_preflight_status_after_selection",
     "control_readiness_status_after_selection",
     "contrast_readiness_status_after_selection",
@@ -197,6 +198,7 @@ def validate_results(
             "protein_existence_status": "evidence_at_protein_level",
             "review_decision": ("accept_reviewed_swissprot_for_gate7_technical_planning"),
             "selection_outcome": ("ready_for_gate7_strict_panel_planning"),
+            "blocker_code": "none",
             "coverage_preflight_status_after_selection": ("coverage_preflight_ready"),
             "control_readiness_status_after_selection": ("controls_ready"),
             "contrast_readiness_status_after_selection": ("eligible_for_contrast_dry_run"),
@@ -215,21 +217,22 @@ def validate_results(
             ),
             "evidence_source_accession": ("GeneID:314856|NP_001426446.1|A0A0G2JVC1|A6IGT1|D3ZVH5"),
             "evidence_source_review_status": (
-                "validated_refseq_with_multiple_unreviewed_uniprot_candidates"
+                "validated_refseq_compared_with_active_and_inactive_uniprot_candidates"
             ),
-            "sequence_status": ("validated_refseq_product_not_sequence_reassessed"),
-            "sequence_length": "not_recorded",
+            "sequence_status": ("validated_refseq_evidence_anchor_not_canonical_project_isoform"),
+            "sequence_length": "434",
             "protein_existence_status": "validated_refseq_product",
-            "review_decision": ("needs_manual_review_choose_canonical_uniprot_accession"),
-            "selection_outcome": "needs_manual_review",
+            "review_decision": ("defer_rat_pending_unambiguous_canonical_sequence_source"),
+            "selection_outcome": "deferred_pending_source",
+            "blocker_code": ("no_unambiguous_canonical_rat_mdm2_sequence"),
             "coverage_preflight_status_after_selection": (
-                "blocked_pending_accession_disambiguation"
+                "blocked_pending_unambiguous_canonical_sequence_source"
             ),
-            "control_readiness_status_after_selection": ("controls_not_ready_manual_review"),
-            "contrast_readiness_status_after_selection": ("blocked_pending_control_review"),
-            "claim_status": "source_review_only",
+            "control_readiness_status_after_selection": ("controls_not_ready_deferred_source"),
+            "contrast_readiness_status_after_selection": ("blocked_pending_control_source"),
+            "claim_status": "terminal_source_blocker",
             "strict_panel_row_allowed": "false",
-            "exact_local_embedding_status": ("not_evaluated_not_required_for_source_review"),
+            "exact_local_embedding_status": ("not_evaluated_not_required_for_source_resolution"),
         },
         "hamster": {
             "selected_control_species_name": "Mesocricetus auratus",
@@ -243,6 +246,7 @@ def validate_results(
             "protein_existence_status": ("evidence_at_transcript_level"),
             "review_decision": ("defer_reviewed_swissprot_fragment_pending_complete_sequence"),
             "selection_outcome": "deferred_pending_source",
+            "blocker_code": ("reviewed_swissprot_fragment_pending_complete_sequence"),
             "coverage_preflight_status_after_selection": (
                 "blocked_pending_complete_sequence_source"
             ),

@@ -1,0 +1,23 @@
+name: tp53_mdm2_rat_mdm2_accession_review_result
+description: >-
+  Decision-bearing comparison of validated rat MDM2 RefSeq evidence against
+  active and inactive UniProt candidates.
+table: data/input/tp53_mdm2_rat_mdm2_accession_review_results.csv
+row_count: 4
+reference_accession: NP_001426446.1
+terminal_blocker_code: no_unambiguous_canonical_rat_mdm2_sequence
+candidate_dispositions:
+  NP_001426446.1: evidence_anchor_not_canonical_project_accession
+  A0A0G2JVC1: not_exact_accession_level_match
+  A6IGT1: excluded_inactive_accession
+  D3ZVH5: distinct_unreviewed_sequence_not_exact_match
+boundaries:
+  - raw amino-acid sequences are not committed
+  - source review occurred outside repository runtime
+  - no contrast execution
+  - no Biohub or ESMC call
+  - no embedding generation
+  - no .npy or data/output commit
+  - no Boltz, AF3, or Chai call
+  - no Gate 8 or Gate 9 opening
+  - no biological claim
