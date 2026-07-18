@@ -2043,3 +2043,36 @@ No contrast is run in this checkpoint. TP53 remains
 Gate 9 remain closed. No raw sequence, Biohub/ESMC call, embedding, `.npy` or
 `data/output` artifact, Boltz/AF3/Chai call, canonical-isoform claim, gate
 promotion, or biological claim is introduced.
+
+
+## MDM2 Gate 8 local prerequisite audit result
+
+The panel-level execution-readiness audit is recorded in
+`data/input/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_results.csv` and
+documented in
+`docs/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_result.md`.
+
+The audit reads the committed Gate 7 MDM2 source panel and checks exact local
+`esmc-300m-2024-12` embedding prerequisites for elephant `G3SX30`, mouse
+`P23804`, and hamster `A0ABM2YB85`.
+
+The existing accession-bound elephant artifact is
+`local_embedding_status=present_valid`, with shape `492x960`, dtype `float32`,
+finite values, and matching sequence length. Exact local embeddings for
+`P23804` and `A0ABM2YB85` are missing.
+
+The panel result is
+`panel_local_prerequisites_status=blocked_missing_exact_local_embeddings`,
+with
+`panel_runtime_blocker_code=missing_exact_local_embeddings_for_ready_mdm2_controls`,
+`panel_valid_accessions=G3SX30`,
+`panel_missing_accessions=P23804|A0ABM2YB85`, and
+`later_mdm2_dry_run_manifest_allowed=false`.
+
+MDM2 remains `strict_panel_ready` and Gate 7 still records
+`mdm2_gate7_contrast_dry_run_allowed=true`, but local execution prerequisites
+are not complete. Rat remains deferred, TP53 remains
+`deferred_pending_source`, aggregate Gate 7 and Gate 8 remain closed, Gate 9
+remains closed, no contrast is run, no Biohub/ESMC call is made, no embedding
+is generated, no `.npy` or `data/output` artifact is committed, and no
+biological claim is made.

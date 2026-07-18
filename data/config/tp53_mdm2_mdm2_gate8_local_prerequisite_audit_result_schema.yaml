@@ -1,0 +1,159 @@
+name: tp53_mdm2_mdm2_gate8_local_prerequisite_audit_result
+description: >
+  Three-row execution-readiness audit for the Gate 7-ready MDM2 source panel.
+  The audit records one existing valid local G3SX30 embedding and two missing
+  exact local embeddings for P23804 and A0ABM2YB85 without generating or
+  committing embedding artifacts.
+version: 1
+model_name: esmc-300m-2024-12
+expected_row_count: 3
+
+source_tables:
+  elephant_gate7_resolution: data/input/tp53_mdm2_gate7_coverage_repair_resolutions.csv
+  short_lived_gate7_controls: data/input/tp53_mdm2_mdm2_short_lived_control_results.csv
+  existing_g3sx30_local_preflight: data/input/g3sx30_one_row_local_embedding_preflight_check_results.csv
+
+external_observation_json: D:/biohub_projects/_chatgpt_observations/tp53_mdm2_mdm2_gate8_local_prerequisite_audit.json
+result_table: data/input/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_results.csv
+
+required_columns:
+  - audit_id
+  - candidate_set
+  - lane_name
+  - candidate_id
+  - gene_symbol
+  - target_species
+  - target_species_taxid
+  - target_accession
+  - target_accession_db
+  - expected_sequence_length
+  - model_name
+  - source_gate7_table
+  - source_gate7_row_index
+  - source_gate7_status
+  - source_gate7_strict_panel_row_allowed
+  - source_gate7_contrast_dry_run_allowed
+  - local_embedding_path
+  - git_ignore_rule_status
+  - local_runtime_embedding_exists
+  - local_runtime_embedding_tracked
+  - local_runtime_embedding_committed
+  - embedding_load_status
+  - embedding_shape
+  - embedding_dtype
+  - embedding_numeric
+  - embedding_finite
+  - embedding_sequence_length_matches
+  - embedding_accession_provenance_status
+  - local_embedding_status
+  - runtime_blocker_code
+  - panel_valid_accessions
+  - panel_missing_accessions
+  - panel_local_prerequisites_status
+  - panel_runtime_blocker_code
+  - later_mdm2_dry_run_manifest_allowed
+  - allowed_next_action
+  - mdm2_gate7_strict_panel_status
+  - mdm2_gate7_contrast_dry_run_allowed
+  - controlled_claim_allowed
+  - tp53_status
+  - aggregate_gate7_entry_allowed
+  - aggregate_gate7_blocker_code
+  - aggregate_gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - contrast_run
+  - live_calls_performed
+  - biohub_called
+  - esmc_called
+  - embedding_generated
+  - npy_artifact_created_by_audit
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - external_observation_json
+  - external_observation_json_committed
+  - boltz_called
+  - af3_called
+  - chai_called
+  - biological_claim_made
+  - audit_date
+  - audit_note
+
+row_contracts:
+  elephant:
+    target_species_taxid: "9785"
+    target_accession: G3SX30
+    expected_sequence_length: 492
+    local_embedding_status: present_valid
+    embedding_shape: 492x960
+    embedding_dtype: float32
+    embedding_numeric: true
+    embedding_finite: true
+    embedding_sequence_length_matches: true
+    runtime_blocker_code: none
+  mouse:
+    target_species_taxid: "10090"
+    target_accession: P23804
+    expected_sequence_length: 489
+    local_embedding_status: missing
+    local_runtime_embedding_exists: false
+    runtime_blocker_code: missing_exact_local_embedding
+  hamster:
+    target_species_taxid: "10036"
+    target_accession: A0ABM2YB85
+    expected_sequence_length: 510
+    local_embedding_status: missing
+    local_runtime_embedding_exists: false
+    runtime_blocker_code: missing_exact_local_embedding
+
+panel_contract:
+  valid_accessions:
+    - G3SX30
+  missing_accessions:
+    - P23804
+    - A0ABM2YB85
+  panel_local_prerequisites_status: blocked_missing_exact_local_embeddings
+  panel_runtime_blocker_code: missing_exact_local_embeddings_for_ready_mdm2_controls
+  later_mdm2_dry_run_manifest_allowed: false
+  allowed_next_action: prepare_separate_scoped_missing_embedding_fill
+
+gate7_context:
+  mdm2_gate7_strict_panel_status: strict_panel_ready
+  mdm2_gate7_contrast_dry_run_allowed: true
+  controlled_claim_allowed: false
+  tp53_status: deferred_pending_source
+  aggregate_gate7_entry_allowed: false
+  aggregate_gate7_blocker_code: tp53_deferred_pending_source
+
+boundaries:
+  aggregate_gate8_entry_allowed: false
+  gate8_promoted: false
+  gate9_promoted: false
+  contrast_run: false
+  live_calls_performed: false
+  biohub_called: false
+  esmc_called: false
+  embedding_generated: false
+  npy_artifact_created_by_audit: false
+  npy_artifact_committed: false
+  data_output_artifact_committed: false
+  external_observation_json_committed: false
+  boltz_called: false
+  af3_called: false
+  chai_called: false
+  biological_claim_made: false
+
+forbidden_actions:
+  - Biohub call
+  - ESMC call
+  - embedding generation
+  - contrast execution
+  - .npy commit
+  - data/output commit
+  - aggregate Gate 8 entry
+  - Gate 8 promotion
+  - Gate 9 promotion
+  - Boltz call
+  - AF3 call
+  - Chai call
+  - biological claim

@@ -3357,3 +3357,42 @@ def test_current_gate_map_records_hamster_mdm2_complete_sequence_resolution() ->
         "biological claim is introduced",
     ):
         assert required in text
+
+
+def test_current_gate_map_records_mdm2_gate8_local_prerequisite_audit() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "MDM2 Gate 8 local prerequisite audit result",
+        "data/input/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_results.csv",
+        "docs/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_result.md",
+        "elephant `G3SX30`",
+        "mouse",
+        "`P23804`",
+        "hamster",
+        "`A0ABM2YB85`",
+        "local_embedding_status=present_valid",
+        "shape `492x960`",
+        "dtype `float32`",
+        "Exact local embeddings for",
+        "`P23804` and `A0ABM2YB85` are missing",
+        "panel_local_prerequisites_status=blocked_missing_exact_local_embeddings",
+        "panel_runtime_blocker_code=missing_exact_local_embeddings_for_ready_mdm2_controls",
+        "panel_valid_accessions=G3SX30",
+        "panel_missing_accessions=P23804|A0ABM2YB85",
+        "later_mdm2_dry_run_manifest_allowed=false",
+        "MDM2 remains `strict_panel_ready`",
+        "mdm2_gate7_contrast_dry_run_allowed=true",
+        "Rat remains deferred",
+        "TP53 remains",
+        "`deferred_pending_source`",
+        "aggregate Gate 7 and Gate 8 remain closed",
+        "Gate 9",
+        "no contrast",
+        "Biohub/ESMC",
+        "no embedding",
+        "`.npy`",
+        "`data/output`",
+        "biological claim",
+    ]:
+        assert required in text
