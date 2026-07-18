@@ -3396,3 +3396,23 @@ def test_current_gate_map_records_mdm2_gate8_local_prerequisite_audit() -> None:
         "biological claim",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_mdm2_missing_embedding_sequence_provenance_audit() -> None:
+    text = read_doc("docs/current_gate_map.md")
+
+    for required in [
+        "TP53/MDM2 MDM2 missing-embedding exact-sequence provenance audit result",
+        "data/input/tp53_mdm2_mdm2_missing_embedding_sequence_provenance_audit_results.csv",
+        "P23804",
+        "A0ABM2YB85",
+        "77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5",
+        "blocked_pending_exact_sequence_bindings_and_mouse_hash",
+        "later_missing_embedding_fill_manifest_allowed=false",
+        "prepare_external_non_committed_exact_sequence_bindings_and_mouse_hash_review",
+        "Gate 8 and Gate 9 remain closed",
+        "no repository-runtime sequence fetch",
+        "BioHub/ESMC",
+        "no biological claim",
+    ]:
+        assert required in text

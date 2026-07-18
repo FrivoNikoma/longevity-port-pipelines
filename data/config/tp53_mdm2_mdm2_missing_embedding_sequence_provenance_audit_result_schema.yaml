@@ -1,0 +1,61 @@
+name: tp53_mdm2_mdm2_missing_embedding_sequence_provenance_audit_result
+description: >
+  Two-row committed audit of exact-sequence provenance for P23804 and
+  A0ABM2YB85 after the MDM2 Gate 8 local prerequisite audit found both exact
+  local embeddings missing.
+version: 1
+
+source_tables:
+  short_lived_control_results: data/input/tp53_mdm2_mdm2_short_lived_control_results.csv
+  hamster_complete_sequence_review: data/input/tp53_mdm2_hamster_mdm2_complete_sequence_review_results.csv
+  gate8_local_prerequisite_audit: data/input/tp53_mdm2_mdm2_gate8_local_prerequisite_audit_results.csv
+result_table: data/input/tp53_mdm2_mdm2_missing_embedding_sequence_provenance_audit_results.csv
+
+required_accessions:
+  - P23804
+  - A0ABM2YB85
+
+required_panel_values:
+  panel_source_identity_ready_accessions: P23804|A0ABM2YB85
+  panel_sha256_ready_accessions: A0ABM2YB85
+  panel_sha256_missing_accessions: P23804
+  panel_exact_sequence_bytes_bound_accessions: none
+  panel_sequence_provenance_status: blocked_pending_exact_sequence_bindings_and_mouse_hash
+  later_missing_embedding_fill_manifest_allowed: "false"
+  panel_allowed_next_action: prepare_external_non_committed_exact_sequence_bindings_and_mouse_hash_review
+
+required_mouse_values:
+  target_accession: P23804
+  expected_sequence_length: "489"
+  source_identity_provenance_ready: "true"
+  committed_exact_sequence_sha256: not_committed
+  committed_exact_sequence_sha256_status: missing_not_committed
+  external_exact_sequence_bytes_bindable: "true"
+  external_exact_sequence_bytes_bound: "false"
+  controlled_fill_sequence_input_status: blocked_missing_committed_sha256_and_non_committed_exact_sequence_binding
+  later_controlled_embedding_fill_input_allowed: "false"
+
+required_hamster_values:
+  target_accession: A0ABM2YB85
+  expected_sequence_length: "510"
+  source_identity_provenance_ready: "true"
+  committed_exact_sequence_sha256: 77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5
+  committed_exact_sequence_sha256_status: present_committed
+  external_exact_sequence_bytes_bindable: "true"
+  external_exact_sequence_bytes_bound: "false"
+  controlled_fill_sequence_input_status: blocked_pending_non_committed_exact_sequence_binding
+  later_controlled_embedding_fill_input_allowed: "false"
+
+required_false_flags:
+  - sequence_fetch_performed
+  - biohub_called
+  - esmc_called
+  - embeddings_generated
+  - npy_artifact_created
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - contrast_run
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made

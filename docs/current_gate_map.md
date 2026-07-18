@@ -2076,3 +2076,25 @@ are not complete. Rat remains deferred, TP53 remains
 remains closed, no contrast is run, no Biohub/ESMC call is made, no embedding
 is generated, no `.npy` or `data/output` artifact is committed, and no
 biological claim is made.
+## TP53/MDM2 MDM2 missing-embedding exact-sequence provenance audit result
+
+`data/input/tp53_mdm2_mdm2_missing_embedding_sequence_provenance_audit_results.csv`
+records the committed two-row exact-sequence provenance audit for the missing
+mouse `P23804` and hamster `A0ABM2YB85` MDM2 embeddings.
+
+Both accessions have source identity provenance ready for Gate 7 technical
+planning. `A0ABM2YB85` already has committed exact sequence SHA-256
+`77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5`;
+`P23804` has no committed exact sequence SHA-256. Both official accession
+endpoints are identified, but neither exact sequence byte stream is yet bound
+as an external non-committed controlled-fill input.
+
+The panel remains
+`blocked_pending_exact_sequence_bindings_and_mouse_hash`,
+`later_missing_embedding_fill_manifest_allowed=false`, Gate 8 and Gate 9
+remain closed, and the allowed next action is
+`prepare_external_non_committed_exact_sequence_bindings_and_mouse_hash_review`.
+
+This checkpoint performs no repository-runtime sequence fetch, BioHub/ESMC
+call, embedding generation, `.npy` creation or commit, `data/output` commit,
+contrast run, gate promotion, or biological claim.
