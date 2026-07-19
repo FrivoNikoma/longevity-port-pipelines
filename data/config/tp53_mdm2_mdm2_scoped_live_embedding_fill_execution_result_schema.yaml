@@ -1,0 +1,64 @@
+schema_version: 1
+schema_id: tp53_mdm2_mdm2_scoped_live_embedding_fill_execution_result_schema
+pipeline_gate: scoped_mdm2_live_embedding_fill_execution_result
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_execution_result
+
+description: >
+  Committed metadata-only result for the completed sequential live embedding
+  fill of exactly P23804 and A0ABM2YB85. Runtime sequence inputs, logs, evidence
+  JSON, and generated .npy artifacts remain outside Git.
+
+source_authorization_table: data/input/tp53_mdm2_mdm2_scoped_live_embedding_fill_authorizations.csv
+source_authorization_validation_table: data/input/tp53_mdm2_mdm2_scoped_live_embedding_fill_authorization_validation_results.csv
+result_table: data/input/tp53_mdm2_mdm2_scoped_live_embedding_fill_execution_results.csv
+
+required_accession_order:
+  - P23804
+  - A0ABM2YB85
+
+required_execution_values:
+  allowed_model: esmc-300m-2024-12
+  required_runner: curated_embedding_single
+  required_live_flag: --yes-live
+  human_opt_in_scope: per_accession_per_invocation
+  explicit_human_opt_in_confirmed: "true"
+  max_live_batch_size: "1"
+  execution_mode: sequential_one_accession_at_a_time
+  live_invocation_count: "1"
+  pre_live_single_dry_run_status: dry_run_missing
+  pre_live_sequence_length_status: matches
+  pre_live_embedding_exists: "false"
+  skip_existing_used: "true"
+  live_status: live_completed
+  follow_up_single_dry_run_status: dry_run_present
+  follow_up_preflight_status: present_valid
+  local_embedding_status: present_valid
+  execution_status: completed_and_audited
+
+required_artifact_values:
+  embedding_dtype: float32
+  embedding_numeric: "true"
+  embedding_finite: "true"
+  embedding_sequence_length_matches: "true"
+  embedding_ignored: "true"
+  embedding_tracked: "false"
+  npy_artifact_committed: "false"
+  data_output_artifact_committed: "false"
+
+required_panel_values:
+  panel_completed_accessions: P23804|A0ABM2YB85
+  panel_local_prerequisites_status: ready_both_scoped_mdm2_embeddings_present_valid
+  panel_runtime_blocker_code: none_for_scoped_mdm2_contrast_dry_run
+  tp53_status: deferred_pending_source
+  aggregate_tp53_mdm2_lane_status: closed_tp53_deferred_pending_source
+  allowed_next_action: prepare_and_execute_scoped_mdm2_contrast_dry_run
+
+required_false_flags:
+  - aggregate_gate7_entry_allowed
+  - aggregate_gate8_entry_allowed
+  - contrast_run
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made
+  - external_evidence_committed

@@ -207,3 +207,25 @@ Disallowed language:
 - confirmed functional effect;
 - safe to port;
 - proven pro-longevity variant.
+
+## Completed scoped MDM2 execution checkpoint
+
+On 2026-07-19, the narrow MDM2-only authorization was executed for mouse
+`P23804` and hamster `A0ABM2YB85`.
+
+Execution remained sequential and single-row:
+
+1. `P23804` passed `dry_run_missing`, one explicitly authorized live call,
+   immediate artifact audit, `dry_run_present`, and `present_valid`.
+2. Only after that success, `A0ABM2YB85` passed the same sequence of checks.
+
+Both generated embeddings remain ignored and untracked runtime artifacts under
+`data/output/`. No `.npy`, runtime sequence input, command log, or external
+evidence JSON is committed.
+
+This checkpoint does not open the aggregate TP53/MDM2 lane. TP53 remains
+`deferred_pending_source`; no contrast was run, no gate was promoted, and no
+biological claim was made.
+
+The next permitted technical action is
+`prepare_and_execute_scoped_mdm2_contrast_dry_run`.
