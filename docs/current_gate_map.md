@@ -2098,3 +2098,29 @@ remain closed, and the allowed next action is
 This checkpoint performs no repository-runtime sequence fetch, BioHub/ESMC
 call, embedding generation, `.npy` creation or commit, `data/output` commit,
 contrast run, gate promotion, or biological claim.
+
+## TP53/MDM2 external exact-sequence binding result
+
+`data/input/tp53_mdm2_mdm2_external_exact_sequence_binding_results.csv`
+records the metadata-only two-row external exact-sequence binding result for
+mouse `P23804` and hamster `A0ABM2YB85`.
+
+Both external non-committed bindings pass accession, taxid, expected-length,
+and exact sequence SHA-256 checks. `P23804` establishes exact sequence SHA-256
+`0841e7c8ebd6a4a9e9e051538600d8f201c6682b3246dfb95ba301ab6233a3e3`;
+`A0ABM2YB85` confirms the already committed hash
+`77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5`.
+
+Raw FASTA and normalized amino-acid sequence bytes remain outside the
+repository under `LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT`. Committed
+bindings use portable relative filenames only.
+
+The panel is now
+`ready_for_scoped_missing_embedding_fill_manifest`, and
+`later_missing_embedding_fill_manifest_allowed=true`. The only allowed next
+action is `prepare_scoped_missing_embedding_fill_manifest_dry_run`; this does
+not authorize a live embedding fill.
+
+This checkpoint makes no BioHub/ESMC call, generates no embedding, creates or
+commits no `.npy`, commits no `data/output` artifact, runs no contrast, keeps
+Gate 8 and Gate 9 closed, and makes no biological claim.

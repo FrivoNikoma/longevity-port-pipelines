@@ -1,0 +1,48 @@
+name: tp53_mdm2_mdm2_external_exact_sequence_binding_result
+description: >
+  Two-row committed metadata result for externally materialized,
+  non-committed exact sequence inputs P23804 and A0ABM2YB85.
+version: 1
+
+source_table: data/input/tp53_mdm2_mdm2_missing_embedding_sequence_provenance_audit_results.csv
+result_table: data/input/tp53_mdm2_mdm2_external_exact_sequence_binding_results.csv
+
+required_accessions:
+  - P23804
+  - A0ABM2YB85
+
+binding_root_env: LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT
+external_manifest_relative_path: tp53_mdm2_mdm2_external_exact_sequence_bindings.json
+
+required_sequence_values:
+  P23804:
+    expected_length: "489"
+    exact_sequence_sha256: 0841e7c8ebd6a4a9e9e051538600d8f201c6682b3246dfb95ba301ab6233a3e3
+    raw_fasta_relative_path: P23804.fasta
+    normalized_sequence_relative_path: P23804.sequence.txt
+  A0ABM2YB85:
+    expected_length: "510"
+    exact_sequence_sha256: 77125856d7835e2b31886052c94d818752c49b9eb7bb86dea1f8d5f313159fe5
+    raw_fasta_relative_path: A0ABM2YB85.fasta
+    normalized_sequence_relative_path: A0ABM2YB85.sequence.txt
+
+required_panel_values:
+  panel_binding_ready_accessions: P23804|A0ABM2YB85
+  panel_binding_status: ready_for_scoped_missing_embedding_fill_manifest
+  panel_runtime_blocker_code: none
+  later_missing_embedding_fill_manifest_allowed: "true"
+  allowed_next_action: prepare_scoped_missing_embedding_fill_manifest_dry_run
+
+required_false_flags:
+  - raw_sequence_committed
+  - biohub_called
+  - esmc_called
+  - embeddings_generated
+  - npy_artifact_created
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - contrast_run
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made

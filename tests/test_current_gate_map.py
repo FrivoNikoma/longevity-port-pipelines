@@ -3416,3 +3416,18 @@ def test_current_gate_map_records_mdm2_missing_embedding_sequence_provenance_aud
         "no biological claim",
     ]:
         assert required in text
+
+
+def test_current_gate_map_records_tp53_mdm2_external_sequence_bindings() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    assert "TP53/MDM2 external exact-sequence binding result" in text
+    assert "P23804" in text
+    assert "A0ABM2YB85" in text
+    assert "LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT" in text
+    assert "ready_for_scoped_missing_embedding_fill_manifest" in text
+    assert "later_missing_embedding_fill_manifest_allowed=true" in text
+    assert "prepare_scoped_missing_embedding_fill_manifest_dry_run" in text
+    normalized_text = " ".join(text.split())
+    assert "does not authorize a live embedding fill" in normalized_text
+    assert "keeps Gate 8 and Gate 9 closed" in normalized_text
+    assert "makes no biological claim" in normalized_text
