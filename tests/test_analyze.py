@@ -6,6 +6,7 @@ from longevity_port_pipelines.stages.analyze import (
     compute_enrichment,
     mann_whitney_test,
     shuffled_control,
+    shuffled_control_distribution,
 )
 
 
@@ -33,6 +34,38 @@ def test_shuffled_control_near_one() -> None:
     deltas = rng.normal(0.5, 0.1, size=100)
     ratio = shuffled_control(deltas, n_interface=20, n_permutations=500)
     assert 0.9 < ratio < 1.1
+
+
+def test_shuffled_control_distribution_is_deterministic_and_metric_compatible() -> None:
+    deltas = np.array([4.0, 3.0, 2.0, 1.0, 0.8, 0.6, 0.4, 0.2])
+
+    first = shuffled_control_distribution(
+        deltas,
+        n_interface=3,
+        n_permutations=25,
+        seed=17,
+    )
+    second = shuffled_control_distribution(
+        deltas,
+        n_interface=3,
+        n_permutations=25,
+        seed=17,
+    )
+
+    assert first.shape == (25,)
+    assert np.array_equal(first, second)
+    assert np.all(first > 0)
+
+
+def test_shuffled_control_distribution_rejects_mask_without_background() -> None:
+    deltas = np.array([0.4, 0.6, 0.8])
+
+    try:
+        shuffled_control_distribution(deltas, n_interface=3)
+    except ValueError as exc:
+        assert "leave non-interface" in str(exc)
+    else:
+        raise AssertionError("Expected invalid shuffled mask size to fail closed")
 
 
 def test_mann_whitney_significant_difference() -> None:

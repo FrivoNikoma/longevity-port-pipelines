@@ -238,6 +238,24 @@ uv run curated-analysis-enrichment
 
 Treat this output as a technical checkpoint, not validated biological evidence, until NEGATOME control is applied.
 
+For the scoped MDM2 lane, the audited local-only runner is:
+
+```bash
+uv run tp53-mdm2-mapped-interface-enrichment             # input/mapping dry run
+uv run tp53-mdm2-mapped-interface-enrichment --yes-run   # explicit local calculation
+```
+
+It consumes exact externally bound sequences and existing ignored ESMC `.npy`
+files. It translates the `1YCR:A` interface to full-length `Q00987`
+coordinates, maps those positions to elephant, mouse, and hamster, and uses
+same-size shuffled masks in the identical residue-level L2 enrichment metric
+family. It makes no network or model call and writes no `data/output` artifact.
+
+The committed three-row MDM2 result is Gate 8 input only. It is not a
+long-lived-vs-short-lived contrast or disposition, does not apply the earlier
+NEGATOME value across incompatible metric families, does not open Gate 9, and
+supports no biological claim.
+
 Or run all stages at once:
 
 ```bash

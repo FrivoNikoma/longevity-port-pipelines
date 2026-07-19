@@ -16,8 +16,8 @@ defer worklist.
 | Gate 4 - coverage/provenance | Ortholog and local downstream evidence are explicit. | Advanced for SIRT6 and started for TP53/MDM2; both calibration lanes now expose generic coverage-helper traces. |
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 has integrated the actual embedding-based NEGATOME control ratio `1.2482765910897506`; the required repair is `completed`, generic control readiness is `ready`, and Gate 6 control readiness is resolved. No numerical controlled pass/fail is claimed because the geometric shuffled control and embedding NEGATOME ratio are different metric families. |
-| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6; SIRT6 summary records generic strict panel helper trace and the generic strict panel runtime builder exists. TP53/MDM2 now has concrete Gate 7 coverage-repair outcomes: the MDM2 row is `coverage_repaired_and_ready` with reviewed accession `G3SX30`, while the TP53 row is `deferred_pending_source` because no accepted accession-level elephant TP53 ortholog evidence exists. Aggregate Gate 7 entry remains disallowed; Gate 8 and Gate 9 remain closed. |
-| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint; generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist; TP53/MDM2 now emits a generic Gate 8 blocked summary while coverage remains unresolved. |
+| Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6. The scoped MDM2 technical panel now has elephant `G3SX30`, mouse `P23804`, and hamster `A0ABM2YB85` with exact sequences and local embeddings available; TP53 remains `deferred_pending_source`, so aggregate TP53/MDM2 Gate 7 entry remains disallowed. |
+| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint. The scoped MDM2 lane now has three audited mapped-interface enrichment input rows, but no long-lived-vs-short-lived contrast or disposition has run. Mapping/cutoff/alignment sensitivity, leave-one-control-out, residue-block jackknife, and the single-long-lived-lineage limitation remain open; Gate 8 is not promoted. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
 | Gate 11 - decision package | Summarize candidate status, allowed claims, forbidden claims, and next action. | Not done. |
@@ -26,9 +26,18 @@ defer worklist.
 ## Current interpretation
 
 The project has moved from a SIRT6-only coverage-repair phase into a multi-lane
-gate architecture phase. After the Gate 8/Gate 9 calibration checkpoint, SIRT6 has a recorded dry-run path and TP53/MDM2 has a recorded blocked dry-run path.
+gate architecture phase. SIRT6 remains the first calibration lane. TP53/MDM2
+is the second calibration lane: its narrow MDM2 technical track now has
+audited mapped-interface input rows, while the aggregate lane remains closed
+because TP53 is still unresolved.
 
 - the Gate 8/Gate 9 calibration-lane roadmap checkpoint is recorded
+
+The earlier Gate 8/Gate 9 calibration checkpoint established that SIRT6 has a recorded dry-run path and that TP53/MDM2 initially had a blocked generic path.
+Those records remain historical provenance; the current scoped MDM2 state is
+the audited mapped-interface input described below.
+
+The generic Gate 8 gated contrast schema, helper, runtime calculator, robustness annotations, SIRT6 generic input bridge, and SIRT6 generic dry-run wrapper now exist. TP53/MDM2 also retains its concrete Gate 7 coverage-repair outcomes; later MDM2-only checkpoints resolve the narrow panel without resolving the aggregate blocker: there is still no accepted accession-level elephant TP53 ortholog evidence.
 
 Current calibration lanes:
 
@@ -44,12 +53,16 @@ Current calibration lanes:
   - second calibration lane
   - useful because `biological_mode = beneficial_breakage`
   - generic coverage-helper trace is recorded in the coverage preflight layer
-  - generic strict panel builder emits a blocked Gate 7 summary
-  - first decision-bearing Gate 7 result records `gate7_entry_allowed=false` with `blocked_species_coverage_repair`
-  - not yet at SIRT6-level gate maturity
-  - emits a generic Gate 8 blocked summary while coverage remains unresolved
-  - emits a generic Gate 9 blocked context while coverage remains unresolved
-  - records a generic Gate 9 blocked dry-run path with empty eligible manifest expectation
+  - the scoped MDM2 panel contains elephant `G3SX30`, mouse `P23804`, and hamster `A0ABM2YB85`
+  - all three exact local embeddings are available but remain ignored runtime artifacts
+  - the audited `1YCR:A` interface is translated to full-length `Q00987` coordinates before analysis
+  - all 47 source interface residues map to each target with zero dropped residues
+  - technical enrichment ratios are `0.59271069444374358`, `0.51464311118804662`, and `0.59823664002011123`, respectively
+  - these are species-specific Gate 8 input rows, not a long-lived-vs-short-lived contrast
+  - the selected first-optimal alignments have 9, 8, and 2 tied optima, so alignment sensitivity remains mandatory
+  - metric-compatible shuffled masks are complete, but NEGATOME compatibility is not applied in this metric family
+  - TP53 remains `deferred_pending_source`, so aggregate Gate 7 and Gate 8 remain closed
+  - the historical generic Gate 8 and Gate 9 blocked summaries remain provenance checkpoints, not the current narrow MDM2 runtime state
   - not a validated biological claim
 
 Current generic adoption checkpoint:
@@ -72,9 +85,9 @@ Current generic adoption checkpoint:
 - the generic gated contrast runtime records contrast robustness annotations
 - SIRT6 generic gated contrast input bridge exists
 - SIRT6 generic gated contrast dry-run wrapper exists
-- TP53/MDM2 emits a generic Gate 8 blocked summary while coverage remains unresolved
-- TP53/MDM2 emits a generic Gate 9 blocked context while coverage remains unresolved
-- TP53/MDM2 Gate 9 blocked dry-run path is recorded
+- TP53/MDM2 retains historical generic Gate 8 and Gate 9 blocked summaries
+- the scoped MDM2 adapter now supplies audited species-specific mapped-interface rows without duplicating generic alignment, delta, enrichment, or shuffle math
+- TP53/MDM2 Gate 8 disposition and Gate 9 planning remain blocked pending robustness review and an explicit decision
 - the generic cofolding readiness schema exists
 - the generic cofolding readiness helper exists
 - the generic cofolding readiness runtime checklist exists
@@ -2179,3 +2192,41 @@ This authorization PR makes no BioHub/ESMC call, generates no embedding,
 creates or commits no `.npy`, commits no `data/output` artifact, runs no
 contrast, does not allow Gate 8 entry in this PR, does not promote Gate 8 or
 Gate 9, and makes no biological claim. Aggregate TP53/MDM2 remains closed.
+
+## Scoped MDM2 mapped-interface enrichment result
+
+The current three-row technical result is recorded in
+`data/input/tp53_mdm2_mdm2_mapped_interface_enrichment_results.csv`, with
+schema
+`data/config/tp53_mdm2_mdm2_mapped_interface_enrichment_result_schema.yaml`
+and detailed interpretation boundaries in
+`docs/tp53_mdm2_mdm2_mapped_interface_enrichment_result.md`.
+
+The runner consumes the existing ignored `esmc-300m-2024-12` embeddings for
+human `Q00987`, elephant `G3SX30`, mouse `P23804`, and hamster `A0ABM2YB85`.
+It translates the 47 observed `1YCR:A` interface residues to full-length
+`Q00987` coordinates and then maps them through the generic Biotite alignment
+policy. All 47 interface residues map to every target and none are dropped.
+
+The species-specific interface/non-interface enrichment ratios are
+`0.59271069444374358` for elephant, `0.51464311118804662` for mouse, and
+`0.59823664002011123` for hamster. Each is below all 1,000 deterministic,
+same-size, metric-compatible shuffled-mask ratios; the add-one lower-tail
+empirical p-value is `0.000999000999000999` for each row.
+
+These rows establish only a technical interface-depletion result in the
+defined human-reference-to-ortholog residue-level ESMC L2 metric family. They
+do not establish preserved binding, TP53/MDM2 functional change, a longevity
+mechanism, or a long-lived-lineage-specific effect. The historical geometric
+shuffled result is not reused, and NEGATOME is not combined because metric
+compatibility remains unaudited.
+
+There are 9, 8, and 2 tied optimal alignments for elephant, mouse, and hamster,
+respectively. A2 mapping/cutoff/alignment sensitivity, A3 leave-one-control-out
+and residue-block jackknife, and a separate A4 Gate 8 disposition remain
+required. The single-long-lived-lineage limitation remains explicit. Gate 8
+contrast and disposition are not run, Gate 8 and Gate 9 are not promoted,
+aggregate TP53/MDM2 remains closed, and no biological claim is made.
+
+The exact next permitted action is
+`run_mapping_cutoff_and_alignment_sensitivity`.
