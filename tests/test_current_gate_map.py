@@ -3431,3 +3431,20 @@ def test_current_gate_map_records_tp53_mdm2_external_sequence_bindings() -> None
     assert "does not authorize a live embedding fill" in normalized_text
     assert "keeps Gate 8 and Gate 9 closed" in normalized_text
     assert "makes no biological claim" in normalized_text
+
+
+def test_current_gate_map_records_scoped_mdm2_fill_execution_contract() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    normalized = " ".join(text.split())
+    assert "Scoped TP53/MDM2 missing-embedding fill execution contract" in text
+    assert "P23804" in text
+    assert "A0ABM2YB85" in text
+    assert "G3SX30" in text
+    assert "passed_table_only_validation" in text
+    assert "prepared_execution_contract_only" in text
+    assert "live_fill_allowed=false" in text
+    assert "fill_execution_allowed=false" in text
+    assert "request_explicit_scoped_live_fill_authorization" in text
+    assert "does not require `LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT`" in normalized
+    assert "generates no embedding" in normalized
+    assert "makes no biological claim" in normalized

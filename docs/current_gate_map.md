@@ -2124,3 +2124,33 @@ not authorize a live embedding fill.
 This checkpoint makes no BioHub/ESMC call, generates no embedding, creates or
 commits no `.npy`, commits no `data/output` artifact, runs no contrast, keeps
 Gate 8 and Gate 9 closed, and makes no biological claim.
+
+## Scoped TP53/MDM2 missing-embedding fill execution contract
+
+`data/input/tp53_mdm2_mdm2_missing_embedding_fill_manifest.csv` records a
+two-row machine-readable execution contract for mouse `P23804` and hamster
+`A0ABM2YB85`.
+
+The contract binds each row to the passed external exact-sequence result and
+the committed local-prerequisite audit. It records exact accession, taxid,
+sequence length, normalized-sequence SHA-256, portable external sequence
+reference, model `esmc-300m-2024-12`, and a declared canonical local `.npy`
+path under the ignored embedding root.
+
+`G3SX30` is excluded because its embedding is already `present_valid`. Rat and
+TP53 remain `deferred_pending_source` and are not admitted to this contract.
+
+The committed validation result records
+`manifest_validation_status=passed_table_only_validation` and
+`scoped_missing_embedding_fill_manifest_status=prepared_execution_contract_only`.
+
+The contract keeps `live_fill_allowed=false`, `fill_execution_allowed=false`,
+`gate8_entry_allowed=false`, `gate8_promoted=false`, and
+`gate9_promoted=false`. Its only allowed next action is
+`request_explicit_scoped_live_fill_authorization`.
+
+This checkpoint does not require
+`LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT` for ordinary CI, makes no
+BioHub/ESMC call, generates no embedding, creates or commits no `.npy`, commits
+no `data/output` artifact or raw sequence, runs no contrast, and makes no
+biological claim.

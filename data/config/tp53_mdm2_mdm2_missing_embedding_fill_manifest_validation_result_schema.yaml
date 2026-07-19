@@ -1,0 +1,49 @@
+schema_version: 1
+schema_id: tp53_mdm2_mdm2_missing_embedding_fill_manifest_validation_result_schema
+pipeline_gate: scoped_mdm2_missing_embedding_fill_manifest_table_only_validation
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_execution_contract
+
+description: >
+  Committed table-only validation result for the scoped P23804 and
+  A0ABM2YB85 MDM2 missing-embedding fill execution contract.
+
+manifest_table: data/input/tp53_mdm2_mdm2_missing_embedding_fill_manifest.csv
+validation_result_table: data/input/tp53_mdm2_mdm2_missing_embedding_fill_manifest_validation_results.csv
+
+required_accessions:
+  - P23804
+  - A0ABM2YB85
+
+required_result_values:
+  manifest_row_validation_status: passed
+  external_binding_validation_status: passed_exact_external_non_committed_binding
+  sequence_hash_binding_status: passed_exact_hash_bound
+  local_prerequisite_validation_status: passed_missing_embedding
+  embedding_path_policy_status: passed_declared_ignored_output_path
+  embedding_artifact_status: missing_not_created
+  manifest_validation_status: passed_table_only_validation
+  scoped_missing_embedding_fill_manifest_status: prepared_execution_contract_only
+  validated_manifest_accessions: P23804|A0ABM2YB85
+  live_fill_allowed: "false"
+  fill_execution_allowed: "false"
+  authorization_status: pending_explicit_scoped_live_fill_authorization
+  allowed_next_action: request_explicit_scoped_live_fill_authorization
+  panel_runtime_blocker_code: explicit_scoped_live_fill_authorization_required
+  external_binding_root_required_for_ci: "false"
+
+required_false_flags:
+  - live_fill_allowed
+  - fill_execution_allowed
+  - external_binding_root_required_for_ci
+  - biohub_called
+  - esmc_called
+  - embedding_generated
+  - npy_artifact_created
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - contrast_run
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made
