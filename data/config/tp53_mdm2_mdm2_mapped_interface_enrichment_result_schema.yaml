@@ -1,0 +1,73 @@
+schema_version: 1
+schema_id: tp53_mdm2_mdm2_mapped_interface_enrichment_result_schema
+pipeline_gate: gate8_input_preparation_only
+affected_lane: tp53_mdm2_elephant_mdm2_scoped
+claim_policy: no_biological_claims_until_robustness_and_gate8_disposition
+maximum_claim_status: technical_mapped_interface_enrichment_result_no_gate8_disposition
+
+description: >
+  Three-row compact result for elephant G3SX30, mouse P23804, and hamster
+  A0ABM2YB85. Each row maps the committed 1YCR:A/Q00987 interface through a
+  full-length reference-to-target alignment, computes residue-level ESMC L2
+  interface enrichment, and evaluates shuffled masks in the same metric family.
+
+authoritative_mapping_table: data/input/tp53_mdm2_1ycr_q00987_interface_mapping.csv
+mapping_table_canonical_sha256: 73cc5548869e537cd90d78a3cf1a417097f85b9dde99818d8c09f96cce8aa325
+result_table: data/input/tp53_mdm2_mdm2_mapped_interface_enrichment_results.csv
+
+required_accession_order:
+  - G3SX30
+  - P23804
+  - A0ABM2YB85
+
+runtime_inputs_not_committed:
+  - exact Q00987 and G3SX30 FASTA files under MDM2_REFERENCE_SEQUENCE_ROOT
+  - exact P23804 and A0ABM2YB85 bindings under LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT
+  - four saved ESMC float32 per-residue .npy arrays under data/output
+
+primary_metric:
+  family: human_reference_to_ortholog_per_residue_esmc_l2_mapped_interface_vs_noninterface_enrichment
+  residue_delta: euclidean_l2_between_aligned_esmc_residue_vectors
+  ratio: interface_mean_delta / noninterface_mean_delta
+  alignment: biotite global BLOSUM62
+  gap_penalty: [-10, -1]
+  terminal_penalty: false
+  optimal_alignment_selection: first_returned
+
+shuffled_control:
+  metric_family_must_equal_primary: true
+  mask_policy: uniform_without_replacement_same_mapped_interface_count_among_aligned_residue_pairs
+  rng: numpy_default_rng_pcg64
+  seed: 42
+  control_count: 1000
+  legacy_geometric_shuffled_result_reuse_forbidden: true
+
+required_false_flags:
+  - legacy_geometric_shuffled_result_reused
+  - negatome_metric_included
+  - gate8_contrast_run
+  - mapping_cutoff_alignment_sensitivity_run
+  - leave_one_control_out_run
+  - residue_block_jackknife_run
+  - gate8_disposition_run
+  - gate8_promoted
+  - gate9_promoted
+  - biohub_called
+  - esmc_called
+  - new_embedding_generated
+  - npy_artifact_written
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - boltz_called
+  - af3_called
+  - chai_called
+  - biological_claim_made
+
+required_follow_up:
+  exact_allowed_next_action: run_mapping_cutoff_and_alignment_sensitivity
+  later_checks:
+    - mapping/cutoff/alignment sensitivity
+    - leave-one-control-out
+    - residue-block jackknife
+    - explicit Gate 8 disposition with single-long-lived-lineage limitation
+    - second independent long-lived lineage

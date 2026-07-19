@@ -4,24 +4,16 @@ from __future__ import annotations
 
 import logging
 
-import biotite.sequence as seq
-import biotite.sequence.align as align
 import numpy as np
 from scipy import stats
 
 from longevity_port_pipelines.models import EnrichmentResult
 from longevity_port_pipelines.stages.embed import PerResidueEmbedding
+from longevity_port_pipelines.stages.reference_coordinate_mapping import (
+    align_reference_to_target,
+)
 
 logger = logging.getLogger(__name__)
-
-
-def _to_protein_sequence(s: str) -> seq.ProteinSequence:
-    """Build a biotite ProteinSequence, mapping unparseable symbols to 'X'."""
-    try:
-        return seq.ProteinSequence(s)
-    except Exception:
-        valid = set(seq.ProteinSequence.alphabet.get_symbols())
-        return seq.ProteinSequence("".join(c if c in valid else "X" for c in s))
 
 
 def align_and_compute_deltas(
@@ -35,24 +27,13 @@ def align_and_compute_deltas(
 
     Returns (deltas, aligned_ref_positions) — both shape (n_aligned,).
     """
-    s_ref = _to_protein_sequence(ref.sequence)
-    s_orth = _to_protein_sequence(orth.sequence)
-
-    matrix = align.SubstitutionMatrix.std_protein_matrix()
-    alignments = align.align_optimal(
-        s_ref,
-        s_orth,
-        matrix,
-        gap_penalty=(-10, -1),
-        terminal_penalty=False,
-    )
-    trace = alignments[0].trace  # shape (aln_len, 2); -1 marks gaps
+    alignment = align_reference_to_target(ref.sequence, orth.sequence)
 
     deltas = []
     aligned_ref_positions = []
-    for r_idx, o_idx in trace:
-        if r_idx == -1 or o_idx == -1:
-            continue
+    for pair in alignment.aligned_pairs:
+        r_idx = pair.reference_index
+        o_idx = pair.target_index
         if r_idx >= ref.embeddings.shape[0] or o_idx >= orth.embeddings.shape[0]:
             continue
 
@@ -89,33 +70,59 @@ def compute_enrichment(
     return interface_mean, noninterface_mean, enrichment
 
 
-def shuffled_control(
+def shuffled_control_distribution(
     deltas: np.ndarray,
     n_interface: int,
     n_permutations: int = 1000,
-) -> float:
-    """Shuffled random mask control.
+    seed: int = 42,
+) -> np.ndarray:
+    """Return metric-compatible enrichment ratios for shuffled masks.
 
-    Randomly assign n_interface positions as "interface" and compute the
-    mean enrichment ratio across permutations.
+    Every permutation samples exactly ``n_interface`` aligned residue rows
+    without replacement and computes the same interface/non-interface mean
+    ratio as the primary enrichment metric.
     """
-    rng = np.random.default_rng(seed=42)
-    ratios = []
+    if deltas.ndim != 1:
+        raise ValueError("Expected one-dimensional per-residue deltas")
+    if n_permutations < 1:
+        raise ValueError("n_permutations must be positive")
+    if not 0 < n_interface < len(deltas):
+        raise ValueError("n_interface must leave non-interface aligned residues")
+
+    rng = np.random.default_rng(seed=seed)
+    ratios: list[float] = []
 
     for _ in range(n_permutations):
         perm = rng.permutation(len(deltas))
         fake_interface = deltas[perm[:n_interface]]
         fake_noninterface = deltas[perm[n_interface:]]
 
-        if len(fake_noninterface) == 0:
-            continue
-
         mean_iface = float(np.mean(fake_interface))
         mean_noniface = float(np.mean(fake_noninterface))
         if mean_noniface > 0:
             ratios.append(mean_iface / mean_noniface)
 
-    return float(np.mean(ratios)) if ratios else 1.0
+    if len(ratios) != n_permutations:
+        raise ValueError("A shuffled non-interface mean was not positive")
+    return np.asarray(ratios, dtype=np.float64)
+
+
+def shuffled_control(
+    deltas: np.ndarray,
+    n_interface: int,
+    n_permutations: int = 1000,
+) -> float:
+    """Return the historical seed-42 mean shuffled-mask enrichment ratio."""
+    try:
+        ratios = shuffled_control_distribution(
+            deltas=deltas,
+            n_interface=n_interface,
+            n_permutations=n_permutations,
+            seed=42,
+        )
+    except ValueError:
+        return 1.0
+    return float(np.mean(ratios))
 
 
 def mann_whitney_test(

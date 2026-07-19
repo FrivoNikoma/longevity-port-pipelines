@@ -180,10 +180,8 @@ def test_current_gate_map_records_sirt6_gate9_dry_run_path() -> None:
 def test_current_gate_map_records_tp53_mdm2_generic_gate8_blocked_summary() -> None:
     text = read_doc("docs/current_gate_map.md")
 
-    assert "TP53/MDM2 now emits a generic Gate 8 blocked summary" in text
-    assert (
-        "TP53/MDM2 emits a generic Gate 8 blocked summary while coverage remains unresolved" in text
-    )
+    assert "historical generic Gate 8 and Gate 9 blocked summaries" in text
+    assert "not the current narrow MDM2 runtime state" in text
     assert "not a validated biological claim" in text
 
 
@@ -193,9 +191,7 @@ def test_current_gate_map_records_tp53_mdm2_gate9_blocked_context() -> None:
     assert (
         "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
     )
-    assert (
-        "TP53/MDM2 emits a generic Gate 9 blocked context while coverage remains unresolved" in text
-    )
+    assert "historical generic Gate 8 and Gate 9 blocked summaries" in text
     assert "additional lane context builders pending" in text
     assert "not a validated biological claim" in text
 
@@ -206,8 +202,7 @@ def test_current_gate_map_records_tp53_mdm2_gate9_blocked_dry_run_path() -> None
     assert (
         "TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded" in text
     )
-    assert "TP53/MDM2 Gate 9 blocked dry-run path is recorded" in text
-    assert "empty eligible manifest expectation" in text
+    assert "Gate 9 planning remain blocked pending robustness review" in text
     assert "additional lane context builders pending" in text
 
 
@@ -216,7 +211,7 @@ def test_current_gate_map_records_gate8_gate9_calibration_roadmap_checkpoint() -
 
     assert "Gate 8/Gate 9 calibration checkpoint" in text
     assert "SIRT6 has a recorded dry-run path" in text
-    assert "TP53/MDM2 has a recorded blocked dry-run path" in text
+    assert "audited mapped-interface input rows" in text
     assert "the Gate 8/Gate 9 calibration-lane roadmap checkpoint is recorded" in text
     assert "genericdry-run" not in text
     assert "calculator,robustness" not in text
@@ -3463,3 +3458,34 @@ def test_current_gate_map_records_scoped_mdm2_live_fill_authorization() -> None:
     assert "only one live invocation may run at a time" in normalized
     assert "makes no BioHub/ESMC call" in normalized
     assert "Aggregate TP53/MDM2 remains closed" in text
+
+
+def test_current_gate_map_records_scoped_mdm2_mapped_interface_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    normalized = " ".join(text.split())
+
+    for required in (
+        "Scoped MDM2 mapped-interface enrichment result",
+        "tp53_mdm2_mdm2_mapped_interface_enrichment_results.csv",
+        "tp53_mdm2_mdm2_mapped_interface_enrichment_result_schema.yaml",
+        "tp53_mdm2_mdm2_mapped_interface_enrichment_result.md",
+        "human `Q00987`",
+        "elephant `G3SX30`",
+        "mouse `P23804`",
+        "hamster `A0ABM2YB85`",
+        "All 47 interface residues map to every target",
+        "0.59271069444374358",
+        "0.51464311118804662",
+        "0.59823664002011123",
+        "0.000999000999000999",
+        "technical interface-depletion result",
+        "NEGATOME is not combined",
+        "9, 8, and 2 tied optimal alignments",
+        "single-long-lived-lineage limitation",
+        "run_mapping_cutoff_and_alignment_sensitivity",
+    ):
+        assert required in text
+
+    assert "do not establish preserved binding" in normalized
+    assert "Gate 8 and Gate 9 are not promoted" in normalized
+    assert "no biological claim is made" in normalized

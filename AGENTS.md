@@ -81,6 +81,9 @@ uv run curated-analysis-preflight
 uv run curated-analysis-plan
 uv run curated-analysis-runner
 uv run curated-analysis-enrichment
+
+# --- Scoped TP53/MDM2 local result lane ---
+uv run tp53-mdm2-mapped-interface-enrichment
 ```
 
 The curated ortholog ladder is dry-run-first. Commands that can spend API
@@ -90,6 +93,13 @@ credits or perform runtime analysis require explicit flags such as `--yes-run`.
 controls are satisfied. Without NEGATOME it must be marked as
 `shuffled_only_negatome_not_applied` and
 `technical_checkpoint_not_validated_claim`.
+
+`tp53-mdm2-mapped-interface-enrichment` is dry-run-first and consumes only
+exact external sequences plus existing ignored embeddings. Its `--yes-run`
+output is species-specific Gate 8 input, not Gate 8 contrast or disposition.
+Do not combine historical geometric shuffled results or the embedding-based
+NEGATOME ratio with its residue-level metric without a compatibility audit.
+Gate 9 and biological claims remain forbidden.
 
 Every new pipeline step gets its own direct entry point — no umbrella CLI.
 
