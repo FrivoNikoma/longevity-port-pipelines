@@ -91,15 +91,19 @@ def test_controlled_embedding_fill_protocol_records_claim_guardrails() -> None:
     )
 
 
-def test_controlled_embedding_fill_protocol_keeps_tp53_mdm2_blocked() -> None:
+def test_controlled_embedding_fill_protocol_keeps_aggregate_lane_closed_with_scoped_mdm2_exception() -> (
+    None
+):
     text = read_doc("docs/controlled_embedding_fill_protocol.md")
 
     assert_contains_all(
         text,
         [
             "SIRT6/core3 is the advanced calibration lane",
-            "TP53/MDM2 elephant remains a blocked calibration lane",
+            "The aggregate TP53/MDM2 lane remains closed while TP53 is",
             "beneficial_breakage",
-            "must not receive live embedding fills while unresolved coverage blockers remain",
+            "TP53 rows must not receive live embedding fills while their source and coverage",
+            "Narrow MDM2-only technical authorization exception",
+            "at most one live row at a time",
         ],
     )

@@ -1,0 +1,77 @@
+schema_version: 1
+schema_id: tp53_mdm2_mdm2_scoped_live_embedding_fill_authorization_schema
+pipeline_gate: scoped_mdm2_live_embedding_fill_authorization
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_authorization_contract
+
+description: >
+  Metadata-only authorization for exactly P23804 and A0ABM2YB85. Two
+  accessions are authorized, but no more than one live invocation may run at a
+  time. This PR performs no live execution.
+
+source_manifest_table: data/input/tp53_mdm2_mdm2_missing_embedding_fill_manifest.csv
+source_validation_table: data/input/tp53_mdm2_mdm2_missing_embedding_fill_manifest_validation_results.csv
+authorization_table: data/input/tp53_mdm2_mdm2_scoped_live_embedding_fill_authorizations.csv
+
+required_accessions:
+  - P23804
+  - A0ABM2YB85
+
+required_values:
+  allowed_live_accessions: P23804|A0ABM2YB85
+  authorized_accession_count: "2"
+  allowed_model: esmc-300m-2024-12
+  required_runner: curated_embedding_single
+  required_live_flag: --yes-live
+  explicit_human_opt_in_required: "true"
+  human_opt_in_scope: per_accession_per_invocation
+  max_live_batch_size: "1"
+  execution_order: sequential_one_accession_at_a_time
+  authorization_status: explicit_scoped_live_fill_authorized
+  authorization_effective: "true"
+  live_fill_allowed: "true"
+  fill_execution_allowed: "true"
+  allowed_next_action: execute_scoped_live_fill_with_immediate_post_fill_audit
+
+required_pre_live_policy:
+  pre_live_single_dry_run_required: "true"
+  required_pre_live_status: dry_run_missing
+  required_sequence_length_status: matches
+  required_embedding_exists_before_live: "false"
+  skip_existing_required: "true"
+  overwrite_existing_allowed: "false"
+  no_skip_existing_flag_allowed: "false"
+
+required_failure_policy:
+  partial_failure_policy: stop_after_first_failed_or_invalid_row
+  continue_after_live_failure: "false"
+  continue_after_post_fill_audit_failure: "false"
+  successful_prior_artifact_policy: retain_only_if_post_fill_audit_passes
+  failed_or_invalid_artifact_policy: quarantine_or_remove_before_retry
+  automatic_rollback_of_valid_prior_row: "false"
+  retry_requires_new_explicit_human_opt_in: "true"
+
+required_post_fill_policy:
+  required_post_fill_dtype: float32
+  required_post_fill_numeric: "true"
+  required_post_fill_finite: "true"
+  required_post_fill_sequence_length_match: "true"
+  required_follow_up_single_dry_run_status: dry_run_present
+  required_follow_up_preflight_status: present_valid
+  generated_artifact_must_remain_untracked: "true"
+  generated_artifact_commit_allowed: "false"
+  data_output_commit_allowed: "false"
+
+required_false_flags_in_this_pr:
+  - execution_performed_in_authorization_pr
+  - biohub_called
+  - esmc_called
+  - embedding_generated
+  - npy_artifact_created
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - contrast_run
+  - gate8_entry_allowed_in_authorization_pr
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made

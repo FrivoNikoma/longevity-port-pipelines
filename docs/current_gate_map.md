@@ -2154,3 +2154,28 @@ This checkpoint does not require
 BioHub/ESMC call, generates no embedding, creates or commits no `.npy`, commits
 no `data/output` artifact or raw sequence, runs no contrast, and makes no
 biological claim.
+
+## Scoped TP53/MDM2 live embedding fill authorization
+
+`data/input/tp53_mdm2_mdm2_scoped_live_embedding_fill_authorizations.csv`
+authorizes exactly mouse `P23804` and hamster `A0ABM2YB85`.
+
+The authorization is bound by exact file SHA-256 to the preceding manifest and
+validation CSVs. It records `allowed_live_accessions=P23804|A0ABM2YB85`,
+`allowed_model=esmc-300m-2024-12`,
+`required_runner=curated_embedding_single`, and `max_live_batch_size=1`.
+
+Both accessions are authorized, but only one live invocation may run at a time.
+Every invocation requires a same-row dry-run, explicit human opt-in, default
+skip-existing behavior, and immediate post-fill audit before the next accession.
+
+The validation result records
+`authorization_validation_status=passed_policy_only_validation` and
+`scoped_live_fill_authorization_status=authorized_execution_contract_only`.
+The next permitted action is
+`execute_scoped_live_fill_with_immediate_post_fill_audit`.
+
+This authorization PR makes no BioHub/ESMC call, generates no embedding,
+creates or commits no `.npy`, commits no `data/output` artifact, runs no
+contrast, does not allow Gate 8 entry in this PR, does not promote Gate 8 or
+Gate 9, and makes no biological claim. Aggregate TP53/MDM2 remains closed.

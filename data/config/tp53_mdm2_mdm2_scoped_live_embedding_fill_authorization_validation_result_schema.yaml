@@ -1,0 +1,38 @@
+schema_version: 1
+schema_id: tp53_mdm2_mdm2_scoped_live_embedding_fill_authorization_validation_result_schema
+pipeline_gate: scoped_mdm2_live_embedding_fill_authorization_validation
+claim_policy: no_biological_claims_until_validation
+maximum_claim_status: technical_authorization_contract
+
+description: >
+  Policy-only validation of the scoped P23804 and A0ABM2YB85 live-fill
+  authorization. No execution is performed.
+
+required_values:
+  source_manifest_integrity_status: passed_canonical_utf8_lf_sha256_binding
+  source_validation_integrity_status: passed_canonical_utf8_lf_sha256_binding
+  accession_scope_validation_status: passed_exact_two_accession_scope
+  sequential_execution_policy_validation_status: passed_max_live_batch_size_one
+  authorization_validation_status: passed_policy_only_validation
+  scoped_live_fill_authorization_status: authorized_execution_contract_only
+  allowed_live_accessions: P23804|A0ABM2YB85
+  max_live_batch_size: "1"
+  authorization_effective: "true"
+  live_fill_allowed: "true"
+  fill_execution_allowed: "true"
+  execution_performed: "false"
+  allowed_next_action: execute_scoped_live_fill_with_immediate_post_fill_audit
+
+required_false_flags:
+  - execution_performed
+  - biohub_called
+  - esmc_called
+  - embedding_generated
+  - npy_artifact_created
+  - npy_artifact_committed
+  - data_output_artifact_committed
+  - contrast_run
+  - gate8_entry_allowed
+  - gate8_promoted
+  - gate9_promoted
+  - biological_claim_made

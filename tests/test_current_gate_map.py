@@ -3448,3 +3448,18 @@ def test_current_gate_map_records_scoped_mdm2_fill_execution_contract() -> None:
     assert "does not require `LONGEVITY_PORT_EXTERNAL_SEQUENCE_BINDING_ROOT`" in normalized
     assert "generates no embedding" in normalized
     assert "makes no biological claim" in normalized
+
+
+def test_current_gate_map_records_scoped_mdm2_live_fill_authorization() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    normalized = " ".join(text.split())
+    assert "Scoped TP53/MDM2 live embedding fill authorization" in text
+    assert "allowed_live_accessions=P23804|A0ABM2YB85" in text
+    assert "required_runner=curated_embedding_single" in text
+    assert "max_live_batch_size=1" in text
+    assert "passed_policy_only_validation" in text
+    assert "authorized_execution_contract_only" in text
+    assert "execute_scoped_live_fill_with_immediate_post_fill_audit" in text
+    assert "only one live invocation may run at a time" in normalized
+    assert "makes no BioHub/ESMC call" in normalized
+    assert "Aggregate TP53/MDM2 remains closed" in text

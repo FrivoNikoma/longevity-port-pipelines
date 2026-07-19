@@ -130,11 +130,32 @@ Filled embeddings must still be treated as technical artifacts only. They do not
 
 ### TP53/MDM2 elephant
 
-TP53/MDM2 elephant remains a blocked calibration lane while coverage/provenance is unresolved.
+The aggregate TP53/MDM2 lane remains closed while TP53 is
+`deferred_pending_source`.
 
-Its biological mode is `beneficial_breakage`, so divergence can be interesting, but that also makes claim discipline especially important.
+Its biological mode is `beneficial_breakage`, so divergence can be interesting,
+but that also makes claim discipline especially important.
 
-TP53/MDM2 must not receive live embedding fills while unresolved coverage blockers remain. Its expected safe output is still a blocked worklist, not an eligible live-fill or cofolding manifest.
+TP53 rows must not receive live embedding fills while their source and coverage
+blockers remain unresolved. Aggregate TP53/MDM2 contrast, Gate 8 entry, Gate 8
+promotion, Gate 9 promotion, and cofolding remain disallowed.
+
+#### Narrow MDM2-only technical authorization exception
+
+The ready MDM2 source/provenance layer may receive a narrowly scoped technical
+authorization for exactly mouse `P23804` and hamster `A0ABM2YB85` after exact
+external sequence bindings, hashes, missing local prerequisites, and the
+execution contract all pass validation.
+
+The authorization may cover both reviewed accessions, but execution must use
+`curated_embedding_single`, require explicit `--yes-live`, and run at most one
+live row at a time. Each accession requires its own dry-run and explicit human
+opt-in. Immediate post-fill audit must pass before execution proceeds to the
+next accession.
+
+This narrow exception does not change the aggregate TP53/MDM2 gate state and
+does not authorize TP53 execution, aggregate contrast, Gate 8 entry, Gate 8 or
+Gate 9 promotion, cofolding, or biological claims.
 
 ## Artifact policy
 
