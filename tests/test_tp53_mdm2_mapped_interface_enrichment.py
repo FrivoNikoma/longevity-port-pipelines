@@ -7,6 +7,10 @@ import numpy as np
 import pytest
 
 from longevity_port_pipelines.stages.embed import PerResidueEmbedding
+from longevity_port_pipelines.stages.reference_coordinate_mapping import (
+    AlignedResiduePair,
+    ReferenceTargetAlignment,
+)
 from longevity_port_pipelines.stages.tp53_mdm2_mapped_interface_enrichment import (
     compute_mapped_interface_metrics,
     load_and_validate_result,
@@ -67,6 +71,40 @@ def test_mapped_interface_metrics_uses_only_aligned_interface_positions() -> Non
     assert result.aligned_residue_count == 8
     assert result.mapped_interface_count == 2
     assert result.noninterface_count == 6
+
+
+def test_mapped_interface_metrics_uses_the_supplied_alignment_trace() -> None:
+    sequence = "AAAA"
+    reference_values = np.zeros((4, 1), dtype=np.float32)
+    target_values = np.asarray([[10.0], [1.0], [1.0], [1.0]], dtype=np.float32)
+    pairs = tuple(
+        AlignedResiduePair(
+            reference_index=index,
+            target_index=target_index,
+            reference_residue="A",
+            target_residue="A",
+        )
+        for index, target_index in enumerate((1, 0, 2, 3))
+    )
+    explicit = ReferenceTargetAlignment(
+        aligned_pairs=pairs,
+        trace_length=4,
+        optimal_alignment_count=1,
+        trace=tuple((pair.reference_index, pair.target_index) for pair in pairs),
+        trace_sha256="synthetic-explicit-trace",
+    )
+
+    result = compute_mapped_interface_metrics(
+        reference=_embedding(sequence, reference_values, 9606),
+        target=_embedding(sequence, target_values, 9785),
+        interface_reference_indices=(0,),
+        alignment=explicit,
+        shuffle_control_count=20,
+    )
+
+    assert result.interface_mean_delta == 1.0
+    assert result.noninterface_mean_delta == 4.0
+    assert result.enrichment_ratio == 0.25
 
 
 def test_committed_result_has_exact_three_row_panel() -> None:

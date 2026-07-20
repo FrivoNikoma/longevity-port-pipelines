@@ -1,0 +1,81 @@
+contract_version: 1
+stage: A2_mapping_cutoff_alignment_sensitivity
+lane: tp53_mdm2_elephant_mdm2_scoped
+affected_gate: Gate_8_input_robustness_only
+
+authoritative_inputs:
+  pdb_id: 1YCR
+  pdb_sha256: 7b4e503dea1fe3a6966b9676a1b98caf511c735cde01029cd0998e2319e75493
+  pdb_chain_mdm2: A
+  pdb_chain_tp53: B
+  reference_accession: Q00987
+  a1_result_table: data/input/tp53_mdm2_mdm2_mapped_interface_enrichment_results.csv
+  a1_result_sha256: bcf4075b428c4bf1494a3247357a8c1736c761f9c1a8bdbf2f0b789b51823ebb
+
+cutoffs_angstrom: [6.0, 7.0, 8.0, 9.0, 10.0]
+alignment_policies:
+  - policy_id: canonical_free_terminal
+    gap_penalty: [-10, -1]
+    terminal_penalty: false
+  - policy_id: canonical_penalized_terminal
+    gap_penalty: [-10, -1]
+    terminal_penalty: true
+  - policy_id: looser_gap_open
+    gap_penalty: [-8, -1]
+    terminal_penalty: false
+  - policy_id: stricter_gap_open
+    gap_penalty: [-12, -1]
+    terminal_penalty: false
+  - policy_id: stricter_gap_extension
+    gap_penalty: [-10, -2]
+    terminal_penalty: false
+
+scenario_contract:
+  enumerate_every_optimal_trace: true
+  compute_metric_from_exact_audited_trace: true
+  expected_scenarios_by_accession:
+    G3SX30: 225
+    P23804: 200
+    A0ABM2YB85: 60
+  expected_total_scenarios: 485
+  metric_family: human_reference_to_ortholog_per_residue_esmc_l2_mapped_interface_vs_noninterface_enrichment
+  shuffle_policy: uniform_without_replacement_same_mapped_interface_count_among_aligned_residue_pairs
+  shuffle_seed: 42
+  shuffle_control_count: 1000
+
+committed_results:
+  full_chain_mapping:
+    path: data/input/tp53_mdm2_1ycr_q00987_full_chain_mapping.csv
+    rows: 85
+    raw_sha256: 2794c3adabb69ff739e24af6179d587424acab293407d44b536bf0a8111dbb5f
+  scenario_table:
+    path: data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_results.csv
+    rows: 485
+    raw_sha256: 33ec3211de227cab56367528019f7a17041759e29a8cf16795dd41db5ae26c07
+  summary_table:
+    path: data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv
+    rows: 3
+    raw_sha256: db58d84a53b2a891eb80d5e065457355c48d6a198cea7a84b47d44b392895ba4
+  sensitivity_status: stable_under_predeclared_a2_grid
+  exact_allowed_next_action: run_leave_one_control_out_and_residue_block_jackknife
+
+predeclared_stability_criteria:
+  all_scenarios_preserve_a1_ratio_side_of_one: true
+  all_scenarios_shuffle_lower_tail_p_le_0_05: true
+  all_source_interface_residues_mapped: true
+  a1_baseline_exactly_reproduced: true
+
+conditional_next_action:
+  stable: run_leave_one_control_out_and_residue_block_jackknife
+  sensitive_or_incomplete: resolve_mapping_cutoff_alignment_sensitivity
+
+boundaries:
+  dry_run_first: true
+  network_allowed: false
+  biohub_or_esmc_call_allowed: false
+  structural_model_call_allowed: false
+  gate8_disposition_run: false
+  gate8_promotion_allowed: false
+  gate9_promotion_forbidden: true
+  biological_claim_forbidden: true
+  single_long_lived_lineage_limitation: true

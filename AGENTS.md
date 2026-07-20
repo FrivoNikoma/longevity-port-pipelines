@@ -84,6 +84,7 @@ uv run curated-analysis-enrichment
 
 # --- Scoped TP53/MDM2 local result lane ---
 uv run tp53-mdm2-mapped-interface-enrichment
+uv run tp53-mdm2-mapping-cutoff-alignment-sensitivity
 ```
 
 The curated ortholog ladder is dry-run-first. Commands that can spend API
@@ -100,6 +101,14 @@ output is species-specific Gate 8 input, not Gate 8 contrast or disposition.
 Do not combine historical geometric shuffled results or the embedding-based
 NEGATOME ratio with its residue-level metric without a compatibility audit.
 Gate 9 and biological claims remain forbidden.
+
+`tp53-mdm2-mapping-cutoff-alignment-sensitivity` is the dry-run-first A2
+robustness stage. It requires the exact local 1YCR PDB and enumerates every
+optimal alignment trace under the committed cutoff/policy grid. Its
+committed 485-scenario result is stable under the predeclared grid and remains
+Gate 8 input evidence only. The exact allowed next action is A3
+`run_leave_one_control_out_and_residue_block_jackknife`. It never performs
+Gate 8 disposition, Gate 9 promotion, or a biological claim.
 
 Every new pipeline step gets its own direct entry point — no umbrella CLI.
 

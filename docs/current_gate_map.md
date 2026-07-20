@@ -17,7 +17,7 @@ defer worklist.
 | Gate 5 - repair decisions | Coverage/provenance blockers are classified as repair/exclude/defer. | Advanced for SIRT6 and started for TP53/MDM2; repair decisions are now mapped into generic repair statuses in the calibration lane traces. |
 | Gate 6 - control readiness | Shuffled and NEGATOME/control status are explicit. | Advanced for SIRT6; generic schema and helper exist. TP53/MDM2 has integrated the actual embedding-based NEGATOME control ratio `1.2482765910897506`; the required repair is `completed`, generic control readiness is `ready`, and Gate 6 control readiness is resolved. No numerical controlled pass/fail is claimed because the geometric shuffled control and embedding NEGATOME ratio are different metric families. |
 | Gate 7 - strict panel / contrast gate | Decide whether a candidate may enter technical contrast. | Advanced for SIRT6. The scoped MDM2 technical panel now has elephant `G3SX30`, mouse `P23804`, and hamster `A0ABM2YB85` with exact sequences and local embeddings available; TP53 remains `deferred_pending_source`, so aggregate TP53/MDM2 Gate 7 entry remains disallowed. |
-| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint. The scoped MDM2 lane now has three audited mapped-interface enrichment input rows, but no long-lived-vs-short-lived contrast or disposition has run. Mapping/cutoff/alignment sensitivity, leave-one-control-out, residue-block jackknife, and the single-long-lived-lineage limitation remain open; Gate 8 is not promoted. |
+| Gate 8 - long-lived vs short-lived contrast | Compute technical contrast under gate policy. | Implemented as a SIRT6 technical checkpoint. The scoped MDM2 A2 mapping/cutoff/alignment audit is now stable across all 485 predeclared scenarios, but no long-lived-vs-short-lived contrast or disposition has run. Leave-one-control-out, residue-block jackknife, NEGATOME metric compatibility, and the single-long-lived-lineage limitation remain open; Gate 8 is not promoted. |
 | Gate 9 - cofolding readiness | Produce contrast-gated cofolding planning rows. | Implemented for SIRT6 planning; generic Gate 9 cofolding readiness schema, helper, and runtime checklist now exist; generic dry-run manifest builder now exists; SIRT6 Gate 9 context builder and dry-run path are now recorded; TP53/MDM2 Gate 9 blocked context builder and blocked dry-run path are now recorded; additional lane context builders pending. |
 | Gate 10 - live structural compatibility | Submit live structural calls only after explicit opt-in and review. | Not part of default pipeline. Must remain opt-in. |
 | Gate 11 - decision package | Summarize candidate status, allowed claims, forbidden claims, and next action. | Not done. |
@@ -59,7 +59,9 @@ Current calibration lanes:
   - all 47 source interface residues map to each target with zero dropped residues
   - technical enrichment ratios are `0.59271069444374358`, `0.51464311118804662`, and `0.59823664002011123`, respectively
   - these are species-specific Gate 8 input rows, not a long-lived-vs-short-lived contrast
-  - the selected first-optimal alignments have 9, 8, and 2 tied optima, so alignment sensitivity remains mandatory
+  - the A2 audit covers five cutoffs, five alignment policies, and every optimal trace: 225 elephant, 200 mouse, and 60 hamster scenarios
+  - all 485 A2 ratios remain below 1, all mappings are complete, all shuffled lower-tail checks pass, and no scenario flips the A1 direction
+  - the exact technical next action is A3 `run_leave_one_control_out_and_residue_block_jackknife`
   - metric-compatible shuffled masks are complete, but NEGATOME compatibility is not applied in this metric family
   - TP53 remains `deferred_pending_source`, so aggregate Gate 7 and Gate 8 remain closed
   - the historical generic Gate 8 and Gate 9 blocked summaries remain provenance checkpoints, not the current narrow MDM2 runtime state
@@ -87,6 +89,8 @@ Current generic adoption checkpoint:
 - SIRT6 generic gated contrast dry-run wrapper exists
 - TP53/MDM2 retains historical generic Gate 8 and Gate 9 blocked summaries
 - the scoped MDM2 adapter now supplies audited species-specific mapped-interface rows without duplicating generic alignment, delta, enrichment, or shuffle math
+- the generic coordinate layer now enumerates explicit optimal traces, and the scoped MDM2 A2 runner computes the metric from the exact audited trace
+- the scoped MDM2 A2 mapping/cutoff/alignment result is stable under its predeclared 485-scenario grid
 - TP53/MDM2 Gate 8 disposition and Gate 9 planning remain blocked pending robustness review and an explicit decision
 - the generic cofolding readiness schema exists
 - the generic cofolding readiness helper exists
@@ -2222,11 +2226,54 @@ shuffled result is not reused, and NEGATOME is not combined because metric
 compatibility remains unaudited.
 
 There are 9, 8, and 2 tied optimal alignments for elephant, mouse, and hamster,
-respectively. A2 mapping/cutoff/alignment sensitivity, A3 leave-one-control-out
-and residue-block jackknife, and a separate A4 Gate 8 disposition remain
-required. The single-long-lived-lineage limitation remains explicit. Gate 8
-contrast and disposition are not run, Gate 8 and Gate 9 are not promoted,
-aggregate TP53/MDM2 remains closed, and no biological claim is made.
+respectively. At this A1 checkpoint, A2 mapping/cutoff/alignment sensitivity,
+A3 leave-one-control-out and residue-block jackknife, and a separate A4 Gate 8
+disposition remained required. The single-long-lived-lineage limitation was
+explicit. Gate 8 contrast and disposition were not run, Gate 8 and Gate 9 were
+not promoted, aggregate TP53/MDM2 remained closed, and no biological claim was
+made.
 
-The exact next permitted action is
-`run_mapping_cutoff_and_alignment_sensitivity`.
+The exact next permitted action at the A1 checkpoint was
+`run_mapping_cutoff_and_alignment_sensitivity`. The subsequent current A2
+result is recorded below.
+
+## Scoped MDM2 A2 mapping/cutoff/alignment sensitivity result
+
+The current A2 technical result is recorded in three committed tables:
+
+- `data/input/tp53_mdm2_1ycr_q00987_full_chain_mapping.csv` — 85 rows;
+- `data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_results.csv` — 485 rows;
+- `data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv` — 3 rows.
+
+Their raw SHA-256 values are, respectively,
+`2794c3adabb69ff739e24af6179d587424acab293407d44b536bf0a8111dbb5f`,
+`33ec3211de227cab56367528019f7a17041759e29a8cf16795dd41db5ae26c07`,
+and `db58d84a53b2a891eb80d5e065457355c48d6a198cea7a84b47d44b392895ba4`.
+The detailed method, numerical ranges, and interpretation boundaries are in
+`docs/tp53_mdm2_mapping_cutoff_alignment_sensitivity_result.md`.
+
+The full resolved `1YCR:A` chain maps uniquely and identity-consistently from
+PDB positions 25–109 to full-length `Q00987` zero-based indices 24–108. Five
+nested interface cutoffs produce 30, 42, 47, 54, and 56 MDM2 residues. Five
+alignment policies retain every optimal trace, and the numerical calculation
+uses the exact trace that was audited. The Cartesian grid contains 225
+elephant, 200 mouse, and 60 hamster scenarios.
+
+The elephant ratio range is `0.58594152898225094`–`0.65347819296783838`,
+the mouse range is `0.50870249919165011`–`0.57404154378007133`, and the
+hamster range is `0.55829361372217545`–`0.61265994493139697`. All 485 ratios
+remain below 1, every source interface residue maps, all 485 metric-compatible
+shuffled lower-tail checks pass at 0.05, no scenario flips the A1 direction,
+and all three canonical A1 scenarios reproduce exactly. The committed status
+is `stable_under_predeclared_a2_grid`.
+
+This remains a technical interface-depletion robustness result. It does not
+establish binding strength, preserved binding, a TP53/MDM2 functional effect,
+a long-lived-lineage-specific effect, or a longevity mechanism. A3
+leave-one-control-out and residue-block jackknife are unrun, NEGATOME metric
+compatibility is unresolved, and the single-long-lived-lineage limitation
+remains explicit. Gate 8 disposition is not run, Gate 8 and Gate 9 are not
+promoted, and no biological claim is made.
+
+The exact next permitted action after merge is
+`run_leave_one_control_out_and_residue_block_jackknife`.
