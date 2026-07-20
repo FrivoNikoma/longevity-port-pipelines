@@ -1,4 +1,4 @@
-contract_version: 1
+contract_version: 2
 stage: A2_mapping_cutoff_alignment_sensitivity
 lane: tp53_mdm2_elephant_mdm2_scoped
 affected_gate: Gate_8_input_robustness_only
@@ -47,15 +47,15 @@ committed_results:
   full_chain_mapping:
     path: data/input/tp53_mdm2_1ycr_q00987_full_chain_mapping.csv
     rows: 85
-    raw_sha256: 2794c3adabb69ff739e24af6179d587424acab293407d44b536bf0a8111dbb5f
+    canonical_text_sha256: 2794c3adabb69ff739e24af6179d587424acab293407d44b536bf0a8111dbb5f
   scenario_table:
     path: data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_results.csv
     rows: 485
-    raw_sha256: 33ec3211de227cab56367528019f7a17041759e29a8cf16795dd41db5ae26c07
+    canonical_text_sha256: 33ec3211de227cab56367528019f7a17041759e29a8cf16795dd41db5ae26c07
   summary_table:
     path: data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv
     rows: 3
-    raw_sha256: db58d84a53b2a891eb80d5e065457355c48d6a198cea7a84b47d44b392895ba4
+    canonical_text_sha256: db58d84a53b2a891eb80d5e065457355c48d6a198cea7a84b47d44b392895ba4
   sensitivity_status: stable_under_predeclared_a2_grid
   exact_allowed_next_action: run_leave_one_control_out_and_residue_block_jackknife
 

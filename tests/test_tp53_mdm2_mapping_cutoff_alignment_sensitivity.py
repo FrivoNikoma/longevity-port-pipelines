@@ -1,6 +1,7 @@
 """Ground-truth tests for scoped MDM2 A2 sensitivity decisions."""
 
 import copy
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ import pytest
 from longevity_port_pipelines.stages.tp53_mdm2_mapping_cutoff_alignment_sensitivity import (
     EXPECTED_SCENARIO_COUNTS,
     TARGETS,
+    _require_canonical_text_sha256,
     build_full_chain_mapping_rows,
     build_summary_rows,
     load_and_validate_result,
@@ -76,12 +78,41 @@ def test_full_chain_mapping_rejects_unbound_pdb_bytes(tmp_path: Path) -> None:
         )
 
 
+@pytest.mark.parametrize("line_ending", ["\n", "\r\n", "\r"])
+@pytest.mark.parametrize("utf8_bom", [b"", b"\xef\xbb\xbf"])
+def test_committed_text_hash_is_transport_invariant(
+    tmp_path: Path,
+    line_ending: str,
+    utf8_bom: bytes,
+) -> None:
+    path = tmp_path / "result.csv"
+    canonical_text = "column_a,column_b\nvalue_a,value_b\n"
+    expected = hashlib.sha256(canonical_text.encode("utf-8")).hexdigest()
+    transported = canonical_text.replace("\n", line_ending).encode("utf-8")
+    path.write_bytes(utf8_bom + transported)
+
+    _require_canonical_text_sha256(path, expected)
+
+
+def test_committed_text_hash_rejects_content_mutation(tmp_path: Path) -> None:
+    path = tmp_path / "result.csv"
+    canonical_text = "column_a,column_b\nvalue_a,value_b\n"
+    expected = hashlib.sha256(canonical_text.encode("utf-8")).hexdigest()
+    path.write_bytes(b"column_a,column_b\r\nvalue_a,changed\r\n")
+
+    with pytest.raises(ValueError, match="canonical text SHA-256 changed"):
+        _require_canonical_text_sha256(path, expected)
+
+
 def test_a2_schema_preserves_gate_and_claim_boundaries() -> None:
     schema = (
         ROOT / "data/config/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_schema.yaml"
     ).read_text(encoding="utf-8")
 
+    assert "contract_version: 2" in schema
     assert "expected_total_scenarios: 485" in schema
+    assert schema.count("canonical_text_sha256:") == 3
+    assert "raw_sha256:" not in schema
     assert "gate8_disposition_run: false" in schema
     assert "gate9_promotion_forbidden: true" in schema
     assert "biological_claim_forbidden: true" in schema
@@ -167,5 +198,7 @@ def test_a2_result_document_records_exact_boundaries() -> None:
     assert "0.50870249919165011" in documentation
     assert "0.55829361372217545" in documentation
     assert "run_leave_one_control_out_and_residue_block_jackknife" in documentation
+    assert "Canonical text SHA-256" in documentation
+    assert "Windows checkout conversion" in documentation
     assert "does not perform Gate 8 disposition" in normalized
     assert "does not open Gate 9" in normalized
