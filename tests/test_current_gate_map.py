@@ -3489,3 +3489,30 @@ def test_current_gate_map_records_scoped_mdm2_mapped_interface_result() -> None:
     assert "do not establish preserved binding" in normalized
     assert "Gate 8 and Gate 9 are not promoted" in normalized
     assert "no biological claim is made" in normalized
+
+
+def test_current_gate_map_records_scoped_mdm2_a2_sensitivity_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    normalized = " ".join(text.split())
+
+    for required in (
+        "Scoped MDM2 A2 mapping/cutoff/alignment sensitivity result",
+        "tp53_mdm2_1ycr_q00987_full_chain_mapping.csv",
+        "tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_results.csv",
+        "tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv",
+        "225 elephant, 200 mouse, and 60 hamster scenarios",
+        "0.58594152898225094",
+        "0.65347819296783838",
+        "0.50870249919165011",
+        "0.57404154378007133",
+        "0.55829361372217545",
+        "0.61265994493139697",
+        "stable_under_predeclared_a2_grid",
+        "run_leave_one_control_out_and_residue_block_jackknife",
+    ):
+        assert required in text
+
+    assert "all 485 metric-compatible shuffled lower-tail checks pass" in normalized
+    assert "Gate 8 disposition is not run" in normalized
+    assert "Gate 8 and Gate 9 are not promoted" in normalized
+    assert "no biological claim is made" in normalized

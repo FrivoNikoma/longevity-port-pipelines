@@ -243,6 +243,7 @@ For the scoped MDM2 lane, the audited local-only runner is:
 ```bash
 uv run tp53-mdm2-mapped-interface-enrichment             # input/mapping dry run
 uv run tp53-mdm2-mapped-interface-enrichment --yes-run   # explicit local calculation
+uv run tp53-mdm2-mapping-cutoff-alignment-sensitivity    # A2 dry run
 ```
 
 It consumes exact externally bound sequences and existing ignored ESMC `.npy`
@@ -255,6 +256,17 @@ The committed three-row MDM2 result is Gate 8 input only. It is not a
 long-lived-vs-short-lived contrast or disposition, does not apply the earlier
 NEGATOME value across incompatible metric families, does not open Gate 9, and
 supports no biological claim.
+
+The A2 command binds the exact local `1YCR` structure, reconstructs the full
+85-residue `1YCR:A -> Q00987` coordinate map, and enumerates all optimal traces
+for five interface cutoffs and five alignment policies. Only an explicit
+`--yes-run` computes the 485 metric-compatible scenarios. The committed A2
+result is stable under the predeclared grid: all 485 ratios remain below 1,
+all mappings are complete, and every shuffled lower-tail check passes. This
+permits only the separate A3 leave-one-control-out and residue-block jackknife
+step; it does not run Gate 8 disposition and does not open Gate 9. Exact
+result ranges and claim boundaries are documented in
+`docs/tp53_mdm2_mapping_cutoff_alignment_sensitivity_result.md`.
 
 Or run all stages at once:
 

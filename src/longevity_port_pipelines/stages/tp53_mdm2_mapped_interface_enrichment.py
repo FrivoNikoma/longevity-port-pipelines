@@ -25,6 +25,7 @@ from longevity_port_pipelines.stages import (
 )
 from longevity_port_pipelines.stages.analyze import (
     align_and_compute_deltas,
+    compute_deltas_from_alignment,
     compute_enrichment,
     mann_whitney_test,
     shuffled_control_distribution,
@@ -553,11 +554,19 @@ def compute_mapped_interface_metrics(
     reference: PerResidueEmbedding,
     target: PerResidueEmbedding,
     interface_reference_indices: tuple[int, ...],
+    alignment: ReferenceTargetAlignment | None = None,
     shuffle_seed: int = SHUFFLE_SEED,
     shuffle_control_count: int = SHUFFLE_CONTROL_COUNT,
 ) -> MappedInterfaceMetrics:
     """Compute primary and shuffled metrics in one residue-level family."""
-    deltas, aligned_positions = align_and_compute_deltas(reference, target)
+    if alignment is None:
+        deltas, aligned_positions = align_and_compute_deltas(reference, target)
+    else:
+        deltas, aligned_positions = compute_deltas_from_alignment(
+            reference,
+            target,
+            alignment,
+        )
     if deltas.size == 0 or not np.isfinite(deltas).all():
         raise ValueError("Aligned per-residue deltas are empty or non-finite")
 

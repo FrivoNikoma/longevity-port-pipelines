@@ -10,6 +10,7 @@ from scipy import stats
 from longevity_port_pipelines.models import EnrichmentResult
 from longevity_port_pipelines.stages.embed import PerResidueEmbedding
 from longevity_port_pipelines.stages.reference_coordinate_mapping import (
+    ReferenceTargetAlignment,
     align_reference_to_target,
 )
 
@@ -28,20 +29,47 @@ def align_and_compute_deltas(
     Returns (deltas, aligned_ref_positions) — both shape (n_aligned,).
     """
     alignment = align_reference_to_target(ref.sequence, orth.sequence)
+    return compute_deltas_from_alignment(ref, orth, alignment)
 
-    deltas = []
-    aligned_ref_positions = []
+
+def compute_deltas_from_alignment(
+    ref: PerResidueEmbedding,
+    orth: PerResidueEmbedding,
+    alignment: ReferenceTargetAlignment,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Compute residue deltas from the exact audited alignment trace.
+
+    This explicit-trace variant prevents a sensitivity audit from validating
+    one optimal alignment and then silently recalculating the metric with a
+    different first-optimal trace.
+    """
+    if ref.embeddings.shape[0] != len(ref.sequence):
+        raise ValueError("Reference embedding rows do not match its sequence length")
+    if orth.embeddings.shape[0] != len(orth.sequence):
+        raise ValueError("Target embedding rows do not match its sequence length")
+
+    deltas: list[float] = []
+    aligned_ref_positions: list[int] = []
     for pair in alignment.aligned_pairs:
         r_idx = pair.reference_index
         o_idx = pair.target_index
         if r_idx >= ref.embeddings.shape[0] or o_idx >= orth.embeddings.shape[0]:
-            continue
+            raise ValueError("Alignment pair is outside an embedding coordinate range")
+        if r_idx < 0 or o_idx < 0:
+            raise ValueError("Ungapped aligned-pair indices must be non-negative")
+        if ref.sequence[r_idx] != pair.reference_residue:
+            raise ValueError("Alignment reference residue differs from embedding sequence")
+        if orth.sequence[o_idx] != pair.target_residue:
+            raise ValueError("Alignment target residue differs from embedding sequence")
 
         delta = np.linalg.norm(ref.embeddings[r_idx] - orth.embeddings[o_idx])
         deltas.append(float(delta))
         aligned_ref_positions.append(int(r_idx))
 
-    return np.array(deltas), np.array(aligned_ref_positions)
+    return np.asarray(deltas, dtype=np.float64), np.asarray(
+        aligned_ref_positions,
+        dtype=np.int64,
+    )
 
 
 def compute_enrichment(
