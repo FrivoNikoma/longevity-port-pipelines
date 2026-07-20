@@ -901,10 +901,10 @@ def _read_csv_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _require_raw_sha256(path: Path, expected: str) -> None:
-    observed = hashlib.sha256(path.read_bytes()).hexdigest()
+def _require_canonical_text_sha256(path: Path, expected: str) -> None:
+    observed = canonical_text_sha256(path)
     if observed != expected:
-        raise ValueError(f"{path.as_posix()}: raw SHA-256 changed")
+        raise ValueError(f"{path.as_posix()}: canonical text SHA-256 changed")
 
 
 def load_and_validate_result(
@@ -914,9 +914,9 @@ def load_and_validate_result(
     mapping_path = root / DEFAULT_FULL_MAPPING_TABLE
     scenario_path = root / DEFAULT_SCENARIO_TABLE
     summary_path = root / DEFAULT_SUMMARY_TABLE
-    _require_raw_sha256(mapping_path, EXPECTED_FULL_MAPPING_SHA256)
-    _require_raw_sha256(scenario_path, EXPECTED_SCENARIO_RESULT_SHA256)
-    _require_raw_sha256(summary_path, EXPECTED_SUMMARY_RESULT_SHA256)
+    _require_canonical_text_sha256(mapping_path, EXPECTED_FULL_MAPPING_SHA256)
+    _require_canonical_text_sha256(scenario_path, EXPECTED_SCENARIO_RESULT_SHA256)
+    _require_canonical_text_sha256(summary_path, EXPECTED_SUMMARY_RESULT_SHA256)
 
     mapping_rows = _read_csv_rows(mapping_path)
     scenario_rows = _read_csv_rows(scenario_path)

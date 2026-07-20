@@ -10,11 +10,17 @@ claim.
 
 ## Bound artifacts
 
-| Artifact | Rows | Raw SHA-256 |
+| Artifact | Rows | Canonical text SHA-256 |
 | --- | ---: | --- |
 | `data/input/tp53_mdm2_1ycr_q00987_full_chain_mapping.csv` | 85 | `2794c3adabb69ff739e24af6179d587424acab293407d44b536bf0a8111dbb5f` |
 | `data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_results.csv` | 485 | `33ec3211de227cab56367528019f7a17041759e29a8cf16795dd41db5ae26c07` |
 | `data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv` | 3 | `db58d84a53b2a891eb80d5e065457355c48d6a198cea7a84b47d44b392895ba4` |
+
+The three CSV hashes use UTF-8 text after an optional BOM is removed and
+`CRLF` or bare `CR` line endings are normalized to `LF`. This makes committed
+result validation invariant to Git's Windows checkout conversion while still
+binding column order, row order, field content, delimiters, and the trailing
+newline.
 
 The PDB bytes are bound to SHA-256
 `7b4e503dea1fe3a6966b9676a1b98caf511c735cde01029cd0998e2319e75493`.
