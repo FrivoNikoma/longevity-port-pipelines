@@ -1,0 +1,97 @@
+contract_version: 1
+contract_status: committed_result
+stage: tp53_mdm2_loco_residue_block_jackknife
+command: tp53-mdm2-loco-residue-block-jackknife
+purpose: >-
+  Separate shared MDM2 interface-depletion robustness from sensitivity of the
+  elephant-versus-short-lived contrast to control identity and residue blocks.
+
+inputs:
+  committed_a1:
+    table: data/input/tp53_mdm2_mdm2_mapped_interface_enrichment_results.csv
+    validation: canonical_text_sha256
+  committed_a2:
+    summary: data/input/tp53_mdm2_mdm2_mapping_cutoff_alignment_sensitivity_summary.csv
+    required_status: stable_under_predeclared_a2_grid
+    required_allowed_next_action: run_leave_one_control_out_and_residue_block_jackknife
+    validation: canonical_text_sha256
+  runtime:
+    exact_sequences: required
+    existing_ignored_embeddings: required
+    network_allowed: false
+
+residue_block_contract:
+  source_mapping: data/input/tp53_mdm2_1ycr_q00987_interface_mapping.csv
+  source_coordinate_system: Q00987_zero_based
+  expected_source_interface_count: 47
+  sort_by_reference_coordinate: true
+  block_count: 5
+  block_sizes: [10, 10, 9, 9, 9]
+  removed_residues_excluded_entirely: true
+  removed_residues_reclassified_as_noninterface: false
+
+contrast_contract:
+  long_lived_species: elephant
+  short_lived_controls: [mouse, hamster]
+  short_lived_baseline: arithmetic_mean
+  generic_contrast_classification_reused: true
+  scenarios:
+    full:
+      - full_short_lived_baseline
+    leave_one_control_out:
+      - leave_mouse_out
+      - leave_hamster_out
+    residue_block_jackknife_count: 5
+
+outputs:
+  species_jackknife:
+    path: data/input/tp53_mdm2_mdm2_residue_block_jackknife_species_results.csv
+    expected_rows: 15
+    canonical_text_sha256: ac27176b72e691e50ca3daf55ec69ee0d386c01242e6a5ad7c50f7326e9bd90b
+  contrast_robustness:
+    path: data/input/tp53_mdm2_mdm2_contrast_robustness_results.csv
+    expected_rows: 8
+    canonical_text_sha256: 2b83c153f729f19f82cd657af30fb4c9d9f29bddeaa79e4c78e37bcae96b6762
+  summary:
+    path: data/input/tp53_mdm2_mdm2_loco_residue_block_jackknife_summary.csv
+    expected_rows: 1
+    canonical_text_sha256: 90158dd18a67dd509df82f25bd30137979b879809a77fbbc702b8d09b576bcb3
+  committed_hash_policy: canonical_text_sha256
+
+summary_dimensions:
+  - shared_interface_depletion_robustness
+  - block_jackknife_robustness
+  - control_identity_robustness
+  - longevity_contrast_interpretation_status
+
+expected_interpretation_is_not_hardcoded: true
+expected_from_committed_a1_arithmetic: >-
+  shared_interface_constraint_robust_but_longevity_contrast_not_robust
+
+committed_result:
+  species_jackknife_row_count: 15
+  contrast_scenario_row_count: 8
+  summary_row_count: 1
+  block_sizes: [10, 10, 9, 9, 9]
+  shared_interface_depletion_robustness: robust
+  block_jackknife_robustness: robust
+  full_contrast_sign: positive
+  loco_sign_flip_count: 1
+  control_identity_robustness: control_identity_sensitive
+  block_contrast_sign_flip_count: 1
+  block_contrast_sign_robustness: block_sensitive
+  generic_contrast_class_stable: true
+  longevity_contrast_interpretation_status: >-
+    shared_interface_constraint_robust_but_longevity_contrast_not_robust
+  exact_allowed_next_action: >-
+    add_independent_short_lived_controls_or_limit_to_shared_interface_constraint
+
+boundaries:
+  new_embeddings_forbidden: true
+  biohub_esmc_forbidden: true
+  structural_model_calls_forbidden: true
+  data_output_commit_forbidden: true
+  gate8_disposition_run: false
+  gate8_promotion_forbidden: true
+  gate9_promotion_forbidden: true
+  biological_claim_forbidden: true

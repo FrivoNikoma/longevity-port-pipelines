@@ -107,6 +107,41 @@ def test_mapped_interface_metrics_uses_the_supplied_alignment_trace() -> None:
     assert result.enrichment_ratio == 0.25
 
 
+def test_mapped_interface_metrics_excludes_deleted_block_from_both_groups() -> None:
+    sequence = "ACDEFGHI"
+    reference_values = np.zeros((len(sequence), 2), dtype=np.float32)
+    target_values = np.ones((len(sequence), 2), dtype=np.float32)
+    target_values[0] = 20.0
+    target_values[1:3] = 0.2
+
+    result = compute_mapped_interface_metrics(
+        reference=_embedding(sequence, reference_values, 9606),
+        target=_embedding(sequence, target_values, 9785),
+        interface_reference_indices=(1, 2),
+        excluded_reference_indices=(0,),
+        shuffle_control_count=20,
+    )
+
+    assert result.aligned_residue_count == 7
+    assert result.mapped_interface_count == 2
+    assert result.noninterface_count == 5
+    assert result.noninterface_mean_delta == pytest.approx(np.sqrt(2.0))
+
+
+def test_mapped_interface_metrics_rejects_excluded_residue_left_in_mask() -> None:
+    sequence = "ACDEFGHI"
+    values = np.zeros((len(sequence), 2), dtype=np.float32)
+
+    with pytest.raises(ValueError, match="cannot remain in the interface mask"):
+        compute_mapped_interface_metrics(
+            reference=_embedding(sequence, values, 9606),
+            target=_embedding(sequence, values + 1.0, 9785),
+            interface_reference_indices=(0, 1),
+            excluded_reference_indices=(0,),
+            shuffle_control_count=20,
+        )
+
+
 def test_committed_result_has_exact_three_row_panel() -> None:
     rows = load_and_validate_result(ROOT)
 

@@ -2269,11 +2269,62 @@ is `stable_under_predeclared_a2_grid`.
 
 This remains a technical interface-depletion robustness result. It does not
 establish binding strength, preserved binding, a TP53/MDM2 functional effect,
-a long-lived-lineage-specific effect, or a longevity mechanism. A3
-leave-one-control-out and residue-block jackknife are unrun, NEGATOME metric
-compatibility is unresolved, and the single-long-lived-lineage limitation
-remains explicit. Gate 8 disposition is not run, Gate 8 and Gate 9 are not
-promoted, and no biological claim is made.
+a long-lived-lineage-specific effect, or a longevity mechanism. At the A2
+checkpoint, A3 leave-one-control-out and residue-block jackknife were unrun,
+NEGATOME metric compatibility was unresolved, and the
+single-long-lived-lineage limitation remained explicit. Gate 8 disposition
+was not run, Gate 8 and Gate 9 were not promoted, and no biological claim was
+made.
 
 The exact next permitted action after merge is
 `run_leave_one_control_out_and_residue_block_jackknife`.
+
+## Scoped MDM2 A3 control-identity and residue-block robustness result
+
+The current A3 technical result is recorded in three committed tables:
+
+- `data/input/tp53_mdm2_mdm2_residue_block_jackknife_species_results.csv` — 15 rows;
+- `data/input/tp53_mdm2_mdm2_contrast_robustness_results.csv` — 8 rows;
+- `data/input/tp53_mdm2_mdm2_loco_residue_block_jackknife_summary.csv` — 1 row.
+
+Their canonical-text SHA-256 values are, respectively,
+`ac27176b72e691e50ca3daf55ec69ee0d386c01242e6a5ad7c50f7326e9bd90b`,
+`2b83c153f729f19f82cd657af30fb4c9d9f29bddeaa79e4c78e37bcae96b6762`,
+and `90158dd18a67dd509df82f25bd30137979b879809a77fbbc702b8d09b576bcb3`.
+The exact method, numerical results, and interpretation boundaries are in
+`docs/tp53_mdm2_loco_residue_block_jackknife_result.md`.
+
+The 47 committed mapped interface positions are sorted in `Q00987`
+zero-based coordinate order and split deterministically into blocks of
+`10/10/9/9/9`. Removed residues are excluded entirely and are not moved into
+the non-interface background. Five blocks across elephant `G3SX30`, mouse
+`P23804`, and hamster `A0ABM2YB85` produce 15 species rows. All 15 enrichment
+ratios remain below 1 and all 15 metric-compatible shuffled lower-tail checks
+pass at 0.05, so shared interface depletion and the block jackknife are both
+recorded as `robust`.
+
+The eight contrast rows contain the full short-lived baseline, two
+leave-one-control-out scenarios, and five block-jackknife scenarios. The full
+contrast delta is `0.036270818839664654` with positive sign. The sign reverses
+for `leave_mouse_out`, with delta `-0.0055259455763676524`, but not for
+`leave_hamster_out`. It also reverses for
+`block_4_short_lived_baseline`, with delta `-0.059953233723955557`. Every
+scenario retains the generic class `shared_interface_constraint`.
+
+The summary therefore records
+`shared_interface_depletion_robustness=robust`,
+`control_identity_robustness=control_identity_sensitive`, and
+`block_contrast_sign_robustness=block_sensitive`. The exact combined status
+is
+`shared_interface_constraint_robust_but_longevity_contrast_not_robust`.
+
+This result supports only a robust shared technical interface-constraint
+pattern in the specified residue-level ESMC metric. It does not establish
+binding strength, preserved binding, a TP53/MDM2 functional effect, a
+long-lived-lineage-specific effect, or a longevity mechanism. The panel still
+contains only one long-lived lineage, NEGATOME metric compatibility remains
+unresolved, Gate 8 disposition is not run, Gate 8 and Gate 9 are not promoted,
+and no biological claim is made.
+
+The exact next permitted action is
+`add_independent_short_lived_controls_or_limit_to_shared_interface_constraint`.

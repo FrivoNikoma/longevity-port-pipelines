@@ -73,6 +73,7 @@ tp53-mdm2-generic-gated-contrast = "longevity_port_pipelines.stages.tp53_mdm2_ge
 tp53-mdm2-cofolding-readiness-context = "longevity_port_pipelines.stages.tp53_mdm2_cofolding_readiness_context:app"
 tp53-mdm2-mapped-interface-enrichment = "longevity_port_pipelines.stages.tp53_mdm2_mapped_interface_enrichment:app"
 tp53-mdm2-mapping-cutoff-alignment-sensitivity = "longevity_port_pipelines.stages.tp53_mdm2_mapping_cutoff_alignment_sensitivity:app"
+tp53-mdm2-loco-residue-block-jackknife = "longevity_port_pipelines.stages.tp53_mdm2_loco_residue_block_jackknife:app"
 lane-manifest-summary = "longevity_port_pipelines.stages.lane_manifest:main"
 
 [build-system]
