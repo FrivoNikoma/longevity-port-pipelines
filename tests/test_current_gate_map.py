@@ -3516,3 +3516,34 @@ def test_current_gate_map_records_scoped_mdm2_a2_sensitivity_result() -> None:
     assert "Gate 8 disposition is not run" in normalized
     assert "Gate 8 and Gate 9 are not promoted" in normalized
     assert "no biological claim is made" in normalized
+
+
+def test_current_gate_map_records_scoped_mdm2_a3_robustness_result() -> None:
+    text = read_doc("docs/current_gate_map.md")
+    normalized = " ".join(text.split())
+
+    for required in (
+        "Scoped MDM2 A3 control-identity and residue-block robustness result",
+        "tp53_mdm2_mdm2_residue_block_jackknife_species_results.csv",
+        "tp53_mdm2_mdm2_contrast_robustness_results.csv",
+        "tp53_mdm2_mdm2_loco_residue_block_jackknife_summary.csv",
+        "tp53_mdm2_loco_residue_block_jackknife_result.md",
+        "10/10/9/9/9",
+        "0.036270818839664654",
+        "leave_mouse_out",
+        "-0.0055259455763676524",
+        "block_4_short_lived_baseline",
+        "-0.059953233723955557",
+        "shared_interface_depletion_robustness=robust",
+        "control_identity_robustness=control_identity_sensitive",
+        "block_contrast_sign_robustness=block_sensitive",
+        "shared_interface_constraint_robust_but_longevity_contrast_not_robust",
+        "add_independent_short_lived_controls_or_limit_to_shared_interface_constraint",
+    ):
+        assert required in text
+
+    assert "Removed residues are excluded entirely" in text
+    assert "does not establish binding strength" in normalized
+    assert "Gate 8 disposition is not run" in normalized
+    assert "Gate 8 and Gate 9 are not promoted" in normalized
+    assert "no biological claim is made" in normalized

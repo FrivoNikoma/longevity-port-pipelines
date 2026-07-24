@@ -305,7 +305,7 @@ def _is_constrained(ratio: float, effect: float) -> bool:
     return ratio <= CONSTRAINED_THRESHOLD and effect <= -MIN_ABS_EFFECT
 
 
-def _classify_contrast(
+def classify_contrast(
     *,
     long_ratio: float,
     short_ratio: float,
@@ -472,7 +472,7 @@ def _ready_records(
         long_effect = _as_float(long_row, "effect_size")
         enrichment_delta = long_ratio - short_ratio
 
-        contrast_class, class_note = _classify_contrast(
+        contrast_class, class_note = classify_contrast(
             long_ratio=long_ratio,
             short_ratio=short_ratio,
             long_effect=long_effect,

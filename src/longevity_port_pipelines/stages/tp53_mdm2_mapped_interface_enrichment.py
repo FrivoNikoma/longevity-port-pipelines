@@ -555,6 +555,7 @@ def compute_mapped_interface_metrics(
     target: PerResidueEmbedding,
     interface_reference_indices: tuple[int, ...],
     alignment: ReferenceTargetAlignment | None = None,
+    excluded_reference_indices: tuple[int, ...] = (),
     shuffle_seed: int = SHUFFLE_SEED,
     shuffle_control_count: int = SHUFFLE_CONTROL_COUNT,
 ) -> MappedInterfaceMetrics:
@@ -569,6 +570,25 @@ def compute_mapped_interface_metrics(
         )
     if deltas.size == 0 or not np.isfinite(deltas).all():
         raise ValueError("Aligned per-residue deltas are empty or non-finite")
+
+    excluded_set = {int(index) for index in excluded_reference_indices}
+    if len(excluded_set) != len(excluded_reference_indices):
+        raise ValueError("Excluded reference indices must be unique")
+    if excluded_set.intersection(interface_reference_indices):
+        raise ValueError("Excluded reference indices cannot remain in the interface mask")
+    original_aligned_set = {int(position) for position in aligned_positions}
+    missing_excluded = excluded_set - original_aligned_set
+    if missing_excluded:
+        raise ValueError("Excluded reference indices must all be aligned")
+    if excluded_set:
+        keep = np.asarray(
+            [int(position) not in excluded_set for position in aligned_positions],
+            dtype=bool,
+        )
+        deltas = deltas[keep]
+        aligned_positions = aligned_positions[keep]
+    if deltas.size == 0:
+        raise ValueError("Excluded reference indices removed every aligned residue")
 
     aligned_set = {int(position) for position in aligned_positions}
     mapped_interface = tuple(index for index in interface_reference_indices if index in aligned_set)

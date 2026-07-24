@@ -244,6 +244,7 @@ For the scoped MDM2 lane, the audited local-only runner is:
 uv run tp53-mdm2-mapped-interface-enrichment             # input/mapping dry run
 uv run tp53-mdm2-mapped-interface-enrichment --yes-run   # explicit local calculation
 uv run tp53-mdm2-mapping-cutoff-alignment-sensitivity    # A2 dry run
+uv run tp53-mdm2-loco-residue-block-jackknife            # A3 dry run
 ```
 
 It consumes exact externally bound sequences and existing ignored ESMC `.npy`
@@ -251,6 +252,20 @@ files. It translates the `1YCR:A` interface to full-length `Q00987`
 coordinates, maps those positions to elephant, mouse, and hamster, and uses
 same-size shuffled masks in the identical residue-level L2 enrichment metric
 family. It makes no network or model call and writes no `data/output` artifact.
+
+The A3 command validates the full and two leave-one-control-out contrasts and
+five deterministic residue blocks. Removed interface residues are excluded
+entirely rather than reassigned to the non-interface background. Its explicit
+`--yes-run` mode writes 15 species rows, eight contrast rows, and one summary
+row while keeping Gate 8 disposition, Gate 9, and biological claims closed.
+The committed result preserves the shared below-one interface-depletion
+direction in all 15 species jackknives, but `leave_mouse_out` and block 4 each
+reverse the small full contrast sign. The combined status is
+`shared_interface_constraint_robust_but_longevity_contrast_not_robust`; the
+only next action is to add independent short-lived controls or limit the
+interpretation to shared interface constraint. Exact values and boundaries
+are documented in
+`docs/tp53_mdm2_loco_residue_block_jackknife_result.md`.
 
 The committed three-row MDM2 result is Gate 8 input only. It is not a
 long-lived-vs-short-lived contrast or disposition, does not apply the earlier
