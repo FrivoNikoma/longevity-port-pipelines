@@ -1,0 +1,76 @@
+{
+  "claim_boundaries": {
+    "beneficial_or_harmful_claim": false,
+    "binding_affinity_claim": false,
+    "biological_mechanism_claim": false,
+    "causal_longevity_claim": false,
+    "phylogenetic_correction_performed": false
+  },
+  "complex_id": "8g57__A1_Q8N6T7--8g57__H1_P04908",
+  "expected_accessions": {
+    "10036": "A0ABM2YD99",
+    "10090": "H2A3_MOUSE",
+    "10116": "D3ZVK7",
+    "10181": "G5BV53",
+    "59463": "G1P399"
+  },
+  "expected_taxids": [
+    10036,
+    10090,
+    10116,
+    10181,
+    59463
+  ],
+  "final_result": {
+    "allowed_next_action": "move_to_next_lane_and_reopen_only_with_divergence_decoupling_species",
+    "lane_status": "closed_pending_divergence_decoupling_species",
+    "raw_ordering": "all_long_lived_above_all_short_lived_controls",
+    "scientific_classification": "sequence_divergence_confounding_not_resolved"
+  },
+  "independent_long_lived_lineages": 2,
+  "mapped_ligand_interface_residue_count": 38,
+  "metric": {
+    "distance_cutoff_angstrom": 8.0,
+    "family": "historical_sequence_mapped_interface_embedding_enrichment",
+    "model": "esmc-300m-2024-12",
+    "shuffled_control": "same_size_mask_seed_42_1000_permutations"
+  },
+  "resolved_chain_pair": "K/G",
+  "runtime_artifacts_not_committed": [
+    "per_residue_npy_embeddings",
+    "external_fasta_or_sequence_files",
+    "pdb_or_mmcif_cache",
+    "parquet_runtime_output",
+    "console_logs"
+  ],
+  "runtime_source_hashes": {
+    "five_species_comparison_canonical_text_sha256": "45deaa4244bc85ad11a0e7492e07f410d42ad045ae535d42228460a2d2997a52",
+    "mapped_enrichment_raw_sha256": "097a141f922e6282e8adb7084d8c4d5bd95d972f028e5187545b4bf6f9fc2562",
+    "mapped_verdict_canonical_text_sha256": "3b659345f36ed7e1315579167d4e970d2a53458e24ab4d374ed5e6c6f22dee72",
+    "runtime_coverage_canonical_text_sha256": "1d0dee74d97f404396ea7b29bab4a9d8c8aee2505b818043180437efb72b58e6",
+    "runtime_selection_canonical_text_sha256": "72336f925c74b2679638d7ae8188f4cbd919cc80f7fa2c67d32b0d8fa1a02428",
+    "sequence_baseline_canonical_text_sha256": "e1d2988a02117db2ef4b0e545f77accfedbc2a9a7d0848b447abc7e6a7c67f76",
+    "sequence_baseline_verdict_canonical_text_sha256": "d1b133b0c62502a161021f4c2494a08219ee4ee729cd6502af2e247554d639c5"
+  },
+  "schema_id": "sirt6_8g57_sequence_divergence_limited_result",
+  "schema_version": 1,
+  "short_lived_controls": 3,
+  "species_count": 5,
+  "tables": {
+    "disposition": {
+      "canonical_text_sha256": "fabd420555e975a63e66205291f3601880ccd62064afc26aa62c21888ebe830d",
+      "path": "data/input/sirt6_8g57_result_disposition.csv",
+      "row_count": 1
+    },
+    "mapped_interface": {
+      "canonical_text_sha256": "3a5207dc3ff4f2650f4caa23a0f1bc980a3932faa3bc518fa62d6b39f8ec8fa5",
+      "path": "data/input/sirt6_8g57_five_species_mapped_interface_results.csv",
+      "row_count": 5
+    },
+    "sequence_divergence_baseline": {
+      "canonical_text_sha256": "d44e2966793c64583ebcdec140335388901ae2086b52554d2cd52a7190e8df6c",
+      "path": "data/input/sirt6_8g57_sequence_divergence_baseline_results.csv",
+      "row_count": 5
+    }
+  }
+}
