@@ -1,0 +1,25 @@
+{
+  "ampk_lane_result": "The tested AMPK regulatory architecture is broadly conserved across long-lived lineages, with separate lineage-specific exceptions rather than one shared AMPK rewiring pattern.",
+  "candidate_csv": "<external-result-root>\\regulatory_motif_sprint_synthesis\\regulatory_motif_species_specific_candidates.csv",
+  "closed_shared_negative_count": 3,
+  "decision": "Stop broad AMPK motif scanning. Do not launch ESMC or cofolding for simple site-presence questions. Preserve the three lineage-specific changes for targeted functional validation or phosphoproteomic review.",
+  "lineage_specific_direct_candidate_count": 3,
+  "lineage_specific_mechanism_count": 3,
+  "main_result": "No direct regulatory-site change repeated across two or more tested long-lived lineages. Three direct site losses were lineage-specific: NMR ULK1 S467G, Myotis ACACB S222G and Myotis PARP1 K521R.",
+  "mechanism_count": 6,
+  "next_scientific_lane": "TP53 elephant retrogene BOX-I evidence audit, handled retrogene-by-retrogene and without assuming all copies are functional or adaptively selected.",
+  "nmr_parp1_resolved_residue": "K",
+  "repeated_long_lived_direct_candidate_count": 0,
+  "schema_version": 1,
+  "scope": "regulatory_motif_result_sprint_only",
+  "scorecard_csv": "<external-result-root>\\regulatory_motif_sprint_synthesis\\regulatory_motif_sprint_scorecard.csv",
+  "source_checks": {
+    "ACC_signal_status": "closed_as_conserved_ACACA_S80_and_ACACB_S222_without_repeated_long_lived_rewiring",
+    "FOXO3_signal_status": "closed_as_conserved_FOXO3_AKT_phosphosite_motifs_without_repeated_long_lived_rewiring",
+    "RPTOR_signal_status": "closed_as_conserved_RPTOR_AMPK_phosphosites_without_repeated_long_lived_rewiring",
+    "SIRT6_PARP1_signal_status": "insufficient_paired_species_coverage_for_SIRT6_PARP1_site_contrast",
+    "TSC2_signal_status": "closed_as_conserved_TSC2_AKT_phosphosite_motifs_without_repeated_long_lived_rewiring",
+    "ULK1_rescue_status": "ULK1_S467_contrast_remains_unresolved_for_myotis",
+    "ULK1_signal_status": "closed_as_conserved_ULK1_AMPK_mTOR_phosphosites_without_repeated_long_lived_rewiring"
+  }
+}

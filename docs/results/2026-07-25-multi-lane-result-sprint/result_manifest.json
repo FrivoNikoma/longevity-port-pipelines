@@ -1,0 +1,70 @@
+{
+  "analysis_root_label": "analysis_20260725",
+  "branch": "record-multi-lane-result-sprint-checkpoint",
+  "checkpoint_artifact_root": "docs/results/2026-07-25-multi-lane-result-sprint",
+  "checkpoint_created_at": "2026-07-26T12:33:36+04:00",
+  "checkpoint_document": "docs/results/2026-07-25-multi-lane-result-sprint-checkpoint.md",
+  "committed_external_source_artifact_count": 3,
+  "curated_artifact_count_excluding_document": 7,
+  "curated_file_hashes_before_manifest": {
+    "docs/results/2026-07-25-multi-lane-result-sprint/candidate_shortlist.csv": {
+      "sha256": "ad39996f9277e4c63c002627561a992f406e832a1d61d509ded0ca147db5e171",
+      "size_bytes": 2598
+    },
+    "docs/results/2026-07-25-multi-lane-result-sprint/lane_scorecard.csv": {
+      "sha256": "24b945e2eb9b54599a988828041ea85d5b2605fd1a9f2243dba7c700296bf2b6",
+      "size_bytes": 8167
+    },
+    "docs/results/2026-07-25-multi-lane-result-sprint/regulatory_motif_species_specific_candidates.csv": {
+      "sha256": "ee1735d582319b69de9de88f078c08127b22060200f7db3f93f5fd01bd32af64",
+      "size_bytes": 1500
+    },
+    "docs/results/2026-07-25-multi-lane-result-sprint/regulatory_motif_sprint_scorecard.csv": {
+      "sha256": "494612f0b2300ce0440a117b1007912f66ed0736bb613dea6336609d2030c407",
+      "size_bytes": 3093
+    },
+    "docs/results/2026-07-25-multi-lane-result-sprint/regulatory_motif_sprint_summary.json": {
+      "sha256": "d70e4a758dfc4c51dde388cbbcadf0fbfca43454ceaed5f02ef43b89f0673698",
+      "size_bytes": 2178
+    },
+    "docs/results/2026-07-25-multi-lane-result-sprint/source_artifact_inventory.csv": {
+      "sha256": "ce0d61c9c4cbe27585382108527dc18bc3a96f57ff424805cdd6071c1c2328b0",
+      "size_bytes": 92390
+    }
+  },
+  "embedding_model_used_in_prior_embedding_lanes": "esmc-300m-2024-12",
+  "execution_notes": {
+    "biohub_called_for_checkpoint": false,
+    "boltz_called_for_checkpoint": false,
+    "full_test_suite_required": false,
+    "new_embeddings_created_for_checkpoint": false,
+    "reason_full_test_suite_not_required": "Documentation and curated result artifacts only; no implementation changes."
+  },
+  "external_source_artifact_count": 511,
+  "fork": "FrivoNikoma/longevity-port-pipelines",
+  "fork_main_sha_at_creation": "50f0eca060ec0f6e20bb9d488438834ba146d789",
+  "lane_count": 14,
+  "main_result": "Across the completed multi-lane sprint, no direct regulatory-site change repeated across two or more tested long-lived lineages. The strongest positive computational result remains the HAS2 reciprocal multi-site rescue. TSC1 M771V remains a moderate two-lineage regional candidate. Three direct regulatory changes are lineage-specific: NMR ULK1 S467G, Myotis ACACB S222G and Myotis PARP1 K521R.",
+  "origin_main_sha_at_creation": "50f0eca060ec0f6e20bb9d488438834ba146d789",
+  "repository": "longevity-genie/longevity-port-pipelines",
+  "repository_head_sha": "50f0eca060ec0f6e20bb9d488438834ba146d789",
+  "schema_version": 2,
+  "shortlisted_candidate_count": 5,
+  "source_artifact_policy": {
+    "absolute_local_paths_committed": false,
+    "committed_external_synthesis_files": [
+      "regulatory_motif_sprint_synthesis/regulatory_motif_species_specific_candidates.csv",
+      "regulatory_motif_sprint_synthesis/regulatory_motif_sprint_scorecard.csv",
+      "regulatory_motif_sprint_synthesis/regulatory_motif_sprint_summary.json"
+    ],
+    "excluded": "per-lane intermediate CSV/JSON copies, FASTA, embeddings, structures, caches and generated scripts",
+    "raw_intermediate_copies_committed": false,
+    "reason": "data/output is repository-ignored regenerable output; the PR commits only curated scientific summaries and a SHA-256 inventory of the external result sprint"
+  },
+  "source_validation": {
+    "empty_csv_count_accepted_as_zero_row_results": 8,
+    "generated_checkpoint_csv_count": 102,
+    "generated_checkpoint_file_count": 151,
+    "generated_checkpoint_json_count": 49
+  }
+}
