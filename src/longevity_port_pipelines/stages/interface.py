@@ -7,22 +7,29 @@ from pathlib import Path
 
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
+import biotite.structure.io.pdbx as pdbx
 import numpy as np
 import requests
 
 logger = logging.getLogger(__name__)
 
-RCSB_URL = "https://files.rcsb.org/download/{pdb_id}.pdb"
+RCSB_CIF_URL = "https://files.rcsb.org/download/{pdb_id}.cif"
 
 
 def download_pdb(pdb_id: str, dest_dir: Path) -> Path:
-    """Download a PDB file from RCSB if not already present."""
-    dest = dest_dir / f"{pdb_id.lower()}.pdb"
+    """Download an mmCIF structure from RCSB if not already present.
+
+    mmCIF (not the legacy PDB format) is used so that large multi-chain
+    assemblies — e.g. cryo-EM structures such as 8bot, which have no legacy
+    ``.pdb`` file at all — are still retrievable, and so that multi-character
+    chain identifiers used by PINDER system IDs are preserved.
+    """
+    dest = dest_dir / f"{pdb_id.lower()}.cif"
     if dest.exists():
         return dest
 
-    url = RCSB_URL.format(pdb_id=pdb_id.upper())
-    logger.info("Downloading PDB %s", pdb_id)
+    url = RCSB_CIF_URL.format(pdb_id=pdb_id.upper())
+    logger.info("Downloading mmCIF %s", pdb_id)
     dest.parent.mkdir(parents=True, exist_ok=True)
     resp = requests.get(url, timeout=60)
     resp.raise_for_status()
@@ -63,8 +70,12 @@ def extract_interface_residues(
     Returns (receptor_interface_indices, ligand_interface_indices) as
     zero-based residue indices within each chain.
     """
-    pdb_file = pdb.PDBFile.read(str(pdb_path))
-    structure = pdb.get_structure(pdb_file, model=1)
+    if pdb_path.suffix.lower() == ".cif":
+        cif_file = pdbx.CIFFile.read(str(pdb_path))
+        structure = pdbx.get_structure(cif_file, model=1, use_author_fields=True)
+    else:
+        pdb_file = pdb.PDBFile.read(str(pdb_path))
+        structure = pdb.get_structure(pdb_file, model=1)
 
     amino = struc.filter_amino_acids(structure)
 

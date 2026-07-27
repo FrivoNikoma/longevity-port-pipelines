@@ -17,6 +17,12 @@ load_dotenv()
 InputDir = Annotated[Path, typer.Option(help="Directory for downloaded source data")]
 OutputDir = Annotated[Path, typer.Option(help="Directory for pipeline outputs")]
 Verbose = Annotated[bool, typer.Option("--verbose", "-v", help="Enable debug logging")]
+CandidateSet = Annotated[
+    str,
+    typer.Option(
+        help="Candidate set from data/config/candidate_sets.yaml (e.g. tp53_mdm2_elephant)"
+    ),
+]
 
 
 def _setup_logging(verbose: bool) -> None:
@@ -36,13 +42,14 @@ def select(
     input_dir: InputDir = Path("data/input"),
     output_dir: OutputDir = Path("data/output"),
     count: Annotated[int, typer.Option(help="Number of complexes to select")] = 10,
+    candidate_set: CandidateSet = "ampk_pilot",
     verbose: Verbose = False,
 ) -> None:
     """Stages 1-3: Load PINDER, filter by Foldseek conservation, annotate STRING hubs."""
     _setup_logging(verbose)
     from longevity_port_pipelines.stages import load_foldseek, load_pinder, load_string
 
-    cfg = _cfg(input_dir, output_dir, selection_count=count)
+    cfg = _cfg(input_dir, output_dir, selection_count=count, candidate_set=candidate_set)
     candidates = load_pinder.run_stage(cfg)
     candidates = load_foldseek.run_stage(candidates, cfg)
     load_string.run_stage(candidates, cfg)
@@ -262,6 +269,7 @@ def run(
     input_dir: InputDir = Path("data/input"),
     output_dir: OutputDir = Path("data/output"),
     count: Annotated[int, typer.Option(help="Number of complexes to select")] = 10,
+    candidate_set: CandidateSet = "ampk_pilot",
     pre_gpu_only: Annotated[
         bool, typer.Option(help="Stop after stage 4 (audit checkpoint)")
     ] = False,
@@ -271,7 +279,7 @@ def run(
     _setup_logging(verbose)
     from longevity_port_pipelines.flow import interface_signal_flow
 
-    cfg = _cfg(input_dir, output_dir, selection_count=count)
+    cfg = _cfg(input_dir, output_dir, selection_count=count, candidate_set=candidate_set)
     interface_signal_flow(cfg=cfg, pre_gpu_only=pre_gpu_only)
     typer.echo(f"Pipeline complete. Output: {output_dir}")
 
