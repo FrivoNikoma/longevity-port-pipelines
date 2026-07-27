@@ -1,0 +1,30 @@
+{
+  "beneficial_breakage_status": "candidate_not_causally_established",
+  "claim_boundaries": [
+    "Homology-guided ORF reconstruction is technical sequence evidence, not direct expression evidence.",
+    "The p53-R9 functional phenotype is published, but its dependence on W23G/MDM2 escape is untested.",
+    "Cross-study retrogene ordinal names are not stable identifiers without accession and exact sequence.",
+    "No BioHub, embedding, Boltz or structural-model call was performed."
+  ],
+  "exact_next_action": "test_p53_R9_WT_versus_G23W_reversion_with_MDM2_and_mitochondrial_apoptosis_readouts",
+  "exact_plasmid_insert_status": "not_independently_recovered",
+  "full_family_embedding_campaign_justified": false,
+  "nomenclature_interpretation": "The exploratory KF715866.1 168-aa reconstruction is not promoted as an independently validated historical TP53RTG12 sequence.",
+  "nomenclature_status": "cross_study_RTG9_TP53RTG12_ordinal_labels_not_stable",
+  "primary_sequence_resolved_candidate": {
+    "W23": "G",
+    "accession": "KF715863.1",
+    "length_aa": 180,
+    "sequence_sha256": "5513900767cd0d62d981f298e6960f8f80b753252c660d0fcaef4e91ecf685ef",
+    "sequence_status": "homology_guided_working_sequence",
+    "status": "retained",
+    "study_label": "p53-R9"
+  },
+  "record_count": 18,
+  "record_level_W23G_count": 18,
+  "repository_head": "06506c939458d4f626839b7cb3f32c6ca98be671",
+  "result": "KF715863.1_p53_R9_180aa_is_the_primary_accession_first_candidate",
+  "schema_version": 6,
+  "source_directory_name": "elephant_tp53_r9_accession_first_checkpoint_v5",
+  "source_execution": "external_local_audit_v5"
+}

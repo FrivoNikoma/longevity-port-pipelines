@@ -1,0 +1,114 @@
+{
+  "artifact_count_excluding_manifest": 12,
+  "artifacts": [
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/candidate_identity_scorecard.csv",
+      "sha256": "1c2e2bc6a3977f63b3c595335c3c2ce864bbdf4713127d1bc9793e66d6683716",
+      "size_bytes": 982
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/causal_hypotheses.csv",
+      "sha256": "8262290133e28bfb4d855e7a515fe50e36bfcd5aa25f64888da849909f96dcd1",
+      "size_bytes": 2843
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/checkpoint.md",
+      "sha256": "7367883e1bea5e68bd2b4b69516687ba43955d8eedcc85fdd2272838d88d838f",
+      "size_bytes": 4038
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/claim_tiers.csv",
+      "sha256": "46a5c2c449a3b826ab8ecb0269a63411fb5a30fe28ab94d1bc56ab10a8e86eb3",
+      "size_bytes": 1170
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/construct_panel.csv",
+      "sha256": "18e1c97c34ab7141bf32d7291fd2d4497e4d7922da2736e669097d38fb083347",
+      "size_bytes": 2145
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/experiment_spec.md",
+      "sha256": "8008ab472b16372770678b09cbd812b522d76944582f6a11dfe6fbb76f427acc",
+      "size_bytes": 7103
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/KF715863.1_p53_R9_180aa_working_sequence.fasta",
+      "sha256": "a0a78263a79c5ce01c1b785c0c17f450c39465d63906efabe1cc8e446adb0ae6",
+      "size_bytes": 243
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/lane_decision.csv",
+      "sha256": "55bade2bafee0cfa89a42ce6c7847c7cbc4f5f0439164c086f6cc287305abce7",
+      "size_bytes": 1086
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/published_evidence_conflicts.csv",
+      "sha256": "b5fb0616f1b76f909e0ba21bbbacd5522d2eaafc8fcffe74d0bf35d9c2067f71",
+      "size_bytes": 2107
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/readout_decision_table.csv",
+      "sha256": "fe74a318a96000f04ad8d7c7ae896e071f5785bb89fd24ed43c159db01465a7e",
+      "size_bytes": 2670
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/source_summary.json",
+      "sha256": "c11daa0630b4aebc733aff682c4ff06c8567f9bb5b39dbdfedd4f3d92b9c976f",
+      "size_bytes": 1635
+    },
+    {
+      "path": "docs/results/2026-07-27-elephant-tp53-r9-accession-first-checkpoint/working_sequence_manifest.csv",
+      "sha256": "195d05a203e82388c42df5b7d54f6fddac70f91b10e1f0948246da2cb513eaaa",
+      "size_bytes": 393
+    }
+  ],
+  "beneficial_breakage_status": "causal_experiment_pre_specified_not_yet_tested",
+  "checkpoint_id": "2026-07-27-elephant-tp53-r9-accession-first-checkpoint",
+  "exact_next_action": "execute_or_peer_review_p53_R9_WT_versus_G23W_causal_experiment",
+  "excluded_technical_comparator": {
+    "accession": "KF715866.1",
+    "predicted_length_aa": 168,
+    "status": "exploratory_homology_guided_reconstruction_not_promoted_as_historical_TP53RTG12_identity"
+  },
+  "experimental_package": {
+    "beneficial_breakage_support_requires": [
+      "orthogonal_MDM2_association_rescue_for_binding_causal",
+      "downstream_regulatory_consequence_for_regulatory_causal",
+      "phenotype_change_not_explained_by_matched_truncation_for_phenotype_causal"
+    ],
+    "claim_tier_count": 3,
+    "claim_tiers": [
+      "binding_causal",
+      "regulatory_causal",
+      "phenotype_causal"
+    ],
+    "construct_count": 8,
+    "hypothesis_count": 6,
+    "important_turnover_caveat": "p53_R9_180aa_lacks_predominant_C_terminal_p53_ubiquitination_sites",
+    "primary_contrast": "p53_R9_WT_G23_versus_p53_R9_G23W",
+    "published_conflict_count": 3,
+    "readout_rule_count": 7
+  },
+  "family_level_result": {
+    "audited_record_count": 18,
+    "interpretation": "shared_BOX1_breakage_not_copy_discriminating",
+    "record_level_W23G_count": 18
+  },
+  "full_family_embedding_campaign_justified": false,
+  "hash_basis": "UTF-8_no_BOM_LF_repository_bytes",
+  "identity_status": "accession_and_hashed_working_sequence_primary;cross_study_RTG9_TP53RTG12_labels_not_stable;exact_plasmid_insert_not_independently_recovered",
+  "manifest_self_excluded": true,
+  "primary_candidate": {
+    "W23": "G",
+    "accession": "KF715863.1",
+    "length_aa": 180,
+    "sequence_sha256": "5513900767cd0d62d981f298e6960f8f80b753252c660d0fcaef4e91ecf685ef",
+    "study_label": "p53-R9"
+  },
+  "repository_head": "06506c939458d4f626839b7cb3f32c6ca98be671",
+  "result_class": "positive_sequence_resolved_candidate",
+  "schema_version": 5,
+  "source_directory_name": "elephant_tp53_r9_accession_first_checkpoint_v5",
+  "source_execution": "external_local_audit_v5",
+  "total_checkpoint_file_count": 13
+}
