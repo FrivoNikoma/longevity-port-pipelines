@@ -3,7 +3,7 @@
 Date: 2026-07-28
 Candidate set: `sirt6_dna_repair`
 Status: **technical checkpoint / preliminary result — not a validated biological claim.**
-Second negative control (NEGATOME) not yet applied (see Limitations).
+Both negative controls (shuffled-mask + NEGATOME) applied.
 
 ## Summary
 
@@ -15,10 +15,11 @@ orthologs, human as reference.
 **Headline: on this panel, interface divergence is NOT concentrated in long-lived
 species.** No complex shows a significant long-lived-vs-short-lived contrast. The method
 itself behaves correctly — it detects significant interface localization in 25/42 tested
-(complex, chain, species) rows (Benjamini-Hochberg q < 0.05) and the shuffled-mask control
-passes everywhere (ratios ≈ 1.00) — but the signal is species-general, not
-longevity-specific. This is a clean, well-controlled negative result. The single
-longevity-leaning lead is the NF-κB RELA interface (see below).
+(complex, chain, species) rows (Benjamini-Hochberg q < 0.05), and **both** negative controls
+(shuffled-mask and NEGATOME) confirm the signals are interface-specific rather than generic
+embedding drift — but the signal is species-general, not longevity-specific. This is a clean,
+two-control negative result. The single longevity-leaning lead is the NF-κB RELA interface,
+which remains interface-specific under NEGATOME (see below).
 
 ## Method (brief)
 
@@ -84,13 +85,29 @@ core NHEJ machinery, independent of lifespan.
 - The method cleanly separates a **constrained** interface (Ku80, d ≈ −0.6, depletion
   p ≈ 1e-20) from a **divergent** one (RELA, enrichment ≈ 1.3) — it discriminates as intended.
 
-## Controls
+## Controls (both applied)
 
-- **Shuffled-mask control: PASS** (ratios ≈ 1.00 everywhere).
-- **NEGATOME control: NOT YET APPLIED.** This is the stronger non-interacting-pair control.
-  Its absence is the main open limitation. For the present negative result it is less
-  pivotal (the shuffled control already rules out artifactual enrichment), but it is
-  required before any positive longevity claim.
+- **Shuffled-mask control: PASS** (ratios ≈ 1.00 everywhere) — interface enrichment/depletion is not a sampling artifact.
+- **NEGATOME control: APPLIED** to all 48 rows, using beta-tubulin (TUBB, UniProt P07437) as a
+  generic non-interacting partner (the repo's own example negative). We report
+  `enr/neg = enrichment_ratio / negatome_control_ratio`; a value away from 1 means the interface
+  change differs from the change in coupling to a non-partner (i.e. interface-specific).
+
+| Complex | Chain | Protein | enr | negatome | enr/neg | Read |
+|---|---|---|---|---|---|---|
+| 8bot | ligand | Ku70 | 1.05 | 0.71 | 1.48 | interface-specific divergence |
+| 1nfi | receptor | RELA | 1.28 | 1.06 | 1.20 | interface-specific divergence |
+| 2mzd | receptor | EP300 | 1.03 | 0.91 | 1.14 | weak |
+| 1nfi | ligand | IκBα | 1.10 | 1.33 | 0.84 | within baseline |
+| 7vdr | ligand | p35 | 0.85 | 1.06 | 0.80 | interface-specific constraint |
+| 7vdr | receptor | CDK5 | 0.64 | 0.82 | 0.78 | interface-specific constraint |
+| 8bot | receptor | Ku80 | 0.77 | 1.09 | 0.71 | interface-specific constraint |
+
+Both controls agree: the **Ku80 interface is constrained beyond a non-partner baseline**
+(enr/neg 0.71) and the **RELA interface diverges beyond it** (enr/neg 1.20) — these signals are
+interface-specific, not generic embedding drift. Critically, the NEGATOME ratios are
+near-identical between long- and short-lived groups (e.g. Ku80 long 0.68 vs short 0.74), so the
+**longevity-contrast conclusion is unchanged and now holds under both controls**.
 
 ## Interpretation
 
@@ -106,7 +123,7 @@ core NHEJ machinery, independent of lifespan.
 ## Limitations
 
 - **Power:** 3 long vs 3 short species → contrast test underpowered (p floor 0.10).
-- **NEGATOME** second control not yet applied.
+- **NEGATOME** control uses a single generic partner (beta-tubulin) applied uniformly. A stronger version would use per-source-protein NEGATOME-verified non-interactors and 2–3 partners per source (median). Tubulin is a defensible generic non-partner but not guaranteed for proteins with cytoskeletal context (e.g. CDK5, p53).
 - **Embedding proxy:** L2 embedding shift is a heuristic for interface change, not a binding-energy measurement.
 - **Single structure per complex** defines the interface; hamster orthologs are predicted structures.
 - **Residue non-independence:** within-species p-values indicate localization, not literal independence-based significance.
@@ -128,7 +145,10 @@ uv run interactome
 uv run select --candidate-set sirt6_dna_repair --count 6   # --candidate-set added this sprint
 uv run orthologs
 uv run embed
-uv run analyze                                              # → data/output/enrichment.parquet
+uv run analyze                                              # → enrichment.parquet (shuffled control)
+# NEGATOME second control: put the committed pairs in place, then re-analyze
+cp data/input/sirt6_negatome_control_pairs.csv data/interim/negatome_control_pairs.csv
+uv run analyze                                              # now also populates negatome_control_ratio
 ```
 
 Two code changes were required this sprint: a `--candidate-set` CLI option on `select`
