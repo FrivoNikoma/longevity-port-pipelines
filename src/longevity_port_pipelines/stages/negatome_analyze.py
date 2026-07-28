@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import numpy as np
 
-from longevity_port_pipelines.stages.analyze import (
-    align_and_compute_deltas,
-    compute_enrichment,
-)
+from longevity_port_pipelines.stages.analyze import compute_enrichment
 from longevity_port_pipelines.stages.embed import PerResidueEmbedding
+from longevity_port_pipelines.stages.reference_coordinate_mapping import (
+    align_reference_to_target,
+)
 
 
 def _unit_vector(vector: np.ndarray) -> np.ndarray:
@@ -59,18 +59,36 @@ def compute_negatome_control_ratio(
     if not interface_residues:
         return 1.0
 
-    _, aligned_positions = align_and_compute_deltas(ref, orth)
-    if aligned_positions.size == 0:
+    # Align reference to ortholog and keep BOTH coordinate frames: reference-frame
+    # indices address the reference embedding, target-frame indices address the
+    # ortholog embedding. Indexing the (possibly shorter) ortholog array with
+    # reference positions previously raised an IndexError.
+    alignment = align_reference_to_target(ref.sequence, orth.sequence)
+    ref_positions_list: list[int] = []
+    orth_positions_list: list[int] = []
+    for pair in alignment.aligned_pairs:
+        if (
+            0 <= pair.reference_index < ref.embeddings.shape[0]
+            and 0 <= pair.target_index < orth.embeddings.shape[0]
+        ):
+            ref_positions_list.append(pair.reference_index)
+            orth_positions_list.append(pair.target_index)
+
+    if not ref_positions_list:
         return 1.0
 
+    ref_positions = np.asarray(ref_positions_list, dtype=np.int64)
+    orth_positions = np.asarray(orth_positions_list, dtype=np.int64)
+
     partner_pool = _mean_partner_pool(negative_partner_embeddings)
-    ref_coupling = _coupling_scores(ref.embeddings, aligned_positions, partner_pool)
-    orth_coupling = _coupling_scores(orth.embeddings, aligned_positions, partner_pool)
+    ref_coupling = _coupling_scores(ref.embeddings, ref_positions, partner_pool)
+    orth_coupling = _coupling_scores(orth.embeddings, orth_positions, partner_pool)
     coupling_deltas = np.abs(ref_coupling - orth_coupling)
 
+    # Interface membership is defined in reference coordinates.
     _, _, enrichment = compute_enrichment(
         coupling_deltas,
-        aligned_positions,
+        ref_positions,
         interface_residues,
     )
     return enrichment
