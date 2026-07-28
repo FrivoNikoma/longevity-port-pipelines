@@ -92,8 +92,10 @@ leans (ERK2 short-ward, TP53/2h1l long-ward) are non-significant and only flagge
 2. The NHEJ Ku70/Ku80 interface is under strong, lifespan-independent purifying selection — a robust
    finding in its own right, confirmed by both controls.
 3. No individual lead survives correction. The largest (non-significant) leans are ERK2 (short-ward)
-   and a p53 interface (2h1l, long-ward); RELA/NF-κB remains a mild long-ward lean. These are
-   candidates for a properly powered follow-up, not claims.
+   and a p53 interface (2h1l, long-ward). The RELA/NF-κB lean was followed up in detail
+   (`RELA_followup.md`) and does not hold: it is not convergent across long-lived lineages and is not
+   interface-specific under the corrected NEGATOME control (its earlier apparent specificity was an
+   artifact of the fixed indexing bug). No interface is a longevity-portability candidate on this panel.
 
 ## Limitations
 
