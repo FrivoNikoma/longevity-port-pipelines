@@ -24,6 +24,20 @@ SPECIES_REGISTRY: dict[str, Species] = {
     # Additional long-lived species (taxids verified via UniProt taxonomy API).
     "elephant": Species(name="elephant", taxid=9785, category=LifespanCategory.LONG_LIVED),
     "brandts_bat": Species(name="brandts_bat", taxid=109478, category=LifespanCategory.LONG_LIVED),
+    # Additional independent long-lived rodent lineages with good OMA/Ensembl coverage
+    # (confirmed empirically by the orthologs stage). Damaraland (Fukomys) and blind
+    # (Nannospalax) mole-rats are long-lived, cancer-resistant subterranean rodents from
+    # lineages independent of the naked mole-rat (Heterocephalus), which strengthens the
+    # cross-lineage convergence test. Bowhead whale, Brandt's/big-brown bat, and Mongolian
+    # gerbil were also tested but lack ortholog coverage for this panel.
+    "damaraland_mole_rat": Species(
+        name="damaraland_mole_rat", taxid=885580, category=LifespanCategory.LONG_LIVED
+    ),
+    "blind_mole_rat": Species(
+        name="blind_mole_rat", taxid=1026970, category=LifespanCategory.LONG_LIVED
+    ),
+    # Well-annotated short-lived control — boosts Mann-Whitney power (n depends on both groups).
+    "guinea_pig": Species(name="guinea_pig", taxid=10141, category=LifespanCategory.SHORT_LIVED),
 }
 
 LONG_LIVED_SPECIES = [
