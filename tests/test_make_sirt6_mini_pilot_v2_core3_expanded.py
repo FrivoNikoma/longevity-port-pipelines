@@ -7,6 +7,8 @@ from scripts.make_sirt6_mini_pilot_v2_core3_expanded import (
     core3_ready_ids,
 )
 
+from longevity_port_pipelines.config import LONG_LIVED_SPECIES, SHORT_LIVED_SPECIES
+
 
 def selection_frame() -> pl.DataFrame:
     return pl.DataFrame(
@@ -61,7 +63,10 @@ def test_core3_audit_covers_expanded_species_but_requires_only_core_species() ->
 
     readiness_audit = build_readiness_audit(selection, coverage)
 
-    assert readiness_audit["target_species"].n_unique() == 8
+    # The audit covers every target species in the registry (registry size, not a
+    # fixed literal, so extending the species panel does not silently break this).
+    expected_target_species = len(LONG_LIVED_SPECIES) + len(SHORT_LIVED_SPECIES)
+    assert readiness_audit["target_species"].n_unique() == expected_target_species
     assert "required_for_core3" in readiness_audit.columns
 
     records = {

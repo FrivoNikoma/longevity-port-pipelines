@@ -94,3 +94,42 @@ def test_negatome_control_ratio_higher_when_interface_coupling_shifts() -> None:
     )
 
     assert interface_ratio > background_ratio
+
+
+def test_negatome_control_ratio_handles_ortholog_shorter_than_reference() -> None:
+    """Regression: a reference longer than the ortholog must not raise IndexError.
+
+    The control previously indexed the ortholog embedding with reference-frame
+    positions, so any interface position beyond the ortholog length overflowed.
+    """
+    ref_seq = "ACDEFGHIKLMNPQRSTVWY" * 3  # 60 residues
+    orth_seq = "ACDEFGHIKLMNPQRSTVWY" * 2  # 40 residues (shorter)
+    rng = np.random.default_rng(0)
+    ref = PerResidueEmbedding(
+        complex_id="c1",
+        chain="receptor",
+        species_taxid=9606,
+        model_name="test-model",
+        sequence=ref_seq,
+        embeddings=rng.standard_normal((len(ref_seq), 8)).astype(np.float32),
+    )
+    orth = PerResidueEmbedding(
+        complex_id="c1",
+        chain="receptor",
+        species_taxid=10181,
+        model_name="test-model",
+        sequence=orth_seq,
+        embeddings=rng.standard_normal((len(orth_seq), 8)).astype(np.float32),
+    )
+    negative_partner = rng.standard_normal((12, 8)).astype(np.float32)
+
+    # Interface includes positions that exist only in the reference frame (45, 58).
+    ratio = compute_negatome_control_ratio(
+        ref=ref,
+        orth=orth,
+        interface_residues=[0, 5, 45, 58],
+        negative_partner_embeddings=negative_partner,
+    )
+
+    assert np.isfinite(ratio)
+    assert ratio > 0.0
