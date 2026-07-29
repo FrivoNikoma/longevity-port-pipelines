@@ -201,7 +201,11 @@ def run_stage_6(
             )
         results.append(result)
 
-    enrichment_df = pl.DataFrame([r.model_dump() for r in results]) if results else pl.DataFrame()
+    enrichment_df = (
+        pl.DataFrame([r.model_dump() for r in results], infer_schema_length=None)
+        if results
+        else pl.DataFrame()
+    )
     out_path = cfg.output_dir / "enrichment.parquet"
     enrichment_df.write_parquet(out_path)
     logger.info("Wrote enrichment table: %d results -> %s", len(results), out_path)

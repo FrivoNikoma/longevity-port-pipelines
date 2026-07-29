@@ -112,3 +112,75 @@ sets:
     interpretation_note: >
       Network-tuning module. Expected signal may involve altered regulatory sensitivity rather
       than complete gain/loss of binding.
+
+  cell_cycle:
+    description: "Cell-cycle restriction-point / tumor-suppressor control plus DNA-damage checkpoints and mitotic exit; motivated by the BMAL (large-bodied) cancer-resistance prediction (Peto's paradox)."
+    focus_genes:
+      - RB1
+      - TP53
+      - CDK4
+      - CDK6
+      - CDK2
+      - CDK1
+      - ATM
+      - ATR
+      - CDC20
+    partners:
+      - E2F1
+      - TFDP1
+      - CCND1
+      - CDKN2A
+      - CCNE1
+      - CCNA2
+      - CDKN1A
+      - CDKN1B
+      - MDM2
+      - MDM4
+      - CHEK1
+      - CHEK2
+      - WEE1
+      - CCNB1
+      - CDC25A
+      - CDC25C
+      - FZR1
+      - ANAPC2
+      - CDC27
+      - MAD2L1
+      - BUB1B
+    uniprot_ids:
+      - P06400   # RB1
+      - P04637   # TP53
+      - P11802   # CDK4
+      - Q00534   # CDK6
+      - P24941   # CDK2
+      - P06493   # CDK1
+      - Q13315   # ATM
+      - Q13535   # ATR
+      - Q12834   # CDC20
+      - Q01094   # E2F1
+      - Q14186   # TFDP1
+      - P24385   # CCND1
+      - P42771   # CDKN2A / p16
+      - P24864   # CCNE1
+      - P20248   # CCNA2
+      - P38936   # CDKN1A / p21
+      - P46527   # CDKN1B / p27
+      - Q00987   # MDM2
+      - O15151   # MDM4
+      - O14757   # CHEK1
+      - O96017   # CHEK2
+      - P30291   # WEE1
+      - P14635   # CCNB1
+      - P30304   # CDC25A
+      - P30307   # CDC25C
+      - Q9UM11   # FZR1 / CDH1
+      - Q9UJX6   # ANAPC2
+      - P30260   # CDC27 / ANAPC3
+      - Q13257   # MAD2L1
+      - O60566   # BUB1B / BubR1
+    biological_mode: "signaling_rewiring"
+    interpretation_note: >
+      BMAL-predicted pathway: large-bodied longevity is hypothesized to require tighter cell-cycle
+      and tumor-suppressor control (Peto's paradox / cancer resistance). BMAL-vs-Reference is the
+      contrast where a positive is predicted; ELLSM-vs-Reference and BMAL-vs-ELLSM serve as controls.
+      No biological claim until an FDR-surviving, cross-lineage convergent signal is demonstrated.

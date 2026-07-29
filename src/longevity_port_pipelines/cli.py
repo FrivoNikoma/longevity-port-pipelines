@@ -43,13 +43,26 @@ def select(
     output_dir: OutputDir = Path("data/output"),
     count: Annotated[int, typer.Option(help="Number of complexes to select")] = 10,
     candidate_set: CandidateSet = "ampk_pilot",
+    selection_mode: Annotated[
+        str,
+        typer.Option(
+            help="Candidate selection mode: 'partner_aware' (broaden via interactome partners) "
+            "or 'explicit_only' (restrict to the candidate set's UniProt IDs)."
+        ),
+    ] = "partner_aware",
     verbose: Verbose = False,
 ) -> None:
     """Stages 1-3: Load PINDER, filter by Foldseek conservation, annotate STRING hubs."""
     _setup_logging(verbose)
     from longevity_port_pipelines.stages import load_foldseek, load_pinder, load_string
 
-    cfg = _cfg(input_dir, output_dir, selection_count=count, candidate_set=candidate_set)
+    cfg = _cfg(
+        input_dir,
+        output_dir,
+        selection_count=count,
+        candidate_set=candidate_set,
+        candidate_selection_mode=selection_mode,
+    )
     candidates = load_pinder.run_stage(cfg)
     candidates = load_foldseek.run_stage(candidates, cfg)
     load_string.run_stage(candidates, cfg)

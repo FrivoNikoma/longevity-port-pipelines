@@ -1,0 +1,53 @@
+{
+  "n_interfaces": 30,
+  "n_species": 22,
+  "pooled_group_mean_enrichment": {
+    "ELLSM": 0.903225379552106,
+    "BMAL": 0.865567013222595,
+    "REF": 0.9054405295798515
+  },
+  "controls": {
+    "mean_enrichment_ratio": 0.8957945347664245,
+    "mean_shuffled_control_ratio": 1.004268681317689,
+    "mean_negatome_control_ratio": 1.2246545945406224,
+    "frac_rows_enrichment_gt_shuffled": 0.33495934959349594
+  },
+  "contrasts": {
+    "BMAL_vs_REF_predicted_positive": {
+      "a": "BMAL",
+      "b": "REF",
+      "n_interfaces": 28,
+      "min_p": 0.04848093083387201,
+      "min_q": 0.4416032167322639,
+      "n_sig_fdr": 0,
+      "top_interface": "3qhw__A1_P24941--3qhw__B1_P51943|ligand",
+      "top_mean_BMAL": 1.0971604825740724,
+      "top_mean_REF": 1.1664906858505881,
+      "top_direction": "REF"
+    },
+    "ELLSM_vs_REF": {
+      "a": "ELLSM",
+      "b": "REF",
+      "n_interfaces": 29,
+      "min_p": 0.006140917905623788,
+      "min_q": 0.17808661926308986,
+      "n_sig_fdr": 0,
+      "top_interface": "6tlj__R1_Q12834--6tlj__S1_O60566|receptor",
+      "top_mean_ELLSM": 0.5245599332419589,
+      "top_mean_REF": 0.6226599666519882,
+      "top_direction": "REF"
+    },
+    "BMAL_vs_ELLSM": {
+      "a": "BMAL",
+      "b": "ELLSM",
+      "n_interfaces": 28,
+      "min_p": 0.031746031746031744,
+      "min_q": 0.7851851851851852,
+      "n_sig_fdr": 0,
+      "top_interface": "1jsu__A1_P24941--1jsu__C1_P46527|receptor",
+      "top_mean_BMAL": 0.8277101120178816,
+      "top_mean_ELLSM": 1.5175850086734886,
+      "top_direction": "ELLSM"
+    }
+  }
+}
