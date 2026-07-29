@@ -1,0 +1,57 @@
+{
+  "n_species": 22,
+  "responseA_embedding": {
+    "label": "ESM interface divergence (cell_cycle)",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      -0.248,
+      0.2666
+    ],
+    "raw_pearson_r_vs_logMass": [
+      -0.341,
+      0.1202
+    ],
+    "OLS": {
+      "beta_lifespan": -0.0006,
+      "p_lifespan": 0.9551,
+      "beta_mass": -0.0111,
+      "p_mass": 0.2892,
+      "R2": 0.117
+    },
+    "PGLS": {
+      "beta_lifespan": -0.0007,
+      "p_lifespan": 0.9564,
+      "beta_mass": -0.0176,
+      "p_mass": 0.1755,
+      "R2": 0.126
+    }
+  },
+  "responseB_dnds": {
+    "label": "Ku80 dN/dS vs human",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      0.399,
+      0.0662
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.277,
+      0.2127
+    ],
+    "OLS": {
+      "beta_lifespan": 0.0256,
+      "p_lifespan": 0.1886,
+      "beta_mass": -0.0003,
+      "p_mass": 0.9879,
+      "R2": 0.159
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0231,
+      "p_lifespan": 0.2836,
+      "beta_mass": 0.0006,
+      "p_mass": 0.977,
+      "R2": 0.08
+    }
+  }
+}
