@@ -1,0 +1,202 @@
+{
+  "ampk_pilot": {
+    "label": "ampk_pilot",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      0.297,
+      0.1793
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.23,
+      0.3023
+    ],
+    "OLS": {
+      "beta_lifespan": 0.0118,
+      "p_lifespan": 0.3957,
+      "beta_mass": 0.002,
+      "p_mass": 0.8874,
+      "R2": 0.089
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0151,
+      "p_lifespan": 0.4372,
+      "beta_mass": 0.0052,
+      "p_mass": 0.7728,
+      "R2": 0.062
+    },
+    "genuine_lane": true,
+    "n_interfaces": 14
+  },
+  "has2_cd44_nmr": {
+    "label": "has2_cd44_nmr",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      0.329,
+      0.1349
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.208,
+      0.3531
+    ],
+    "OLS": {
+      "beta_lifespan": 0.0324,
+      "p_lifespan": 0.2501,
+      "beta_mass": -0.0039,
+      "p_mass": 0.8868,
+      "R2": 0.109
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0314,
+      "p_lifespan": 0.4394,
+      "beta_mass": 0.0136,
+      "p_mass": 0.7199,
+      "R2": 0.068
+    },
+    "genuine_lane": false,
+    "n_interfaces": 4
+  },
+  "igf_rheb_mtor": {
+    "label": "igf_rheb_mtor",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      0.384,
+      0.0773
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.266,
+      0.2314
+    ],
+    "OLS": {
+      "beta_lifespan": 0.0167,
+      "p_lifespan": 0.2056,
+      "beta_mass": -0.0003,
+      "p_mass": 0.9843,
+      "R2": 0.148
+    },
+    "PGLS": {
+      "beta_lifespan": 0.016,
+      "p_lifespan": 0.3888,
+      "beta_mass": 0.0051,
+      "p_mass": 0.77,
+      "R2": 0.073
+    },
+    "genuine_lane": false,
+    "n_interfaces": 14
+  },
+  "sirt6_dna_repair": {
+    "label": "sirt6_dna_repair",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      -0.049,
+      0.8286
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.022,
+      0.9211
+    ],
+    "OLS": {
+      "beta_lifespan": -0.0117,
+      "p_lifespan": 0.6962,
+      "beta_mass": 0.0103,
+      "p_mass": 0.732,
+      "R2": 0.009
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0047,
+      "p_lifespan": 0.9027,
+      "beta_mass": -0.0153,
+      "p_mass": 0.6689,
+      "R2": 0.01
+    },
+    "genuine_lane": true,
+    "n_interfaces": 20
+  },
+  "tp53_mdm2_elephant": {
+    "label": "tp53_mdm2_elephant",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      -0.308,
+      0.1629
+    ],
+    "raw_pearson_r_vs_logMass": [
+      -0.416,
+      0.0538
+    ],
+    "OLS": {
+      "beta_lifespan": -0.0012,
+      "p_lifespan": 0.9119,
+      "beta_mass": -0.0149,
+      "p_mass": 0.1934,
+      "R2": 0.174
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0064,
+      "p_lifespan": 0.6934,
+      "beta_mass": -0.0236,
+      "p_mass": 0.13,
+      "R2": 0.124
+    },
+    "genuine_lane": false,
+    "n_interfaces": 18
+  },
+  "POOLED": {
+    "label": "POOLED (all unique interfaces)",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      -0.081,
+      0.719
+    ],
+    "raw_pearson_r_vs_logMass": [
+      -0.078,
+      0.7307
+    ],
+    "OLS": {
+      "beta_lifespan": -0.0025,
+      "p_lifespan": 0.871,
+      "beta_mass": -0.0019,
+      "p_mass": 0.8995,
+      "R2": 0.007
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0067,
+      "p_lifespan": 0.732,
+      "beta_mass": -0.0155,
+      "p_mass": 0.4039,
+      "R2": 0.037
+    },
+    "n_interfaces": 52
+  },
+  "Ku80_dNdS": {
+    "label": "Ku80 dN/dS vs human",
+    "n": 22,
+    "predictor_collinearity_r(logLife,logMass)": 0.7,
+    "raw_pearson_r_vs_logLifespan": [
+      0.399,
+      0.0662
+    ],
+    "raw_pearson_r_vs_logMass": [
+      0.277,
+      0.2127
+    ],
+    "OLS": {
+      "beta_lifespan": 0.0256,
+      "p_lifespan": 0.1886,
+      "beta_mass": -0.0003,
+      "p_mass": 0.9879,
+      "R2": 0.159
+    },
+    "PGLS": {
+      "beta_lifespan": 0.0231,
+      "p_lifespan": 0.2836,
+      "beta_mass": 0.0006,
+      "p_mass": 0.977,
+      "R2": 0.08
+    }
+  }
+}
