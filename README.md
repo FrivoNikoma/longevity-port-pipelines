@@ -8,6 +8,10 @@
 > The code produces results, but the analysis has known limitations (see
 > [Pilot results & roadmap](docs/PILOT_RESULTS.md)). Treat the outputs as promising
 > preliminary data, not validated biological claims.
+>
+> **Screening closure.** Broad interface-divergence screening is now formally closed as a
+> standalone discovery method - see the [results index](docs/results/README.md) for the full
+> evidence table and the method-boundary argument.
 
 ## The big picture
 
