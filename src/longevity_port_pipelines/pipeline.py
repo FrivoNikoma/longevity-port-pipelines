@@ -8,6 +8,7 @@ pipeline runs identically with or without Prefect in the loop.
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import polars as pl
 
@@ -168,19 +169,41 @@ def run_stage_6(
     cfg: PipelineConfig,
 ) -> list[EnrichmentResult]:
     """Stage 6: Analyze enrichment."""
-    from longevity_port_pipelines.stages.analyze import analyze_pair
+    from longevity_port_pipelines.stages.analyze import align_and_compute_deltas, analyze_pair
 
     logger.info("=== Stage 6: Analyze enrichment ===")
 
     _, negatome_lookup = _load_negatome_pair_lookup(cfg)
 
     results: list[EnrichmentResult] = []
+    residue_rows: list[dict[str, Any]] = []
     for ref_emb, orth_emb, interface_res, source_sp, target_sp in embedding_pairs:
         if not interface_res:
             logger.warning(
                 "Skipping %s/%s — no interface residues", ref_emb.complex_id, ref_emb.chain
             )
             continue
+
+        # per-residue delta emit (site-level analysis input)
+        try:
+            r_deltas, r_positions = align_and_compute_deltas(ref_emb, orth_emb)
+            iface = set(interface_res)
+            for dv, pos in zip(r_deltas, r_positions, strict=False):
+                residue_rows.append(
+                    {
+                        "complex_id": ref_emb.complex_id,
+                        "chain": ref_emb.chain,
+                        "target_species": target_sp,
+                        "ref_position": int(pos),
+                        "ref_residue": ref_emb.sequence[int(pos)],
+                        "delta": float(dv),
+                        "is_interface": bool(int(pos) in iface),
+                    }
+                )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(
+                "per-residue emit failed for %s/%s: %s", ref_emb.complex_id, ref_emb.chain, exc
+            )
 
         result = analyze_pair(
             ref=ref_emb,
@@ -209,6 +232,11 @@ def run_stage_6(
     out_path = cfg.output_dir / "enrichment.parquet"
     enrichment_df.write_parquet(out_path)
     logger.info("Wrote enrichment table: %d results -> %s", len(results), out_path)
+
+    if residue_rows:
+        res_path = cfg.output_dir / "residue_deltas.parquet"
+        pl.DataFrame(residue_rows).write_parquet(res_path)
+        logger.info("Wrote per-residue deltas: %d rows -> %s", len(residue_rows), res_path)
 
     return results
 

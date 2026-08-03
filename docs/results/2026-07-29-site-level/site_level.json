@@ -1,0 +1,66 @@
+{
+  "ampk_pilot": {
+    "interface": {
+      "n_sites": 2682,
+      "min_pgls_p": 0.0005555012851894628,
+      "min_pgls_q": 0.9892809317619213,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5254098653573549
+    },
+    "non_interface_bg": {
+      "n_sites": 3546,
+      "min_pgls_p": 0.0016997223435624524,
+      "min_pgls_q": 0.9994644680178457,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5272763397689826
+    }
+  },
+  "cell_cycle": {
+    "interface": {
+      "n_sites": 1847,
+      "min_pgls_p": 0.0003356691944903864,
+      "min_pgls_q": 0.5988912722405744,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5655802340275892
+    },
+    "non_interface_bg": {
+      "n_sites": 4388,
+      "min_pgls_p": 0.00031091751599242415,
+      "min_pgls_q": 0.9940381837664232,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5696745206201121
+    }
+  },
+  "sirt6_dna_repair": {
+    "interface": {
+      "n_sites": 1214,
+      "min_pgls_p": 0.004283123227168385,
+      "min_pgls_q": 0.9096209692388681,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.48679019951658536
+    },
+    "non_interface_bg": {
+      "n_sites": 1922,
+      "min_pgls_p": 0.0018739678817230097,
+      "min_pgls_q": 0.9997229284875807,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5308005571409993
+    }
+  },
+  "POOLED": {
+    "interface": {
+      "n_sites": 5618,
+      "min_pgls_p": 0.0003356691944903864,
+      "min_pgls_q": 0.9992644935134972,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5262094818900142
+    },
+    "non_interface_bg": {
+      "n_sites": 9626,
+      "min_pgls_p": 0.00031091751599242415,
+      "min_pgls_q": 0.999835721974512,
+      "n_sites_fdr_sig": 0,
+      "median_pgls_p": 0.5399640861221201
+    }
+  }
+}
