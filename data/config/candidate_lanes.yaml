@@ -34,13 +34,15 @@ lanes:
       - SIRT6
     partner_genes: []
     lane_role: calibration_lane
-    current_gate_status: advanced_calibration_lane
+    current_gate_status: closed_negative_interface_divergence
     interpretation_policy: >
       Interface constraint or maintained compatibility can be treated as a
       technical checkpoint for DNA-repair portability, but not as a validated
       longevity signal.
     notes: >
       First calibration lane and most mature gate stack.
+      Interface-divergence screening formally closed as negative; see
+      docs/results/2026-07-29-synthesis-negative-and-method-boundary/RESULT.md
 
   tp53_mdm2_elephant:
     candidate_set: tp53_mdm2_elephant
@@ -101,9 +103,20 @@ lanes:
       - PRKAA2
     partner_genes: []
     lane_role: legacy_pilot_alignment_lane
-    current_gate_status: alignment_needed
+    current_gate_status: closed_negative_interface_divergence
     interpretation_policy: >
       Earlier AMPK pilot outputs should be aligned with the generic lane
       registry before being compared with newer gated lanes.
     notes: >
       Existing pilot lane to align with the generic architecture.
+      Interface-divergence screening formally closed as negative; see
+      docs/results/2026-07-29-synthesis-negative-and-method-boundary/RESULT.md
+
+closed_discovery_methods:
+  - method: broad_interface_divergence_screening
+    status: closed_negative
+    evidence: docs/results/2026-07-29-synthesis-negative-and-method-boundary/RESULT.md
+    note: >
+      No FDR-surviving cross-lineage longevity signal across two pathways x two designs x
+      three controls; orthogonal dN/dS agrees; five rigor checks reproduce the null.
+      Do not re-run broad interface-divergence screening as a standalone discovery method.
