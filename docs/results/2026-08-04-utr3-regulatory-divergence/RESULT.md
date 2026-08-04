@@ -97,6 +97,30 @@ targeted rather than broader: (1) miRNA-seed-site-level analysis within 3' UTRs;
 (2) expression-prediction models on the same loci; (3) branch-specific (not human-anchored)
 divergence; (4) more species to break the mass–lifespan collinearity.
 
+## Follow-up: does the 3' UTR conservation sit on miRNA target sites?
+
+The classical 3' UTR trend is diffuse (a whole-UTR mean). The main post-transcriptional
+dosage lever in a 3' UTR is its set of **miRNA target sites**, so if the conservation is
+regulatory it should concentrate there. Test: locate canonical 7mer-m8 sites for all **108
+broadly conserved human miRNA families** (TargetScan `miR_Family_Info.txt`) in each human
+3' UTR, then measure per-species **retention** (fraction of human sites whose exact motif
+survives at the aligned ortholog position) and **site density** (sites / kb); PGLS + BH-FDR
+as above (`scripts/analyze_mirna_site_conservation.py`).
+
+| Metric | Genes tested | FDR survivors | Pooled PGLS lifespan p | Direction | Note |
+|---|---|---|---|---|---|
+| Site retention | 11 | 0 / 11 | 0.15 (slope > 0, conserve) | 9 / 11 conserve (sign-test p = 0.065) | strongest CDK2 (p = 0.009) |
+| Site density | — | — | 0.69 | flat | no lifespan-linked regulatory load |
+
+**This does not localize the signal — it narrows it.** Site retention shows only a weak,
+same-direction tendency (pooled p = 0.15, vs 0.022 for the whole UTR) and, tellingly, is
+**not** driven by HAS2 (retention p = 0.81, despite HAS2 leading the whole-UTR test); the
+strongest gene here is CDK2. Site density is flat. So the whole-3' UTR conservation trend is
+**diffuse, not concentrated on canonical miRNA seed sites** — it is not explained by a
+simple miRNA-site-tuning mechanism, and points instead at broader 3' UTR sequence/structure
+constraint (or a general conservation gradient). Four genes (ATM, ATR, MTOR, CDC20) carry
+truncated reference 3' UTRs and drop out of the site test.
+
 ## Reproducing
 
 ```
@@ -105,7 +129,11 @@ uv run python scripts/analyze_utr3_divergence.py             # classical -> utr_
 uv run --with torch --with transformers --with numpy \
     python scripts/embed_utr_dna_lm.py                       # DNA-LM embeddings (no Biohub credits)
 uv run python scripts/analyze_utr_embedding_divergence.py    # AI -> utr_embedding_divergence.{json,png}
+uv run python scripts/analyze_mirna_site_conservation.py     # miRNA sites -> mirna_site_conservation.{json,png}
 ```
+
+`data/interim/mirna/miR_Family_Info.txt` is TargetScan release data (downloaded separately;
+gitignored).
 
 `data/` intermediates are gitignored; committed here are the two figures and the two
 machine-readable JSON summaries. No Biohub/ESM credits are used — the AI metric runs a

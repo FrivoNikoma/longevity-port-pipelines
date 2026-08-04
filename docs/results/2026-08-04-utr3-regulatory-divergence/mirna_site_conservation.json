@@ -1,0 +1,115 @@
+{
+  "n_mirna_families": 108,
+  "retention": {
+    "n_genes_tested": 11,
+    "fdr_survivors": 0,
+    "per_gene": [
+      {
+        "gene": "CDK1",
+        "n_human_sites": 6,
+        "n": 22,
+        "pgls_p_lifespan": 0.0663,
+        "pgls_beta_lifespan": 0.2344,
+        "direction": "conserve"
+      },
+      {
+        "gene": "CDK2",
+        "n_human_sites": 9,
+        "n": 22,
+        "pgls_p_lifespan": 0.0093,
+        "pgls_beta_lifespan": 0.1094,
+        "direction": "conserve"
+      },
+      {
+        "gene": "CDK4",
+        "n_human_sites": 7,
+        "n": 21,
+        "pgls_p_lifespan": 0.0644,
+        "pgls_beta_lifespan": 0.057,
+        "direction": "conserve"
+      },
+      {
+        "gene": "CDK6",
+        "n_human_sites": 22,
+        "n": 22,
+        "pgls_p_lifespan": 0.3278,
+        "pgls_beta_lifespan": 0.0548,
+        "direction": "conserve"
+      },
+      {
+        "gene": "HAS2",
+        "n_human_sites": 20,
+        "n": 21,
+        "pgls_p_lifespan": 0.8092,
+        "pgls_beta_lifespan": 0.0138,
+        "direction": "conserve"
+      },
+      {
+        "gene": "IGF1R",
+        "n_human_sites": 25,
+        "n": 21,
+        "pgls_p_lifespan": 0.2757,
+        "pgls_beta_lifespan": -0.0665,
+        "direction": "lose"
+      },
+      {
+        "gene": "PRKAA1",
+        "n_human_sites": 24,
+        "n": 22,
+        "pgls_p_lifespan": 0.458,
+        "pgls_beta_lifespan": 0.0657,
+        "direction": "conserve"
+      },
+      {
+        "gene": "PRKAA2",
+        "n_human_sites": 25,
+        "n": 22,
+        "pgls_p_lifespan": 0.5062,
+        "pgls_beta_lifespan": 0.0397,
+        "direction": "conserve"
+      },
+      {
+        "gene": "RB1",
+        "n_human_sites": 17,
+        "n": 20,
+        "pgls_p_lifespan": 0.1803,
+        "pgls_beta_lifespan": 0.0888,
+        "direction": "conserve"
+      },
+      {
+        "gene": "SIRT6",
+        "n_human_sites": 5,
+        "n": 22,
+        "pgls_p_lifespan": 0.9535,
+        "pgls_beta_lifespan": -0.0065,
+        "direction": "lose"
+      },
+      {
+        "gene": "TP53",
+        "n_human_sites": 12,
+        "n": 21,
+        "pgls_p_lifespan": 0.2707,
+        "pgls_beta_lifespan": 0.0686,
+        "direction": "conserve"
+      }
+    ],
+    "pooled": {
+      "n": 22,
+      "collinearity_r": 0.7,
+      "ols_p_lifespan": 0.0652,
+      "pgls_beta_lifespan": 0.0476,
+      "pgls_p_lifespan": 0.1547,
+      "pgls_p_mass": 0.5225
+    }
+  },
+  "density": {
+    "pooled": {
+      "n": 22,
+      "collinearity_r": 0.7,
+      "ols_p_lifespan": 0.7781,
+      "pgls_beta_lifespan": 0.0756,
+      "pgls_p_lifespan": 0.6938,
+      "pgls_p_mass": 0.8514
+    }
+  }
+}
