@@ -1,0 +1,106 @@
+{
+  "analysis": "cellcycle_3utr_positional_conservation",
+  "region": "utr3",
+  "n_bins": 8,
+  "genes": [
+    "RB1",
+    "TP53",
+    "CDK1",
+    "CDK2",
+    "CDK4",
+    "CDK6",
+    "ATM",
+    "ATR",
+    "CDC20",
+    "E2F1",
+    "TFDP1",
+    "CCND1",
+    "CCNE1",
+    "CCNA2",
+    "CCNB1",
+    "CDKN1A",
+    "CDKN1B",
+    "CDKN2A",
+    "MDM2",
+    "MDM4",
+    "CHEK1",
+    "CHEK2",
+    "WEE1",
+    "CDC25A",
+    "BUB1B"
+  ],
+  "profile": [
+    {
+      "bin": 0,
+      "rel_start": 0.0,
+      "rel_end": 0.12,
+      "n": 57,
+      "pgls_p_lifespan": 0.0005,
+      "pgls_beta_lifespan": -0.04485,
+      "direction": "conserve"
+    },
+    {
+      "bin": 1,
+      "rel_start": 0.12,
+      "rel_end": 0.25,
+      "n": 57,
+      "pgls_p_lifespan": 0.0008,
+      "pgls_beta_lifespan": -0.0461,
+      "direction": "conserve"
+    },
+    {
+      "bin": 2,
+      "rel_start": 0.25,
+      "rel_end": 0.38,
+      "n": 57,
+      "pgls_p_lifespan": 0.0131,
+      "pgls_beta_lifespan": -0.04661,
+      "direction": "conserve"
+    },
+    {
+      "bin": 3,
+      "rel_start": 0.38,
+      "rel_end": 0.5,
+      "n": 57,
+      "pgls_p_lifespan": 0.0937,
+      "pgls_beta_lifespan": -0.0363,
+      "direction": "conserve"
+    },
+    {
+      "bin": 4,
+      "rel_start": 0.5,
+      "rel_end": 0.62,
+      "n": 57,
+      "pgls_p_lifespan": 0.1187,
+      "pgls_beta_lifespan": -0.0373,
+      "direction": "conserve"
+    },
+    {
+      "bin": 5,
+      "rel_start": 0.62,
+      "rel_end": 0.75,
+      "n": 57,
+      "pgls_p_lifespan": 0.1537,
+      "pgls_beta_lifespan": -0.0375,
+      "direction": "conserve"
+    },
+    {
+      "bin": 6,
+      "rel_start": 0.75,
+      "rel_end": 0.88,
+      "n": 57,
+      "pgls_p_lifespan": 0.2384,
+      "pgls_beta_lifespan": -0.03128,
+      "direction": "conserve"
+    },
+    {
+      "bin": 7,
+      "rel_start": 0.88,
+      "rel_end": 1.0,
+      "n": 57,
+      "pgls_p_lifespan": 0.2737,
+      "pgls_beta_lifespan": -0.03003,
+      "direction": "conserve"
+    }
+  ]
+}
