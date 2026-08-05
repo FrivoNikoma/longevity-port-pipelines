@@ -121,6 +121,41 @@ simple miRNA-site-tuning mechanism, and points instead at broader 3' UTR sequenc
 constraint (or a general conservation gradient). Four genes (ATM, ATR, MTOR, CDC20) carry
 truncated reference 3' UTRs and drop out of the site test.
 
+## Follow-up 2: Enformer-predicted expression (AI expression model, pilot)
+
+The sharpest form of the dosage question is not sequence divergence but predicted regulatory
+*output*. Enformer takes a 196,608 bp genomic window and predicts expression (CAGE), chromatin
+and TF tracks per 128 bp bin. Pilot on **3 genes (HAS2, TP53, CDK2) x 22 species**: fetch each
+gene's TSS-centered genomic window per species
+(`scripts/fetch_gene_genomic_windows.py`), run Enformer's human head
+(`scripts/run_enformer_expression.py`), read predicted expression at the TSS bins (mean over the
+**638 CAGE tracks**), and PGLS on lifespan + mass (`scripts/analyze_enformer_expression.py`).
+Because Enformer is human-trained, each species' prediction is a **comparative in-silico
+readout** ("what the human model predicts for this sequence"): sequence varies, reader fixed
+— out-of-distribution for non-model species.
+
+| Gene | PGLS lifespan p | direction | note |
+|---|---|---|---|
+| HAS2 | 0.093 | up in long-lived | same direction as naked mole-rat high-hyaluronan biology |
+| TP53 | 0.64 | up | — |
+| CDK2 | 0.61 | down | — |
+| **pooled (mean-z)** | **0.36** | — | body **mass** is the associated trait (p = 0.021), not lifespan |
+
+**No significant longevity association in the pilot.** The all-track ("regulatory activity")
+readout is fully null (pooled p = 0.88); the CAGE (expression) readout is also non-significant,
+with body mass — not lifespan — carrying the pooled signal (collinearity r = 0.70). The one
+directionally-interesting thread is **HAS2** (higher predicted expression in long-lived species,
+p = 0.093), consistent with its output biology but not significant.
+
+**What the pilot establishes.** The expression-prediction pipeline — the AI method closest to the
+dosage phenotype, and stronger in principle than embedding-L2 — runs end to end on commodity CPU
+(~seconds/window, ~6 GB RAM) and is ready to scale. It does not, on 3 genes, surface a longevity
+signal. Caveats bound the negative: a 3-gene pilot (not a screen), single-species (human) model
+applied out-of-distribution, TSS-bin readout only (not gene-body / multi-bin), and the n = 22
+mass-lifespan collinearity. Motivated next steps: scale to the full 15-gene panel; Borzoi (RNA-seq
+head, longer context); species-appropriate or fine-tuned models; multi-bin / gene-body
+aggregation.
+
 ## Reproducing
 
 ```
@@ -130,6 +165,10 @@ uv run --with torch --with transformers --with numpy \
     python scripts/embed_utr_dna_lm.py                       # DNA-LM embeddings (no Biohub credits)
 uv run python scripts/analyze_utr_embedding_divergence.py    # AI -> utr_embedding_divergence.{json,png}
 uv run python scripts/analyze_mirna_site_conservation.py     # miRNA sites -> mirna_site_conservation.{json,png}
+uv run python scripts/fetch_gene_genomic_windows.py          # TSS windows -> data/interim/genome_windows (gitignored)
+uv run --with torch --with enformer-pytorch --with numpy \
+    python scripts/run_enformer_expression.py                # Enformer predictions (no Biohub credits)
+uv run python scripts/analyze_enformer_expression.py         # AI expression -> enformer_expression.{json,png}
 ```
 
 `data/interim/mirna/miR_Family_Info.txt` is TargetScan release data (downloaded separately;

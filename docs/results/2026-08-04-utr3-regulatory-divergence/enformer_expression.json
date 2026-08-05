@@ -1,0 +1,45 @@
+{
+  "analysis": "enformer_predicted_expression_vs_longevity_pilot",
+  "model": "Enformer (EleutherAI/enformer-official-rough), human head, TSS central bins",
+  "tracks_used": "CAGE (638 tracks)",
+  "genes": [
+    "CDK2",
+    "HAS2",
+    "TP53"
+  ],
+  "n_species_panel": 22,
+  "per_gene": [
+    {
+      "gene": "CDK2",
+      "n": 22,
+      "ols_p_lifespan": 0.5435,
+      "pgls_p_lifespan": 0.6081,
+      "pgls_beta_lifespan": -1.7294,
+      "direction": "down"
+    },
+    {
+      "gene": "HAS2",
+      "n": 22,
+      "ols_p_lifespan": 0.0265,
+      "pgls_p_lifespan": 0.0931,
+      "pgls_beta_lifespan": 1.1869,
+      "direction": "up"
+    },
+    {
+      "gene": "TP53",
+      "n": 22,
+      "ols_p_lifespan": 0.7106,
+      "pgls_p_lifespan": 0.644,
+      "pgls_beta_lifespan": 4.5277,
+      "direction": "up"
+    }
+  ],
+  "pooled": {
+    "n": 22,
+    "collinearity_r": 0.7,
+    "ols_p_lifespan": 0.4562,
+    "pgls_beta_lifespan": 0.159,
+    "pgls_p_lifespan": 0.3648,
+    "pgls_p_mass": 0.0206
+  }
+}
