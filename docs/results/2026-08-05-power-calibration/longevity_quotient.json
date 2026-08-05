@@ -1,0 +1,30 @@
+{
+  "analysis": "longevity_quotient_reanalysis",
+  "note": "LQ = residual of log10(lifespan) on log10(mass); single-predictor PGLS vs the original lifespan+mass PGLS",
+  "results": {
+    "classical_utr3_divergence": {
+      "n": 22,
+      "pooled_p_lifespan_plus_mass": 0.0223,
+      "pooled_p_lq": 0.05,
+      "lq_beta": -0.0133,
+      "fdr_survivors_lq": 0,
+      "n_genes": 15,
+      "conserve_dir_lq": 13
+    },
+    "classical_utr5_divergence": {
+      "n": 22,
+      "pooled_p_lifespan_plus_mass": 0.484,
+      "pooled_p_lq": 0.7522,
+      "lq_beta": -0.0033,
+      "fdr_survivors_lq": 0,
+      "n_genes": 15,
+      "conserve_dir_lq": 9
+    },
+    "enformer_cage_expression": {
+      "n": 22,
+      "pooled_p_lifespan_plus_mass": 0.3866,
+      "pooled_p_lq": 0.4762,
+      "lq_beta": 0.0714
+    }
+  }
+}
