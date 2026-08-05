@@ -1,0 +1,58 @@
+{
+  "analysis": "cellcycle_3utr_element_enrichment",
+  "region": "utr3",
+  "n_mirna_families": 108,
+  "genes": [
+    "RB1",
+    "TP53",
+    "CDK1",
+    "CDK2",
+    "CDK4",
+    "CDK6",
+    "ATM",
+    "ATR",
+    "CDC20",
+    "E2F1",
+    "TFDP1",
+    "CCND1",
+    "CCNE1",
+    "CCNA2",
+    "CCNB1",
+    "CDKN1A",
+    "CDKN1B",
+    "CDKN2A",
+    "MDM2",
+    "MDM4",
+    "CHEK1",
+    "CHEK2",
+    "WEE1",
+    "CDC25A",
+    "BUB1B"
+  ],
+  "classes": [
+    {
+      "class": "background",
+      "n_species": 57,
+      "pgls_p_lifespan": 0.0346,
+      "pgls_beta_lifespan": -0.03833,
+      "marginal_r": -0.39,
+      "direction": "conserve"
+    },
+    {
+      "class": "miRNA_site",
+      "n_species": 57,
+      "pgls_p_lifespan": 0.1387,
+      "pgls_beta_lifespan": -0.03398,
+      "marginal_r": -0.28,
+      "direction": "conserve"
+    },
+    {
+      "class": "ARE",
+      "n_species": 57,
+      "pgls_p_lifespan": 0.0926,
+      "pgls_beta_lifespan": -0.04433,
+      "marginal_r": -0.158,
+      "direction": "conserve"
+    }
+  ]
+}
