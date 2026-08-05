@@ -121,40 +121,40 @@ simple miRNA-site-tuning mechanism, and points instead at broader 3' UTR sequenc
 constraint (or a general conservation gradient). Four genes (ATM, ATR, MTOR, CDC20) carry
 truncated reference 3' UTRs and drop out of the site test.
 
-## Follow-up 2: Enformer-predicted expression (AI expression model, pilot)
+## Follow-up 2: Enformer-predicted expression (AI expression model, full panel)
 
 The sharpest form of the dosage question is not sequence divergence but predicted regulatory
 *output*. Enformer takes a 196,608 bp genomic window and predicts expression (CAGE), chromatin
-and TF tracks per 128 bp bin. Pilot on **3 genes (HAS2, TP53, CDK2) x 22 species**: fetch each
-gene's TSS-centered genomic window per species
-(`scripts/fetch_gene_genomic_windows.py`), run Enformer's human head
-(`scripts/run_enformer_expression.py`), read predicted expression at the TSS bins (mean over the
-**638 CAGE tracks**), and PGLS on lifespan + mass (`scripts/analyze_enformer_expression.py`).
-Because Enformer is human-trained, each species' prediction is a **comparative in-silico
-readout** ("what the human model predicts for this sequence"): sequence varies, reader fixed
-— out-of-distribution for non-model species.
+and TF tracks per 128 bp bin. Full panel: **15 genes x 22 species** (345 TSS-centered windows).
+Fetch each gene's window per species (`scripts/fetch_gene_genomic_windows.py`), run Enformer's
+human head (`scripts/run_enformer_expression.py`), read predicted expression at the TSS bins
+(mean over the **638 CAGE tracks**), and PGLS on lifespan + mass
+(`scripts/analyze_enformer_expression.py`). Because Enformer is human-trained, each species'
+prediction is a **comparative in-silico readout** ("what the human model predicts for this
+sequence"): sequence varies, reader fixed — out-of-distribution for non-model species.
 
-| Gene | PGLS lifespan p | direction | note |
-|---|---|---|---|
-| HAS2 | 0.093 | up in long-lived | same direction as naked mole-rat high-hyaluronan biology |
-| TP53 | 0.64 | up | — |
-| CDK2 | 0.61 | down | — |
-| **pooled (mean-z)** | **0.36** | — | body **mass** is the associated trait (p = 0.021), not lifespan |
+| Metric | FDR survivors | Pooled PGLS lifespan p | Direction | Strongest gene |
+|---|---|---|---|---|
+| CAGE predicted expression | **0 / 15** | 0.39 (mass p = 0.99) | 10 / 15 up (sign-test p = 0.30) | HAS2 (p = 0.093, up) |
+| All-track regulatory activity | — | 0.70 | — | — |
 
-**No significant longevity association in the pilot.** The all-track ("regulatory activity")
-readout is fully null (pooled p = 0.88); the CAGE (expression) readout is also non-significant,
-with body mass — not lifespan — carrying the pooled signal (collinearity r = 0.70). The one
-directionally-interesting thread is **HAS2** (higher predicted expression in long-lived species,
-p = 0.093), consistent with its output biology but not significant.
+**No FDR-surviving longevity signal at full panel.** Neither predicted CAGE expression nor
+overall regulatory activity tracks lifespan; the pooled fits are null and, unlike the 3-gene
+pilot, body mass carries no signal either (pooled mass p = 0.99 — the pilot's apparent mass
+confound did not survive scaling). The directional lean toward higher predicted expression in
+long-lived species (10 / 15 genes up) is not significant. The one persistent thread is **HAS2**
+(higher predicted expression in long-lived species, PGLS p = 0.093, OLS p = 0.027) — consistent
+across the pilot and full run and with naked mole-rat high-hyaluronan output biology — but it
+does not survive multiple-testing correction.
 
-**What the pilot establishes.** The expression-prediction pipeline — the AI method closest to the
+**What this establishes.** The expression-prediction pipeline — the AI method closest to the
 dosage phenotype, and stronger in principle than embedding-L2 — runs end to end on commodity CPU
-(~seconds/window, ~6 GB RAM) and is ready to scale. It does not, on 3 genes, surface a longevity
-signal. Caveats bound the negative: a 3-gene pilot (not a screen), single-species (human) model
-applied out-of-distribution, TSS-bin readout only (not gene-body / multi-bin), and the n = 22
-mass-lifespan collinearity. Motivated next steps: scale to the full 15-gene panel; Borzoi (RNA-seq
-head, longer context); species-appropriate or fine-tuned models; multi-bin / gene-body
-aggregation.
+(~seconds/window, ~6 GB RAM) and, applied at panel scale, returns a **well-powered negative**:
+predicted regulatory output does not track longevity across these 15 genes, with HAS2 the lone
+sub-0.1 directional hint. Caveats bound it: a human model applied out-of-distribution to 22
+species, a TSS-bin readout (not gene-body / multi-bin), and the n = 22 ceiling. Motivated next
+steps sharpen rather than broaden: Borzoi (RNA-seq head, longer context); species-appropriate or
+fine-tuned models; multi-bin / gene-body aggregation; HAS2-focused follow-up.
 
 ## Reproducing
 

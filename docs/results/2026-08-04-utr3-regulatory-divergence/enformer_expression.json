@@ -3,12 +3,56 @@
   "model": "Enformer (EleutherAI/enformer-official-rough), human head, TSS central bins",
   "tracks_used": "CAGE (638 tracks)",
   "genes": [
+    "ATM",
+    "ATR",
+    "CDC20",
+    "CDK1",
     "CDK2",
+    "CDK4",
+    "CDK6",
     "HAS2",
+    "IGF1R",
+    "MTOR",
+    "PRKAA1",
+    "PRKAA2",
+    "RB1",
+    "SIRT6",
     "TP53"
   ],
   "n_species_panel": 22,
   "per_gene": [
+    {
+      "gene": "ATM",
+      "n": 22,
+      "ols_p_lifespan": 0.9949,
+      "pgls_p_lifespan": 0.6633,
+      "pgls_beta_lifespan": 1.5853,
+      "direction": "up"
+    },
+    {
+      "gene": "ATR",
+      "n": 22,
+      "ols_p_lifespan": 0.9975,
+      "pgls_p_lifespan": 0.5931,
+      "pgls_beta_lifespan": 2.1205,
+      "direction": "up"
+    },
+    {
+      "gene": "CDC20",
+      "n": 22,
+      "ols_p_lifespan": 0.064,
+      "pgls_p_lifespan": 0.6478,
+      "pgls_beta_lifespan": -3.2367,
+      "direction": "down"
+    },
+    {
+      "gene": "CDK1",
+      "n": 22,
+      "ols_p_lifespan": 0.8572,
+      "pgls_p_lifespan": 0.5741,
+      "pgls_beta_lifespan": 3.2013,
+      "direction": "up"
+    },
     {
       "gene": "CDK2",
       "n": 22,
@@ -18,12 +62,76 @@
       "direction": "down"
     },
     {
+      "gene": "CDK4",
+      "n": 22,
+      "ols_p_lifespan": 0.5141,
+      "pgls_p_lifespan": 0.9687,
+      "pgls_beta_lifespan": -0.2828,
+      "direction": "down"
+    },
+    {
+      "gene": "CDK6",
+      "n": 22,
+      "ols_p_lifespan": 0.3385,
+      "pgls_p_lifespan": 0.3014,
+      "pgls_beta_lifespan": 2.7251,
+      "direction": "up"
+    },
+    {
       "gene": "HAS2",
       "n": 22,
       "ols_p_lifespan": 0.0265,
       "pgls_p_lifespan": 0.0931,
       "pgls_beta_lifespan": 1.1869,
       "direction": "up"
+    },
+    {
+      "gene": "IGF1R",
+      "n": 22,
+      "ols_p_lifespan": 0.6239,
+      "pgls_p_lifespan": 0.5137,
+      "pgls_beta_lifespan": -1.2541,
+      "direction": "down"
+    },
+    {
+      "gene": "MTOR",
+      "n": 22,
+      "ols_p_lifespan": 0.3473,
+      "pgls_p_lifespan": 0.4281,
+      "pgls_beta_lifespan": 2.7951,
+      "direction": "up"
+    },
+    {
+      "gene": "PRKAA1",
+      "n": 22,
+      "ols_p_lifespan": 0.9271,
+      "pgls_p_lifespan": 0.8637,
+      "pgls_beta_lifespan": 1.0752,
+      "direction": "up"
+    },
+    {
+      "gene": "PRKAA2",
+      "n": 22,
+      "ols_p_lifespan": 0.2552,
+      "pgls_p_lifespan": 0.1741,
+      "pgls_beta_lifespan": 3.7488,
+      "direction": "up"
+    },
+    {
+      "gene": "RB1",
+      "n": 22,
+      "ols_p_lifespan": 0.4465,
+      "pgls_p_lifespan": 0.3752,
+      "pgls_beta_lifespan": 4.2337,
+      "direction": "up"
+    },
+    {
+      "gene": "SIRT6",
+      "n": 22,
+      "ols_p_lifespan": 0.1946,
+      "pgls_p_lifespan": 0.3499,
+      "pgls_beta_lifespan": -3.5186,
+      "direction": "down"
     },
     {
       "gene": "TP53",
@@ -37,9 +145,9 @@
   "pooled": {
     "n": 22,
     "collinearity_r": 0.7,
-    "ols_p_lifespan": 0.4562,
-    "pgls_beta_lifespan": 0.159,
-    "pgls_p_lifespan": 0.3648,
-    "pgls_p_mass": 0.0206
+    "ols_p_lifespan": 0.9433,
+    "pgls_beta_lifespan": 0.1286,
+    "pgls_p_lifespan": 0.3866,
+    "pgls_p_mass": 0.9869
   }
 }
