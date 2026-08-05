@@ -20,6 +20,7 @@ No network, no Biohub credits.
 """
 from __future__ import annotations
 
+import argparse
 import contextlib
 import csv
 import importlib.util
@@ -29,6 +30,7 @@ from pathlib import Path
 
 import matplotlib
 import numpy as np
+from scipy.stats import binomtest
 from scipy.stats import t as tdist
 
 matplotlib.use("Agg")
@@ -45,6 +47,13 @@ OUT_DIR = REPO / "docs" / "results" / "2026-08-05-extended-panel"
 
 # TimeTree label differs from the panel scientific name for a few species
 TREE_ALIAS = {"Physeter macrocephalus": "Physeter catodon"}
+
+# cell-cycle / tumour-suppressor module (for the --gene-set cellcycle focused test)
+CELLCYCLE = [
+    "RB1", "TP53", "CDK1", "CDK2", "CDK4", "CDK6", "ATM", "ATR", "CDC20",
+    "E2F1", "TFDP1", "CCND1", "CCNE1", "CCNA2", "CCNB1", "CDKN1A", "CDKN1B",
+    "CDKN2A", "MDM2", "MDM4", "CHEK1", "CHEK2", "WEE1", "CDC25A", "BUB1B",
+]
 
 
 def _load(name: str):
@@ -225,10 +234,13 @@ def bh(pvals: list[float]) -> int:
 
 
 def human_ref(gene: str, region: str) -> str | None:
-    fp = HUMAN_DIR / f"{gene}_{region}.fasta"
-    if not fp.exists():
-        return None
-    return UTR.load_fasta(fp).get("human")
+    for base in (UTR_DIR, HUMAN_DIR):  # prefer reference embedded in the panel fasta
+        fp = base / f"{gene}_{region}.fasta"
+        if fp.exists():
+            h = UTR.load_fasta(fp).get("human")
+            if h:
+                return h
+    return None
 
 
 DIV_CACHE = UTR_DIR / "div_cache"
@@ -256,10 +268,12 @@ def divergence(path: Path, region: str, traits: dict) -> dict[str, float]:
     return out
 
 
-def run_region(region: str, traits: dict, wanted: dict) -> dict:
+def run_region(region: str, traits: dict, wanted: dict, genes: set[str] | None = None) -> dict:
     per_gene, psum = [], {}
     for fp in sorted(UTR_DIR.glob(f"*_{region}.fasta")):
         gene = fp.name.replace(f"_{region}.fasta", "")
+        if genes is not None and gene not in genes:
+            continue
         div = divergence(fp, region, traits)
         sp = [s for s in div if s in wanted]
         if len(sp) >= 8:
@@ -287,12 +301,22 @@ def run_region(region: str, traits: dict, wanted: dict) -> dict:
                   "marginal_r": round(r, 3)}
         fig = (life, y, p)
     ps = [g["pgls_p_lifespan"] for g in per_gene]
+    cons = sum(1 for g in per_gene if g["pgls_beta_lifespan"] < 0)
+    sign_p = float(binomtest(cons, len(per_gene), 0.5).pvalue) if per_gene else 1.0
     return {"region": region, "n_genes": len(per_gene), "fdr_survivors": bh(ps),
-            "conserve": sum(1 for g in per_gene if g["pgls_beta_lifespan"] < 0),
+            "conserve": cons, "sign_test_p": round(sign_p, 4),
             "per_gene": per_gene, "pooled": pooled, "_fig": fig}
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--gene-set", choices=["all", "cellcycle"], default="all")
+    ap.add_argument("--out-dir", default=str(OUT_DIR),
+                    help="result directory (default: the extended-panel dir)")
+    args = ap.parse_args()
+    genes = set(CELLCYCLE) if args.gene_set == "cellcycle" else None
+    out_dir = Path(args.out_dir)
+
     for need in (PANEL, ANAGE, NWK):
         if not need.exists():
             print(f"Missing {need}")
@@ -300,19 +324,20 @@ def main() -> int:
     if not any(UTR_DIR.glob("*_utr3.fasta")):
         print(f"No panel UTRs in {UTR_DIR}. Run scripts/fetch_panel_utr.py first.")
         return 1
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     traits = load_traits()
     wanted = {s: sci for s, sci, _ in load_panel() if s in traits}
 
-    regions = {r: run_region(r, traits, wanted) for r in ("utr3", "utr5")}
+    regions = {r: run_region(r, traits, wanted, genes) for r in ("utr3", "utr5")}
     summary = {
-        "analysis": "extended_panel_utr_divergence_vs_longevity",
+        "analysis": f"panel_utr_divergence_vs_longevity_{args.gene_set}",
+        "gene_set": args.gene_set,
         "n_species_with_traits": len(traits),
         "phylogeny": "TimeTree (Newick), Brownian VCV from branch lengths",
         "regions": {r: {k: v for k, v in d.items() if not k.startswith("_")}
                     for r, d in regions.items()},
     }
-    (OUT_DIR / "panel_utr_divergence.json").write_text(json.dumps(summary, indent=2))
+    (out_dir / "panel_utr_divergence.json").write_text(json.dumps(summary, indent=2))
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     for ax, region in zip(axes, ("utr3", "utr5"), strict=True):
@@ -328,13 +353,14 @@ def main() -> int:
                      f"PGLS p={p:.3f} FDR {regions[region]['fdr_survivors']}/"
                      f"{regions[region]['n_genes']}", fontsize=9)
     plt.tight_layout()
-    plt.savefig(OUT_DIR / "panel_utr_divergence.png", dpi=140)
+    plt.savefig(out_dir / "panel_utr_divergence.png", dpi=140)
 
     for region, d in regions.items():
         pl = d["pooled"]
         print(f"== {region} ==  genes={d['n_genes']} FDR={d['fdr_survivors']} "
-              f"conserve={d['conserve']}/{d['n_genes']}  pooled p={pl.get('pgls_p_lifespan')} "
-              f"beta={pl.get('pgls_beta_lifespan')} r={pl.get('marginal_r')} n={pl.get('n')}")
+              f"conserve={d['conserve']}/{d['n_genes']} sign_p={d['sign_test_p']}  "
+              f"pooled p={pl.get('pgls_p_lifespan')} beta={pl.get('pgls_beta_lifespan')} "
+              f"r={pl.get('marginal_r')} n={pl.get('n')}")
     return 0
 
 

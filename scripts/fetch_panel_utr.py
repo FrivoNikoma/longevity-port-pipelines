@@ -71,8 +71,8 @@ def main() -> int:
     if args.limit:
         panel = panel[: args.limit]
 
-    # resolve taxids once
-    species: list[tuple[str, str, str, str]] = []  # (short, sci, clade, taxid)
+    # resolve taxids once; always include the human reference (needed for divergence)
+    species: list[tuple[str, str, str, str]] = [("human", "Homo sapiens", "primates", "9606")]
     for short, sci, clade in panel:
         try:
             taxid = resolve_taxid(sci)
