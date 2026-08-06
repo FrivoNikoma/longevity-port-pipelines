@@ -1,0 +1,141 @@
+{
+  "analysis": "module_specificity_of_proximal_utr3_indel_deficit",
+  "metric": "substitution",
+  "primary": "delta = cellcycle - control_all, within-species contrast",
+  "n_genes": {
+    "cellcycle": 25,
+    "control_all": 24,
+    "ribosome": 8,
+    "glycolysis": 8,
+    "structural_tca": 8
+  },
+  "genes": {
+    "cellcycle": [
+      "RB1",
+      "TP53",
+      "CDK1",
+      "CDK2",
+      "CDK4",
+      "CDK6",
+      "ATM",
+      "ATR",
+      "CDC20",
+      "E2F1",
+      "TFDP1",
+      "CCND1",
+      "CCNE1",
+      "CCNA2",
+      "CCNB1",
+      "CDKN1A",
+      "CDKN1B",
+      "CDKN2A",
+      "MDM2",
+      "MDM4",
+      "CHEK1",
+      "CHEK2",
+      "WEE1",
+      "CDC25A",
+      "BUB1B"
+    ],
+    "ribosome": [
+      "RPL5",
+      "RPL11",
+      "RPL13A",
+      "RPS3",
+      "RPS6",
+      "RPS14",
+      "RPS19",
+      "RPLP0"
+    ],
+    "glycolysis": [
+      "GAPDH",
+      "ALDOA",
+      "ENO1",
+      "PKM",
+      "PGK1",
+      "TPI1",
+      "LDHA",
+      "HK1"
+    ],
+    "structural_tca": [
+      "ACTB",
+      "ACTG1",
+      "TUBB",
+      "TUBA1B",
+      "SDHA",
+      "CS",
+      "MDH1",
+      "FH"
+    ]
+  },
+  "missing_control_genes": {},
+  "results": {
+    "cellcycle": {
+      "n": 57,
+      "beta_lifespan": -0.0063,
+      "ci95": [
+        -0.015,
+        0.0023
+      ],
+      "p_lifespan": 0.1487,
+      "p_mass": 0.6913,
+      "mean": 0.1508
+    },
+    "control_all": {
+      "n": 57,
+      "beta_lifespan": -0.0124,
+      "ci95": [
+        -0.0208,
+        -0.004
+      ],
+      "p_lifespan": 0.0048,
+      "p_mass": 0.8664,
+      "mean": 0.1292
+    },
+    "control_ribosome": {
+      "n": 57,
+      "beta_lifespan": -0.0149,
+      "ci95": [
+        -0.0274,
+        -0.0025
+      ],
+      "p_lifespan": 0.0196,
+      "p_mass": 0.5893,
+      "mean": 0.1147
+    },
+    "control_glycolysis": {
+      "n": 57,
+      "beta_lifespan": -0.0107,
+      "ci95": [
+        -0.0199,
+        -0.0015
+      ],
+      "p_lifespan": 0.0237,
+      "p_mass": 0.4132,
+      "mean": 0.1439
+    },
+    "control_structural_tca": {
+      "n": 57,
+      "beta_lifespan": -0.0103,
+      "ci95": [
+        -0.0222,
+        0.0017
+      ],
+      "p_lifespan": 0.0899,
+      "p_mass": 0.4665,
+      "mean": 0.129
+    }
+  },
+  "delta_cellcycle_minus_control": {
+    "n": 57,
+    "beta_lifespan": 0.0061,
+    "ci95": [
+      -0.0025,
+      0.0146
+    ],
+    "p_lifespan": 0.1596,
+    "p_mass": 0.8132,
+    "mean": 0.0216
+  },
+  "verdict": "mixed: see the per-module table"
+}

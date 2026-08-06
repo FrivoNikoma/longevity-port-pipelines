@@ -58,6 +58,12 @@ ALN_CACHE = UTR_DIR / "aln_cache"
 OUT_DIR = REPO / "docs" / "results" / "2026-08-07-utr-constraint-nature"
 
 MAX_ALN = 3000  # same cap as the classical divergence test
+# Data-integrity guard. NCBI gene resolution occasionally returns a genomic record instead of
+# an mRNA (observed: GAPDH/rabbit came back as chromosome NC_091435.1, a 144 Mb "3' UTR").
+# Truncation to MAX_ALN would hide that completely - the first 3000 nt of a chromosome would
+# enter the statistics as a UTR. Real mammalian 3' UTRs reach ~13 kb in this panel (CDK6 ~10 kb,
+# MDM4 ~13 kb), so anything past 20 kb is a resolution failure, not biology.
+MAX_PLAUSIBLE_UTR = 20_000
 MIN_BIN = 10
 ABS_BINS = [(0, 50), (50, 100), (100, 200), (200, 400), (400, 800), (800, MAX_ALN)]
 N_REL_BINS = 8
@@ -113,10 +119,17 @@ def gene_tracks(gene: str, region: str, force: bool = False) -> dict[str, str]:
     href = PANEL.human_ref(gene, region)
     if not fasta.exists() or not href:
         return {}
+    if len(href) > MAX_PLAUSIBLE_UTR:
+        print(f"  DROP {gene}/human: {len(href):,} nt exceeds the plausible-UTR guard")
+        return {}
     ref = clean(proximal(href, region))
     tracks: dict[str, str] = {"_human": ref}
     for sp, raw in PANEL.UTR.load_fasta(fasta).items():
         if sp == "human":
+            continue
+        if len(raw) > MAX_PLAUSIBLE_UTR:
+            print(f"  DROP {gene}/{sp}: {len(raw):,} nt exceeds the plausible-UTR guard "
+                  "(genomic record, not an mRNA)")
             continue
         t = align_track(ref, proximal(raw, region))
         if t:

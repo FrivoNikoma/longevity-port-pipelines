@@ -1,0 +1,141 @@
+{
+  "analysis": "module_specificity_of_proximal_utr3_indel_deficit",
+  "metric": "indel",
+  "primary": "delta = cellcycle - control_all, within-species contrast",
+  "n_genes": {
+    "cellcycle": 25,
+    "control_all": 24,
+    "ribosome": 8,
+    "glycolysis": 8,
+    "structural_tca": 8
+  },
+  "genes": {
+    "cellcycle": [
+      "RB1",
+      "TP53",
+      "CDK1",
+      "CDK2",
+      "CDK4",
+      "CDK6",
+      "ATM",
+      "ATR",
+      "CDC20",
+      "E2F1",
+      "TFDP1",
+      "CCND1",
+      "CCNE1",
+      "CCNA2",
+      "CCNB1",
+      "CDKN1A",
+      "CDKN1B",
+      "CDKN2A",
+      "MDM2",
+      "MDM4",
+      "CHEK1",
+      "CHEK2",
+      "WEE1",
+      "CDC25A",
+      "BUB1B"
+    ],
+    "ribosome": [
+      "RPL5",
+      "RPL11",
+      "RPL13A",
+      "RPS3",
+      "RPS6",
+      "RPS14",
+      "RPS19",
+      "RPLP0"
+    ],
+    "glycolysis": [
+      "GAPDH",
+      "ALDOA",
+      "ENO1",
+      "PKM",
+      "PGK1",
+      "TPI1",
+      "LDHA",
+      "HK1"
+    ],
+    "structural_tca": [
+      "ACTB",
+      "ACTG1",
+      "TUBB",
+      "TUBA1B",
+      "SDHA",
+      "CS",
+      "MDH1",
+      "FH"
+    ]
+  },
+  "missing_control_genes": {},
+  "results": {
+    "cellcycle": {
+      "n": 57,
+      "beta_lifespan": -0.0465,
+      "ci95": [
+        -0.0709,
+        -0.0221
+      ],
+      "p_lifespan": 0.0003,
+      "p_mass": 0.0102,
+      "mean": 0.2158
+    },
+    "control_all": {
+      "n": 57,
+      "beta_lifespan": -0.0016,
+      "ci95": [
+        -0.0316,
+        0.0285
+      ],
+      "p_lifespan": 0.917,
+      "p_mass": 0.5874,
+      "mean": 0.3515
+    },
+    "control_ribosome": {
+      "n": 57,
+      "beta_lifespan": -0.0077,
+      "ci95": [
+        -0.0715,
+        0.0561
+      ],
+      "p_lifespan": 0.8103,
+      "p_mass": 0.3897,
+      "mean": 0.6084
+    },
+    "control_glycolysis": {
+      "n": 57,
+      "beta_lifespan": -0.0138,
+      "ci95": [
+        -0.0477,
+        0.02
+      ],
+      "p_lifespan": 0.4162,
+      "p_mass": 0.2339,
+      "mean": 0.1677
+    },
+    "control_structural_tca": {
+      "n": 57,
+      "beta_lifespan": 0.0119,
+      "ci95": [
+        -0.0364,
+        0.0603
+      ],
+      "p_lifespan": 0.6224,
+      "p_mass": 0.2799,
+      "mean": 0.2718
+    }
+  },
+  "delta_cellcycle_minus_control": {
+    "n": 57,
+    "beta_lifespan": -0.0449,
+    "ci95": [
+      -0.0756,
+      -0.0142
+    ],
+    "p_lifespan": 0.0049,
+    "p_mass": 0.0105,
+    "mean": -0.1358
+  },
+  "verdict": "module-specific: the cell-cycle set is constrained, the housekeeping controls are not, and the within-species contrast is significant"
+}
