@@ -56,16 +56,27 @@ Full argument with numbers:
 | Where along the UTR? | [Positional map](2026-08-05-utr-positional/) | **proximal** (first ~38 %, next to the stop codon; p ≤ 0.013), fading distally |
 | Which element? | [Element enrichment](2026-08-05-utr-element-enrichment/) | **not** miRNA sites or AREs — diffuse across the proximal region |
 | Can an AI metric see it? | [Embedding panel re-test](2026-08-06-utr-embedding-panel/) | re-tested at n = 57 with a 3'UTR-domain model: embedding distance **adds nothing beyond the alignment** (`emb given JC` ns in all 16 cells) and misses both FDR survivors; the old n = 22 AI null was largely a **power** artifact |
+| What *kind* of constraint is it? | [Constraint nature](2026-08-07-utr-constraint-nature/) | not secondary structure (delta p = 0.14, with the method shown to detect structure at Wilcoxon p = 5e-4); the proximal localisation is carried by **indels, not substitutions** — proximal indel p = 0.0003 vs substitution p = 0.15, robust to UTR-length mismatch (p = 0.0009) and to gene/clade jackknives |
 
 ## What this shows
 
 The concrete finding is **stabilizing selection on the proximal 3' UTR of the cell-cycle /
 tumour-suppressor module in long-lived mammals** — consistent with tighter cell-cycle control in
 large, cancer-resistant species (Peto's paradox). It is a comparative-genomics correlation, not
-a demonstrated mechanism, and the responsible proximal-3' UTR feature is not yet identified
-(it is neither canonical miRNA sites nor AREs). But it is the project's first positive,
-phylogenetically controlled, FDR-surviving regulatory signal, and it vindicates changing the
-unit of analysis off the coding interface.
+a demonstrated mechanism. But it is the project's first positive, phylogenetically controlled,
+FDR-surviving regulatory signal, and it vindicates changing the unit of analysis off the coding
+interface.
+
+The [constraint-nature layer](2026-08-07-utr-constraint-nature/) then identifies what the
+proximal component of that signal *is*. Three composition hypotheses failed in a row — miRNA
+sites, AREs, secondary structure — and the reason is that the proximal signal is not a
+substitution signal at all. Separating gaps from mismatches on the same alignments shows the
+localisation is carried by **indels** (proximal indel p = 0.0003; proximal substitution
+p = 0.15). Long-lived mammals carry fewer insertions and deletions in the stop-proximal
+3' UTR: the constraint is on UTR architecture — the length and spacing of the proximal region —
+rather than on which bases occupy it. This refines the positional map rather than overturning
+it; that result reproduces exactly here, but its per-position score counted a gap as a
+mismatch, so it could not separate the two classes of event.
 
 The AI arms (ESM protein embeddings; Nucleotide Transformer DNA embeddings; Enformer expression)
 were each null, and the [embedding panel re-test](2026-08-06-utr-embedding-panel/) sharpens what
