@@ -28,7 +28,7 @@ Brownian covariance, two-sided, with 95 % confidence intervals on the slopes.
 
 Inputs:  data/config/control_modules.tsv
          data/interim/utr_panel/{GENE}_utr3.fasta for both gene sets
-Outputs: docs/results/2026-08-09-module-specificity/module_specificity.{json,png}
+Outputs: docs/results/2026-08-09-module-specificity/module_specificity_{metric}.{json,png}
 No network, no Biohub credits.
 """
 
