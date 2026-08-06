@@ -301,8 +301,9 @@ def main() -> int:
     wanted = {s: sci for s, sci, _ in panel_rows if s in traits}
     clade = {s: cl for s, _sci, cl in panel_rows}
     nwk = PANEL.NWK.read_text()
-    all_genes = sorted({f.name.split("_utr")[0]
-                        for f in UTR_DIR.glob(f"*_{args.region}.fasta")})
+    suffix = f"_{args.region}.fasta"
+    all_genes = sorted({f.name[: -len(suffix)]
+                        for f in UTR_DIR.glob(f"*{suffix}")})
     genes = [g for g in all_genes if args.gene_set == "all" or g in set(PANEL.CELLCYCLE)]
     if args.genes:
         pick = {g.strip() for g in args.genes.split(",") if g.strip()}

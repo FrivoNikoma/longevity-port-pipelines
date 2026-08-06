@@ -57,6 +57,7 @@ Full argument with numbers:
 | Which element? | [Element enrichment](2026-08-05-utr-element-enrichment/) | **not** miRNA sites or AREs — diffuse across the proximal region |
 | Can an AI metric see it? | [Embedding panel re-test](2026-08-06-utr-embedding-panel/) | re-tested at n = 57 with a 3'UTR-domain model: embedding distance **adds nothing beyond the alignment** (`emb given JC` ns in all 16 cells) and misses both FDR survivors; the old n = 22 AI null was largely a **power** artifact |
 | What *kind* of constraint is it? | [Constraint nature](2026-08-07-utr-constraint-nature/) | not secondary structure (delta p = 0.14, with the method shown to detect structure at Wilcoxon p = 5e-4); the proximal localisation is carried by **indels, not substitutions** — proximal indel p = 0.0003 vs substitution p = 0.15, robust to UTR-length mismatch (p = 0.0009) and to gene/clade jackknives |
+| Or is it just a slower mutation clock? | [Intron neutral control](2026-08-08-intron-neutral-control/) | no: intronic windows of the same genes are **flat** (slope −0.004, 95 % CI [−0.022, +0.014], p = 0.65) and the interval **excludes** the 3' UTR slope (−0.033), so the null is real rather than underpowered; the weak generation-time trend that does exist sits in intronic *substitutions* (p = 0.087) |
 
 ## What this shows
 
@@ -77,6 +78,12 @@ p = 0.15). Long-lived mammals carry fewer insertions and deletions in the stop-p
 rather than on which bases occupy it. This refines the positional map rather than overturning
 it; that result reproduces exactly here, but its per-position score counted a gap as a
 mismatch, so it could not separate the two classes of event.
+
+The obvious alternative — that long-lived mammals simply accumulate indels more slowly
+everywhere, given their longer generation times — is rejected by an
+[external neutral control](2026-08-08-intron-neutral-control/): intronic windows from the same
+genes are flat, and their confidence interval excludes the 3' UTR slope, so the deficit is
+regional rather than genome-wide.
 
 The AI arms (ESM protein embeddings; Nucleotide Transformer DNA embeddings; Enformer expression)
 were each null, and the [embedding panel re-test](2026-08-06-utr-embedding-panel/) sharpens what
