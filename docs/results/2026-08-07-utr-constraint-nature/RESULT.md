@@ -76,11 +76,23 @@ Over the proximal window as a whole:
 | **substitution only** | **0.15** | −0.0063 | 0.151 |
 | **indel only** | **0.0003** | −0.047 | 0.216 |
 
-**The confound that could have manufactured this does not.** Gaps are mechanically produced by
-UTR length differences, and human — the alignment anchor — is itself long-lived, so "long-lived
-species look more human" is a live alternative. Length mismatch does drive gaps
-(r = +0.53), but it is **uncorrelated with lifespan** (r = −0.029), and entering it as a third
-covariate leaves the effect intact: **p = 0.0009**, slope −0.039 (covariate p = 5e-4).
+**Two confounds that could have manufactured this do not.**
+
+*UTR length mismatch.* Gaps are mechanically produced by UTR length differences, and human —
+the alignment anchor — is itself long-lived, so "long-lived species look more human" is a live
+alternative. Length mismatch does drive gaps (r = +0.53), but it is **uncorrelated with
+lifespan** (r = −0.029), and entering it as a third covariate leaves the effect intact:
+**p = 0.0009**, slope −0.039 (covariate p = 5e-4).
+
+*Species-level indel rate.* The obvious alternative is that long-lived mammals accumulate
+indels more slowly everywhere — longer generation times, lower per-year mutation rate — so that
+nothing about the 3' UTR is special. Each species' background indel propensity, measured off
+the window of interest on the **distal half of the same UTRs**, tests this. The background rate
+is strongly real (r = 0.665 with the proximal rate; covariate p = 1e-6) but is **not itself
+lifespan-linked (p = 0.33)**, and the proximal effect survives holding it constant:
+**p = 0.0002**, slope −0.039. The deficit is specific to the proximal window, not a property
+of the species.
+
 Jackknives: worst leave-one-gene-out p = 0.0042 (dropping WEE1), worst leave-one-clade-out
 p = 0.0021 (dropping all rodents, n = 42).
 
@@ -126,6 +138,19 @@ which is the opposite of what an annotation artifact would produce.
   predicted structure.
 - Indel *rate* is measured, not indel *length spectrum* or the distinction between insertion
   and deletion, which would need an outgroup polarisation this design does not have.
+- **The neutral-region control is internal, not external.** Species-level indel propensity is
+  estimated from the distal half of the same 3' UTRs — the same transcripts, the same alignment
+  procedure — which is the right comparison in every respect except one: the distal 3' UTR is
+  not neutral sequence, and it is the *worst*-annotated part of the transcript, so it is a
+  noisier background than an intron or an intergenic window would be. Noise in a covariate
+  biases its adjustment toward zero, i.e. toward leaving the proximal effect standing. An
+  external neutral control (introns of the same genes, same species) is the outstanding test
+  and would be the decisive one; until it is done, "the deficit is specific to the proximal
+  3' UTR" should be read as strongly supported rather than settled.
+- **Generation time is only indirectly controlled.** Lifespan, body mass and generation time
+  are tightly correlated in mammals; mass is a model term and the background-indel covariate
+  absorbs the rate component that shows up in these transcripts, but generation time itself is
+  not a variable in the model, and no per-lineage substitution-rate estimate was used.
 
 ## Reproducing
 

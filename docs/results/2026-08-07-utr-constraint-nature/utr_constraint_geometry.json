@@ -471,6 +471,22 @@
     "beta_covariate": 0.0212,
     "p_covariate": 0.000539
   },
+  "background_indel_distal_half_alone": {
+    "n": 57,
+    "beta_lifespan": -0.0256,
+    "p_lifespan": 0.3268,
+    "p_mass": 0.3241,
+    "mean": 0.3853
+  },
+  "primary_indel_adjusted_for_background_indel": {
+    "n": 57,
+    "beta_lifespan": -0.0393,
+    "p_lifespan": 0.0002,
+    "p_mass": 0.0142,
+    "mean": 0.2158,
+    "beta_covariate": 0.0315,
+    "p_covariate": 1e-06
+  },
   "jackknife_leave_one_gene_out": [
     {
       "dropped": "ATM",

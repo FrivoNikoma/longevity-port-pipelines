@@ -189,6 +189,33 @@ def proximal_scores(genes: list[str], region: str, traits: dict,
     return acc
 
 
+def background_indel(genes: list[str], region: str, traits: dict,
+                     from_frac: float = 0.5) -> dict[str, list[float]]:
+    """Per-species indel rate over the DISTAL half of the same UTRs.
+
+    This is the species' own indel propensity measured off the window of interest, and it is
+    the control for the alternative that long-lived mammals simply accumulate indels more
+    slowly everywhere (longer generation times, lower per-year mutation rate). If the proximal
+    deficit is a species-level rate effect, it disappears once this is held constant.
+    """
+    acc: dict[str, list[float]] = {}
+    for gene in genes:
+        tracks = gene_tracks(gene, region)
+        if not tracks:
+            continue
+        n = len(tracks.get("_human", ""))
+        lo = int(round(n * from_frac))
+        if n - lo < MIN_BIN:
+            continue
+        for sp, track in tracks.items():
+            if sp == "_human" or sp not in traits:
+                continue
+            v = score(track, lo, n, "indel")
+            if v is not None:
+                acc.setdefault(sp, []).append(v)
+    return acc
+
+
 def length_mismatch(genes: list[str], region: str, traits: dict) -> dict[str, list[float]]:
     """Per-species |log10 UTR length - log10 human UTR length|, gene by gene."""
     acc: dict[str, list[float]] = {}
@@ -298,8 +325,11 @@ def main() -> int:
     # ---- primary: proximal indel rate, with the length-mismatch confound and jackknives
     prox = {m: proximal_scores(genes, args.region, traits, m) for m in METRICS}
     lm = length_mismatch(genes, args.region, traits)
+    bg = background_indel(genes, args.region, traits)
     primary = {m: fit_species(prox[m], traits, wanted, nwk) for m in METRICS}
     adjusted = fit_species(prox["indel"], traits, wanted, nwk, extra=lm)
+    background_alone = fit_species(bg, traits, wanted, nwk)
+    adjusted_bg = fit_species(prox["indel"], traits, wanted, nwk, extra=bg)
 
     jack_gene = []
     for drop in genes:
@@ -327,6 +357,8 @@ def main() -> int:
         "bins": bins,
         "primary_proximal": primary,
         "primary_indel_adjusted_for_utr_length_mismatch": adjusted,
+        "background_indel_distal_half_alone": background_alone,
+        "primary_indel_adjusted_for_background_indel": adjusted_bg,
         "jackknife_leave_one_gene_out": jack_gene,
         "jackknife_leave_one_clade_out": jack_clade,
     }
@@ -365,6 +397,12 @@ def main() -> int:
     if adjusted:
         print(f"  indel + UTR-length-mismatch covariate: p={adjusted['p_lifespan']} "
               f"beta={adjusted['beta_lifespan']} (covariate p={adjusted['p_covariate']})")
+    if background_alone:
+        print(f"  background (distal half) indel alone:   p={background_alone['p_lifespan']} "
+              f"beta={background_alone['beta_lifespan']}")
+    if adjusted_bg:
+        print(f"  indel + background-indel covariate:     p={adjusted_bg['p_lifespan']} "
+              f"beta={adjusted_bg['beta_lifespan']} (covariate p={adjusted_bg['p_covariate']})")
     if jack_gene:
         worst = max(jack_gene, key=lambda r: r["p_lifespan"])
         print(f"=== jackknife: worst leave-one-gene-out p={worst['p_lifespan']} "
