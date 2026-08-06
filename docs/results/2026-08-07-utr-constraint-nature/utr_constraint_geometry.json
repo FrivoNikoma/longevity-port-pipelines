@@ -1,0 +1,691 @@
+{
+  "analysis": "utr_constraint_geometry_indel_vs_substitution",
+  "gene_set": "cellcycle",
+  "region": "utr3",
+  "n_genes": 25,
+  "proximal_frac": 0.38,
+  "question": "does the published proximal localisation come from substitutions or from indels, and is it a fixed footprint or a proportional region",
+  "bins": {
+    "relative|combined": [
+      {
+        "bin": "0.00-0.12",
+        "n": 57,
+        "beta_lifespan": -0.0448,
+        "p_lifespan": 0.0005,
+        "p_mass": 0.0564,
+        "mean": 0.3257,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.12-0.25",
+        "n": 57,
+        "beta_lifespan": -0.0461,
+        "p_lifespan": 0.0008,
+        "p_mass": 0.0458,
+        "mean": 0.3129,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.25-0.38",
+        "n": 57,
+        "beta_lifespan": -0.0466,
+        "p_lifespan": 0.0131,
+        "p_mass": 0.0708,
+        "mean": 0.376,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.38-0.50",
+        "n": 57,
+        "beta_lifespan": -0.0365,
+        "p_lifespan": 0.0799,
+        "p_mass": 0.0914,
+        "mean": 0.4262,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.50-0.62",
+        "n": 57,
+        "beta_lifespan": -0.0373,
+        "p_lifespan": 0.1187,
+        "p_mass": 0.1804,
+        "mean": 0.4415,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.62-0.75",
+        "n": 57,
+        "beta_lifespan": -0.0375,
+        "p_lifespan": 0.1537,
+        "p_mass": 0.239,
+        "mean": 0.454,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.75-0.88",
+        "n": 57,
+        "beta_lifespan": -0.0313,
+        "p_lifespan": 0.2384,
+        "p_mass": 0.3686,
+        "mean": 0.4916,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.88-1.00",
+        "n": 57,
+        "beta_lifespan": -0.0279,
+        "p_lifespan": 0.2896,
+        "p_mass": 0.6243,
+        "mean": 0.5561,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      }
+    ],
+    "relative|substitution": [
+      {
+        "bin": "0.00-0.12",
+        "n": 57,
+        "beta_lifespan": -0.0088,
+        "p_lifespan": 0.0614,
+        "p_mass": 0.7524,
+        "mean": 0.152,
+        "n_gene_obs": 1159,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.12-0.25",
+        "n": 57,
+        "beta_lifespan": -0.0043,
+        "p_lifespan": 0.3864,
+        "p_mass": 0.2441,
+        "mean": 0.1456,
+        "n_gene_obs": 1120,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.25-0.38",
+        "n": 57,
+        "beta_lifespan": -0.0075,
+        "p_lifespan": 0.1433,
+        "p_mass": 0.8924,
+        "mean": 0.1538,
+        "n_gene_obs": 1055,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.38-0.50",
+        "n": 57,
+        "beta_lifespan": -0.0164,
+        "p_lifespan": 0.0045,
+        "p_mass": 0.0908,
+        "mean": 0.1605,
+        "n_gene_obs": 1014,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.50-0.62",
+        "n": 57,
+        "beta_lifespan": -0.0149,
+        "p_lifespan": 0.0086,
+        "p_mass": 0.9595,
+        "mean": 0.1541,
+        "n_gene_obs": 912,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.62-0.75",
+        "n": 57,
+        "beta_lifespan": -0.0107,
+        "p_lifespan": 0.0846,
+        "p_mass": 0.4553,
+        "mean": 0.1503,
+        "n_gene_obs": 908,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.75-0.88",
+        "n": 57,
+        "beta_lifespan": -0.0124,
+        "p_lifespan": 0.058,
+        "p_mass": 0.8112,
+        "mean": 0.1367,
+        "n_gene_obs": 850,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.88-1.00",
+        "n": 57,
+        "beta_lifespan": -0.0124,
+        "p_lifespan": 0.054,
+        "p_mass": 0.8831,
+        "mean": 0.1368,
+        "n_gene_obs": 755,
+        "direction": "conserve"
+      }
+    ],
+    "relative|indel": [
+      {
+        "bin": "0.00-0.12",
+        "n": 57,
+        "beta_lifespan": -0.0421,
+        "p_lifespan": 0.0022,
+        "p_mass": 0.0371,
+        "mean": 0.2113,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.12-0.25",
+        "n": 57,
+        "beta_lifespan": -0.0491,
+        "p_lifespan": 0.0014,
+        "p_mass": 0.021,
+        "mean": 0.2005,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.25-0.38",
+        "n": 57,
+        "beta_lifespan": -0.049,
+        "p_lifespan": 0.0153,
+        "p_mass": 0.0342,
+        "mean": 0.266,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.38-0.50",
+        "n": 57,
+        "beta_lifespan": -0.0316,
+        "p_lifespan": 0.1722,
+        "p_mass": 0.1039,
+        "mean": 0.3236,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.50-0.62",
+        "n": 57,
+        "beta_lifespan": -0.0327,
+        "p_lifespan": 0.227,
+        "p_mass": 0.1615,
+        "mean": 0.3447,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.62-0.75",
+        "n": 57,
+        "beta_lifespan": -0.0339,
+        "p_lifespan": 0.2379,
+        "p_mass": 0.2459,
+        "mean": 0.3619,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.75-0.88",
+        "n": 57,
+        "beta_lifespan": -0.029,
+        "p_lifespan": 0.3364,
+        "p_mass": 0.307,
+        "mean": 0.4137,
+        "n_gene_obs": 1266,
+        "direction": "conserve"
+      },
+      {
+        "bin": "0.88-1.00",
+        "n": 57,
+        "beta_lifespan": -0.0235,
+        "p_lifespan": 0.419,
+        "p_mass": 0.6136,
+        "mean": 0.4896,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      }
+    ],
+    "absolute|combined": [
+      {
+        "bin": "0-50",
+        "n": 57,
+        "beta_lifespan": -0.0381,
+        "p_lifespan": 0.0019,
+        "p_mass": 0.0593,
+        "mean": 0.3431,
+        "n_gene_obs": 1379,
+        "direction": "conserve"
+      },
+      {
+        "bin": "50-100",
+        "n": 57,
+        "beta_lifespan": -0.0395,
+        "p_lifespan": 0.0018,
+        "p_mass": 0.0305,
+        "mean": 0.3098,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      },
+      {
+        "bin": "100-200",
+        "n": 57,
+        "beta_lifespan": -0.0522,
+        "p_lifespan": 0.0002,
+        "p_mass": 0.0032,
+        "mean": 0.2869,
+        "n_gene_obs": 1209,
+        "direction": "conserve"
+      },
+      {
+        "bin": "200-400",
+        "n": 57,
+        "beta_lifespan": -0.0467,
+        "p_lifespan": 0.0075,
+        "p_mass": 0.0578,
+        "mean": 0.3588,
+        "n_gene_obs": 1101,
+        "direction": "conserve"
+      },
+      {
+        "bin": "400-800",
+        "n": 57,
+        "beta_lifespan": -0.0467,
+        "p_lifespan": 0.0528,
+        "p_mass": 0.1186,
+        "mean": 0.4473,
+        "n_gene_obs": 1043,
+        "direction": "conserve"
+      },
+      {
+        "bin": "800-3000",
+        "n": 57,
+        "beta_lifespan": -0.0357,
+        "p_lifespan": 0.262,
+        "p_mass": 0.4251,
+        "mean": 0.5129,
+        "n_gene_obs": 878,
+        "direction": "conserve"
+      }
+    ],
+    "absolute|substitution": [
+      {
+        "bin": "0-50",
+        "n": 57,
+        "beta_lifespan": -0.0106,
+        "p_lifespan": 0.0268,
+        "p_mass": 0.7058,
+        "mean": 0.1545,
+        "n_gene_obs": 1240,
+        "direction": "conserve"
+      },
+      {
+        "bin": "50-100",
+        "n": 57,
+        "beta_lifespan": -0.0101,
+        "p_lifespan": 0.0424,
+        "p_mass": 0.7447,
+        "mean": 0.1479,
+        "n_gene_obs": 1148,
+        "direction": "conserve"
+      },
+      {
+        "bin": "100-200",
+        "n": 57,
+        "beta_lifespan": -0.0109,
+        "p_lifespan": 0.021,
+        "p_mass": 0.8194,
+        "mean": 0.14,
+        "n_gene_obs": 1113,
+        "direction": "conserve"
+      },
+      {
+        "bin": "200-400",
+        "n": 57,
+        "beta_lifespan": -0.0085,
+        "p_lifespan": 0.0484,
+        "p_mass": 0.061,
+        "mean": 0.1407,
+        "n_gene_obs": 975,
+        "direction": "conserve"
+      },
+      {
+        "bin": "400-800",
+        "n": 57,
+        "beta_lifespan": -0.0125,
+        "p_lifespan": 0.0134,
+        "p_mass": 0.8955,
+        "mean": 0.1494,
+        "n_gene_obs": 817,
+        "direction": "conserve"
+      },
+      {
+        "bin": "800-3000",
+        "n": 57,
+        "beta_lifespan": -0.0071,
+        "p_lifespan": 0.1856,
+        "p_mass": 0.9293,
+        "mean": 0.1292,
+        "n_gene_obs": 641,
+        "direction": "conserve"
+      }
+    ],
+    "absolute|indel": [
+      {
+        "bin": "0-50",
+        "n": 57,
+        "beta_lifespan": -0.0352,
+        "p_lifespan": 0.0048,
+        "p_mass": 0.0428,
+        "mean": 0.2263,
+        "n_gene_obs": 1379,
+        "direction": "conserve"
+      },
+      {
+        "bin": "50-100",
+        "n": 57,
+        "beta_lifespan": -0.0359,
+        "p_lifespan": 0.0119,
+        "p_mass": 0.0201,
+        "mean": 0.1931,
+        "n_gene_obs": 1322,
+        "direction": "conserve"
+      },
+      {
+        "bin": "100-200",
+        "n": 57,
+        "beta_lifespan": -0.0495,
+        "p_lifespan": 0.0013,
+        "p_mass": 0.0028,
+        "mean": 0.1758,
+        "n_gene_obs": 1209,
+        "direction": "conserve"
+      },
+      {
+        "bin": "200-400",
+        "n": 57,
+        "beta_lifespan": -0.0475,
+        "p_lifespan": 0.015,
+        "p_mass": 0.0245,
+        "mean": 0.2565,
+        "n_gene_obs": 1101,
+        "direction": "conserve"
+      },
+      {
+        "bin": "400-800",
+        "n": 57,
+        "beta_lifespan": -0.0457,
+        "p_lifespan": 0.0904,
+        "p_mass": 0.0986,
+        "mean": 0.3571,
+        "n_gene_obs": 1043,
+        "direction": "conserve"
+      },
+      {
+        "bin": "800-3000",
+        "n": 57,
+        "beta_lifespan": -0.0367,
+        "p_lifespan": 0.3044,
+        "p_mass": 0.3718,
+        "mean": 0.4469,
+        "n_gene_obs": 878,
+        "direction": "conserve"
+      }
+    ]
+  },
+  "primary_proximal": {
+    "combined": {
+      "n": 57,
+      "beta_lifespan": -0.0453,
+      "p_lifespan": 0.0002,
+      "p_mass": 0.02,
+      "mean": 0.3301
+    },
+    "substitution": {
+      "n": 57,
+      "beta_lifespan": -0.0063,
+      "p_lifespan": 0.1487,
+      "p_mass": 0.6913,
+      "mean": 0.1508
+    },
+    "indel": {
+      "n": 57,
+      "beta_lifespan": -0.0465,
+      "p_lifespan": 0.0003,
+      "p_mass": 0.0102,
+      "mean": 0.2158
+    }
+  },
+  "primary_indel_adjusted_for_utr_length_mismatch": {
+    "n": 57,
+    "beta_lifespan": -0.0392,
+    "p_lifespan": 0.0009,
+    "p_mass": 0.0304,
+    "mean": 0.2158,
+    "beta_covariate": 0.0212,
+    "p_covariate": 0.000539
+  },
+  "background_indel_distal_half_alone": {
+    "n": 57,
+    "beta_lifespan": -0.0256,
+    "p_lifespan": 0.3268,
+    "p_mass": 0.3241,
+    "mean": 0.3853
+  },
+  "primary_indel_adjusted_for_background_indel": {
+    "n": 57,
+    "beta_lifespan": -0.0393,
+    "p_lifespan": 0.0002,
+    "p_mass": 0.0142,
+    "mean": 0.2158,
+    "beta_covariate": 0.0315,
+    "p_covariate": 1e-06
+  },
+  "jackknife_leave_one_gene_out": [
+    {
+      "dropped": "ATM",
+      "p_lifespan": 0.0007,
+      "beta_lifespan": -0.0454
+    },
+    {
+      "dropped": "ATR",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0471
+    },
+    {
+      "dropped": "BUB1B",
+      "p_lifespan": 0.0006,
+      "beta_lifespan": -0.0472
+    },
+    {
+      "dropped": "CCNA2",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.0479
+    },
+    {
+      "dropped": "CCNB1",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0467
+    },
+    {
+      "dropped": "CCND1",
+      "p_lifespan": 0.0012,
+      "beta_lifespan": -0.0449
+    },
+    {
+      "dropped": "CCNE1",
+      "p_lifespan": 0.0006,
+      "beta_lifespan": -0.045
+    },
+    {
+      "dropped": "CDC20",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.048
+    },
+    {
+      "dropped": "CDC25A",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.0482
+    },
+    {
+      "dropped": "CDK1",
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0469
+    },
+    {
+      "dropped": "CDK2",
+      "p_lifespan": 0.0005,
+      "beta_lifespan": -0.0425
+    },
+    {
+      "dropped": "CDK4",
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0462
+    },
+    {
+      "dropped": "CDK6",
+      "p_lifespan": 0.0013,
+      "beta_lifespan": -0.0428
+    },
+    {
+      "dropped": "CDKN1A",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.048
+    },
+    {
+      "dropped": "CDKN1B",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.0481
+    },
+    {
+      "dropped": "CDKN2A",
+      "p_lifespan": 0.0021,
+      "beta_lifespan": -0.0421
+    },
+    {
+      "dropped": "CHEK1",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0471
+    },
+    {
+      "dropped": "CHEK2",
+      "p_lifespan": 0.0006,
+      "beta_lifespan": -0.0458
+    },
+    {
+      "dropped": "E2F1",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0496
+    },
+    {
+      "dropped": "MDM2",
+      "p_lifespan": 0.0006,
+      "beta_lifespan": -0.0451
+    },
+    {
+      "dropped": "MDM4",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0505
+    },
+    {
+      "dropped": "RB1",
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.0496
+    },
+    {
+      "dropped": "TFDP1",
+      "p_lifespan": 0.0002,
+      "beta_lifespan": -0.0494
+    },
+    {
+      "dropped": "TP53",
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.048
+    },
+    {
+      "dropped": "WEE1",
+      "p_lifespan": 0.0042,
+      "beta_lifespan": -0.0407
+    }
+  ],
+  "jackknife_leave_one_clade_out": [
+    {
+      "dropped_clade": "afrotheria",
+      "n": 54,
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0471
+    },
+    {
+      "dropped_clade": "artiodactyla",
+      "n": 52,
+      "p_lifespan": 0.0003,
+      "beta_lifespan": -0.0511
+    },
+    {
+      "dropped_clade": "carnivora",
+      "n": 53,
+      "p_lifespan": 0.0005,
+      "beta_lifespan": -0.0484
+    },
+    {
+      "dropped_clade": "cetacea",
+      "n": 51,
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0456
+    },
+    {
+      "dropped_clade": "chiroptera",
+      "n": 52,
+      "p_lifespan": 0.0012,
+      "beta_lifespan": -0.049
+    },
+    {
+      "dropped_clade": "eulipotyphla",
+      "n": 55,
+      "p_lifespan": 0.0013,
+      "beta_lifespan": -0.0432
+    },
+    {
+      "dropped_clade": "lagomorpha",
+      "n": 55,
+      "p_lifespan": 0.0007,
+      "beta_lifespan": -0.045
+    },
+    {
+      "dropped_clade": "marsupialia",
+      "n": 56,
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0459
+    },
+    {
+      "dropped_clade": "perissodactyla",
+      "n": 55,
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0451
+    },
+    {
+      "dropped_clade": "primates",
+      "n": 46,
+      "p_lifespan": 0.001,
+      "beta_lifespan": -0.0456
+    },
+    {
+      "dropped_clade": "rodentia",
+      "n": 42,
+      "p_lifespan": 0.0021,
+      "beta_lifespan": -0.0437
+    },
+    {
+      "dropped_clade": "xenarthra",
+      "n": 56,
+      "p_lifespan": 0.0004,
+      "beta_lifespan": -0.0469
+    }
+  ]
+}

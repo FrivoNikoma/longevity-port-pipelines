@@ -1,0 +1,2031 @@
+{
+  "analysis": "utr_structure_conservation_vs_longevity",
+  "gene_set": "cellcycle",
+  "proximal_frac": 0.38,
+  "pairing": "MFE structure, local fold max_bp_span=150",
+  "primary": "utr3|delta",
+  "note": "delta = divergence(unpaired) - divergence(paired), a within-sequence contrast; positive slope on lifespan = structure-tracking constraint strengthens in long-lived species",
+  "n_species_with_traits": 59,
+  "results": {
+    "utr3|delta": {
+      "metric": "delta",
+      "region": "utr3",
+      "n_genes": 24,
+      "fdr_survivors": 1,
+      "positive_slope": 10,
+      "sign_test_p": 0.5413,
+      "per_gene": [
+        {
+          "gene": "ATR",
+          "n": 55,
+          "pgls_p_lifespan": 0.4926,
+          "pgls_beta_lifespan": 0.0258,
+          "direction": "structure-conserving",
+          "mean": -0.0091
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.3316,
+          "pgls_beta_lifespan": -0.0171,
+          "direction": "structure-eroding",
+          "mean": 0.0287
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.4409,
+          "pgls_beta_lifespan": -0.0076,
+          "direction": "structure-eroding",
+          "mean": -0.0045
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.6772,
+          "pgls_beta_lifespan": -0.0071,
+          "direction": "structure-eroding",
+          "mean": -0.0219
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.0253,
+          "pgls_beta_lifespan": -0.0421,
+          "direction": "structure-eroding",
+          "mean": 0.0403
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.5449,
+          "pgls_beta_lifespan": 0.0084,
+          "direction": "structure-conserving",
+          "mean": 0.0234
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0015,
+          "pgls_beta_lifespan": -0.0504,
+          "direction": "structure-eroding",
+          "mean": 0.0327
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.7536,
+          "pgls_beta_lifespan": -0.0041,
+          "direction": "structure-eroding",
+          "mean": 0.0346
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.2368,
+          "pgls_beta_lifespan": -0.0198,
+          "direction": "structure-eroding",
+          "mean": -0.0127
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.1435,
+          "pgls_beta_lifespan": -0.0186,
+          "direction": "structure-eroding",
+          "mean": 0.0149
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.8595,
+          "pgls_beta_lifespan": -0.0023,
+          "direction": "structure-eroding",
+          "mean": 0.0043
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.9624,
+          "pgls_beta_lifespan": -0.0004,
+          "direction": "structure-eroding",
+          "mean": 0.0016
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.9334,
+          "pgls_beta_lifespan": 0.0013,
+          "direction": "structure-conserving",
+          "mean": 0.0037
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.9404,
+          "pgls_beta_lifespan": 0.0007,
+          "direction": "structure-conserving",
+          "mean": 0.0112
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 30,
+          "pgls_p_lifespan": 0.7703,
+          "pgls_beta_lifespan": -0.0091,
+          "direction": "structure-eroding",
+          "mean": 0.0034
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.9482,
+          "pgls_beta_lifespan": -0.0008,
+          "direction": "structure-eroding",
+          "mean": -0.0245
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.2845,
+          "pgls_beta_lifespan": -0.0363,
+          "direction": "structure-eroding",
+          "mean": -0.0061
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.6704,
+          "pgls_beta_lifespan": 0.0028,
+          "direction": "structure-conserving",
+          "mean": -0.0025
+        },
+        {
+          "gene": "MDM2",
+          "n": 55,
+          "pgls_p_lifespan": 0.6437,
+          "pgls_beta_lifespan": 0.0052,
+          "direction": "structure-conserving",
+          "mean": -0.0096
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.9778,
+          "pgls_beta_lifespan": 0.0011,
+          "direction": "structure-conserving",
+          "mean": -0.0088
+        },
+        {
+          "gene": "RB1",
+          "n": 54,
+          "pgls_p_lifespan": 0.9846,
+          "pgls_beta_lifespan": 0.0001,
+          "direction": "structure-conserving",
+          "mean": 0.0088
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.6725,
+          "pgls_beta_lifespan": -0.0068,
+          "direction": "structure-eroding",
+          "mean": 0.0444
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.9528,
+          "pgls_beta_lifespan": 0.0006,
+          "direction": "structure-conserving",
+          "mean": 0.017
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.0748,
+          "pgls_beta_lifespan": 0.0409,
+          "direction": "structure-conserving",
+          "mean": 0.0063
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.1396,
+        "pgls_beta_lifespan": -0.0059,
+        "pgls_p_mass": 0.2756,
+        "marginal_r": -0.097,
+        "mean": 0.0074
+      }
+    },
+    "utr3|delta_shuffled": {
+      "metric": "delta_shuffled",
+      "region": "utr3",
+      "n_genes": 24,
+      "fdr_survivors": 0,
+      "positive_slope": 14,
+      "sign_test_p": 0.5413,
+      "per_gene": [
+        {
+          "gene": "ATR",
+          "n": 51,
+          "pgls_p_lifespan": 0.9684,
+          "pgls_beta_lifespan": 0.0015,
+          "direction": "structure-conserving",
+          "mean": 0.1088
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.3155,
+          "pgls_beta_lifespan": -0.0151,
+          "direction": "structure-eroding",
+          "mean": -0.0164
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.1907,
+          "pgls_beta_lifespan": -0.0133,
+          "direction": "structure-eroding",
+          "mean": 0.0002
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.3235,
+          "pgls_beta_lifespan": -0.0123,
+          "direction": "structure-eroding",
+          "mean": 0.0268
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.1389,
+          "pgls_beta_lifespan": 0.0275,
+          "direction": "structure-conserving",
+          "mean": -0.0262
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.0548,
+          "pgls_beta_lifespan": 0.0325,
+          "direction": "structure-conserving",
+          "mean": 0.0288
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.3709,
+          "pgls_beta_lifespan": 0.0179,
+          "direction": "structure-conserving",
+          "mean": 0.0394
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.3429,
+          "pgls_beta_lifespan": 0.0079,
+          "direction": "structure-conserving",
+          "mean": 0.0058
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.4915,
+          "pgls_beta_lifespan": -0.01,
+          "direction": "structure-eroding",
+          "mean": -0.024
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.0798,
+          "pgls_beta_lifespan": 0.0182,
+          "direction": "structure-conserving",
+          "mean": 0.0066
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.5517,
+          "pgls_beta_lifespan": 0.0087,
+          "direction": "structure-conserving",
+          "mean": -0.0087
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.2824,
+          "pgls_beta_lifespan": -0.0094,
+          "direction": "structure-eroding",
+          "mean": -0.0099
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.4186,
+          "pgls_beta_lifespan": -0.0061,
+          "direction": "structure-eroding",
+          "mean": 0.0083
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.3276,
+          "pgls_beta_lifespan": 0.0081,
+          "direction": "structure-conserving",
+          "mean": 0.0031
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 30,
+          "pgls_p_lifespan": 0.3716,
+          "pgls_beta_lifespan": 0.0425,
+          "direction": "structure-conserving",
+          "mean": 0.0368
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.079,
+          "pgls_beta_lifespan": -0.016,
+          "direction": "structure-eroding",
+          "mean": -0.0239
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.6074,
+          "pgls_beta_lifespan": 0.0119,
+          "direction": "structure-conserving",
+          "mean": -0.0588
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.9603,
+          "pgls_beta_lifespan": 0.0003,
+          "direction": "structure-conserving",
+          "mean": -0.0179
+        },
+        {
+          "gene": "MDM2",
+          "n": 55,
+          "pgls_p_lifespan": 0.4057,
+          "pgls_beta_lifespan": 0.0119,
+          "direction": "structure-conserving",
+          "mean": 0.006
+        },
+        {
+          "gene": "MDM4",
+          "n": 50,
+          "pgls_p_lifespan": 0.2556,
+          "pgls_beta_lifespan": -0.0479,
+          "direction": "structure-eroding",
+          "mean": -0.0133
+        },
+        {
+          "gene": "RB1",
+          "n": 54,
+          "pgls_p_lifespan": 0.9566,
+          "pgls_beta_lifespan": -0.0006,
+          "direction": "structure-eroding",
+          "mean": 0.0067
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.1055,
+          "pgls_beta_lifespan": -0.0233,
+          "direction": "structure-eroding",
+          "mean": -0.0025
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.4591,
+          "pgls_beta_lifespan": 0.0076,
+          "direction": "structure-conserving",
+          "mean": -0.0269
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.2708,
+          "pgls_beta_lifespan": 0.0121,
+          "direction": "structure-conserving",
+          "mean": 0.0058
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.4166,
+        "pgls_beta_lifespan": 0.0028,
+        "pgls_p_mass": 0.05,
+        "marginal_r": -0.126,
+        "mean": 0.0013
+      }
+    },
+    "utr3|comp_rate": {
+      "metric": "comp_rate",
+      "region": "utr3",
+      "n_genes": 21,
+      "fdr_survivors": 0,
+      "positive_slope": 12,
+      "sign_test_p": 0.6636,
+      "per_gene": [
+        {
+          "gene": "BUB1B",
+          "n": 47,
+          "pgls_p_lifespan": 0.826,
+          "pgls_beta_lifespan": 0.0092,
+          "direction": "structure-conserving",
+          "mean": 0.3243
+        },
+        {
+          "gene": "CCNA2",
+          "n": 34,
+          "pgls_p_lifespan": 0.2761,
+          "pgls_beta_lifespan": -0.0549,
+          "direction": "structure-eroding",
+          "mean": 0.3813
+        },
+        {
+          "gene": "CCNB1",
+          "n": 22,
+          "pgls_p_lifespan": 0.3915,
+          "pgls_beta_lifespan": 0.0524,
+          "direction": "structure-conserving",
+          "mean": 0.3692
+        },
+        {
+          "gene": "CCND1",
+          "n": 43,
+          "pgls_p_lifespan": 0.8567,
+          "pgls_beta_lifespan": -0.0045,
+          "direction": "structure-eroding",
+          "mean": 0.3259
+        },
+        {
+          "gene": "CCNE1",
+          "n": 42,
+          "pgls_p_lifespan": 0.8072,
+          "pgls_beta_lifespan": 0.0073,
+          "direction": "structure-conserving",
+          "mean": 0.3547
+        },
+        {
+          "gene": "CDC25A",
+          "n": 54,
+          "pgls_p_lifespan": 0.7299,
+          "pgls_beta_lifespan": 0.011,
+          "direction": "structure-conserving",
+          "mean": 0.348
+        },
+        {
+          "gene": "CDK1",
+          "n": 32,
+          "pgls_p_lifespan": 0.6198,
+          "pgls_beta_lifespan": 0.0195,
+          "direction": "structure-conserving",
+          "mean": 0.3996
+        },
+        {
+          "gene": "CDK2",
+          "n": 48,
+          "pgls_p_lifespan": 0.9046,
+          "pgls_beta_lifespan": -0.0032,
+          "direction": "structure-eroding",
+          "mean": 0.3212
+        },
+        {
+          "gene": "CDK4",
+          "n": 40,
+          "pgls_p_lifespan": 0.0345,
+          "pgls_beta_lifespan": 0.1114,
+          "direction": "structure-conserving",
+          "mean": 0.4311
+        },
+        {
+          "gene": "CDK6",
+          "n": 53,
+          "pgls_p_lifespan": 0.591,
+          "pgls_beta_lifespan": -0.0117,
+          "direction": "structure-eroding",
+          "mean": 0.3444
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 51,
+          "pgls_p_lifespan": 0.4821,
+          "pgls_beta_lifespan": -0.0175,
+          "direction": "structure-eroding",
+          "mean": 0.3188
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 49,
+          "pgls_p_lifespan": 0.0138,
+          "pgls_beta_lifespan": 0.0603,
+          "direction": "structure-conserving",
+          "mean": 0.2676
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 9,
+          "pgls_p_lifespan": 0.8032,
+          "pgls_beta_lifespan": -0.0234,
+          "direction": "structure-eroding",
+          "mean": 0.1953
+        },
+        {
+          "gene": "CHEK1",
+          "n": 53,
+          "pgls_p_lifespan": 0.7684,
+          "pgls_beta_lifespan": -0.0086,
+          "direction": "structure-eroding",
+          "mean": 0.3557
+        },
+        {
+          "gene": "E2F1",
+          "n": 47,
+          "pgls_p_lifespan": 0.6117,
+          "pgls_beta_lifespan": 0.0117,
+          "direction": "structure-conserving",
+          "mean": 0.4011
+        },
+        {
+          "gene": "MDM2",
+          "n": 45,
+          "pgls_p_lifespan": 0.0986,
+          "pgls_beta_lifespan": 0.0449,
+          "direction": "structure-conserving",
+          "mean": 0.3073
+        },
+        {
+          "gene": "MDM4",
+          "n": 12,
+          "pgls_p_lifespan": 0.594,
+          "pgls_beta_lifespan": -0.0427,
+          "direction": "structure-eroding",
+          "mean": 0.1028
+        },
+        {
+          "gene": "RB1",
+          "n": 49,
+          "pgls_p_lifespan": 0.7752,
+          "pgls_beta_lifespan": 0.0066,
+          "direction": "structure-conserving",
+          "mean": 0.3208
+        },
+        {
+          "gene": "TFDP1",
+          "n": 44,
+          "pgls_p_lifespan": 0.4409,
+          "pgls_beta_lifespan": 0.0242,
+          "direction": "structure-conserving",
+          "mean": 0.3703
+        },
+        {
+          "gene": "TP53",
+          "n": 52,
+          "pgls_p_lifespan": 0.0873,
+          "pgls_beta_lifespan": 0.0548,
+          "direction": "structure-conserving",
+          "mean": 0.3149
+        },
+        {
+          "gene": "WEE1",
+          "n": 41,
+          "pgls_p_lifespan": 0.8731,
+          "pgls_beta_lifespan": -0.0052,
+          "direction": "structure-eroding",
+          "mean": 0.359
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.3681,
+        "pgls_beta_lifespan": 0.0094,
+        "pgls_p_mass": 0.3886,
+        "marginal_r": 0.159,
+        "mean": 0.338
+      }
+    },
+    "utr3|div_paired": {
+      "metric": "div_paired",
+      "region": "utr3",
+      "n_genes": 24,
+      "fdr_survivors": 0,
+      "positive_slope": 10,
+      "sign_test_p": 0.5413,
+      "per_gene": [
+        {
+          "gene": "ATR",
+          "n": 55,
+          "pgls_p_lifespan": 0.9262,
+          "pgls_beta_lifespan": 0.003,
+          "direction": "structure-conserving",
+          "mean": 0.2337
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.7075,
+          "pgls_beta_lifespan": 0.0039,
+          "direction": "structure-conserving",
+          "mean": 0.1674
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.6866,
+          "pgls_beta_lifespan": 0.005,
+          "direction": "structure-conserving",
+          "mean": 0.0876
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.4005,
+          "pgls_beta_lifespan": -0.0123,
+          "direction": "structure-eroding",
+          "mean": 0.1226
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.2851,
+          "pgls_beta_lifespan": 0.011,
+          "direction": "structure-conserving",
+          "mean": 0.1351
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.1128,
+          "pgls_beta_lifespan": -0.0187,
+          "direction": "structure-eroding",
+          "mean": 0.151
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.8891,
+          "pgls_beta_lifespan": -0.0027,
+          "direction": "structure-eroding",
+          "mean": 0.0784
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.9865,
+          "pgls_beta_lifespan": 0.0001,
+          "direction": "structure-conserving",
+          "mean": 0.1313
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.6862,
+          "pgls_beta_lifespan": 0.006,
+          "direction": "structure-conserving",
+          "mean": 0.137
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.86,
+          "pgls_beta_lifespan": 0.0017,
+          "direction": "structure-conserving",
+          "mean": 0.1598
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.0035,
+          "pgls_beta_lifespan": -0.0284,
+          "direction": "structure-eroding",
+          "mean": 0.1459
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.0109,
+          "pgls_beta_lifespan": -0.0173,
+          "direction": "structure-eroding",
+          "mean": 0.1267
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.2866,
+          "pgls_beta_lifespan": -0.0148,
+          "direction": "structure-eroding",
+          "mean": 0.1683
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.755,
+          "pgls_beta_lifespan": -0.006,
+          "direction": "structure-eroding",
+          "mean": 0.0816
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 30,
+          "pgls_p_lifespan": 0.8334,
+          "pgls_beta_lifespan": 0.0084,
+          "direction": "structure-conserving",
+          "mean": 0.2391
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.0699,
+          "pgls_beta_lifespan": -0.0175,
+          "direction": "structure-eroding",
+          "mean": 0.1398
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.7226,
+          "pgls_beta_lifespan": 0.0068,
+          "direction": "structure-conserving",
+          "mean": 0.1669
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.2572,
+          "pgls_beta_lifespan": -0.0092,
+          "direction": "structure-eroding",
+          "mean": 0.115
+        },
+        {
+          "gene": "MDM2",
+          "n": 55,
+          "pgls_p_lifespan": 0.1382,
+          "pgls_beta_lifespan": -0.0187,
+          "direction": "structure-eroding",
+          "mean": 0.1933
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.6839,
+          "pgls_beta_lifespan": 0.0115,
+          "direction": "structure-conserving",
+          "mean": 0.2222
+        },
+        {
+          "gene": "RB1",
+          "n": 54,
+          "pgls_p_lifespan": 0.0632,
+          "pgls_beta_lifespan": -0.0168,
+          "direction": "structure-eroding",
+          "mean": 0.129
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.2955,
+          "pgls_beta_lifespan": -0.0139,
+          "direction": "structure-eroding",
+          "mean": 0.17
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.3132,
+          "pgls_beta_lifespan": -0.0083,
+          "direction": "structure-eroding",
+          "mean": 0.1811
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.0785,
+          "pgls_beta_lifespan": -0.0541,
+          "direction": "structure-eroding",
+          "mean": 0.1177
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.0661,
+        "pgls_beta_lifespan": -0.0087,
+        "pgls_p_mass": 0.9759,
+        "marginal_r": -0.505,
+        "mean": 0.1491
+      }
+    },
+    "utr3|div_unpaired": {
+      "metric": "div_unpaired",
+      "region": "utr3",
+      "n_genes": 24,
+      "fdr_survivors": 1,
+      "positive_slope": 2,
+      "sign_test_p": 0.0,
+      "per_gene": [
+        {
+          "gene": "ATR",
+          "n": 55,
+          "pgls_p_lifespan": 0.064,
+          "pgls_beta_lifespan": 0.0288,
+          "direction": "structure-conserving",
+          "mean": 0.2246
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.3944,
+          "pgls_beta_lifespan": -0.0132,
+          "direction": "structure-eroding",
+          "mean": 0.1961
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.8209,
+          "pgls_beta_lifespan": -0.0026,
+          "direction": "structure-eroding",
+          "mean": 0.0831
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.3886,
+          "pgls_beta_lifespan": -0.0194,
+          "direction": "structure-eroding",
+          "mean": 0.1007
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.0277,
+          "pgls_beta_lifespan": -0.0311,
+          "direction": "structure-eroding",
+          "mean": 0.1754
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.4616,
+          "pgls_beta_lifespan": -0.0103,
+          "direction": "structure-eroding",
+          "mean": 0.1744
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0018,
+          "pgls_beta_lifespan": -0.053,
+          "direction": "structure-eroding",
+          "mean": 0.1111
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.7506,
+          "pgls_beta_lifespan": -0.0039,
+          "direction": "structure-eroding",
+          "mean": 0.1659
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.4116,
+          "pgls_beta_lifespan": -0.0138,
+          "direction": "structure-eroding",
+          "mean": 0.1243
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.0947,
+          "pgls_beta_lifespan": -0.017,
+          "direction": "structure-eroding",
+          "mean": 0.1746
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.032,
+          "pgls_beta_lifespan": -0.0307,
+          "direction": "structure-eroding",
+          "mean": 0.1502
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.0613,
+          "pgls_beta_lifespan": -0.0177,
+          "direction": "structure-eroding",
+          "mean": 0.1283
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.6153,
+          "pgls_beta_lifespan": -0.0135,
+          "direction": "structure-eroding",
+          "mean": 0.172
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.7227,
+          "pgls_beta_lifespan": -0.0053,
+          "direction": "structure-eroding",
+          "mean": 0.0928
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 30,
+          "pgls_p_lifespan": 0.9833,
+          "pgls_beta_lifespan": -0.0007,
+          "direction": "structure-eroding",
+          "mean": 0.2424
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.0043,
+          "pgls_beta_lifespan": -0.0183,
+          "direction": "structure-eroding",
+          "mean": 0.1153
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.1636,
+          "pgls_beta_lifespan": -0.0296,
+          "direction": "structure-eroding",
+          "mean": 0.1609
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.4737,
+          "pgls_beta_lifespan": -0.0064,
+          "direction": "structure-eroding",
+          "mean": 0.1125
+        },
+        {
+          "gene": "MDM2",
+          "n": 55,
+          "pgls_p_lifespan": 0.3511,
+          "pgls_beta_lifespan": -0.0135,
+          "direction": "structure-eroding",
+          "mean": 0.1838
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.5831,
+          "pgls_beta_lifespan": 0.0126,
+          "direction": "structure-conserving",
+          "mean": 0.2135
+        },
+        {
+          "gene": "RB1",
+          "n": 54,
+          "pgls_p_lifespan": 0.0624,
+          "pgls_beta_lifespan": -0.0167,
+          "direction": "structure-eroding",
+          "mean": 0.1378
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.1471,
+          "pgls_beta_lifespan": -0.0208,
+          "direction": "structure-eroding",
+          "mean": 0.2144
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.4242,
+          "pgls_beta_lifespan": -0.0077,
+          "direction": "structure-eroding",
+          "mean": 0.1981
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.3231,
+          "pgls_beta_lifespan": -0.0133,
+          "direction": "structure-eroding",
+          "mean": 0.124
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.0016,
+        "pgls_beta_lifespan": -0.0146,
+        "pgls_p_mass": 0.3425,
+        "marginal_r": -0.519,
+        "mean": 0.1566
+      }
+    },
+    "utr5|delta": {
+      "metric": "delta",
+      "region": "utr5",
+      "n_genes": 23,
+      "fdr_survivors": 0,
+      "positive_slope": 9,
+      "sign_test_p": 0.4049,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "pgls_p_lifespan": 0.9641,
+          "pgls_beta_lifespan": 0.0012,
+          "direction": "structure-conserving",
+          "mean": -0.009
+        },
+        {
+          "gene": "ATR",
+          "n": 46,
+          "pgls_p_lifespan": 0.4021,
+          "pgls_beta_lifespan": 0.0235,
+          "direction": "structure-conserving",
+          "mean": -0.0386
+        },
+        {
+          "gene": "BUB1B",
+          "n": 56,
+          "pgls_p_lifespan": 0.9551,
+          "pgls_beta_lifespan": 0.0015,
+          "direction": "structure-conserving",
+          "mean": -0.0577
+        },
+        {
+          "gene": "CCNA2",
+          "n": 48,
+          "pgls_p_lifespan": 0.0987,
+          "pgls_beta_lifespan": -0.0337,
+          "direction": "structure-eroding",
+          "mean": 0.0225
+        },
+        {
+          "gene": "CCNB1",
+          "n": 52,
+          "pgls_p_lifespan": 0.3979,
+          "pgls_beta_lifespan": -0.0131,
+          "direction": "structure-eroding",
+          "mean": 0.0365
+        },
+        {
+          "gene": "CCND1",
+          "n": 52,
+          "pgls_p_lifespan": 0.7917,
+          "pgls_beta_lifespan": -0.0049,
+          "direction": "structure-eroding",
+          "mean": -0.0021
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.033,
+          "pgls_beta_lifespan": 0.0555,
+          "direction": "structure-conserving",
+          "mean": 0.0405
+        },
+        {
+          "gene": "CDC20",
+          "n": 53,
+          "pgls_p_lifespan": 0.8849,
+          "pgls_beta_lifespan": -0.0056,
+          "direction": "structure-eroding",
+          "mean": 0.0178
+        },
+        {
+          "gene": "CDC25A",
+          "n": 50,
+          "pgls_p_lifespan": 0.3858,
+          "pgls_beta_lifespan": 0.0133,
+          "direction": "structure-conserving",
+          "mean": 0.0036
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.5948,
+          "pgls_beta_lifespan": -0.0159,
+          "direction": "structure-eroding",
+          "mean": -0.0167
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.6215,
+          "pgls_beta_lifespan": -0.0055,
+          "direction": "structure-eroding",
+          "mean": -0.0048
+        },
+        {
+          "gene": "CDK4",
+          "n": 55,
+          "pgls_p_lifespan": 0.0195,
+          "pgls_beta_lifespan": 0.0482,
+          "direction": "structure-conserving",
+          "mean": -0.0371
+        },
+        {
+          "gene": "CDK6",
+          "n": 47,
+          "pgls_p_lifespan": 0.4793,
+          "pgls_beta_lifespan": -0.0073,
+          "direction": "structure-eroding",
+          "mean": 0.0467
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 55,
+          "pgls_p_lifespan": 0.5039,
+          "pgls_beta_lifespan": 0.0159,
+          "direction": "structure-conserving",
+          "mean": 0.0014
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 54,
+          "pgls_p_lifespan": 0.6944,
+          "pgls_beta_lifespan": -0.0056,
+          "direction": "structure-eroding",
+          "mean": -0.0245
+        },
+        {
+          "gene": "CHEK1",
+          "n": 53,
+          "pgls_p_lifespan": 0.3765,
+          "pgls_beta_lifespan": -0.0389,
+          "direction": "structure-eroding",
+          "mean": 0.0225
+        },
+        {
+          "gene": "E2F1",
+          "n": 35,
+          "pgls_p_lifespan": 0.6582,
+          "pgls_beta_lifespan": 0.0054,
+          "direction": "structure-conserving",
+          "mean": 0.0744
+        },
+        {
+          "gene": "MDM2",
+          "n": 54,
+          "pgls_p_lifespan": 0.3898,
+          "pgls_beta_lifespan": -0.034,
+          "direction": "structure-eroding",
+          "mean": 0.0281
+        },
+        {
+          "gene": "MDM4",
+          "n": 54,
+          "pgls_p_lifespan": 0.6664,
+          "pgls_beta_lifespan": -0.0187,
+          "direction": "structure-eroding",
+          "mean": 0.0563
+        },
+        {
+          "gene": "RB1",
+          "n": 45,
+          "pgls_p_lifespan": 0.3312,
+          "pgls_beta_lifespan": -0.0358,
+          "direction": "structure-eroding",
+          "mean": 0.0684
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.3088,
+          "pgls_beta_lifespan": -0.0209,
+          "direction": "structure-eroding",
+          "mean": -0.0577
+        },
+        {
+          "gene": "TP53",
+          "n": 53,
+          "pgls_p_lifespan": 0.6781,
+          "pgls_beta_lifespan": 0.012,
+          "direction": "structure-conserving",
+          "mean": 0.017
+        },
+        {
+          "gene": "WEE1",
+          "n": 49,
+          "pgls_p_lifespan": 0.5889,
+          "pgls_beta_lifespan": -0.0093,
+          "direction": "structure-eroding",
+          "mean": 0.023
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.3178,
+        "pgls_beta_lifespan": -0.0062,
+        "pgls_p_mass": 0.3095,
+        "marginal_r": -0.139,
+        "mean": 0.0064
+      }
+    },
+    "utr5|delta_shuffled": {
+      "metric": "delta_shuffled",
+      "region": "utr5",
+      "n_genes": 23,
+      "fdr_survivors": 0,
+      "positive_slope": 12,
+      "sign_test_p": 1.0,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "pgls_p_lifespan": 0.0893,
+          "pgls_beta_lifespan": 0.0465,
+          "direction": "structure-conserving",
+          "mean": 0.0277
+        },
+        {
+          "gene": "ATR",
+          "n": 46,
+          "pgls_p_lifespan": 0.8728,
+          "pgls_beta_lifespan": 0.0036,
+          "direction": "structure-conserving",
+          "mean": -0.0193
+        },
+        {
+          "gene": "BUB1B",
+          "n": 55,
+          "pgls_p_lifespan": 0.2045,
+          "pgls_beta_lifespan": -0.0255,
+          "direction": "structure-eroding",
+          "mean": 0.0189
+        },
+        {
+          "gene": "CCNA2",
+          "n": 48,
+          "pgls_p_lifespan": 0.8684,
+          "pgls_beta_lifespan": 0.0033,
+          "direction": "structure-conserving",
+          "mean": -0.0511
+        },
+        {
+          "gene": "CCNB1",
+          "n": 52,
+          "pgls_p_lifespan": 0.6691,
+          "pgls_beta_lifespan": -0.0086,
+          "direction": "structure-eroding",
+          "mean": -0.0072
+        },
+        {
+          "gene": "CCND1",
+          "n": 52,
+          "pgls_p_lifespan": 0.0994,
+          "pgls_beta_lifespan": -0.0296,
+          "direction": "structure-eroding",
+          "mean": 0.0072
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.9138,
+          "pgls_beta_lifespan": 0.003,
+          "direction": "structure-conserving",
+          "mean": 0.061
+        },
+        {
+          "gene": "CDC20",
+          "n": 53,
+          "pgls_p_lifespan": 0.1988,
+          "pgls_beta_lifespan": 0.0377,
+          "direction": "structure-conserving",
+          "mean": 0.0003
+        },
+        {
+          "gene": "CDC25A",
+          "n": 50,
+          "pgls_p_lifespan": 0.9077,
+          "pgls_beta_lifespan": -0.002,
+          "direction": "structure-eroding",
+          "mean": -0.0187
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.2012,
+          "pgls_beta_lifespan": 0.0482,
+          "direction": "structure-conserving",
+          "mean": -0.0545
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.2775,
+          "pgls_beta_lifespan": 0.0147,
+          "direction": "structure-conserving",
+          "mean": 0.0006
+        },
+        {
+          "gene": "CDK4",
+          "n": 55,
+          "pgls_p_lifespan": 0.6086,
+          "pgls_beta_lifespan": 0.0092,
+          "direction": "structure-conserving",
+          "mean": 0.0211
+        },
+        {
+          "gene": "CDK6",
+          "n": 47,
+          "pgls_p_lifespan": 0.2595,
+          "pgls_beta_lifespan": 0.0149,
+          "direction": "structure-conserving",
+          "mean": -0.0199
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 55,
+          "pgls_p_lifespan": 0.7999,
+          "pgls_beta_lifespan": -0.0079,
+          "direction": "structure-eroding",
+          "mean": -0.0535
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 54,
+          "pgls_p_lifespan": 0.1815,
+          "pgls_beta_lifespan": -0.0165,
+          "direction": "structure-eroding",
+          "mean": -0.033
+        },
+        {
+          "gene": "CHEK1",
+          "n": 53,
+          "pgls_p_lifespan": 0.4833,
+          "pgls_beta_lifespan": -0.0175,
+          "direction": "structure-eroding",
+          "mean": 0.0056
+        },
+        {
+          "gene": "E2F1",
+          "n": 35,
+          "pgls_p_lifespan": 0.8595,
+          "pgls_beta_lifespan": -0.0025,
+          "direction": "structure-eroding",
+          "mean": -0.025
+        },
+        {
+          "gene": "MDM2",
+          "n": 54,
+          "pgls_p_lifespan": 0.9551,
+          "pgls_beta_lifespan": -0.0022,
+          "direction": "structure-eroding",
+          "mean": -0.022
+        },
+        {
+          "gene": "MDM4",
+          "n": 54,
+          "pgls_p_lifespan": 0.2906,
+          "pgls_beta_lifespan": -0.039,
+          "direction": "structure-eroding",
+          "mean": 0.0006
+        },
+        {
+          "gene": "RB1",
+          "n": 45,
+          "pgls_p_lifespan": 0.9611,
+          "pgls_beta_lifespan": 0.0011,
+          "direction": "structure-conserving",
+          "mean": 0.0011
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.4854,
+          "pgls_beta_lifespan": 0.0155,
+          "direction": "structure-conserving",
+          "mean": -0.0218
+        },
+        {
+          "gene": "TP53",
+          "n": 53,
+          "pgls_p_lifespan": 0.3939,
+          "pgls_beta_lifespan": 0.0325,
+          "direction": "structure-conserving",
+          "mean": 0.0636
+        },
+        {
+          "gene": "WEE1",
+          "n": 49,
+          "pgls_p_lifespan": 0.7018,
+          "pgls_beta_lifespan": -0.0063,
+          "direction": "structure-eroding",
+          "mean": 0.0394
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.5241,
+        "pgls_beta_lifespan": 0.003,
+        "pgls_p_mass": 0.3356,
+        "marginal_r": -0.031,
+        "mean": -0.0027
+      }
+    },
+    "utr5|comp_rate": {
+      "metric": "comp_rate",
+      "region": "utr5",
+      "n_genes": 21,
+      "fdr_survivors": 0,
+      "positive_slope": 12,
+      "sign_test_p": 0.6636,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 21,
+          "pgls_p_lifespan": 0.2018,
+          "pgls_beta_lifespan": 0.0986,
+          "direction": "structure-conserving",
+          "mean": 0.266
+        },
+        {
+          "gene": "ATR",
+          "n": 22,
+          "pgls_p_lifespan": 0.8001,
+          "pgls_beta_lifespan": 0.0135,
+          "direction": "structure-conserving",
+          "mean": 0.2482
+        },
+        {
+          "gene": "BUB1B",
+          "n": 25,
+          "pgls_p_lifespan": 0.2721,
+          "pgls_beta_lifespan": 0.0554,
+          "direction": "structure-conserving",
+          "mean": 0.2593
+        },
+        {
+          "gene": "CCNA2",
+          "n": 18,
+          "pgls_p_lifespan": 0.4218,
+          "pgls_beta_lifespan": 0.05,
+          "direction": "structure-conserving",
+          "mean": 0.4424
+        },
+        {
+          "gene": "CCNB1",
+          "n": 10,
+          "pgls_p_lifespan": 0.7587,
+          "pgls_beta_lifespan": -0.0281,
+          "direction": "structure-eroding",
+          "mean": 0.2948
+        },
+        {
+          "gene": "CCND1",
+          "n": 18,
+          "pgls_p_lifespan": 0.2507,
+          "pgls_beta_lifespan": -0.0488,
+          "direction": "structure-eroding",
+          "mean": 0.1968
+        },
+        {
+          "gene": "CCNE1",
+          "n": 24,
+          "pgls_p_lifespan": 0.1944,
+          "pgls_beta_lifespan": -0.0762,
+          "direction": "structure-eroding",
+          "mean": 0.2435
+        },
+        {
+          "gene": "CDC20",
+          "n": 21,
+          "pgls_p_lifespan": 0.2126,
+          "pgls_beta_lifespan": 0.0865,
+          "direction": "structure-conserving",
+          "mean": 0.3176
+        },
+        {
+          "gene": "CDC25A",
+          "n": 36,
+          "pgls_p_lifespan": 0.8103,
+          "pgls_beta_lifespan": 0.0079,
+          "direction": "structure-conserving",
+          "mean": 0.2354
+        },
+        {
+          "gene": "CDK2",
+          "n": 10,
+          "pgls_p_lifespan": 0.0225,
+          "pgls_beta_lifespan": 0.1315,
+          "direction": "structure-conserving",
+          "mean": 0.3452
+        },
+        {
+          "gene": "CDK4",
+          "n": 17,
+          "pgls_p_lifespan": 0.8215,
+          "pgls_beta_lifespan": -0.0144,
+          "direction": "structure-eroding",
+          "mean": 0.4042
+        },
+        {
+          "gene": "CDK6",
+          "n": 40,
+          "pgls_p_lifespan": 0.8034,
+          "pgls_beta_lifespan": -0.0092,
+          "direction": "structure-eroding",
+          "mean": 0.249
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 34,
+          "pgls_p_lifespan": 0.0495,
+          "pgls_beta_lifespan": -0.0676,
+          "direction": "structure-eroding",
+          "mean": 0.2522
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 45,
+          "pgls_p_lifespan": 0.046,
+          "pgls_beta_lifespan": 0.0782,
+          "direction": "structure-conserving",
+          "mean": 0.3802
+        },
+        {
+          "gene": "CHEK1",
+          "n": 20,
+          "pgls_p_lifespan": 0.4532,
+          "pgls_beta_lifespan": 0.0502,
+          "direction": "structure-conserving",
+          "mean": 0.2206
+        },
+        {
+          "gene": "MDM2",
+          "n": 20,
+          "pgls_p_lifespan": 0.4571,
+          "pgls_beta_lifespan": -0.0371,
+          "direction": "structure-eroding",
+          "mean": 0.2605
+        },
+        {
+          "gene": "MDM4",
+          "n": 15,
+          "pgls_p_lifespan": 0.4789,
+          "pgls_beta_lifespan": 0.0361,
+          "direction": "structure-conserving",
+          "mean": 0.3063
+        },
+        {
+          "gene": "RB1",
+          "n": 12,
+          "pgls_p_lifespan": 0.5599,
+          "pgls_beta_lifespan": -0.0449,
+          "direction": "structure-eroding",
+          "mean": 0.2119
+        },
+        {
+          "gene": "TFDP1",
+          "n": 21,
+          "pgls_p_lifespan": 0.5854,
+          "pgls_beta_lifespan": -0.0377,
+          "direction": "structure-eroding",
+          "mean": 0.249
+        },
+        {
+          "gene": "TP53",
+          "n": 25,
+          "pgls_p_lifespan": 0.1881,
+          "pgls_beta_lifespan": 0.0681,
+          "direction": "structure-conserving",
+          "mean": 0.1716
+        },
+        {
+          "gene": "WEE1",
+          "n": 29,
+          "pgls_p_lifespan": 0.6936,
+          "pgls_beta_lifespan": 0.0214,
+          "direction": "structure-conserving",
+          "mean": 0.4041
+        }
+      ],
+      "pooled": {
+        "n": 56,
+        "pgls_p_lifespan": 0.237,
+        "pgls_beta_lifespan": 0.0227,
+        "pgls_p_mass": 0.0831,
+        "marginal_r": -0.227,
+        "mean": 0.2768
+      }
+    },
+    "utr5|div_paired": {
+      "metric": "div_paired",
+      "region": "utr5",
+      "n_genes": 23,
+      "fdr_survivors": 0,
+      "positive_slope": 6,
+      "sign_test_p": 0.0347,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "pgls_p_lifespan": 0.3495,
+          "pgls_beta_lifespan": -0.0181,
+          "direction": "structure-eroding",
+          "mean": 0.1993
+        },
+        {
+          "gene": "ATR",
+          "n": 46,
+          "pgls_p_lifespan": 0.4493,
+          "pgls_beta_lifespan": 0.0109,
+          "direction": "structure-conserving",
+          "mean": 0.229
+        },
+        {
+          "gene": "BUB1B",
+          "n": 56,
+          "pgls_p_lifespan": 0.0206,
+          "pgls_beta_lifespan": -0.0465,
+          "direction": "structure-eroding",
+          "mean": 0.1886
+        },
+        {
+          "gene": "CCNA2",
+          "n": 48,
+          "pgls_p_lifespan": 0.6421,
+          "pgls_beta_lifespan": 0.0097,
+          "direction": "structure-conserving",
+          "mean": 0.1217
+        },
+        {
+          "gene": "CCNB1",
+          "n": 52,
+          "pgls_p_lifespan": 0.169,
+          "pgls_beta_lifespan": -0.0184,
+          "direction": "structure-eroding",
+          "mean": 0.1012
+        },
+        {
+          "gene": "CCND1",
+          "n": 52,
+          "pgls_p_lifespan": 0.9002,
+          "pgls_beta_lifespan": -0.0016,
+          "direction": "structure-eroding",
+          "mean": 0.1483
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.1225,
+          "pgls_beta_lifespan": -0.0337,
+          "direction": "structure-eroding",
+          "mean": 0.1667
+        },
+        {
+          "gene": "CDC20",
+          "n": 53,
+          "pgls_p_lifespan": 0.6702,
+          "pgls_beta_lifespan": -0.0106,
+          "direction": "structure-eroding",
+          "mean": 0.182
+        },
+        {
+          "gene": "CDC25A",
+          "n": 50,
+          "pgls_p_lifespan": 0.2015,
+          "pgls_beta_lifespan": 0.0194,
+          "direction": "structure-conserving",
+          "mean": 0.1034
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.989,
+          "pgls_beta_lifespan": -0.0005,
+          "direction": "structure-eroding",
+          "mean": 0.2006
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.0391,
+          "pgls_beta_lifespan": -0.027,
+          "direction": "structure-eroding",
+          "mean": 0.0945
+        },
+        {
+          "gene": "CDK4",
+          "n": 55,
+          "pgls_p_lifespan": 0.034,
+          "pgls_beta_lifespan": -0.0328,
+          "direction": "structure-eroding",
+          "mean": 0.1634
+        },
+        {
+          "gene": "CDK6",
+          "n": 47,
+          "pgls_p_lifespan": 0.0165,
+          "pgls_beta_lifespan": -0.0214,
+          "direction": "structure-eroding",
+          "mean": 0.1335
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 55,
+          "pgls_p_lifespan": 0.987,
+          "pgls_beta_lifespan": -0.0003,
+          "direction": "structure-eroding",
+          "mean": 0.2027
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 54,
+          "pgls_p_lifespan": 0.1726,
+          "pgls_beta_lifespan": -0.0116,
+          "direction": "structure-eroding",
+          "mean": 0.1641
+        },
+        {
+          "gene": "CHEK1",
+          "n": 53,
+          "pgls_p_lifespan": 0.3569,
+          "pgls_beta_lifespan": -0.021,
+          "direction": "structure-eroding",
+          "mean": 0.2178
+        },
+        {
+          "gene": "E2F1",
+          "n": 35,
+          "pgls_p_lifespan": 0.0794,
+          "pgls_beta_lifespan": -0.0163,
+          "direction": "structure-eroding",
+          "mean": 0.0255
+        },
+        {
+          "gene": "MDM2",
+          "n": 54,
+          "pgls_p_lifespan": 0.3196,
+          "pgls_beta_lifespan": 0.028,
+          "direction": "structure-conserving",
+          "mean": 0.1853
+        },
+        {
+          "gene": "MDM4",
+          "n": 54,
+          "pgls_p_lifespan": 0.9534,
+          "pgls_beta_lifespan": -0.0009,
+          "direction": "structure-eroding",
+          "mean": 0.2113
+        },
+        {
+          "gene": "RB1",
+          "n": 45,
+          "pgls_p_lifespan": 0.2176,
+          "pgls_beta_lifespan": 0.0364,
+          "direction": "structure-conserving",
+          "mean": 0.1361
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.3497,
+          "pgls_beta_lifespan": 0.0233,
+          "direction": "structure-conserving",
+          "mean": 0.1708
+        },
+        {
+          "gene": "TP53",
+          "n": 53,
+          "pgls_p_lifespan": 0.0531,
+          "pgls_beta_lifespan": -0.0508,
+          "direction": "structure-eroding",
+          "mean": 0.2677
+        },
+        {
+          "gene": "WEE1",
+          "n": 49,
+          "pgls_p_lifespan": 0.4507,
+          "pgls_beta_lifespan": -0.0127,
+          "direction": "structure-eroding",
+          "mean": 0.1572
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.3292,
+        "pgls_beta_lifespan": -0.0059,
+        "pgls_p_mass": 0.6762,
+        "marginal_r": -0.515,
+        "mean": 0.1684
+      }
+    },
+    "utr5|div_unpaired": {
+      "metric": "div_unpaired",
+      "region": "utr5",
+      "n_genes": 23,
+      "fdr_survivors": 0,
+      "positive_slope": 7,
+      "sign_test_p": 0.0931,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "pgls_p_lifespan": 0.3999,
+          "pgls_beta_lifespan": -0.017,
+          "direction": "structure-eroding",
+          "mean": 0.1903
+        },
+        {
+          "gene": "ATR",
+          "n": 46,
+          "pgls_p_lifespan": 0.199,
+          "pgls_beta_lifespan": 0.0344,
+          "direction": "structure-conserving",
+          "mean": 0.1904
+        },
+        {
+          "gene": "BUB1B",
+          "n": 56,
+          "pgls_p_lifespan": 0.1468,
+          "pgls_beta_lifespan": -0.045,
+          "direction": "structure-eroding",
+          "mean": 0.1309
+        },
+        {
+          "gene": "CCNA2",
+          "n": 48,
+          "pgls_p_lifespan": 0.1366,
+          "pgls_beta_lifespan": -0.0241,
+          "direction": "structure-eroding",
+          "mean": 0.1442
+        },
+        {
+          "gene": "CCNB1",
+          "n": 52,
+          "pgls_p_lifespan": 0.0339,
+          "pgls_beta_lifespan": -0.0315,
+          "direction": "structure-eroding",
+          "mean": 0.1378
+        },
+        {
+          "gene": "CCND1",
+          "n": 52,
+          "pgls_p_lifespan": 0.7591,
+          "pgls_beta_lifespan": -0.0065,
+          "direction": "structure-eroding",
+          "mean": 0.1462
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.2662,
+          "pgls_beta_lifespan": 0.0218,
+          "direction": "structure-conserving",
+          "mean": 0.2072
+        },
+        {
+          "gene": "CDC20",
+          "n": 53,
+          "pgls_p_lifespan": 0.5869,
+          "pgls_beta_lifespan": -0.0163,
+          "direction": "structure-eroding",
+          "mean": 0.1997
+        },
+        {
+          "gene": "CDC25A",
+          "n": 50,
+          "pgls_p_lifespan": 0.051,
+          "pgls_beta_lifespan": 0.0327,
+          "direction": "structure-conserving",
+          "mean": 0.107
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.4184,
+          "pgls_beta_lifespan": -0.0164,
+          "direction": "structure-eroding",
+          "mean": 0.1839
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.032,
+          "pgls_beta_lifespan": -0.0326,
+          "direction": "structure-eroding",
+          "mean": 0.0896
+        },
+        {
+          "gene": "CDK4",
+          "n": 55,
+          "pgls_p_lifespan": 0.3721,
+          "pgls_beta_lifespan": 0.0154,
+          "direction": "structure-conserving",
+          "mean": 0.1263
+        },
+        {
+          "gene": "CDK6",
+          "n": 47,
+          "pgls_p_lifespan": 0.0172,
+          "pgls_beta_lifespan": -0.0287,
+          "direction": "structure-eroding",
+          "mean": 0.1802
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 55,
+          "pgls_p_lifespan": 0.5616,
+          "pgls_beta_lifespan": 0.0156,
+          "direction": "structure-conserving",
+          "mean": 0.2041
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 54,
+          "pgls_p_lifespan": 0.1684,
+          "pgls_beta_lifespan": -0.0172,
+          "direction": "structure-eroding",
+          "mean": 0.1395
+        },
+        {
+          "gene": "CHEK1",
+          "n": 53,
+          "pgls_p_lifespan": 0.0607,
+          "pgls_beta_lifespan": -0.0599,
+          "direction": "structure-eroding",
+          "mean": 0.2402
+        },
+        {
+          "gene": "E2F1",
+          "n": 35,
+          "pgls_p_lifespan": 0.2928,
+          "pgls_beta_lifespan": -0.0109,
+          "direction": "structure-eroding",
+          "mean": 0.0999
+        },
+        {
+          "gene": "MDM2",
+          "n": 54,
+          "pgls_p_lifespan": 0.8084,
+          "pgls_beta_lifespan": -0.006,
+          "direction": "structure-eroding",
+          "mean": 0.2134
+        },
+        {
+          "gene": "MDM4",
+          "n": 54,
+          "pgls_p_lifespan": 0.5825,
+          "pgls_beta_lifespan": -0.0196,
+          "direction": "structure-eroding",
+          "mean": 0.2676
+        },
+        {
+          "gene": "RB1",
+          "n": 45,
+          "pgls_p_lifespan": 0.9807,
+          "pgls_beta_lifespan": 0.0005,
+          "direction": "structure-conserving",
+          "mean": 0.2045
+        },
+        {
+          "gene": "TFDP1",
+          "n": 54,
+          "pgls_p_lifespan": 0.925,
+          "pgls_beta_lifespan": 0.0024,
+          "direction": "structure-conserving",
+          "mean": 0.1131
+        },
+        {
+          "gene": "TP53",
+          "n": 53,
+          "pgls_p_lifespan": 0.1101,
+          "pgls_beta_lifespan": -0.0388,
+          "direction": "structure-eroding",
+          "mean": 0.2848
+        },
+        {
+          "gene": "WEE1",
+          "n": 49,
+          "pgls_p_lifespan": 0.1634,
+          "pgls_beta_lifespan": -0.022,
+          "direction": "structure-eroding",
+          "mean": 0.1802
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.0585,
+        "pgls_beta_lifespan": -0.0122,
+        "pgls_p_mass": 0.5476,
+        "marginal_r": -0.591,
+        "mean": 0.1748
+      }
+    }
+  }
+}
