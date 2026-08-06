@@ -1,0 +1,1935 @@
+{
+  "analysis": "utr_embedding_panel_vs_longevity",
+  "model": "InstaDeepAI/nucleotide-transformer-v2-50m-multi-species",
+  "gene_set": "cellcycle",
+  "primary_cell": "utr3|prox|cosine",
+  "n_species_with_traits": 59,
+  "phylogeny": "TimeTree (Newick), Brownian VCV from branch lengths",
+  "note": "identical panel / tree / PGLS / FDR as analyze_panel_utr_divergence.py; only the divergence metric differs (LM embedding distance vs JC)",
+  "grid": {
+    "utr3|prox|cosine": {
+      "region": "utr3",
+      "window": "prox",
+      "metric": "cosine",
+      "n_genes": 25,
+      "fdr_survivors": 0,
+      "conserve": 15,
+      "sign_test_p": 0.4244,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 57,
+          "pgls_p_lifespan": 0.6311,
+          "pgls_beta_lifespan": 0.0039,
+          "direction": "diverge"
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "pgls_p_lifespan": 0.1202,
+          "pgls_beta_lifespan": -0.0054,
+          "direction": "conserve"
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.5331,
+          "pgls_beta_lifespan": -0.0021,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.2923,
+          "pgls_beta_lifespan": -0.0067,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.8392,
+          "pgls_beta_lifespan": -0.0017,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.5406,
+          "pgls_beta_lifespan": -0.0061,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.3747,
+          "pgls_beta_lifespan": -0.0019,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0412,
+          "pgls_beta_lifespan": -0.0072,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.5693,
+          "pgls_beta_lifespan": -0.0029,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.0848,
+          "pgls_beta_lifespan": 0.0118,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.1886,
+          "pgls_beta_lifespan": -0.0062,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.8336,
+          "pgls_beta_lifespan": 0.0006,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.0807,
+          "pgls_beta_lifespan": -0.0208,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.9008,
+          "pgls_beta_lifespan": -0.0008,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.829,
+          "pgls_beta_lifespan": 0.001,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "pgls_p_lifespan": 0.2422,
+          "pgls_beta_lifespan": 0.0061,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.9984,
+          "pgls_beta_lifespan": 0.0,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.2352,
+          "pgls_beta_lifespan": 0.0081,
+          "direction": "diverge"
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.8635,
+          "pgls_beta_lifespan": 0.0002,
+          "direction": "diverge"
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "pgls_p_lifespan": 0.8071,
+          "pgls_beta_lifespan": -0.0017,
+          "direction": "conserve"
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.5297,
+          "pgls_beta_lifespan": -0.0098,
+          "direction": "conserve"
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "pgls_p_lifespan": 0.8604,
+          "pgls_beta_lifespan": 0.0017,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "pgls_p_lifespan": 0.9017,
+          "pgls_beta_lifespan": 0.0003,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.3755,
+          "pgls_beta_lifespan": -0.001,
+          "direction": "conserve"
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.1864,
+          "pgls_beta_lifespan": -0.011,
+          "direction": "conserve"
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.0535,
+        "pgls_beta_lifespan": -0.1094,
+        "pgls_p_mass": 0.1386,
+        "marginal_r": -0.353
+      },
+      "head_to_head": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "r_emb_jc": -0.018,
+          "p_emb_alone": 0.7989,
+          "p_jc_alone": 0.6912,
+          "p_emb_given_jc": 0.779,
+          "beta_emb_given_jc": 0.0023,
+          "p_jc_given_emb": 0.6802,
+          "beta_jc_given_emb": 0.0085
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "r_emb_jc": -0.062,
+          "p_emb_alone": 0.1202,
+          "p_jc_alone": 0.892,
+          "p_emb_given_jc": 0.1252,
+          "beta_emb_given_jc": -0.0054,
+          "p_jc_given_emb": 0.9837,
+          "beta_jc_given_emb": 0.0003
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "r_emb_jc": 0.317,
+          "p_emb_alone": 0.5331,
+          "p_jc_alone": 0.8107,
+          "p_emb_given_jc": 0.511,
+          "beta_emb_given_jc": -0.0022,
+          "p_jc_given_emb": 0.7435,
+          "beta_jc_given_emb": 0.0032
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "r_emb_jc": -0.18,
+          "p_emb_alone": 0.2923,
+          "p_jc_alone": 0.6151,
+          "p_emb_given_jc": 0.321,
+          "beta_emb_given_jc": -0.0063,
+          "p_jc_given_emb": 0.7033,
+          "beta_jc_given_emb": 0.0062
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "r_emb_jc": 0.19,
+          "p_emb_alone": 0.8392,
+          "p_jc_alone": 0.2726,
+          "p_emb_given_jc": 0.8792,
+          "beta_emb_given_jc": 0.0012,
+          "p_jc_given_emb": 0.281,
+          "beta_jc_given_emb": -0.0159
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "r_emb_jc": 0.186,
+          "p_emb_alone": 0.5406,
+          "p_jc_alone": 0.1881,
+          "p_emb_given_jc": 0.581,
+          "beta_emb_given_jc": -0.0056,
+          "p_jc_given_emb": 0.2007,
+          "beta_jc_given_emb": -0.0117
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "r_emb_jc": 0.756,
+          "p_emb_alone": 0.3747,
+          "p_jc_alone": 0.4485,
+          "p_emb_given_jc": 0.569,
+          "beta_emb_given_jc": -0.0011,
+          "p_jc_given_emb": 0.7343,
+          "beta_jc_given_emb": -0.0031
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "r_emb_jc": 0.553,
+          "p_emb_alone": 0.0412,
+          "p_jc_alone": 0.0032,
+          "p_emb_given_jc": 0.0402,
+          "beta_emb_given_jc": -0.0079,
+          "p_jc_given_emb": 0.0033,
+          "beta_jc_given_emb": -0.0327
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "r_emb_jc": 0.319,
+          "p_emb_alone": 0.5693,
+          "p_jc_alone": 0.588,
+          "p_emb_given_jc": 0.378,
+          "beta_emb_given_jc": -0.0041,
+          "p_jc_given_emb": 0.3873,
+          "beta_jc_given_emb": 0.0086
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "r_emb_jc": 0.372,
+          "p_emb_alone": 0.0848,
+          "p_jc_alone": 0.4543,
+          "p_emb_given_jc": 0.059,
+          "beta_emb_given_jc": 0.0128,
+          "p_jc_given_emb": 0.2731,
+          "beta_jc_given_emb": -0.0145
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "r_emb_jc": 0.292,
+          "p_emb_alone": 0.1886,
+          "p_jc_alone": 0.0386,
+          "p_emb_given_jc": 0.2273,
+          "beta_emb_given_jc": -0.006,
+          "p_jc_given_emb": 0.0466,
+          "beta_jc_given_emb": -0.0165
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "r_emb_jc": 0.202,
+          "p_emb_alone": 0.8336,
+          "p_jc_alone": 0.0,
+          "p_emb_given_jc": 0.2528,
+          "beta_emb_given_jc": -0.004,
+          "p_jc_given_emb": 0.0,
+          "beta_jc_given_emb": -0.0314
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "r_emb_jc": 0.032,
+          "p_emb_alone": 0.0807,
+          "p_jc_alone": 0.081,
+          "p_emb_given_jc": 0.0091,
+          "beta_emb_given_jc": -0.0297,
+          "p_jc_given_emb": 0.0092,
+          "beta_jc_given_emb": -0.0193
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "r_emb_jc": 0.286,
+          "p_emb_alone": 0.9008,
+          "p_jc_alone": 0.2221,
+          "p_emb_given_jc": 0.283,
+          "beta_emb_given_jc": 0.0052,
+          "p_jc_given_emb": 0.1069,
+          "beta_jc_given_emb": -0.0199
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "r_emb_jc": -0.112,
+          "p_emb_alone": 0.829,
+          "p_jc_alone": 0.8499,
+          "p_emb_given_jc": 0.839,
+          "beta_emb_given_jc": 0.001,
+          "p_jc_given_emb": 0.8611,
+          "beta_jc_given_emb": -0.0023
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "r_emb_jc": -0.336,
+          "p_emb_alone": 0.2422,
+          "p_jc_alone": 0.7216,
+          "p_emb_given_jc": 0.2506,
+          "beta_emb_given_jc": 0.0061,
+          "p_jc_given_emb": 0.726,
+          "beta_jc_given_emb": -0.0094
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "r_emb_jc": 0.24,
+          "p_emb_alone": 0.9984,
+          "p_jc_alone": 0.056,
+          "p_emb_given_jc": 0.7222,
+          "beta_emb_given_jc": 0.0017,
+          "p_jc_given_emb": 0.0541,
+          "beta_jc_given_emb": -0.0183
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "r_emb_jc": 0.404,
+          "p_emb_alone": 0.2352,
+          "p_jc_alone": 0.16,
+          "p_emb_given_jc": 0.2042,
+          "beta_emb_given_jc": 0.009,
+          "p_jc_given_emb": 0.1411,
+          "beta_jc_given_emb": -0.0214
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "r_emb_jc": 0.584,
+          "p_emb_alone": 0.8635,
+          "p_jc_alone": 0.0966,
+          "p_emb_given_jc": 0.493,
+          "beta_emb_given_jc": 0.0008,
+          "p_jc_given_emb": 0.0761,
+          "beta_jc_given_emb": -0.0094
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "r_emb_jc": 0.198,
+          "p_emb_alone": 0.8071,
+          "p_jc_alone": 0.8062,
+          "p_emb_given_jc": 0.746,
+          "beta_emb_given_jc": -0.0021,
+          "p_jc_given_emb": 0.7454,
+          "beta_jc_given_emb": -0.0045
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "r_emb_jc": 0.296,
+          "p_emb_alone": 0.5297,
+          "p_jc_alone": 0.2246,
+          "p_emb_given_jc": 0.6897,
+          "beta_emb_given_jc": -0.0062,
+          "p_jc_given_emb": 0.2699,
+          "beta_jc_given_emb": -0.0184
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "r_emb_jc": 0.375,
+          "p_emb_alone": 0.8604,
+          "p_jc_alone": 0.0543,
+          "p_emb_given_jc": 0.1279,
+          "beta_emb_given_jc": 0.013,
+          "p_jc_given_emb": 0.015,
+          "beta_jc_given_emb": -0.0184
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "r_emb_jc": 0.727,
+          "p_emb_alone": 0.9017,
+          "p_jc_alone": 0.749,
+          "p_emb_given_jc": 0.9496,
+          "beta_emb_given_jc": -0.0001,
+          "p_jc_given_emb": 0.7649,
+          "beta_jc_given_emb": 0.005
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "r_emb_jc": 0.637,
+          "p_emb_alone": 0.3755,
+          "p_jc_alone": 0.1577,
+          "p_emb_given_jc": 0.6842,
+          "beta_emb_given_jc": -0.0005,
+          "p_jc_given_emb": 0.2448,
+          "beta_jc_given_emb": -0.0095
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "r_emb_jc": 0.698,
+          "p_emb_alone": 0.1864,
+          "p_jc_alone": 0.177,
+          "p_emb_given_jc": 0.6682,
+          "beta_emb_given_jc": -0.0023,
+          "p_jc_given_emb": 0.6114,
+          "beta_jc_given_emb": -0.0088
+        }
+      ],
+      "pooled_head_to_head": {
+        "n": 57,
+        "r_emb_jc": 0.795,
+        "p_emb_alone": 0.0535,
+        "p_jc_alone": 0.0226,
+        "p_emb_given_jc": 0.2788,
+        "beta_emb_given_jc": -0.0593,
+        "p_jc_given_emb": 0.1061,
+        "beta_jc_given_emb": -0.1119,
+        "verdict": "one measurement: the embedding tracks JC and adds nothing beyond it"
+      }
+    },
+    "utr3|prox|l2": {
+      "region": "utr3",
+      "window": "prox",
+      "metric": "l2",
+      "n_genes": 25,
+      "fdr_survivors": 0,
+      "conserve": 17,
+      "sign_test_p": 0.1078,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 57,
+          "pgls_p_lifespan": 0.6428,
+          "pgls_beta_lifespan": 0.104,
+          "direction": "diverge"
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "pgls_p_lifespan": 0.1646,
+          "pgls_beta_lifespan": -0.186,
+          "direction": "conserve"
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.4122,
+          "pgls_beta_lifespan": -0.1075,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.3644,
+          "pgls_beta_lifespan": -0.3392,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.6689,
+          "pgls_beta_lifespan": -0.1298,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.7326,
+          "pgls_beta_lifespan": -0.1548,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.2983,
+          "pgls_beta_lifespan": -0.1404,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0752,
+          "pgls_beta_lifespan": -0.3509,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.5684,
+          "pgls_beta_lifespan": -0.1512,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.1631,
+          "pgls_beta_lifespan": 0.3949,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.2281,
+          "pgls_beta_lifespan": -0.3818,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.7428,
+          "pgls_beta_lifespan": 0.0541,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.0703,
+          "pgls_beta_lifespan": -0.8275,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.6976,
+          "pgls_beta_lifespan": -0.1333,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.773,
+          "pgls_beta_lifespan": 0.0723,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "pgls_p_lifespan": 0.2565,
+          "pgls_beta_lifespan": 0.2906,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.7843,
+          "pgls_beta_lifespan": -0.0658,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.4867,
+          "pgls_beta_lifespan": 0.165,
+          "direction": "diverge"
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.988,
+          "pgls_beta_lifespan": -0.0011,
+          "direction": "conserve"
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "pgls_p_lifespan": 0.8015,
+          "pgls_beta_lifespan": -0.079,
+          "direction": "conserve"
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.4831,
+          "pgls_beta_lifespan": -0.2877,
+          "direction": "conserve"
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "pgls_p_lifespan": 0.8735,
+          "pgls_beta_lifespan": 0.0571,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "pgls_p_lifespan": 0.8122,
+          "pgls_beta_lifespan": 0.0325,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.284,
+          "pgls_beta_lifespan": -0.0928,
+          "direction": "conserve"
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.1723,
+          "pgls_beta_lifespan": -0.4909,
+          "direction": "conserve"
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.038,
+        "pgls_beta_lifespan": -0.1236,
+        "pgls_p_mass": 0.136,
+        "marginal_r": -0.375
+      },
+      "head_to_head": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "r_emb_jc": -0.05,
+          "p_emb_alone": 0.7969,
+          "p_jc_alone": 0.6912,
+          "p_emb_given_jc": 0.7657,
+          "beta_emb_given_jc": 0.0685,
+          "p_jc_given_emb": 0.6726,
+          "beta_jc_given_emb": 0.0087
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "r_emb_jc": -0.07,
+          "p_emb_alone": 0.1646,
+          "p_jc_alone": 0.892,
+          "p_emb_given_jc": 0.1707,
+          "beta_emb_given_jc": -0.1843,
+          "p_jc_given_emb": 0.9979,
+          "beta_jc_given_emb": -0.0
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "r_emb_jc": 0.511,
+          "p_emb_alone": 0.4122,
+          "p_jc_alone": 0.8107,
+          "p_emb_given_jc": 0.3705,
+          "beta_emb_given_jc": -0.1151,
+          "p_jc_given_emb": 0.656,
+          "beta_jc_given_emb": 0.0042
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "r_emb_jc": -0.119,
+          "p_emb_alone": 0.3644,
+          "p_jc_alone": 0.6151,
+          "p_emb_given_jc": 0.3821,
+          "beta_emb_given_jc": -0.3305,
+          "p_jc_given_emb": 0.6504,
+          "beta_jc_given_emb": 0.0074
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "r_emb_jc": 0.159,
+          "p_emb_alone": 0.6689,
+          "p_jc_alone": 0.2726,
+          "p_emb_given_jc": 0.8696,
+          "beta_emb_given_jc": -0.0494,
+          "p_jc_given_emb": 0.3108,
+          "beta_jc_given_emb": -0.0153
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "r_emb_jc": 0.184,
+          "p_emb_alone": 0.7326,
+          "p_jc_alone": 0.1881,
+          "p_emb_given_jc": 0.7927,
+          "beta_emb_given_jc": -0.122,
+          "p_jc_given_emb": 0.1984,
+          "beta_jc_given_emb": -0.0117
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "r_emb_jc": 0.807,
+          "p_emb_alone": 0.2983,
+          "p_jc_alone": 0.4485,
+          "p_emb_given_jc": 0.4634,
+          "beta_emb_given_jc": -0.0828,
+          "p_jc_given_emb": 0.8405,
+          "beta_jc_given_emb": -0.0018
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "r_emb_jc": 0.529,
+          "p_emb_alone": 0.0752,
+          "p_jc_alone": 0.0032,
+          "p_emb_given_jc": 0.065,
+          "beta_emb_given_jc": -0.3991,
+          "p_jc_given_emb": 0.003,
+          "beta_jc_given_emb": -0.0327
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "r_emb_jc": 0.347,
+          "p_emb_alone": 0.5684,
+          "p_jc_alone": 0.588,
+          "p_emb_given_jc": 0.3879,
+          "beta_emb_given_jc": -0.211,
+          "p_jc_given_emb": 0.3981,
+          "beta_jc_given_emb": 0.0085
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "r_emb_jc": 0.466,
+          "p_emb_alone": 0.1631,
+          "p_jc_alone": 0.4543,
+          "p_emb_given_jc": 0.1254,
+          "beta_emb_given_jc": 0.4338,
+          "p_jc_given_emb": 0.3198,
+          "beta_jc_given_emb": -0.0131
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "r_emb_jc": 0.369,
+          "p_emb_alone": 0.2281,
+          "p_jc_alone": 0.0386,
+          "p_emb_given_jc": 0.3182,
+          "beta_emb_given_jc": -0.3306,
+          "p_jc_given_emb": 0.0522,
+          "beta_jc_given_emb": -0.016
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "r_emb_jc": 0.212,
+          "p_emb_alone": 0.7428,
+          "p_jc_alone": 0.0,
+          "p_emb_given_jc": 0.3372,
+          "beta_emb_given_jc": -0.1827,
+          "p_jc_given_emb": 0.0,
+          "beta_jc_given_emb": -0.0312
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "r_emb_jc": 0.059,
+          "p_emb_alone": 0.0703,
+          "p_jc_alone": 0.081,
+          "p_emb_given_jc": 0.0089,
+          "beta_emb_given_jc": -1.1553,
+          "p_jc_given_emb": 0.0101,
+          "beta_jc_given_emb": -0.0193
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "r_emb_jc": 0.362,
+          "p_emb_alone": 0.6976,
+          "p_jc_alone": 0.2221,
+          "p_emb_given_jc": 0.3985,
+          "beta_emb_given_jc": 0.1904,
+          "p_jc_given_emb": 0.1545,
+          "beta_jc_given_emb": -0.0162
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "r_emb_jc": -0.072,
+          "p_emb_alone": 0.773,
+          "p_jc_alone": 0.8499,
+          "p_emb_given_jc": 0.7782,
+          "beta_emb_given_jc": 0.0714,
+          "p_jc_given_emb": 0.8561,
+          "beta_jc_given_emb": -0.0024
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "r_emb_jc": -0.354,
+          "p_emb_alone": 0.2565,
+          "p_jc_alone": 0.7216,
+          "p_emb_given_jc": 0.271,
+          "beta_emb_given_jc": 0.2874,
+          "p_jc_given_emb": 0.7616,
+          "beta_jc_given_emb": -0.0081
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "r_emb_jc": 0.293,
+          "p_emb_alone": 0.7843,
+          "p_jc_alone": 0.056,
+          "p_emb_given_jc": 0.9659,
+          "beta_emb_given_jc": 0.0106,
+          "p_jc_given_emb": 0.0609,
+          "beta_jc_given_emb": -0.0179
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "r_emb_jc": 0.573,
+          "p_emb_alone": 0.4867,
+          "p_jc_alone": 0.16,
+          "p_emb_given_jc": 0.3868,
+          "beta_emb_given_jc": 0.2099,
+          "p_jc_given_emb": 0.1371,
+          "beta_jc_given_emb": -0.0213
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "r_emb_jc": 0.655,
+          "p_emb_alone": 0.988,
+          "p_jc_alone": 0.0966,
+          "p_emb_given_jc": 0.596,
+          "beta_emb_given_jc": 0.0387,
+          "p_jc_given_emb": 0.0839,
+          "beta_jc_given_emb": -0.0091
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "r_emb_jc": 0.305,
+          "p_emb_alone": 0.8015,
+          "p_jc_alone": 0.8062,
+          "p_emb_given_jc": 0.7688,
+          "beta_emb_given_jc": -0.092,
+          "p_jc_given_emb": 0.7727,
+          "beta_jc_given_emb": -0.0041
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "r_emb_jc": 0.32,
+          "p_emb_alone": 0.4831,
+          "p_jc_alone": 0.2246,
+          "p_emb_given_jc": 0.6656,
+          "beta_emb_given_jc": -0.1772,
+          "p_jc_given_emb": 0.2836,
+          "beta_jc_given_emb": -0.0177
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "r_emb_jc": 0.381,
+          "p_emb_alone": 0.8735,
+          "p_jc_alone": 0.0543,
+          "p_emb_given_jc": 0.1561,
+          "beta_emb_given_jc": 0.4473,
+          "p_jc_given_emb": 0.0178,
+          "beta_jc_given_emb": -0.0183
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "r_emb_jc": 0.749,
+          "p_emb_alone": 0.8122,
+          "p_jc_alone": 0.749,
+          "p_emb_given_jc": 0.9423,
+          "beta_emb_given_jc": 0.0083,
+          "p_jc_given_emb": 0.8226,
+          "beta_jc_given_emb": 0.0037
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "r_emb_jc": 0.692,
+          "p_emb_alone": 0.284,
+          "p_jc_alone": 0.1577,
+          "p_emb_given_jc": 0.5636,
+          "beta_emb_given_jc": -0.0477,
+          "p_jc_given_emb": 0.2803,
+          "beta_jc_given_emb": -0.0087
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "r_emb_jc": 0.723,
+          "p_emb_alone": 0.1723,
+          "p_jc_alone": 0.177,
+          "p_emb_given_jc": 0.6484,
+          "beta_emb_given_jc": -0.0984,
+          "p_jc_given_emb": 0.6819,
+          "beta_jc_given_emb": -0.0066
+        }
+      ],
+      "pooled_head_to_head": {
+        "n": 57,
+        "r_emb_jc": 0.836,
+        "p_emb_alone": 0.038,
+        "p_jc_alone": 0.0226,
+        "p_emb_given_jc": 0.2597,
+        "beta_emb_given_jc": -0.0628,
+        "p_jc_given_emb": 0.1433,
+        "beta_jc_given_emb": -0.0986,
+        "verdict": "one measurement: the embedding tracks JC and adds nothing beyond it"
+      }
+    },
+    "utr3|full|cosine": {
+      "region": "utr3",
+      "window": "full",
+      "metric": "cosine",
+      "n_genes": 25,
+      "fdr_survivors": 0,
+      "conserve": 13,
+      "sign_test_p": 1.0,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 57,
+          "pgls_p_lifespan": 0.3019,
+          "pgls_beta_lifespan": 0.0124,
+          "direction": "diverge"
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "pgls_p_lifespan": 0.028,
+          "pgls_beta_lifespan": -0.0101,
+          "direction": "conserve"
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.3016,
+          "pgls_beta_lifespan": -0.0055,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.2187,
+          "pgls_beta_lifespan": -0.0185,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.5778,
+          "pgls_beta_lifespan": 0.0035,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.3297,
+          "pgls_beta_lifespan": -0.0193,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.5037,
+          "pgls_beta_lifespan": 0.004,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0062,
+          "pgls_beta_lifespan": -0.005,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.891,
+          "pgls_beta_lifespan": -0.0011,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.1956,
+          "pgls_beta_lifespan": 0.0073,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.1752,
+          "pgls_beta_lifespan": -0.0212,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.1424,
+          "pgls_beta_lifespan": -0.0041,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.1242,
+          "pgls_beta_lifespan": -0.0231,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.5815,
+          "pgls_beta_lifespan": 0.0049,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.9622,
+          "pgls_beta_lifespan": 0.0005,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "pgls_p_lifespan": 0.1551,
+          "pgls_beta_lifespan": 0.0135,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.7234,
+          "pgls_beta_lifespan": -0.0026,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.4331,
+          "pgls_beta_lifespan": 0.0062,
+          "direction": "diverge"
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.0268,
+          "pgls_beta_lifespan": 0.0076,
+          "direction": "diverge"
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "pgls_p_lifespan": 0.9689,
+          "pgls_beta_lifespan": -0.0004,
+          "direction": "conserve"
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.5312,
+          "pgls_beta_lifespan": -0.012,
+          "direction": "conserve"
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "pgls_p_lifespan": 0.7451,
+          "pgls_beta_lifespan": 0.0054,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "pgls_p_lifespan": 0.3342,
+          "pgls_beta_lifespan": 0.0084,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.3226,
+          "pgls_beta_lifespan": 0.003,
+          "direction": "diverge"
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.1096,
+          "pgls_beta_lifespan": -0.0222,
+          "direction": "conserve"
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.3,
+        "pgls_beta_lifespan": -0.0616,
+        "pgls_p_mass": 0.1588,
+        "marginal_r": -0.148
+      },
+      "head_to_head": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "r_emb_jc": -0.021,
+          "p_emb_alone": 0.3257,
+          "p_jc_alone": 0.6912,
+          "p_emb_given_jc": 0.3209,
+          "beta_emb_given_jc": 0.0124,
+          "p_jc_given_emb": 0.6606,
+          "beta_jc_given_emb": 0.0091
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "r_emb_jc": 0.045,
+          "p_emb_alone": 0.028,
+          "p_jc_alone": 0.892,
+          "p_emb_given_jc": 0.0297,
+          "beta_emb_given_jc": -0.0101,
+          "p_jc_given_emb": 0.9332,
+          "beta_jc_given_emb": -0.0013
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "r_emb_jc": 0.198,
+          "p_emb_alone": 0.3016,
+          "p_jc_alone": 0.8107,
+          "p_emb_given_jc": 0.297,
+          "beta_emb_given_jc": -0.0056,
+          "p_jc_given_emb": 0.7557,
+          "beta_jc_given_emb": 0.003
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "r_emb_jc": -0.311,
+          "p_emb_alone": 0.2187,
+          "p_jc_alone": 0.6151,
+          "p_emb_given_jc": 0.2554,
+          "beta_emb_given_jc": -0.0169,
+          "p_jc_given_emb": 0.8099,
+          "beta_jc_given_emb": 0.0039
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "r_emb_jc": -0.022,
+          "p_emb_alone": 0.5778,
+          "p_jc_alone": 0.2726,
+          "p_emb_given_jc": 0.6929,
+          "beta_emb_given_jc": 0.0025,
+          "p_jc_given_emb": 0.3097,
+          "beta_jc_given_emb": -0.0157
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "r_emb_jc": 0.175,
+          "p_emb_alone": 0.3297,
+          "p_jc_alone": 0.1881,
+          "p_emb_given_jc": 0.3583,
+          "beta_emb_given_jc": -0.0186,
+          "p_jc_given_emb": 0.2043,
+          "beta_jc_given_emb": -0.0117
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "r_emb_jc": 0.193,
+          "p_emb_alone": 0.5037,
+          "p_jc_alone": 0.4485,
+          "p_emb_given_jc": 0.4447,
+          "beta_emb_given_jc": 0.0046,
+          "p_jc_given_emb": 0.3999,
+          "beta_jc_given_emb": -0.009
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "r_emb_jc": 0.529,
+          "p_emb_alone": 0.0062,
+          "p_jc_alone": 0.0032,
+          "p_emb_given_jc": 0.0109,
+          "beta_emb_given_jc": -0.0051,
+          "p_jc_given_emb": 0.0056,
+          "beta_jc_given_emb": -0.0317
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "r_emb_jc": 0.184,
+          "p_emb_alone": 0.891,
+          "p_jc_alone": 0.588,
+          "p_emb_given_jc": 0.8777,
+          "beta_emb_given_jc": -0.0013,
+          "p_jc_given_emb": 0.5882,
+          "beta_jc_given_emb": 0.006
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "r_emb_jc": 0.47,
+          "p_emb_alone": 0.1956,
+          "p_jc_alone": 0.4543,
+          "p_emb_given_jc": 0.145,
+          "beta_emb_given_jc": 0.0082,
+          "p_jc_given_emb": 0.3101,
+          "beta_jc_given_emb": -0.0133
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "r_emb_jc": 0.168,
+          "p_emb_alone": 0.1752,
+          "p_jc_alone": 0.0386,
+          "p_emb_given_jc": 0.2529,
+          "beta_emb_given_jc": -0.0187,
+          "p_jc_given_emb": 0.0544,
+          "beta_jc_given_emb": -0.0159
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "r_emb_jc": 0.107,
+          "p_emb_alone": 0.1424,
+          "p_jc_alone": 0.0,
+          "p_emb_given_jc": 0.1641,
+          "beta_emb_given_jc": -0.0046,
+          "p_jc_given_emb": 0.0,
+          "beta_jc_given_emb": -0.0323
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "r_emb_jc": 0.014,
+          "p_emb_alone": 0.1242,
+          "p_jc_alone": 0.081,
+          "p_emb_given_jc": 0.0261,
+          "beta_emb_given_jc": -0.0328,
+          "p_jc_given_emb": 0.0178,
+          "beta_jc_given_emb": -0.0179
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "r_emb_jc": 0.22,
+          "p_emb_alone": 0.5815,
+          "p_jc_alone": 0.2221,
+          "p_emb_given_jc": 0.1339,
+          "beta_emb_given_jc": 0.0112,
+          "p_jc_given_emb": 0.0648,
+          "beta_jc_given_emb": -0.027
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "r_emb_jc": -0.049,
+          "p_emb_alone": 0.9622,
+          "p_jc_alone": 0.8499,
+          "p_emb_given_jc": 0.9744,
+          "beta_emb_given_jc": 0.0004,
+          "p_jc_given_emb": 0.8539,
+          "beta_jc_given_emb": -0.0024
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "r_emb_jc": -0.338,
+          "p_emb_alone": 0.1551,
+          "p_jc_alone": 0.7216,
+          "p_emb_given_jc": 0.172,
+          "beta_emb_given_jc": 0.0131,
+          "p_jc_given_emb": 0.8457,
+          "beta_jc_given_emb": -0.0052
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "r_emb_jc": 0.077,
+          "p_emb_alone": 0.7234,
+          "p_jc_alone": 0.056,
+          "p_emb_given_jc": 0.5744,
+          "beta_emb_given_jc": -0.0043,
+          "p_jc_given_emb": 0.052,
+          "beta_jc_given_emb": -0.0187
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "r_emb_jc": 0.296,
+          "p_emb_alone": 0.4331,
+          "p_jc_alone": 0.16,
+          "p_emb_given_jc": 0.3704,
+          "beta_emb_given_jc": 0.0073,
+          "p_jc_given_emb": 0.1439,
+          "beta_jc_given_emb": -0.0211
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "r_emb_jc": 0.311,
+          "p_emb_alone": 0.0268,
+          "p_jc_alone": 0.0966,
+          "p_emb_given_jc": 0.0065,
+          "beta_emb_given_jc": 0.0094,
+          "p_jc_given_emb": 0.0212,
+          "beta_jc_given_emb": -0.0129
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "r_emb_jc": -0.031,
+          "p_emb_alone": 0.9689,
+          "p_jc_alone": 0.8062,
+          "p_emb_given_jc": 0.8697,
+          "beta_emb_given_jc": -0.0014,
+          "p_jc_given_emb": 0.7714,
+          "beta_jc_given_emb": -0.0037
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "r_emb_jc": 0.24,
+          "p_emb_alone": 0.5312,
+          "p_jc_alone": 0.2246,
+          "p_emb_given_jc": 0.7834,
+          "beta_emb_given_jc": -0.0051,
+          "p_jc_given_emb": 0.2865,
+          "beta_jc_given_emb": -0.0173
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "r_emb_jc": 0.3,
+          "p_emb_alone": 0.7451,
+          "p_jc_alone": 0.0543,
+          "p_emb_given_jc": 0.1291,
+          "beta_emb_given_jc": 0.0225,
+          "p_jc_given_emb": 0.0157,
+          "beta_jc_given_emb": -0.019
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "r_emb_jc": 0.758,
+          "p_emb_alone": 0.3342,
+          "p_jc_alone": 0.749,
+          "p_emb_given_jc": 0.2211,
+          "beta_emb_given_jc": 0.0061,
+          "p_jc_given_emb": 0.4086,
+          "beta_jc_given_emb": -0.0094
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "r_emb_jc": 0.566,
+          "p_emb_alone": 0.3226,
+          "p_jc_alone": 0.1577,
+          "p_emb_given_jc": 0.2129,
+          "beta_emb_given_jc": 0.0038,
+          "p_jc_given_emb": 0.1103,
+          "beta_jc_given_emb": -0.0137
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "r_emb_jc": 0.806,
+          "p_emb_alone": 0.1096,
+          "p_jc_alone": 0.177,
+          "p_emb_given_jc": 0.3898,
+          "beta_emb_given_jc": -0.0058,
+          "p_jc_given_emb": 0.9002,
+          "beta_jc_given_emb": 0.0016
+        }
+      ],
+      "pooled_head_to_head": {
+        "n": 57,
+        "r_emb_jc": 0.658,
+        "p_emb_alone": 0.3,
+        "p_jc_alone": 0.0226,
+        "p_emb_given_jc": 0.7277,
+        "beta_emb_given_jc": -0.0209,
+        "p_jc_given_emb": 0.0413,
+        "beta_jc_given_emb": -0.1438,
+        "verdict": "embedding is uninformative here; JC carries the signal"
+      }
+    },
+    "utr3|full|l2": {
+      "region": "utr3",
+      "window": "full",
+      "metric": "l2",
+      "n_genes": 25,
+      "fdr_survivors": 0,
+      "conserve": 11,
+      "sign_test_p": 0.69,
+      "per_gene": [
+        {
+          "gene": "ATM",
+          "n": 57,
+          "pgls_p_lifespan": 0.2169,
+          "pgls_beta_lifespan": 0.4109,
+          "direction": "diverge"
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "pgls_p_lifespan": 0.0163,
+          "pgls_beta_lifespan": -0.3951,
+          "direction": "conserve"
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "pgls_p_lifespan": 0.3236,
+          "pgls_beta_lifespan": -0.2245,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "pgls_p_lifespan": 0.2356,
+          "pgls_beta_lifespan": -0.6456,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "pgls_p_lifespan": 0.7699,
+          "pgls_beta_lifespan": 0.0906,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "pgls_p_lifespan": 0.4567,
+          "pgls_beta_lifespan": -0.5671,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "pgls_p_lifespan": 0.4781,
+          "pgls_beta_lifespan": 0.1871,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "pgls_p_lifespan": 0.0145,
+          "pgls_beta_lifespan": -0.2553,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "pgls_p_lifespan": 0.9732,
+          "pgls_beta_lifespan": 0.0126,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "pgls_p_lifespan": 0.2639,
+          "pgls_beta_lifespan": 0.2923,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "pgls_p_lifespan": 0.2519,
+          "pgls_beta_lifespan": -0.7056,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "pgls_p_lifespan": 0.179,
+          "pgls_beta_lifespan": -0.1821,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "pgls_p_lifespan": 0.1014,
+          "pgls_beta_lifespan": -1.0587,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "pgls_p_lifespan": 0.8046,
+          "pgls_beta_lifespan": 0.1055,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "pgls_p_lifespan": 0.9529,
+          "pgls_beta_lifespan": 0.0305,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "pgls_p_lifespan": 0.1743,
+          "pgls_beta_lifespan": 0.3874,
+          "direction": "diverge"
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "pgls_p_lifespan": 0.677,
+          "pgls_beta_lifespan": -0.1339,
+          "direction": "conserve"
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "pgls_p_lifespan": 0.5367,
+          "pgls_beta_lifespan": 0.1818,
+          "direction": "diverge"
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "pgls_p_lifespan": 0.0349,
+          "pgls_beta_lifespan": 0.4487,
+          "direction": "diverge"
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "pgls_p_lifespan": 0.9714,
+          "pgls_beta_lifespan": 0.014,
+          "direction": "diverge"
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "pgls_p_lifespan": 0.6364,
+          "pgls_beta_lifespan": -0.2465,
+          "direction": "conserve"
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "pgls_p_lifespan": 0.7022,
+          "pgls_beta_lifespan": 0.2209,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "pgls_p_lifespan": 0.358,
+          "pgls_beta_lifespan": 0.3181,
+          "direction": "diverge"
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "pgls_p_lifespan": 0.6551,
+          "pgls_beta_lifespan": 0.0759,
+          "direction": "diverge"
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "pgls_p_lifespan": 0.094,
+          "pgls_beta_lifespan": -0.8662,
+          "direction": "conserve"
+        }
+      ],
+      "pooled": {
+        "n": 57,
+        "pgls_p_lifespan": 0.2983,
+        "pgls_beta_lifespan": -0.0617,
+        "pgls_p_mass": 0.1795,
+        "marginal_r": -0.193
+      },
+      "head_to_head": [
+        {
+          "gene": "ATM",
+          "n": 56,
+          "r_emb_jc": -0.034,
+          "p_emb_alone": 0.2264,
+          "p_jc_alone": 0.6912,
+          "p_emb_given_jc": 0.2258,
+          "beta_emb_given_jc": 0.4203,
+          "p_jc_given_emb": 0.6663,
+          "beta_jc_given_emb": 0.009
+        },
+        {
+          "gene": "ATR",
+          "n": 56,
+          "r_emb_jc": 0.027,
+          "p_emb_alone": 0.0163,
+          "p_jc_alone": 0.892,
+          "p_emb_given_jc": 0.0174,
+          "beta_emb_given_jc": -0.395,
+          "p_jc_given_emb": 0.9073,
+          "beta_jc_given_emb": -0.0019
+        },
+        {
+          "gene": "BUB1B",
+          "n": 57,
+          "r_emb_jc": 0.327,
+          "p_emb_alone": 0.3236,
+          "p_jc_alone": 0.8107,
+          "p_emb_given_jc": 0.3093,
+          "beta_emb_given_jc": -0.2316,
+          "p_jc_given_emb": 0.7143,
+          "beta_jc_given_emb": 0.0036
+        },
+        {
+          "gene": "CCNA2",
+          "n": 55,
+          "r_emb_jc": -0.238,
+          "p_emb_alone": 0.2356,
+          "p_jc_alone": 0.6151,
+          "p_emb_given_jc": 0.2635,
+          "beta_emb_given_jc": -0.6107,
+          "p_jc_given_emb": 0.7303,
+          "beta_jc_given_emb": 0.0056
+        },
+        {
+          "gene": "CCNB1",
+          "n": 53,
+          "r_emb_jc": -0.062,
+          "p_emb_alone": 0.7699,
+          "p_jc_alone": 0.2726,
+          "p_emb_given_jc": 0.959,
+          "beta_emb_given_jc": 0.0159,
+          "p_jc_given_emb": 0.2947,
+          "beta_jc_given_emb": -0.0159
+        },
+        {
+          "gene": "CCND1",
+          "n": 56,
+          "r_emb_jc": 0.24,
+          "p_emb_alone": 0.4567,
+          "p_jc_alone": 0.1881,
+          "p_emb_given_jc": 0.5197,
+          "beta_emb_given_jc": -0.5023,
+          "p_jc_given_emb": 0.2101,
+          "beta_jc_given_emb": -0.0115
+        },
+        {
+          "gene": "CCNE1",
+          "n": 53,
+          "r_emb_jc": 0.254,
+          "p_emb_alone": 0.4781,
+          "p_jc_alone": 0.4485,
+          "p_emb_given_jc": 0.4073,
+          "beta_emb_given_jc": 0.2194,
+          "p_jc_given_emb": 0.3844,
+          "beta_jc_given_emb": -0.0092
+        },
+        {
+          "gene": "CDC20",
+          "n": 55,
+          "r_emb_jc": 0.544,
+          "p_emb_alone": 0.0145,
+          "p_jc_alone": 0.0032,
+          "p_emb_given_jc": 0.0223,
+          "beta_emb_given_jc": -0.2614,
+          "p_jc_given_emb": 0.005,
+          "beta_jc_given_emb": -0.0317
+        },
+        {
+          "gene": "CDC25A",
+          "n": 56,
+          "r_emb_jc": 0.255,
+          "p_emb_alone": 0.9732,
+          "p_jc_alone": 0.588,
+          "p_emb_given_jc": 0.9998,
+          "beta_emb_given_jc": -0.0001,
+          "p_jc_given_emb": 0.5923,
+          "beta_jc_given_emb": 0.0059
+        },
+        {
+          "gene": "CDK1",
+          "n": 56,
+          "r_emb_jc": 0.494,
+          "p_emb_alone": 0.2639,
+          "p_jc_alone": 0.4543,
+          "p_emb_given_jc": 0.2061,
+          "beta_emb_given_jc": 0.3301,
+          "p_jc_given_emb": 0.3365,
+          "beta_jc_given_emb": -0.0126
+        },
+        {
+          "gene": "CDK2",
+          "n": 57,
+          "r_emb_jc": 0.214,
+          "p_emb_alone": 0.2519,
+          "p_jc_alone": 0.0386,
+          "p_emb_given_jc": 0.3847,
+          "beta_emb_given_jc": -0.5574,
+          "p_jc_given_emb": 0.0556,
+          "beta_jc_given_emb": -0.0157
+        },
+        {
+          "gene": "CDK4",
+          "n": 56,
+          "r_emb_jc": 0.125,
+          "p_emb_alone": 0.179,
+          "p_jc_alone": 0.0,
+          "p_emb_given_jc": 0.1794,
+          "beta_emb_given_jc": -0.2193,
+          "p_jc_given_emb": 0.0,
+          "beta_jc_given_emb": -0.0324
+        },
+        {
+          "gene": "CDK6",
+          "n": 55,
+          "r_emb_jc": 0.078,
+          "p_emb_alone": 0.1014,
+          "p_jc_alone": 0.081,
+          "p_emb_given_jc": 0.0209,
+          "beta_emb_given_jc": -1.4673,
+          "p_jc_given_emb": 0.0171,
+          "beta_jc_given_emb": -0.0181
+        },
+        {
+          "gene": "CDKN1A",
+          "n": 56,
+          "r_emb_jc": 0.287,
+          "p_emb_alone": 0.8046,
+          "p_jc_alone": 0.2221,
+          "p_emb_given_jc": 0.2056,
+          "beta_emb_given_jc": 0.434,
+          "p_jc_given_emb": 0.0831,
+          "beta_jc_given_emb": -0.0241
+        },
+        {
+          "gene": "CDKN1B",
+          "n": 53,
+          "r_emb_jc": 0.042,
+          "p_emb_alone": 0.9529,
+          "p_jc_alone": 0.8499,
+          "p_emb_given_jc": 0.9553,
+          "beta_emb_given_jc": 0.0292,
+          "p_jc_given_emb": 0.852,
+          "beta_jc_given_emb": -0.0024
+        },
+        {
+          "gene": "CDKN2A",
+          "n": 32,
+          "r_emb_jc": -0.344,
+          "p_emb_alone": 0.1743,
+          "p_jc_alone": 0.7216,
+          "p_emb_given_jc": 0.1944,
+          "beta_emb_given_jc": 0.3737,
+          "p_jc_given_emb": 0.8728,
+          "beta_jc_given_emb": -0.0043
+        },
+        {
+          "gene": "CHEK1",
+          "n": 57,
+          "r_emb_jc": 0.153,
+          "p_emb_alone": 0.677,
+          "p_jc_alone": 0.056,
+          "p_emb_given_jc": 0.4888,
+          "beta_emb_given_jc": -0.23,
+          "p_jc_given_emb": 0.0485,
+          "beta_jc_given_emb": -0.0189
+        },
+        {
+          "gene": "CHEK2",
+          "n": 54,
+          "r_emb_jc": 0.398,
+          "p_emb_alone": 0.5367,
+          "p_jc_alone": 0.16,
+          "p_emb_given_jc": 0.4661,
+          "beta_emb_given_jc": 0.2201,
+          "p_jc_given_emb": 0.1481,
+          "beta_jc_given_emb": -0.0208
+        },
+        {
+          "gene": "E2F1",
+          "n": 54,
+          "r_emb_jc": 0.254,
+          "p_emb_alone": 0.0349,
+          "p_jc_alone": 0.0966,
+          "p_emb_given_jc": 0.0129,
+          "beta_emb_given_jc": 0.5365,
+          "p_jc_given_emb": 0.0333,
+          "beta_jc_given_emb": -0.012
+        },
+        {
+          "gene": "MDM2",
+          "n": 56,
+          "r_emb_jc": 0.107,
+          "p_emb_alone": 0.9714,
+          "p_jc_alone": 0.8062,
+          "p_emb_given_jc": 0.9611,
+          "beta_emb_given_jc": -0.0182,
+          "p_jc_given_emb": 0.8063,
+          "beta_jc_given_emb": -0.0033
+        },
+        {
+          "gene": "MDM4",
+          "n": 52,
+          "r_emb_jc": 0.243,
+          "p_emb_alone": 0.6364,
+          "p_jc_alone": 0.2246,
+          "p_emb_given_jc": 0.936,
+          "beta_emb_given_jc": -0.0406,
+          "p_jc_given_emb": 0.267,
+          "beta_jc_given_emb": -0.0178
+        },
+        {
+          "gene": "RB1",
+          "n": 55,
+          "r_emb_jc": 0.353,
+          "p_emb_alone": 0.7022,
+          "p_jc_alone": 0.0543,
+          "p_emb_given_jc": 0.1174,
+          "beta_emb_given_jc": 0.8153,
+          "p_jc_given_emb": 0.0148,
+          "beta_jc_given_emb": -0.0193
+        },
+        {
+          "gene": "TFDP1",
+          "n": 55,
+          "r_emb_jc": 0.808,
+          "p_emb_alone": 0.358,
+          "p_jc_alone": 0.749,
+          "p_emb_given_jc": 0.2349,
+          "beta_emb_given_jc": 0.2253,
+          "p_jc_given_emb": 0.4087,
+          "beta_jc_given_emb": -0.009
+        },
+        {
+          "gene": "TP53",
+          "n": 55,
+          "r_emb_jc": 0.675,
+          "p_emb_alone": 0.6551,
+          "p_jc_alone": 0.1577,
+          "p_emb_given_jc": 0.4764,
+          "beta_emb_given_jc": 0.1224,
+          "p_jc_given_emb": 0.132,
+          "beta_jc_given_emb": -0.0128
+        },
+        {
+          "gene": "WEE1",
+          "n": 55,
+          "r_emb_jc": 0.809,
+          "p_emb_alone": 0.094,
+          "p_jc_alone": 0.177,
+          "p_emb_given_jc": 0.3114,
+          "beta_emb_given_jc": -0.258,
+          "p_jc_given_emb": 0.8045,
+          "beta_jc_given_emb": 0.0033
+        }
+      ],
+      "pooled_head_to_head": {
+        "n": 57,
+        "r_emb_jc": 0.738,
+        "p_emb_alone": 0.2983,
+        "p_jc_alone": 0.0226,
+        "p_emb_given_jc": 0.846,
+        "beta_emb_given_jc": -0.0113,
+        "p_jc_given_emb": 0.0435,
+        "beta_jc_given_emb": -0.1385,
+        "verdict": "embedding is a lossy proxy for the alignment"
+      }
+    }
+  }
+}

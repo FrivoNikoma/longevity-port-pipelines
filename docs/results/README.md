@@ -55,6 +55,7 @@ Full argument with numbers:
 | Two genes or a module? | [Cell-cycle expansion (25 genes)](2026-08-05-cellcycle-expansion/) | **20 / 25 genes conserve** (sign-test p = 0.004); pooled p = 0.016 — module-wide |
 | Where along the UTR? | [Positional map](2026-08-05-utr-positional/) | **proximal** (first ~38 %, next to the stop codon; p ≤ 0.013), fading distally |
 | Which element? | [Element enrichment](2026-08-05-utr-element-enrichment/) | **not** miRNA sites or AREs — diffuse across the proximal region |
+| Can an AI metric see it? | [Embedding panel re-test](2026-08-06-utr-embedding-panel/) | re-tested at n = 57 with a 3'UTR-domain model: embedding distance **adds nothing beyond the alignment** (`emb given JC` ns in all 16 cells) and misses both FDR survivors; the old n = 22 AI null was largely a **power** artifact |
 
 ## What this shows
 
@@ -64,10 +65,18 @@ large, cancer-resistant species (Peto's paradox). It is a comparative-genomics c
 a demonstrated mechanism, and the responsible proximal-3' UTR feature is not yet identified
 (it is neither canonical miRNA sites nor AREs). But it is the project's first positive,
 phylogenetically controlled, FDR-surviving regulatory signal, and it vindicates changing the
-unit of analysis off the coding interface. The two AI arms (ESM protein embeddings; Nucleotide
-Transformer DNA embeddings and Enformer expression) were each null — informative in bounding
-where the signal is *not* (embedding-distance and predicted-expression space), and in showing
-that classical sequence conservation, not embedding L2, is what detects it.
+unit of analysis off the coding interface.
+
+The AI arms (ESM protein embeddings; Nucleotide Transformer DNA embeddings; Enformer expression)
+were each null, and the [embedding panel re-test](2026-08-06-utr-embedding-panel/) sharpens what
+that null means. Re-run at n = 57 with a proximal window and a 3'UTR-pretrained model, the
+embedding metric reaches nominal significance — so "embeddings are blind to lineage-specific
+selection" was too strong, and the earlier null was substantially a power artifact. But the
+metric adds **nothing beyond the alignment** in any cell of the grid (r ≈ 0.7–0.85 with JC
+distance; partial p never significant), and it misses both FDR survivors. Embedding distance is
+not blind, it is redundant: a compressed, noisier restatement of sequence identity whose loss
+falls on exactly the genes and sub-region that carry the signal. Classical sequence conservation
+remains the only method here that resolves it.
 
 ## Reproducing
 
