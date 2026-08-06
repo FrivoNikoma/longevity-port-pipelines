@@ -1,0 +1,84 @@
+{
+  "analysis": "intron_neutral_control_for_proximal_utr3_indel_deficit",
+  "genes": [
+    "ATM",
+    "ATR",
+    "BUB1B",
+    "CDC25A",
+    "CDK6",
+    "CHEK1",
+    "CHEK2",
+    "MDM2",
+    "MDM4",
+    "RB1",
+    "TFDP1"
+  ],
+  "n_genes": 11,
+  "min_species_per_gene": 40,
+  "question": "does the lifespan-linked indel deficit also appear in neutral intronic sequence of the same genes (genome-wide rate effect) or not (specific)",
+  "results": {
+    "utr3_proximal_indel": {
+      "n": 57,
+      "beta_lifespan": -0.0331,
+      "ci95": [
+        -0.0642,
+        -0.002
+      ],
+      "p_lifespan": 0.0375,
+      "p_mass": 0.5896,
+      "mean": 0.2266
+    },
+    "intron_indel": {
+      "n": 57,
+      "beta_lifespan": -0.004,
+      "ci95": [
+        -0.0218,
+        0.0138
+      ],
+      "p_lifespan": 0.6533,
+      "p_mass": 0.5852,
+      "mean": 0.2815
+    },
+    "utr3_proximal_substitution": {
+      "n": 57,
+      "beta_lifespan": -0.0044,
+      "ci95": [
+        -0.015,
+        0.0062
+      ],
+      "p_lifespan": 0.4108,
+      "p_mass": 0.5523,
+      "mean": 0.1709
+    },
+    "intron_substitution": {
+      "n": 57,
+      "beta_lifespan": -0.0088,
+      "ci95": [
+        -0.0189,
+        0.0013
+      ],
+      "p_lifespan": 0.0874,
+      "p_mass": 0.7396,
+      "mean": 0.2262
+    },
+    "utr3_proximal_indel_adjusted_for_intron_indel": {
+      "n": 57,
+      "beta_lifespan": -0.0316,
+      "ci95": [
+        -0.0623,
+        -0.0008
+      ],
+      "p_lifespan": 0.0442,
+      "p_mass": 0.5045,
+      "mean": 0.2266,
+      "p_covariate": 0.1064
+    }
+  },
+  "r_utr3_vs_intron_indel": 0.153,
+  "mean_indel_rate": {
+    "utr3_proximal": 0.2259,
+    "intron": 0.2815
+  },
+  "intron_ci_excludes_utr3_effect": true,
+  "verdict": "the intron interval excludes the observed 3' UTR slope: this is a genuine null, not a power failure"
+}
