@@ -1,0 +1,25 @@
+gene	module	rationale
+RPL5	ribosome	large subunit; broadly expressed, strong protein-level constraint
+RPL11	ribosome	large subunit
+RPL13A	ribosome	large subunit
+RPS3	ribosome	small subunit
+RPS6	ribosome	small subunit
+RPS14	ribosome	small subunit
+RPS19	ribosome	small subunit
+RPLP0	ribosome	stalk protein; standard housekeeping reference
+GAPDH	glycolysis	core glycolysis; canonical housekeeping gene
+ALDOA	glycolysis	core glycolysis
+ENO1	glycolysis	core glycolysis
+PKM	glycolysis	core glycolysis
+PGK1	glycolysis	core glycolysis
+TPI1	glycolysis	core glycolysis
+LDHA	glycolysis	terminal glycolysis
+HK1	glycolysis	glycolysis entry step
+ACTB	structural_tca	cytoskeleton; canonical housekeeping gene
+ACTG1	structural_tca	cytoskeleton
+TUBB	structural_tca	cytoskeleton
+TUBA1B	structural_tca	cytoskeleton
+SDHA	structural_tca	TCA cycle / complex II
+CS	structural_tca	TCA cycle, citrate synthase
+MDH1	structural_tca	TCA cycle, malate dehydrogenase
+FH	structural_tca	TCA cycle, fumarate hydratase

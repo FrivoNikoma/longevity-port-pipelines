@@ -58,6 +58,7 @@ Full argument with numbers:
 | Can an AI metric see it? | [Embedding panel re-test](2026-08-06-utr-embedding-panel/) | re-tested at n = 57 with a 3'UTR-domain model: embedding distance **adds nothing beyond the alignment** (`emb given JC` ns in all 16 cells) and misses both FDR survivors; the old n = 22 AI null was largely a **power** artifact |
 | What *kind* of constraint is it? | [Constraint nature](2026-08-07-utr-constraint-nature/) | not secondary structure (delta p = 0.14, with the method shown to detect structure at Wilcoxon p = 5e-4); the proximal localisation is carried by **indels, not substitutions** — proximal indel p = 0.0003 vs substitution p = 0.15, robust to UTR-length mismatch (p = 0.0009) and to gene/clade jackknives |
 | Or is it just a slower mutation clock? | [Intron neutral control](2026-08-08-intron-neutral-control/) | no: intronic windows of the same genes are **flat** (slope −0.004, 95 % CI [−0.022, +0.014], p = 0.65) and the interval **excludes** the 3' UTR slope (−0.033), so the null is real rather than underpowered; the weak generation-time trend that does exist sits in intronic *substitutions* (p = 0.087) |
+| Is it about the cell cycle at all? | [Module specificity](2026-08-09-module-specificity/) | yes: 24 housekeeping genes (ribosome, glycolysis, cytoskeleton/TCA) are **flat** (slope −0.002, p = 0.92, interval excluding the cell-cycle slope), and the within-species contrast cell-cycle − control gives **p = 0.005**; the Peto's-paradox framing survives its first real test |
 
 ## What this shows
 
@@ -83,7 +84,11 @@ The obvious alternative — that long-lived mammals simply accumulate indels mor
 everywhere, given their longer generation times — is rejected by an
 [external neutral control](2026-08-08-intron-neutral-control/): intronic windows from the same
 genes are flat, and their confidence interval excludes the 3' UTR slope, so the deficit is
-regional rather than genome-wide.
+regional rather than genome-wide. The [module control](2026-08-09-module-specificity/) closes the
+other side: 24 housekeeping genes show no such deficit, and the within-species contrast between
+the two gene sets is significant, so the effect is specific to the cell-cycle module rather than
+a general property of long-lived mammals' 3' UTRs. The Peto's-paradox framing the arc has carried
+since the extended panel therefore survives its first direct test.
 
 The AI arms (ESM protein embeddings; Nucleotide Transformer DNA embeddings; Enformer expression)
 were each null, and the [embedding panel re-test](2026-08-06-utr-embedding-panel/) sharpens what
